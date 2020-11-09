@@ -69,13 +69,6 @@ packages:
       relative: true
     source: path
     version: "0.0.1"
-  flutter_plugin_qrcode:
-    dependency: transitive
-    description:
-      name: flutter_plugin_qrcode
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "1.0.3"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -102,6 +95,15 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.7.0"
+  qrcode_reader:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: "88d1b58efbf9856d1220025f78d475e41ef4ba22"
+      url: "git@github.com:bcko/flutter_qrcode_reader.git"
+    source: git
+    version: "0.4.4"
   sky_engine:
     dependency: transitive
     description: flutter

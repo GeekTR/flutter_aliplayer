@@ -6,10 +6,13 @@ PODS:
   - flutter_aliplayer (0.0.1):
     - AliPlayerSDK_iOS (= 5.1.6)
     - Flutter
+  - qrcode_reader (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_aliplayer (from `.symlinks/plugins/flutter_aliplayer/ios`)
+  - qrcode_reader (from `.symlinks/plugins/qrcode_reader/ios`)
 
 SPEC REPOS:
   trunk:
@@ -20,12 +23,15 @@ EXTERNAL SOURCES:
     :path: Flutter
   flutter_aliplayer:
     :path: ".symlinks/plugins/flutter_aliplayer/ios"
+  qrcode_reader:
+    :path: ".symlinks/plugins/qrcode_reader/ios"
 
 SPEC CHECKSUMS:
   AliPlayerSDK_iOS: d349d7f8acc0f86b0fccef9aa4e0f1369c938ca7
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
   flutter_aliplayer: 214cac82c7c800d66ae6e1befbce33b04156d990
+  qrcode_reader: 09b34d43b4c08fe5b63a6e56c96789bcea7b9148
 
 PODFILE CHECKSUM: 8e679eca47255a8ca8067c4c67aab20e64cb974d
 
-COCOAPODS: 1.9.1
+COCOAPODS: 1.9.3

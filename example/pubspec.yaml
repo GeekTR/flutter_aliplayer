@@ -12,6 +12,10 @@ dependencies:
   flutter:
     sdk: flutter
 
+  qrcode_reader:
+    git:
+      url: "git@github.com:bcko/flutter_qrcode_reader.git"
+
   flutter_aliplayer:
     # When depending on this package from a real application you should use:
     #   flutter_aliplayer: ^x.y.z

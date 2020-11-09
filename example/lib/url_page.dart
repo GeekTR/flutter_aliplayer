@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_aliplayer_example/play_page.dart';
-import 'package:flutter_plugin_qrcode/flutter_plugin_qrcode.dart';
+import 'package:qrcode_reader/qrcode_reader.dart';
 
 class UrlPage extends StatelessWidget {
   @override
@@ -23,17 +23,28 @@ class _MyUrlPageState extends State<MyUrlPage> {
       "https://alivc-demo-vod.aliyuncs.com/6b357371ef3c45f4a06e2536fd534380/eb3f139a4b437d1e9b623ee1b671115b-ld.mp4";
 
   Future<void> getQrcodeState() async {
-    String qrcode_path;
-    try {
-      qrcode_path = await FlutterPluginQrcode.getQRCode;
-    } on PlatformException {
-      qrcode_path = 'Failed to get platform version.';
-    }
+    // String qrcode_path;
+    // try {
+    //   qrcode_path = await FlutterPluginQrcode.getQRCode;
+    // } on PlatformException {
+    //   qrcode_path = 'Failed to get platform version.';
+    // }
 
-    if (!mounted) return;
-    //获取到扫描的结果进行页面更新
+    // if (!mounted) return;
+    // //获取到扫描的结果进行页面更新
+    // setState(() {
+    //   _qrcode_result = qrcode_path;
+    // });
+    _qrcode_result = await QRCodeReader()
+               .setAutoFocusIntervalInMs(200) // default 5000
+               .setForceAutoFocus(true) // default false
+               .setTorchEnabled(true) // default false
+               .setHandlePermissions(true) // default true
+               .setExecuteAfterPermissionGranted(true) // default true
+               .setFrontCamera(false) // default false
+               .scan();
     setState(() {
-      _qrcode_result = qrcode_path;
+      
     });
   }
 
