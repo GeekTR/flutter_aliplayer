@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_aliplayer_example/widget/custom_radio.dart';
+import 'package:flutter_aliplayer_example/widget/aliyun_segment.dart';
 
 class OptionsFramePage extends StatefulWidget {
   @override
@@ -145,43 +145,18 @@ class _OptionsFramePageState extends State<OptionsFramePage> {
    */
   Row _buildScale() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Text('缩放模式'),
-        Row(
-          children: [
-            CustomRadioButton(
-              title: "比例填充",
-              value: 1,
-              groupValue: mScaleGroupValue,
-              onChecked: (value) {
-                setState(() {
-                  mScaleGroupValue = value;
-                });
-              },
-            ),
-            CustomRadioButton(
-              title: "比例全屏",
-              value: 2,
-              groupValue: mScaleGroupValue,
-              onChecked: (value) {
-                setState(() {
-                  mScaleGroupValue = value;
-                });
-              },
-            ),
-            CustomRadioButton(
-              title: "拉伸全屏",
-              value: 3,
-              groupValue: mScaleGroupValue,
-              onChecked: (value) {
-                setState(() {
-                  mScaleGroupValue = value;
-                });
-              },
-            ),
-          ],
+        Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal:8),
+                    child: AliyunSegment(titles: ['比例填充','比例全屏','拉伸全屏'],selIdx: 0,onSelectAtIdx: (value) {
+                      mScaleGroupValue = value;
+                    },),
+                  ),
         ),
+
       ],
     );
   }
@@ -191,42 +166,16 @@ class _OptionsFramePageState extends State<OptionsFramePage> {
    */
   Row _buildMirror() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Text('镜像模式'),
-        Row(
-          children: [
-            CustomRadioButton(
-              title: "无镜像",
-              value: 1,
-              groupValue: mMirrorGroupValue,
-              onChecked: (value) {
-                setState(() {
-                  mMirrorGroupValue = value;
-                });
-              },
-            ),
-            CustomRadioButton(
-              title: "水平镜像",
-              value: 2,
-              groupValue: mMirrorGroupValue,
-              onChecked: (value) {
-                setState(() {
-                  mMirrorGroupValue = value;
-                });
-              },
-            ),
-            CustomRadioButton(
-              title: "垂直镜像",
-              value: 3,
-              groupValue: mMirrorGroupValue,
-              onChecked: (value) {
-                setState(() {
-                  mMirrorGroupValue = value;
-                });
-              },
-            ),
-          ],
+         Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal:8),
+                    child: AliyunSegment(titles: ['无镜像','水平镜像','垂直镜像'],selIdx: 0,onSelectAtIdx: (value) {
+                      mMirrorGroupValue = value;
+                    },),
+                  ),
         ),
       ],
     );
@@ -240,58 +189,19 @@ class _OptionsFramePageState extends State<OptionsFramePage> {
     print("abc : 屏幕宽度 width = $width");
     return Container(
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Text('旋转模式'),
-          SizedBox(
-            width: 20.0,
-          ),
-          Row(
-            children: [
-              CustomRadioButton(
-                title: "0°",
-                value: 1,
-                groupValue: mRotateGroupValue,
-                onChecked: (value) {
-                  setState(() {
-                    mRotateGroupValue = value;
-                  });
-                },
-              ),
-              CustomRadioButton(
-                title: "90°",
-                value: 2,
-                groupValue: mRotateGroupValue,
-                onChecked: (value) {
-                  setState(() {
-                    mRotateGroupValue = value;
-                  });
-                },
-              ),
-              CustomRadioButton(
-                title: "180°",
-                value: 3,
-                groupValue: mRotateGroupValue,
-                onChecked: (value) {
-                  setState(() {
-                    mRotateGroupValue = value;
-                  });
-                },
-              ),
-              CustomRadioButton(
-                title: "270°",
-                value: 4,
-                groupValue: mRotateGroupValue,
-                onChecked: (value) {
-                  setState(() {
-                    mRotateGroupValue = value;
-                  });
-                },
-              ),
-            ],
-          ),
-        ],
-      ),
+          Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal:8),
+                    child: AliyunSegment(titles: ['0°','90°','180°',"270°"],selIdx: 0,onSelectAtIdx: (value) {
+                      mRotateGroupValue = value;
+                    },),
+                  ),
+        ),
+        ]
+      ),  
     );
   }
 
@@ -303,52 +213,17 @@ class _OptionsFramePageState extends State<OptionsFramePage> {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         Text('倍速播放'),
-        Row(
-          children: [
-            CustomRadioButton(
-              title: "正常",
-              value: 1,
-              groupValue: mSpeedGroupValue,
-              onChecked: (value) {
-                setState(() {
-                  mSpeedGroupValue = value;
-                });
-              },
-            ),
-            CustomRadioButton(
-              title: "0.5倍速",
-              value: 2,
-              groupValue: mSpeedGroupValue,
-              onChecked: (value) {
-                setState(() {
-                  mSpeedGroupValue = value;
-                });
-              },
-            ),
-            CustomRadioButton(
-              title: "1.5倍速",
-              value: 3,
-              groupValue: mSpeedGroupValue,
-              onChecked: (value) {
-                setState(() {
-                  mSpeedGroupValue = value;
-                });
-              },
-            ),
-            CustomRadioButton(
-              title: "2.0倍速",
-              value: 4,
-              groupValue: mSpeedGroupValue,
-              onChecked: (value) {
-                setState(() {
-                  mSpeedGroupValue = value;
-                });
-              },
-            ),
-          ],
+        Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal:8),
+                    child: AliyunSegment(titles: ['正常','0.5倍速','1.5倍速',"2.0倍速"],selIdx: 0,onSelectAtIdx: (value) {
+                      mSpeedGroupValue = value;
+                    },),
+                  ),
         ),
-      ],
+      ]
     );
+        
   }
 
   /**
