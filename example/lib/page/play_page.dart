@@ -49,8 +49,7 @@ class _PlayPageState extends State<PlayPage> {
         y: y,
         width: width,
         height: height);
-    return MaterialApp(
-      home: Scaffold(
+    return Scaffold(
         appBar: AppBar(
           title: const Text('Plugin for aliplayer'),
         ),
@@ -82,7 +81,6 @@ class _PlayPageState extends State<PlayPage> {
             }
           },
         ),
-      ),
     );
   }
 
