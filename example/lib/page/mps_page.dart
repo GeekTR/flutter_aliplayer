@@ -3,21 +3,12 @@ import 'package:flutter_aliplayer_example/config.dart';
 import 'package:flutter_aliplayer_example/util/network_utils.dart';
 import 'package:flutter_aliplayer_example/widget/aliyun_regin_dropdown.dart';
 
-class MpsPage extends StatelessWidget {
+class MpsPage extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: MpsHomePage(),
-    );
-  }
+  _MpsPagePageState createState() => _MpsPagePageState();
 }
 
-class MpsHomePage extends StatefulWidget {
-  @override
-  _StsHomePageState createState() => _StsHomePageState();
-}
-
-class _StsHomePageState extends State<MpsHomePage> {
+class _MpsPagePageState extends State<MpsPage> {
   NetWorkUtils _netWorkUtils;
   TextEditingController _vidController = TextEditingController();
   TextEditingController _accessKeyIdController = TextEditingController();
@@ -34,106 +25,104 @@ class _StsHomePageState extends State<MpsHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text("MPS 播放"),
-          centerTitle: true,
-        ),
-        resizeToAvoidBottomPadding: false,
-        body: Padding(
-          padding: const EdgeInsets.only(
-              left: 15.0, top: 5.0, right: 15.0, bottom: 0),
-          child: Column(
-            children: [
-              //Region
-              Container(
-                width: double.infinity,
-                child: ReginDropDownButton(
-                  onRegionChanged: (region) => {
-                    print("region = $region"),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("MPS 播放"),
+        centerTitle: true,
+      ),
+      resizeToAvoidBottomPadding: false,
+      body: Padding(
+        padding:
+            const EdgeInsets.only(left: 15.0, top: 5.0, right: 15.0, bottom: 0),
+        child: Column(
+          children: [
+            //Region
+            Container(
+              width: double.infinity,
+              child: ReginDropDownButton(
+                onRegionChanged: (region) => {
+                  print("region = $region"),
+                },
+              ),
+            ),
+            //vid
+            TextField(
+              controller: _vidController,
+              maxLines: 1,
+              decoration: InputDecoration(
+                labelText: "vid",
+              ),
+            ),
+            //AccessKeyId
+            TextField(
+              controller: _accessKeyIdController,
+              maxLines: 1,
+              decoration: InputDecoration(
+                labelText: "AccessKeyId",
+              ),
+            ),
+            //AccessKeySecret
+            TextField(
+              controller: _accessKeySecretController,
+              maxLines: 1,
+              decoration: InputDecoration(
+                labelText: "AccessKeySecret",
+              ),
+            ),
+            //PlayDomain
+            TextField(
+              controller: _previewController,
+              maxLines: 1,
+              decoration: InputDecoration(
+                labelText: "PlayDomain",
+              ),
+            ),
+            //AuthInfo
+            TextField(
+              controller: _previewController,
+              maxLines: 1,
+              decoration: InputDecoration(
+                labelText: "AuthInfo",
+              ),
+            ),
+            //HlsUriToken
+            TextField(
+              controller: _previewController,
+              maxLines: 1,
+              decoration: InputDecoration(
+                labelText: "HlsUriToken",
+              ),
+            ),
+            //SecurityToken
+            TextField(
+              controller: _securityTokenController,
+              decoration: InputDecoration(
+                labelText: "SecurityToken",
+              ),
+            ),
+
+            SizedBox(
+              height: 30.0,
+            ),
+
+            Row(
+              children: [
+                RaisedButton(
+                  child: Text("MPS播放"),
+                  onPressed: () {
+                    _netWorkUtils.getHttp(HttpConstant.GET_MPS);
                   },
                 ),
-              ),
-              //vid
-              TextField(
-                controller: _vidController,
-                maxLines: 1,
-                decoration: InputDecoration(
-                  labelText: "vid",
+                Expanded(
+                  child: SizedBox(),
                 ),
-              ),
-              //AccessKeyId
-              TextField(
-                controller: _accessKeyIdController,
-                maxLines: 1,
-                decoration: InputDecoration(
-                  labelText: "AccessKeyId",
+                RaisedButton(
+                  child: Text("清除"),
+                  onPressed: () {},
                 ),
-              ),
-              //AccessKeySecret
-              TextField(
-                controller: _accessKeySecretController,
-                maxLines: 1,
-                decoration: InputDecoration(
-                  labelText: "AccessKeySecret",
-                ),
-              ),
-              //PlayDomain
-              TextField(
-                controller: _previewController,
-                maxLines: 1,
-                decoration: InputDecoration(
-                  labelText: "PlayDomain",
-                ),
-              ),
-              //AuthInfo
-              TextField(
-                controller: _previewController,
-                maxLines: 1,
-                decoration: InputDecoration(
-                  labelText: "AuthInfo",
-                ),
-              ),
-              //HlsUriToken
-              TextField(
-                controller: _previewController,
-                maxLines: 1,
-                decoration: InputDecoration(
-                  labelText: "HlsUriToken",
-                ),
-              ),
-              //SecurityToken
-              TextField(
-                controller: _securityTokenController,
-                decoration: InputDecoration(
-                  labelText: "SecurityToken",
-                ),
-              ),
-
-              SizedBox(
-                height: 30.0,
-              ),
-
-              Row(
-                children: [
-                  RaisedButton(
-                    child: Text("MPS播放"),
-                    onPressed: () {
-                      _netWorkUtils.getHttp(HttpConstant.GET_MPS);
-                    },
-                  ),
-                  Expanded(
-                    child: SizedBox(),
-                  ),
-                  RaisedButton(
-                    child: Text("清除"),
-                    onPressed: () {},
-                  ),
-                ],
-              ),
-            ],
-          ),
+              ],
+            ),
+          ],
         ),
       ),
     );

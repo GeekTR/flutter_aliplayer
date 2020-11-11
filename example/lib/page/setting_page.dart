@@ -2,21 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-class SettingPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: SettingHomePage(),
-    );
-  }
-}
-
-class SettingHomePage extends StatefulWidget {
+class SettingPage extends StatefulWidget {
   @override
   _SettingHomePageState createState() => _SettingHomePageState();
 }
 
-class _SettingHomePageState extends State<SettingHomePage> {
+class _SettingHomePageState extends State<SettingPage> {
   TextEditingController _dnsTextEditingController = TextEditingController();
   int _currentLogIndex = 5;
   bool _enableLog = true;
@@ -29,67 +20,65 @@ class _SettingHomePageState extends State<SettingHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        resizeToAvoidBottomPadding: false,
-        appBar: AppBar(
-          title: Text("Settings"),
-          centerTitle: true,
-        ),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.only(
-              left: 5.0, top: 10.0, right: 5.0, bottom: 10.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              //VersionCode
-              Text("版本号"),
+    return Scaffold(
+      resizeToAvoidBottomPadding: false,
+      appBar: AppBar(
+        title: Text("Settings"),
+        centerTitle: true,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.only(
+            left: 5.0, top: 10.0, right: 5.0, bottom: 10.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            //VersionCode
+            Text("版本号"),
 
-              //硬解开关
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text("硬解开关"),
-                  SizedBox(
-                    width: 5.0,
-                  ),
-                  Switch(
-                      value: _enableHardwareDecoder,
-                      onChanged: (value) {
-                        setState(() {
-                          _enableHardwareDecoder = value;
-                        });
-                      }),
-                ],
-              ),
+            //硬解开关
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text("硬解开关"),
+                SizedBox(
+                  width: 5.0,
+                ),
+                Switch(
+                    value: _enableHardwareDecoder,
+                    onChanged: (value) {
+                      setState(() {
+                        _enableHardwareDecoder = value;
+                      });
+                    }),
+              ],
+            ),
 
-              //黑名单,Android显示，iOS不显示
-              Text(Platform.operatingSystemVersion),
-              _blackListForAndroid(),
+            //黑名单,Android显示，iOS不显示
+            Text(Platform.operatingSystemVersion),
+            _blackListForAndroid(),
 
-              SizedBox(
-                height: 10.0,
-              ),
+            SizedBox(
+              height: 10.0,
+            ),
 
-              //DSResolve
-              _buildDNSResolve(),
+            //DSResolve
+            _buildDNSResolve(),
 
-              //Log
-              Row(
-                children: [
-                  Text("Log日志开关"),
-                  Switch(
-                      value: _enableLog,
-                      onChanged: (value) {
-                        setState(() {
-                          _enableLog = value;
-                        });
-                      })
-                ],
-              ),
-              _buildLog(),
-            ],
-          ),
+            //Log
+            Row(
+              children: [
+                Text("Log日志开关"),
+                Switch(
+                    value: _enableLog,
+                    onChanged: (value) {
+                      setState(() {
+                        _enableLog = value;
+                      });
+                    })
+              ],
+            ),
+            _buildLog(),
+          ],
         ),
       ),
     );
