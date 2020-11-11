@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_aliplayer_example/common/common_utils.dart';
 import 'package:flutter_aliplayer_example/page/auth_page.dart';
 import 'package:flutter_aliplayer_example/page/mps_page.dart';
+import 'package:flutter_aliplayer_example/page/setting_page.dart';
 import 'package:flutter_aliplayer_example/page/sts_page.dart';
 import 'package:flutter_aliplayer_example/page/url_page.dart';
 
@@ -29,6 +30,12 @@ class _MyAppState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Plugin for aliplayer'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.settings),
+            onPressed: () => CommomUtils.pushPage(context, SettingPage()),
+          ),
+        ],
       ),
       body: ListView.builder(
         padding: EdgeInsets.all(8.0),
