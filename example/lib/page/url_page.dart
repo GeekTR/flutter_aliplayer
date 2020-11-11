@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_aliplayer_example/common/common_utils.dart';
-import 'package:flutter_aliplayer_example/play_page.dart';
+import 'package:flutter_aliplayer_example/page/play_page.dart';
 import 'package:qrcode_reader/qrcode_reader.dart';
 
 class UrlPage extends StatefulWidget {
@@ -16,16 +16,14 @@ class _UrlPageState extends State<UrlPage> {
 
   Future<void> getQrcodeState() async {
     _qrcode_result = await QRCodeReader()
-               .setAutoFocusIntervalInMs(200) // default 5000
-               .setForceAutoFocus(true) // default false
-               .setTorchEnabled(true) // default false
-               .setHandlePermissions(true) // default true
-               .setExecuteAfterPermissionGranted(true) // default true
-               .setFrontCamera(false) // default false
-               .scan();
-    setState(() {
-      
-    });
+        .setAutoFocusIntervalInMs(200) // default 5000
+        .setForceAutoFocus(true) // default false
+        .setTorchEnabled(true) // default false
+        .setHandlePermissions(true) // default true
+        .setExecuteAfterPermissionGranted(true) // default true
+        .setFrontCamera(false) // default false
+        .scan();
+    setState(() {});
   }
 
   @override
