@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_aliplayer_example/common/common_utils.dart';
-import 'package:flutter_aliplayer_example/play_page.dart';
+import 'package:flutter_aliplayer_example/page/player_page.dart';
 import 'package:qrcode_reader/qrcode_reader.dart';
 
 class UrlPage extends StatefulWidget {
@@ -52,7 +52,7 @@ class _UrlPageState extends State<UrlPage> {
           RaisedButton(
             child: Text("开始播放"),
             onPressed: () {
-              CommomUtils.pushPage(context, PlayPage(_qrcode_result));
+              CommomUtils.pushPage(context, PlayerPage(_qrcode_result));
             },
           )
         ],

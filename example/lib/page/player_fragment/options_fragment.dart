@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_aliplayer_example/widget/aliyun_segment.dart';
 
-class OptionsFramePage extends StatefulWidget {
+class OptionsFragment extends StatefulWidget {
   @override
-  _OptionsFramePageState createState() => _OptionsFramePageState();
+  _OptionsFragmentState createState() => _OptionsFragmentState();
 }
 
-class _OptionsFramePageState extends State<OptionsFramePage> {
+class _OptionsFragmentState extends State<OptionsFragment> {
   bool mAutoPlay = false;
   bool mMute = false;
   bool mLoop = false;
@@ -49,9 +49,7 @@ class _OptionsFramePageState extends State<OptionsFramePage> {
     );
   }
 
-  /**
-   * switch for : autoplay、mute、loop...
-   */
+  /// switch for : autoplay、mute、loop...
   Row _buildSwitch() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -120,9 +118,7 @@ class _OptionsFramePageState extends State<OptionsFramePage> {
     );
   }
 
-  /**
-   * 音量
-   */
+  /// 音量
   Row _buildVolume() {
     return Row(
       children: [
@@ -140,9 +136,7 @@ class _OptionsFramePageState extends State<OptionsFramePage> {
     );
   }
 
-  /**
-   * 缩放模式
-   */
+  /// 缩放模式
   Row _buildScale() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -161,9 +155,7 @@ class _OptionsFramePageState extends State<OptionsFramePage> {
     );
   }
 
-  /**
-   * 镜像模式
-   */
+  /// 镜像模式
   Row _buildMirror() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -181,9 +173,7 @@ class _OptionsFramePageState extends State<OptionsFramePage> {
     );
   }
 
-  /**
-   * 旋转模式
-   */
+  /// 旋转模式
   Container _buildRotate() {
     double width = MediaQuery.of(context).size.width;
     print("abc : 屏幕宽度 width = $width");
@@ -205,9 +195,7 @@ class _OptionsFramePageState extends State<OptionsFramePage> {
     );
   }
 
-  /**
-   * 倍速播放
-   */
+  /// 倍速播放
   Row _buildSpeed() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -226,9 +214,7 @@ class _OptionsFramePageState extends State<OptionsFramePage> {
         
   }
 
-  /**
-   * 背景色
-   */
+  /// 背景色
   Row _buildBgColor() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -262,9 +248,7 @@ class _OptionsFramePageState extends State<OptionsFramePage> {
     );
   }
 
-  /**
-   * 后台播放
-   */
+  /// 后台播放
   Row _buildPlayBack() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,

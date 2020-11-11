@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
-class CacheConfigFramePage extends StatefulWidget {
+class CacheConfigFragment extends StatefulWidget {
   @override
-  _CacheConfigFramePageState createState() => _CacheConfigFramePageState();
+  _CacheConfigFragmentState createState() => _CacheConfigFragmentState();
 }
 
-class _CacheConfigFramePageState extends State<CacheConfigFramePage> {
+class _CacheConfigFragmentState extends State<CacheConfigFragment> {
   bool mEnableCacheConfig = false;
 
   @override

@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/cupertino.dart';
 
-class PlayConfigFramePage extends StatefulWidget {
+class PlayConfigFragment extends StatefulWidget {
   @override
-  _PlayConfigFramePageState createState() => _PlayConfigFramePageState();
+  _PlayConfigFragmentState createState() => _PlayConfigFragmentState();
 }
 
-class _PlayConfigFramePageState extends State<PlayConfigFramePage> {
+class _PlayConfigFragmentState extends State<PlayConfigFragment> {
   bool mShowFrameWhenStop = true;
   bool mEnableSEI = true;
 

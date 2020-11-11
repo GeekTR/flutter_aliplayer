@@ -1,39 +1,39 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_aliplayer/flutter_aliplayer.dart';
-import 'package:flutter_aliplayer_example/framepage/cache_cfg_frame_page.dart';
-import 'package:flutter_aliplayer_example/framepage/options_frame_page.dart';
-import 'package:flutter_aliplayer_example/framepage/play_cfg_frame_page.dart';
-import 'package:flutter_aliplayer_example/framepage/track_frame_page.dart';
+import 'package:flutter_aliplayer_example/page/player_fragment/cache_config_fragment.dart';
+import 'package:flutter_aliplayer_example/page/player_fragment/options_fragment.dart';
+import 'package:flutter_aliplayer_example/page/player_fragment/play_config_fragment.dart';
+import 'package:flutter_aliplayer_example/page/player_fragment/track_fragment.dart';
 
-class PlayPage extends StatefulWidget {
-  String urlPath;
+class PlayerPage extends StatefulWidget {
+  final String urlPath;
 
-  PlayPage([
+  PlayerPage([
     this.urlPath,
   ]) : assert(urlPath != null);
 
   @override
-  _PlayPageState createState() => _PlayPageState();
+  _PlayerPageState createState() => _PlayerPageState();
 }
 
-class _PlayPageState extends State<PlayPage> {
+class _PlayerPageState extends State<PlayerPage> {
   var viewPlayerController;
-  int bottom_currentIndex;
+  int bottomIndex;
   List<Widget> mFramePage;
   String urlPath;
 
   @override
   void initState() {
     super.initState();
-    bottom_currentIndex = 0;
+    bottomIndex = 0;
     urlPath = widget.urlPath;
 
     mFramePage = [
-      OptionsFramePage(),
-      PlayConfigFramePage(),
-      CacheConfigFramePage(),
-      TrackFramePage(),
+      OptionsFragment(),
+      PlayConfigFragment(),
+      CacheConfigFragment(),
+      TrackFragment(),
     ];
   }
 
@@ -57,7 +57,7 @@ class _PlayPageState extends State<PlayPage> {
           children: [
             Container(child: videoPlayer, width: width, height: height),
             _buildControlBtns(),
-            mFramePage[bottom_currentIndex],
+            mFramePage[bottomIndex],
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
@@ -72,11 +72,11 @@ class _PlayPageState extends State<PlayPage> {
             BottomNavigationBarItem(
                 title: Text('track'), icon: Icon(Icons.control_point)),
           ],
-          currentIndex: bottom_currentIndex,
+          currentIndex: bottomIndex,
           onTap: (index) {
-            if (index != bottom_currentIndex) {
+            if (index != bottomIndex) {
               setState(() {
-                bottom_currentIndex = index;
+                bottomIndex = index;
               });
             }
           },
@@ -86,8 +86,6 @@ class _PlayPageState extends State<PlayPage> {
 
   void onViewPlayerCreated(viewPlayerController) async {
     this.viewPlayerController = viewPlayerController;
-    // this.viewPlayerController.setUrl(
-    //     "https://alivc-demo-vod.aliyuncs.com/6b357371ef3c45f4a06e2536fd534380/eb3f139a4b437d1e9b623ee1b671115b-ld.mp4");
     this.viewPlayerController.setUrl(urlPath);
   }
 
@@ -123,7 +121,7 @@ class _PlayPageState extends State<PlayPage> {
           InkWell(
               child: Text('截图'),
               onTap: () {
-                //TODO
+                // TODO
               }),
         ],
       ),
