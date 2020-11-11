@@ -88,7 +88,7 @@ class _StsHomePageState extends State<AuthHomePage> {
                   RaisedButton(
                     child: Text("AUTH播放"),
                     onPressed: () {
-                      _netWorkUtils.getHttp(HttpCommon.GET_AUTH);
+                      _netWorkUtils.getHttp(HttpConstant.GET_AUTH);
                     },
                   ),
                   Expanded(

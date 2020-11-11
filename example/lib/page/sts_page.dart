@@ -104,7 +104,7 @@ class _StsHomePageState extends State<StsHomePage> {
                   RaisedButton(
                     child: Text("STS播放"),
                     onPressed: () {
-                      _netWorkUtils.getHttp(HttpCommon.GET_STS);
+                      _netWorkUtils.getHttp(HttpConstant.GET_STS);
                     },
                   ),
                   Expanded(

@@ -1,4 +1,4 @@
-class HttpCommon {
+class HttpConstant {
   static const String HTTP_HOST = 'https://alivc-demo.aliyuncs.com/';
   static const String HTTP_METHOD_GET = 'GET';
   static const String HTTP_METHOD_POST = 'POST';

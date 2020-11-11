@@ -120,7 +120,7 @@ class _StsHomePageState extends State<MpsHomePage> {
                   RaisedButton(
                     child: Text("MPS播放"),
                     onPressed: () {
-                      _netWorkUtils.getHttp(HttpCommon.GET_MPS);
+                      _netWorkUtils.getHttp(HttpConstant.GET_MPS);
                     },
                   ),
                   Expanded(

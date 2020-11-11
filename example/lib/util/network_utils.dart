@@ -19,7 +19,7 @@ class NetWorkUtils {
   NetWorkUtils._privateConstructor() {
     if (_dio == null) {
       _dio = Dio();
-      _dio.options.baseUrl = HttpCommon.HTTP_HOST;
+      _dio.options.baseUrl = HttpConstant.HTTP_HOST;
     }
   }
 
