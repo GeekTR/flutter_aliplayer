@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_aliplayer_example/common/common_utils.dart';
 import 'package:flutter_aliplayer_example/page/player_page.dart';
+import 'package:flutter_aliplayer_example/util/common_utils.dart';
 import 'package:qrcode_reader/qrcode_reader.dart';
 
 class UrlPage extends StatefulWidget {
@@ -57,5 +57,4 @@ class _UrlPageState extends State<UrlPage> {
       ),
     );
   }
-
 }

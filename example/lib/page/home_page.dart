@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_aliplayer_example/common/common_utils.dart';
 import 'package:flutter_aliplayer_example/page/auth_page.dart';
 import 'package:flutter_aliplayer_example/page/mps_page.dart';
 import 'package:flutter_aliplayer_example/page/setting_page.dart';
 import 'package:flutter_aliplayer_example/page/sts_page.dart';
 import 'package:flutter_aliplayer_example/page/url_page.dart';
+import 'package:flutter_aliplayer_example/util/common_utils.dart';
 
 class HomePage extends StatefulWidget {
   @override

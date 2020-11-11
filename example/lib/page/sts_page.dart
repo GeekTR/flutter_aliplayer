@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_aliplayer_example/common/http_common.dart';
+import 'package:flutter_aliplayer_example/config.dart';
 import 'package:flutter_aliplayer_example/util/network_utils.dart';
 import 'package:flutter_aliplayer_example/widget/aliyun_regin_dropdown.dart';
 

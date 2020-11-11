@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_aliplayer_example/common/http_common.dart';
+import 'package:flutter_aliplayer_example/config.dart';
 
 typedef HttpSuccessCallback<T> = void Function(dynamic data);
 
