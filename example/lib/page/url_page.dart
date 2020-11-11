@@ -16,16 +16,14 @@ class _UrlPageState extends State<UrlPage> {
 
   Future<void> getQrcodeState() async {
     _qrcode_result = await QRCodeReader()
-               .setAutoFocusIntervalInMs(200) // default 5000
-               .setForceAutoFocus(true) // default false
-               .setTorchEnabled(true) // default false
-               .setHandlePermissions(true) // default true
-               .setExecuteAfterPermissionGranted(true) // default true
-               .setFrontCamera(false) // default false
-               .scan();
-    setState(() {
-      
-    });
+        .setAutoFocusIntervalInMs(200) // default 5000
+        .setForceAutoFocus(true) // default false
+        .setTorchEnabled(true) // default false
+        .setHandlePermissions(true) // default true
+        .setExecuteAfterPermissionGranted(true) // default true
+        .setFrontCamera(false) // default false
+        .scan();
+    setState(() {});
   }
 
   @override
