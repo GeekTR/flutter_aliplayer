@@ -3,21 +3,21 @@ import 'package:flutter_aliplayer_example/common/http_common.dart';
 import 'package:flutter_aliplayer_example/util/network_utils.dart';
 import 'package:flutter_aliplayer_example/widget/aliyun_regin_dropdown.dart';
 
-class StsPage extends StatelessWidget {
+class MpsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: StsHomePage(),
+      home: MpsHomePage(),
     );
   }
 }
 
-class StsHomePage extends StatefulWidget {
+class MpsHomePage extends StatefulWidget {
   @override
   _StsHomePageState createState() => _StsHomePageState();
 }
 
-class _StsHomePageState extends State<StsHomePage> {
+class _StsHomePageState extends State<MpsHomePage> {
   NetWorkUtils _netWorkUtils;
   TextEditingController _vidController = TextEditingController();
   TextEditingController _accessKeyIdController = TextEditingController();
@@ -37,7 +37,7 @@ class _StsHomePageState extends State<StsHomePage> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text("STS 播放"),
+          title: Text("MPS 播放"),
           centerTitle: true,
         ),
         resizeToAvoidBottomPadding: false,
@@ -79,12 +79,28 @@ class _StsHomePageState extends State<StsHomePage> {
                   labelText: "AccessKeySecret",
                 ),
               ),
-              //试看时间(s)
+              //PlayDomain
               TextField(
                 controller: _previewController,
                 maxLines: 1,
                 decoration: InputDecoration(
-                  labelText: "试看时间(s)",
+                  labelText: "PlayDomain",
+                ),
+              ),
+              //AuthInfo
+              TextField(
+                controller: _previewController,
+                maxLines: 1,
+                decoration: InputDecoration(
+                  labelText: "AuthInfo",
+                ),
+              ),
+              //HlsUriToken
+              TextField(
+                controller: _previewController,
+                maxLines: 1,
+                decoration: InputDecoration(
+                  labelText: "HlsUriToken",
                 ),
               ),
               //SecurityToken
@@ -102,11 +118,9 @@ class _StsHomePageState extends State<StsHomePage> {
               Row(
                 children: [
                   RaisedButton(
-                    child: Text("STS播放"),
+                    child: Text("MPS播放"),
                     onPressed: () {
-                      print("123123");
-                      // _netWorkUtils.getMethod(url: HttpCommon.GET_STS);
-                      _netWorkUtils.getHttp(HttpCommon.GET_STS);
+                      _netWorkUtils.getHttp(HttpCommon.GET_MPS);
                     },
                   ),
                   Expanded(
