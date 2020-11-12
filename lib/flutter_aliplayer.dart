@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class FlutterAliplayer {
-  // static const MethodChannel _channel =
-  //     const MethodChannel('flutter_aliplayer');
 
   MethodChannel _channel;
   FlutterAliplayer.init(int id) {
@@ -35,16 +33,16 @@ class FlutterAliplayer {
   }
 }
 
-typedef void AliVideoPlayerCreatedCallback(FlutterAliplayer fAliplayer);
+typedef void AliPlayerViewCreatedCallback(FlutterAliplayer fAliplayer);
 
-class AliVideoPlayer extends StatefulWidget {
-  final AliVideoPlayerCreatedCallback onCreated;
+class AliPlayerView extends StatefulWidget {
+  final AliPlayerViewCreatedCallback onCreated;
   final x;
   final y;
   final width;
   final height;
 
-  AliVideoPlayer({
+  AliPlayerView({
     Key key,
     @required this.onCreated,
     @required this.x,
@@ -57,8 +55,7 @@ class AliVideoPlayer extends StatefulWidget {
   State<StatefulWidget> createState() => _VideoPlayerState();
 }
 
-class _VideoPlayerState extends State<AliVideoPlayer> {
-  var _sliderCurrentValue = 0.0;
+class _VideoPlayerState extends State<AliPlayerView> {
 
   @override
   void initState() {
@@ -67,46 +64,7 @@ class _VideoPlayerState extends State<AliVideoPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      child: Stack(
-        children: [
-          //renderView
-          nativeView(),
-          //顶部标题栏
-          _buildTopController(),
-          //底部控制栏
-          _buildBottomController(),
-        ],
-      ),
-      onHorizontalDragStart: (DragStartDetails details) {
-        print("onHorizontalDragStart: ${details.globalPosition}");
-        // if (!controller.value.initialized) {
-        //   return;
-        // }
-        // _controllerWasPlaying = controller.value.isPlaying;
-        // if (_controllerWasPlaying) {
-        //   controller.pause();
-        // }
-      },
-      onHorizontalDragUpdate: (DragUpdateDetails details) {
-        print("onHorizontalDragUpdate: ${details.globalPosition}");
-        print(details.globalPosition);
-        // if (!controller.value.initialized) {
-        //   return;
-        // }
-        // seekToRelativePosition(details.globalPosition);
-      },
-      onHorizontalDragEnd: (DragEndDetails details) {
-        print("onHorizontalDragEnd");
-        // if (_controllerWasPlaying) {
-        //   controller.play();
-        // }
-      },
-      onTapDown: (TapDownDetails details) {
-        print("onTapDown: ${details.globalPosition}");
-      },
-    );
+    return nativeView();
   }
 
   nativeView() {
@@ -138,73 +96,10 @@ class _VideoPlayerState extends State<AliVideoPlayer> {
   }
 
   Future<void> _onPlatformViewCreated(id) async {
-    print("abc : onPlatformViewCreated 1 $id");
     if (widget.onCreated == null) {
       return;
     }
-    print("abc : onPlatformViewCreated 2 ");
     widget.onCreated(new FlutterAliplayer.init(id));
   }
 
-  Widget _buildTopController() {
-    return Row(
-      children: [
-        SizedBox(
-          width: 5.0,
-        ),
-        Icon(Icons.arrow_back, color: Colors.white),
-        SizedBox(
-          width: 10.0,
-        ),
-        Text("我是标题", style: TextStyle(color: Colors.white))
-      ],
-    );
-  }
-
-  Widget _buildBottomController() {
-    return Container(
-      alignment: Alignment.bottomLeft,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        verticalDirection: VerticalDirection.down,
-        children: [
-          SizedBox(
-            width: 5.0,
-          ),
-          Icon(Icons.play_arrow, color: Colors.white),
-          SizedBox(
-            width: 5.0,
-          ),
-          Text("00:00", style: TextStyle(color: Colors.white)),
-          Text("/", style: TextStyle(color: Colors.white)),
-          Text("00:00", style: TextStyle(color: Colors.white)),
-          Expanded(
-              child: Container(
-            height: 25.0,
-            child: Slider(
-              value: _sliderCurrentValue,
-              max: 100,
-              onChanged: (value) {
-                setState(() {
-                  _sliderCurrentValue = value;
-                  print("onchange $_sliderCurrentValue");
-                });
-              },
-              onChangeStart: (start) {
-                print("start $start");
-              },
-              onChangeEnd: (end) {
-                print("end $end");
-              },
-            ),
-          )),
-          Icon(Icons.pages, color: Colors.white),
-          SizedBox(
-            width: 5.0,
-          ),
-        ],
-      ),
-    );
-  }
 }

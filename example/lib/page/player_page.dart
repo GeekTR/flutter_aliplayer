@@ -18,7 +18,7 @@ class PlayerPage extends StatefulWidget {
 }
 
 class _PlayerPageState extends State<PlayerPage> {
-  var viewPlayerController;
+  FlutterAliplayer fAliplayer;
   int bottomIndex;
   List<Widget> mFramePage;
   String urlPath;
@@ -43,7 +43,7 @@ class _PlayerPageState extends State<PlayerPage> {
     var y = 0.0;
     var width = 400.0;
     var height = width * 9.0 / 16.0;
-    AliVideoPlayer videoPlayer = new AliVideoPlayer(
+    AliPlayerView videoPlayer = new AliPlayerView(
         onCreated: onViewPlayerCreated,
         x: x,
         y: y,
@@ -84,9 +84,9 @@ class _PlayerPageState extends State<PlayerPage> {
     );
   }
 
-  void onViewPlayerCreated(viewPlayerController) async {
-    this.viewPlayerController = viewPlayerController;
-    this.viewPlayerController.setUrl(urlPath);
+  void onViewPlayerCreated(FlutterAliplayer fAliplayer) async {
+    this.fAliplayer = fAliplayer;
+    this.fAliplayer.setUrl(urlPath);
   }
 
   /// MARK: 私有方法
@@ -100,23 +100,23 @@ class _PlayerPageState extends State<PlayerPage> {
           InkWell(
               child: Text('准备'),
               onTap: () {
-                viewPlayerController.prepare();
+                fAliplayer.prepare();
               }),
           InkWell(
               child: Text('播放'),
               onTap: () {
-                viewPlayerController.play();
+                fAliplayer.play();
               }),
           InkWell(
             child: Text('停止'),
             onTap: () {
-              viewPlayerController.stop();
+              fAliplayer.stop();
             },
           ),
           InkWell(
               child: Text('暂停'),
               onTap: () {
-                viewPlayerController.pause();
+                fAliplayer.pause();
               }),
           InkWell(
               child: Text('截图'),
