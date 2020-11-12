@@ -1,9 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_aliplayer/flutter_aliplayer.dart';
 import 'package:flutter_aliplayer_example/widget/aliyun_segment.dart';
 
 class OptionsFragment extends StatefulWidget {
+  final FlutterAliplayer fAliplayer;
+  OptionsFragment(this.fAliplayer);
+
   @override
   _OptionsFragmentState createState() => _OptionsFragmentState();
 }
@@ -12,6 +16,7 @@ class _OptionsFragmentState extends State<OptionsFragment> {
   bool mAutoPlay = false;
   bool mMute = false;
   bool mLoop = false;
+  bool mEnableHardwareDecoder = false;
   bool mAccurateSeek = false;
   bool mEnablePlayBack = false;
   int mScaleGroupValue = 1;
@@ -19,9 +24,20 @@ class _OptionsFragmentState extends State<OptionsFragment> {
   int mRotateGroupValue = 1;
   int mSpeedGroupValue = 1;
 
+  _loadInitData() async{
+    mLoop = await widget.fAliplayer.isLoop();
+    mAutoPlay = await widget.fAliplayer.isAutoPlay();
+    mMute = await widget.fAliplayer.isMuted();
+    mEnableHardwareDecoder = await widget.fAliplayer.enableHardwareDecoder();
+    setState(() {
+      
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    _loadInitData();
   }
 
   @override
@@ -62,6 +78,7 @@ class _OptionsFragmentState extends State<OptionsFragment> {
                 setState(() {
                   mAutoPlay = value;
                 });
+                widget.fAliplayer.setAutoPlay(mAutoPlay);
               },
             ),
             Text("自动播放"),
@@ -75,6 +92,7 @@ class _OptionsFragmentState extends State<OptionsFragment> {
                 setState(() {
                   mMute = value;
                 });
+                widget.fAliplayer.setMuted(mMute);
               },
             ),
             Text("静音"),
@@ -86,8 +104,9 @@ class _OptionsFragmentState extends State<OptionsFragment> {
               value: mLoop,
               onChanged: (value) {
                 setState(() {
-                  mLoop = value;
+                  mLoop = !mLoop;
                 });
+                widget.fAliplayer.setLoop(mLoop);
               },
             ),
             Text("循环"),
@@ -97,6 +116,12 @@ class _OptionsFragmentState extends State<OptionsFragment> {
           children: [
             CupertinoSwitch(
               value: true,
+              onChanged: (value) {
+                setState(() {
+                  mEnableHardwareDecoder = !mEnableHardwareDecoder;
+                });
+                widget.fAliplayer.setEnableHardwareDecoder(mEnableHardwareDecoder);
+              },
             ),
             Text("硬解"),
           ],

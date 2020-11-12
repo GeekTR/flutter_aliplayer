@@ -50,16 +50,33 @@
 }
 
 - (void)onMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
-    if ([[call method] isEqualToString:@"setUrl"]) {
+    NSString* method = [call method];
+    if ([method isEqualToString:@"setUrl"]) {
         [self setUrl:call result:result];
-    } else if ([[call method] isEqualToString:@"prepare"]) {
+    } else if ([method isEqualToString:@"prepare"]) {
         [self prepare:call result:result];
-    }else if ([[call method] isEqualToString:@"play"]) {
+    }else if ([method isEqualToString:@"play"]) {
         [self play:call result:result];
-    }else if ([[call method] isEqualToString:@"pause"]) {
+    }else if ([method isEqualToString:@"pause"]) {
         [self pause:call result:result];
-    }else if ([[call method] isEqualToString:@"stop"]) {
+    }else if ([method isEqualToString:@"stop"]) {
         [self stop:call result:result];
+    }else if ([method isEqualToString:@"setLoop"]) {
+        [self setLoop:call result:result];
+    }else if ([method isEqualToString:@"isLoop"]) {
+        [self isLoop:call result:result];
+    }else if ([method isEqualToString:@"setMuted"]) {
+        [self setMuted:call result:result];
+    }else if ([method isEqualToString:@"isMuted"]) {
+        [self isMuted:call result:result];
+    }else if ([method isEqualToString:@"setAutoPlay"]) {
+        [self setAutoPlay:call result:result];
+    }else if ([method isEqualToString:@"isAutoPlay"]) {
+        [self isAutoPlay:call result:result];
+    }else if ([method isEqualToString:@"enableHardwareDecoder"]) {
+        [self enableHardwareDecoder:call result:result];
+    }else if ([method isEqualToString:@"setEnableHardwareDecoder"]) {
+        [self setEnableHardwareDecoder:call result:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -90,7 +107,42 @@
     AVPUrlSource *source = [[AVPUrlSource alloc] urlWithString:url];
     [self.aliPlayer setUrlSource:source];
     [self.aliPlayer prepare];
-    
+}
+
+- (void)isLoop:(FlutterMethodCall*)call result:(FlutterResult)result {
+    result(@([self.aliPlayer isLoop]));
+}
+
+- (void)setLoop:(FlutterMethodCall*)call result:(FlutterResult)result {
+    NSNumber* isLoop = [call arguments];
+    [self.aliPlayer setLoop:isLoop.boolValue];
+}
+
+- (void)isAutoPlay:(FlutterMethodCall*)call result:(FlutterResult)result {
+    result(@([self.aliPlayer isAutoPlay]));
+}
+
+- (void)setAutoPlay:(FlutterMethodCall*)call result:(FlutterResult)result {
+    NSNumber* val = [call arguments];
+    [self.aliPlayer setAutoPlay:val.boolValue];
+}
+
+- (void)isMuted:(FlutterMethodCall*)call result:(FlutterResult)result {
+    result(@([self.aliPlayer isMuted]));
+}
+
+- (void)setMuted:(FlutterMethodCall*)call result:(FlutterResult)result {
+    NSNumber* val = [call arguments];
+    [self.aliPlayer setMuted:val.boolValue];
+}
+
+- (void)enableHardwareDecoder:(FlutterMethodCall*)call result:(FlutterResult)result {
+    result(@([self.aliPlayer enableHardwareDecoder]));
+}
+
+- (void)setEnableHardwareDecoder:(FlutterMethodCall*)call result:(FlutterResult)result {
+    NSNumber* val = [call arguments];
+    [self.aliPlayer setEnableHardwareDecoder:val.boolValue];
 }
 
 #pragma --mark getters
@@ -101,7 +153,6 @@
         _aliPlayer.rate = 1;
         _aliPlayer.delegate = self;
         _aliPlayer.playerView = _videoView;
-//        _aliPlayer.autoPlay = YES;
     }
     return _aliPlayer;
 }

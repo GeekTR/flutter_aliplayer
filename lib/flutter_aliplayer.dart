@@ -31,9 +31,43 @@ class FlutterAliplayer {
   Future<void> stop() async {
     return _channel.invokeMethod('stop');
   }
+
+  Future<bool> isLoop() async {
+    return _channel.invokeMethod('isLoop');
+  }
+
+  Future<void> setLoop(bool isloop) async {
+    return _channel.invokeMethod('setLoop',isloop);
+  }
+
+  Future<bool> isAutoPlay() async {
+    return _channel.invokeMethod('isAutoPlay');
+  }
+
+  Future<void> setAutoPlay(bool isAutoPlay) async {
+    return _channel.invokeMethod('setAutoPlay',isAutoPlay);
+  }
+
+  Future<bool> isMuted() async {
+    return _channel.invokeMethod('isMuted');
+  }
+
+  Future<void> setMuted(bool isMuted) async {
+    print('isMuted===$isMuted');
+    return _channel.invokeMethod('setMuted',isMuted);
+  }
+
+  Future<bool> enableHardwareDecoder() async {
+    return _channel.invokeMethod('enableHardwareDecoder');
+  }
+
+  Future<void> setEnableHardwareDecoder(bool isHardWare) async {
+    return _channel.invokeMethod('setEnableHardwareDecoder',isHardWare);
+  }
+
 }
 
-typedef void AliPlayerViewCreatedCallback(FlutterAliplayer fAliplayer);
+typedef void AliPlayerViewCreatedCallback();
 
 class AliPlayerView extends StatefulWidget {
   final AliPlayerViewCreatedCallback onCreated;
@@ -96,10 +130,9 @@ class _VideoPlayerState extends State<AliPlayerView> {
   }
 
   Future<void> _onPlatformViewCreated(id) async {
-    if (widget.onCreated == null) {
-      return;
+    if (widget.onCreated != null) {
+      widget.onCreated();
     }
-    widget.onCreated(new FlutterAliplayer.init(id));
   }
 
 }

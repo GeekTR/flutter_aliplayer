@@ -29,8 +29,9 @@ class _PlayerPageState extends State<PlayerPage> {
     bottomIndex = 0;
     urlPath = widget.urlPath;
 
+    fAliplayer = FlutterAliplayer.init(0);
     mFramePage = [
-      OptionsFragment(),
+      OptionsFragment(fAliplayer),
       PlayConfigFragment(),
       CacheConfigFragment(),
       TrackFragment(),
@@ -43,7 +44,7 @@ class _PlayerPageState extends State<PlayerPage> {
     var y = 0.0;
     var width = 400.0;
     var height = width * 9.0 / 16.0;
-    AliPlayerView videoPlayer = new AliPlayerView(
+    AliPlayerView aliPlayerView = new AliPlayerView(
         onCreated: onViewPlayerCreated,
         x: x,
         y: y,
@@ -55,7 +56,7 @@ class _PlayerPageState extends State<PlayerPage> {
         ),
         body: Column(
           children: [
-            Container(child: videoPlayer, width: width, height: height),
+            Container(child: aliPlayerView, width: width, height: height),
             _buildControlBtns(),
             mFramePage[bottomIndex],
           ],
@@ -84,8 +85,7 @@ class _PlayerPageState extends State<PlayerPage> {
     );
   }
 
-  void onViewPlayerCreated(FlutterAliplayer fAliplayer) async {
-    this.fAliplayer = fAliplayer;
+  void onViewPlayerCreated() async {
     this.fAliplayer.setUrl(urlPath);
   }
 
