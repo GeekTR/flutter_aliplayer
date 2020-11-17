@@ -4,16 +4,16 @@ typedef OnRegionChanged = void Function(String region);
 
 class ReginDropDownButton extends StatefulWidget {
   OnRegionChanged onRegionChanged;
+  String currentHint = "cn-shanghai";
 
-  ReginDropDownButton({Key key, this.onRegionChanged}) : super(key: key);
+  ReginDropDownButton({Key key, this.onRegionChanged, this.currentHint})
+      : super(key: key);
 
   @override
   _ReginDropDownButtonState createState() => _ReginDropDownButtonState();
 }
 
 class _ReginDropDownButtonState extends State<ReginDropDownButton> {
-  String _currentHint = "cn-shanghai";
-
   List<DropdownMenuItem> getItemList() {
     List<DropdownMenuItem> items = List();
     DropdownMenuItem item1 = DropdownMenuItem(
@@ -44,10 +44,10 @@ class _ReginDropDownButtonState extends State<ReginDropDownButton> {
     return DropdownButton(
         items: getItemList(),
         isExpanded: true,
-        hint: Text(_currentHint),
+        hint: Text(widget.currentHint),
         onChanged: (value) {
           setState(() {
-            _currentHint = value;
+            widget.currentHint = value;
             if (widget.onRegionChanged != null) {
               widget.onRegionChanged(value);
             }

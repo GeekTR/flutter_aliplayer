@@ -90,18 +90,18 @@ class _PlayerPageState extends State<PlayerPage> {
   }
 
   void onViewPlayerCreated() async {
-    print("abc : created");
     switch (_playMode) {
       case PlayMode.URL:
         this.fAliplayer.setUrl(_dataSourceMap[DataSourceRelated.URL_KEY]);
         break;
       case PlayMode.STS:
-        print("abc : sts");
         this.fAliplayer.setVidSts(_dataSourceMap);
         break;
       case PlayMode.AUTH:
+        this.fAliplayer.setVidAuth(_dataSourceMap);
         break;
       case PlayMode.MPS:
+        this.fAliplayer.setVidMps(_dataSourceMap);
         break;
       default:
     }

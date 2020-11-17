@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_aliplayer_example/config.dart';
+import 'package:flutter_aliplayer_example/page/player_page.dart';
+import 'package:flutter_aliplayer_example/util/common_utils.dart';
 import 'package:flutter_aliplayer_example/util/network_utils.dart';
 import 'package:flutter_aliplayer_example/widget/aliyun_regin_dropdown.dart';
 
@@ -13,8 +15,11 @@ class _MpsPagePageState extends State<MpsPage> {
   TextEditingController _vidController = TextEditingController();
   TextEditingController _accessKeyIdController = TextEditingController();
   TextEditingController _accessKeySecretController = TextEditingController();
-  TextEditingController _previewController = TextEditingController();
+  TextEditingController _playDomainController = TextEditingController();
   TextEditingController _securityTokenController = TextEditingController();
+  TextEditingController _authInfoController = TextEditingController();
+  TextEditingController _hlsUriTokenController = TextEditingController();
+  String _region = DataSourceRelated.DEFAULT_REGION;
 
   @override
   void initState() {
@@ -40,9 +45,8 @@ class _MpsPagePageState extends State<MpsPage> {
             Container(
               width: double.infinity,
               child: ReginDropDownButton(
-                onRegionChanged: (region) => {
-                  print("region = $region"),
-                },
+                currentHint: _region,
+                onRegionChanged: (region) => {_region = region},
               ),
             ),
             //vid
@@ -71,7 +75,7 @@ class _MpsPagePageState extends State<MpsPage> {
             ),
             //PlayDomain
             TextField(
-              controller: _previewController,
+              controller: _playDomainController,
               maxLines: 1,
               decoration: InputDecoration(
                 labelText: "PlayDomain",
@@ -79,7 +83,7 @@ class _MpsPagePageState extends State<MpsPage> {
             ),
             //AuthInfo
             TextField(
-              controller: _previewController,
+              controller: _authInfoController,
               maxLines: 1,
               decoration: InputDecoration(
                 labelText: "AuthInfo",
@@ -87,7 +91,7 @@ class _MpsPagePageState extends State<MpsPage> {
             ),
             //HlsUriToken
             TextField(
-              controller: _previewController,
+              controller: _hlsUriTokenController,
               maxLines: 1,
               decoration: InputDecoration(
                 labelText: "HlsUriToken",
@@ -110,7 +114,43 @@ class _MpsPagePageState extends State<MpsPage> {
                 RaisedButton(
                   child: Text("MPS播放"),
                   onPressed: () {
-                    // _netWorkUtils.getHttp(HttpConstant.GET_MPS);
+                    _netWorkUtils.getHttp(HttpConstant.GET_MPS,
+                        successCallback: (data) {
+                      _region = data["RegionId"];
+                      _vidController.text = data["MediaId"];
+                      _authInfoController.text = data["authInfo"];
+                      _hlsUriTokenController.text = data["HlsUriToken"];
+                      var _akInfo = data["AkInfo"];
+                      if (_akInfo != null) {
+                        _accessKeyIdController.text = _akInfo["AccessKeyId"];
+                        _accessKeySecretController.text =
+                            _akInfo["AccessKeySecret"];
+                        _securityTokenController.text =
+                            _akInfo["SecurityToken"];
+                      }
+                      var map = {
+                        DataSourceRelated.REGION_KEY: _region,
+                        DataSourceRelated.VID_KEY: _vidController.text,
+                        DataSourceRelated.ACCESSKEYID_KEY:
+                            _accessKeyIdController.text,
+                        DataSourceRelated.ACCESSKEYSECRET_KEY:
+                            _accessKeySecretController.text,
+                        DataSourceRelated.PLAYDOMAIN_KEY:
+                            _playDomainController.text,
+                        DataSourceRelated.AUTHINFO_KEY:
+                            _authInfoController.text,
+                        DataSourceRelated.HLSURITOKEN_KEY:
+                            _hlsUriTokenController.text,
+                        DataSourceRelated.SECURITYTOKEN_KEY:
+                            _securityTokenController.text
+                      };
+                      CommomUtils.pushPage(
+                          context,
+                          PlayerPage(
+                            playMode: PlayMode.MPS,
+                            dataSourceMap: map,
+                          ));
+                    }, errorCallback: (error) {});
                   },
                 ),
                 Expanded(
@@ -118,7 +158,15 @@ class _MpsPagePageState extends State<MpsPage> {
                 ),
                 RaisedButton(
                   child: Text("清除"),
-                  onPressed: () {},
+                  onPressed: () {
+                    _vidController.clear();
+                    _accessKeyIdController.clear();
+                    _accessKeySecretController.clear();
+                    _playDomainController.clear();
+                    _authInfoController.clear();
+                    _hlsUriTokenController.clear();
+                    _securityTokenController.clear();
+                  },
                 ),
               ],
             ),

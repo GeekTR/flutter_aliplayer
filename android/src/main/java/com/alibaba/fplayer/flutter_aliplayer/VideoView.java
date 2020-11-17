@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import com.aliyun.player.AliPlayer;
 import com.aliyun.player.AliPlayerFactory;
 import com.aliyun.player.source.UrlSource;
+import com.aliyun.player.source.VidAuth;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.MethodCall;
@@ -18,6 +19,7 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugin.platform.PlatformView;
 import com.aliyun.player.source.VidSts;
+import com.aliyun.player.source.VidMps;
 import com.aliyun.player.VidPlayerConfigGen;
 import java.util.Map;
 
@@ -84,21 +86,50 @@ public class VideoView implements PlatformView, MethodChannel.MethodCallHandler 
                 setDataSource(mUrl);
                 break;
             case "setVidSts":
-                Map<String,String> map = (Map<String,String>)methodCall.arguments;
+                Map<String,String> stsMap = (Map<String,String>)methodCall.arguments;
                 VidSts vidSts = new VidSts();
-                vidSts.setRegion(map.get("region"));
-                vidSts.setVid(map.get("vid"));
-                vidSts.setAccessKeyId(map.get("accessKeyId"));
-                vidSts.setAccessKeySecret(map.get("accessKeySecret"));
-                vidSts.setSecurityToken(map.get("securityToken"));
+                vidSts.setRegion(stsMap.get("region"));
+                vidSts.setVid(stsMap.get("vid"));
+                vidSts.setAccessKeyId(stsMap.get("accessKeyId"));
+                vidSts.setAccessKeySecret(stsMap.get("accessKeySecret"));
+                vidSts.setSecurityToken(stsMap.get("securityToken"));
 
-                if(map.containsKey("previewTime") && !TextUtils.isEmpty(map.get("previewTime"))){
+                if(stsMap.containsKey("previewTime") && !TextUtils.isEmpty(stsMap.get("previewTime"))){
                     VidPlayerConfigGen vidPlayerConfigGen = new VidPlayerConfigGen();
-                    int previewTime = Integer.valueOf(map.get("previewTime"));
+                    int previewTime = Integer.valueOf(stsMap.get("previewTime"));
                     vidPlayerConfigGen.setPreviewTime(previewTime);
                     vidSts.setPlayConfig(vidPlayerConfigGen);
                 }
                 setDataSource(vidSts);
+                break;
+            case "setVidAuth":
+                Map<String,String> authMap = (Map<String,String>)methodCall.arguments;
+                VidAuth vidAuth = new VidAuth();
+                vidAuth.setVid(authMap.get("vid"));
+                vidAuth.setRegion(authMap.get("region"));
+                vidAuth.setPlayAuth(authMap.get("playAuth"));
+                if(authMap.containsKey("previewTime") && !TextUtils.isEmpty(authMap.get("previewTime"))){
+                    VidPlayerConfigGen vidPlayerConfigGen = new VidPlayerConfigGen();
+                    int previewTime = Integer.valueOf(authMap.get("previewTime"));
+                    vidPlayerConfigGen.setPreviewTime(previewTime);
+                    vidAuth.setPlayConfig(vidPlayerConfigGen);
+                }
+                setDataSource(vidAuth);
+                break;
+            case "setVidMps":
+                Map<String,String> mpsMap = (Map<String,String>)methodCall.arguments;
+                VidMps vidMps = new VidMps();
+                vidMps.setMediaId(mpsMap.get("vid"));
+                vidMps.setRegion(mpsMap.get("region"));
+                vidMps.setAccessKeyId(mpsMap.get("accessKeyId"));
+                vidMps.setAccessKeySecret(mpsMap.get("accessKeySecret"));
+                if(mpsMap.containsKey("playDomain") && !TextUtils.isEmpty(mpsMap.get("playDomain"))){
+                    vidMps.setPlayDomain(mpsMap.get("playDomain"));
+                }
+                vidMps.setAuthInfo(mpsMap.get("authInfo"));
+                vidMps.setHlsUriToken(mpsMap.get("hlsUriToken"));
+                vidMps.setSecurityToken(mpsMap.get("securityToken"));
+                setDataSource(vidMps);
                 break;
             case "prepare":
                 prepare();
@@ -126,9 +157,16 @@ public class VideoView implements PlatformView, MethodChannel.MethodCallHandler 
             case "setEnableHardwareDecoder":
                 
                 break;
+            case "getSDKVersion":
+                getSDKVersion();
+                break;
             default:
                 result.notImplemented();
         }
+    }
+
+    private String getSDKVersion(){
+        return AliPlayerFactory.getSdkVersion();
     }
 
     private void setDataSource(String url){
@@ -143,6 +181,18 @@ public class VideoView implements PlatformView, MethodChannel.MethodCallHandler 
         if(mAliPlayer != null){
             mAliPlayer.setDataSource(vidSts);
         }
+    }
+
+    private void setDataSource(VidAuth vidAuth){
+        if(mAliPlayer != null){
+            mAliPlayer.setDataSource(vidAuth);
+        }   
+    }
+
+    private void setDataSource(VidMps vidMps){
+        if(mAliPlayer != null){
+            mAliPlayer.setDataSource(vidMps);
+        }  
     }
 
     private void prepare(){

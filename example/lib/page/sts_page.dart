@@ -20,7 +20,7 @@ class _StsHomePageState extends State<StsPage> {
   TextEditingController _accessKeySecretController = TextEditingController();
   TextEditingController _previewController = TextEditingController();
   TextEditingController _securityTokenController = TextEditingController();
-  String _region = "cn-shanghai";
+  String _region = DataSourceRelated.DEFAULT_REGION;
 
   @override
   void initState() {
@@ -45,6 +45,7 @@ class _StsHomePageState extends State<StsPage> {
             Container(
               width: double.infinity,
               child: ReginDropDownButton(
+                currentHint: DataSourceRelated.DEFAULT_REGION,
                 onRegionChanged: (region) => _region = region,
               ),
             ),
@@ -76,6 +77,7 @@ class _StsHomePageState extends State<StsPage> {
             TextField(
               controller: _previewController,
               maxLines: 1,
+              keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 labelText: "试看时间(s)",
               ),
@@ -97,7 +99,8 @@ class _StsHomePageState extends State<StsPage> {
                 RaisedButton(
                   child: Text("STS播放"),
                   onPressed: () {
-                    _netWorkUtils.getHttp(HttpConstant.GET_STS, (data) {
+                    _netWorkUtils.getHttp(HttpConstant.GET_STS,
+                        successCallback: (data) {
                       _accessKeyIdController.text = data["accessKeyId"];
                       _accessKeySecretController.text = data["accessKeySecret"];
                       _securityTokenController.text = data["securityToken"];
@@ -119,7 +122,7 @@ class _StsHomePageState extends State<StsPage> {
                             playMode: PlayMode.STS,
                             dataSourceMap: map,
                           ));
-                    }, (error) {
+                    }, errorCallback: (error) {
                       print("error");
                     });
                   },

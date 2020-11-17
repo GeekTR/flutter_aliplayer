@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter_aliplayer_example/config.dart';
 
@@ -21,8 +19,11 @@ class NetWorkUtils {
     }
   }
 
-  void getHttp(String url, Function successCallback, errorCallback) async {
-    Response response = await _dio.get(url);
+  void getHttp(String url,
+      {Map<String, String> params,
+      Function successCallback,
+      Function errorCallback}) async {
+    Response response = await _dio.get(url, queryParameters: params);
     Map<String, dynamic> data = response.data;
     if (data.isNotEmpty && data['result'] == 'true') {
       successCallback(data['data']);

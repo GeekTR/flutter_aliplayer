@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_aliplayer_example/config.dart';
+import 'package:flutter_aliplayer_example/page/player_page.dart';
+import 'package:flutter_aliplayer_example/util/common_utils.dart';
 import 'package:flutter_aliplayer_example/util/network_utils.dart';
 import 'package:flutter_aliplayer_example/widget/aliyun_regin_dropdown.dart';
 
@@ -10,11 +12,11 @@ class AuthPage extends StatefulWidget {
 
 class _AuthPageState extends State<AuthPage> {
   NetWorkUtils _netWorkUtils;
-  TextEditingController _vidController = TextEditingController();
-  TextEditingController _accessKeyIdController = TextEditingController();
-  TextEditingController _accessKeySecretController = TextEditingController();
+  TextEditingController _vidController = TextEditingController.fromValue(
+      TextEditingValue(text: DataSourceRelated.DEFAULT_VID));
   TextEditingController _previewController = TextEditingController();
-  TextEditingController _securityTokenController = TextEditingController();
+  TextEditingController _playAuthController = TextEditingController();
+  String _region = DataSourceRelated.DEFAULT_REGION;
 
   @override
   void initState() {
@@ -40,9 +42,8 @@ class _AuthPageState extends State<AuthPage> {
             Container(
               width: double.infinity,
               child: ReginDropDownButton(
-                onRegionChanged: (region) => {
-                  print("region = $region"),
-                },
+                currentHint: DataSourceRelated.DEFAULT_REGION,
+                onRegionChanged: (region) => _region = region,
               ),
             ),
             //vid
@@ -57,13 +58,14 @@ class _AuthPageState extends State<AuthPage> {
             TextField(
               controller: _previewController,
               maxLines: 1,
+              keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 labelText: "试看时间(s)",
               ),
             ),
             //PlayAuth
             TextField(
-              controller: _securityTokenController,
+              controller: _playAuthController,
               decoration: InputDecoration(
                 labelText: "PlayAuth",
               ),
@@ -78,7 +80,25 @@ class _AuthPageState extends State<AuthPage> {
                 RaisedButton(
                   child: Text("AUTH播放"),
                   onPressed: () {
-                    // _netWorkUtils.getHttp(HttpConstant.GET_AUTH);
+                    var params = {"videoId": _vidController.text};
+                    _netWorkUtils.getHttp(HttpConstant.GET_AUTH, params: params,
+                        successCallback: (data) {
+                      _playAuthController.text = data["playAuth"];
+                      var map = {
+                        DataSourceRelated.VID_KEY: _vidController.text,
+                        DataSourceRelated.REGION_KEY: _region,
+                        DataSourceRelated.PLAYAUTH_KEY:
+                            _playAuthController.text,
+                        DataSourceRelated.PREVIEWTIME_KEY:
+                            _previewController.text
+                      };
+                      CommomUtils.pushPage(
+                          context,
+                          PlayerPage(
+                            playMode: PlayMode.AUTH,
+                            dataSourceMap: map,
+                          ));
+                    }, errorCallback: (error) {});
                   },
                 ),
                 Expanded(
@@ -86,7 +106,11 @@ class _AuthPageState extends State<AuthPage> {
                 ),
                 RaisedButton(
                   child: Text("清除"),
-                  onPressed: () {},
+                  onPressed: () {
+                    _vidController.clear();
+                    _previewController.clear();
+                    _playAuthController.clear();
+                  },
                 ),
               ],
             ),
