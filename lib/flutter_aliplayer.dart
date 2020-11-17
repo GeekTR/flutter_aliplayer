@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+export 'flutter_avpdef.dart';
+
 class FlutterAliplayer {
 
   MethodChannel _channel;
@@ -54,7 +56,7 @@ class FlutterAliplayer {
   }
 
   Future<void> setMuted(bool isMuted) async {
-    return _channel.invokeMethod('setMuted', isMuted);
+    return _channel.invokeMethod('setMuted',isMuted);
   }
 
   Future<bool> enableHardwareDecoder() async {
@@ -67,6 +69,38 @@ class FlutterAliplayer {
 
   Future<void> setVidSts(Map<String, String> stsInfo) async {
     return _channel.invokeMethod("setVidSts", stsInfo);
+  }
+
+  Future<int> getRotateMode() async {
+    return _channel.invokeMethod('getRotateMode');
+  }
+
+  Future<void> setRotateMode(int mode) async {
+    return _channel.invokeMethod('setRotateMode',mode);
+  }
+
+  Future<int> getScalingMode() async {
+    return _channel.invokeMethod('getScalingMode');
+  }
+
+  Future<void> setScalingMode(int mode) async {
+    return _channel.invokeMethod('setScalingMode',mode);
+  }
+
+  Future<int> getMirrorMode() async {
+    return _channel.invokeMethod('getMirrorMode');
+  }
+
+  Future<void> setMirrorMode(int mode) async {
+    return _channel.invokeMethod('setMirrorMode',mode);
+  }
+
+  Future<double> getRate() async {
+    return _channel.invokeMethod('getRate');
+  }
+
+  Future<void> setRate(double mode) async {
+    return _channel.invokeMethod('setRate',mode);
   }
 }
 

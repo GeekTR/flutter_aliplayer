@@ -21,8 +21,8 @@ class _OptionsFragmentState extends State<OptionsFragment> {
   bool mEnablePlayBack = false;
   int mScaleGroupValue = 1;
   int mMirrorGroupValue = 1;
-  int mRotateGroupValue = 1;
-  int mSpeedGroupValue = 1;
+  int mRotateGroupValue = FlutterAvpdef.AVP_ROTATE_0;
+  double mSpeedGroupValue = 1;
 
   _loadInitData() async{
     mLoop = await widget.fAliplayer.isLoop();
@@ -172,6 +172,7 @@ class _OptionsFragmentState extends State<OptionsFragment> {
                     padding: EdgeInsets.symmetric(horizontal:8),
                     child: AliyunSegment(titles: ['比例填充','比例全屏','拉伸全屏'],selIdx: 0,onSelectAtIdx: (value) {
                       mScaleGroupValue = value;
+                      widget.fAliplayer.setScalingMode(mScaleGroupValue);
                     },),
                   ),
         ),
@@ -191,6 +192,7 @@ class _OptionsFragmentState extends State<OptionsFragment> {
                     padding: EdgeInsets.symmetric(horizontal:8),
                     child: AliyunSegment(titles: ['无镜像','水平镜像','垂直镜像'],selIdx: 0,onSelectAtIdx: (value) {
                       mMirrorGroupValue = value;
+                      widget.fAliplayer.setMirrorMode(mMirrorGroupValue);
                     },),
                   ),
         ),
@@ -210,7 +212,8 @@ class _OptionsFragmentState extends State<OptionsFragment> {
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal:8),
                     child: AliyunSegment(titles: ['0°','90°','180°',"270°"],selIdx: 0,onSelectAtIdx: (value) {
-                      mRotateGroupValue = value;
+                      mRotateGroupValue = value*90;
+                      widget.fAliplayer.setRotateMode(mRotateGroupValue);
                     },),
                   ),
         ),
@@ -229,7 +232,22 @@ class _OptionsFragmentState extends State<OptionsFragment> {
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal:8),
                     child: AliyunSegment(titles: ['正常','0.5倍速','1.5倍速',"2.0倍速"],selIdx: 0,onSelectAtIdx: (value) {
-                      mSpeedGroupValue = value;
+                      switch (value) {
+                        case 0:
+                          mSpeedGroupValue = 1.0;
+                          break;
+                          case 1:
+                          mSpeedGroupValue = 0.5;
+                          break;
+                          case 2:
+                          mSpeedGroupValue = 1.5;
+                          break;
+                          case 3:
+                          mSpeedGroupValue = 2.0;
+                          break;
+                        default:
+                      }
+                      widget.fAliplayer.setRate(mSpeedGroupValue);
                     },),
                   ),
         ),

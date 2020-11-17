@@ -77,7 +77,23 @@
         [self enableHardwareDecoder:call result:result];
     }else if ([method isEqualToString:@"setEnableHardwareDecoder"]) {
         [self setEnableHardwareDecoder:call result:result];
-    } else {
+    }else if ([method isEqualToString:@"getRotateMode"]) {
+        [self getRotateMode:call result:result];
+    }else if ([method isEqualToString:@"setRotateMode"]) {
+        [self setRotateMode:call result:result];
+    }else if ([method isEqualToString:@"getMirrorMode"]) {
+        [self getMirrorMode:call result:result];
+    }else if ([method isEqualToString:@"setMirrorMode"]) {
+        [self setMirrorMode:call result:result];
+    }else if ([method isEqualToString:@"getScalingMode"]) {
+        [self getScalingMode:call result:result];
+    }else if ([method isEqualToString:@"setScalingMode"]) {
+        [self setScalingMode:call result:result];
+    }else if ([method isEqualToString:@"getRate"]) {
+        [self getRate:call result:result];
+    }else if ([method isEqualToString:@"setRate"]) {
+        [self setRate:call result:result];
+    }else {
         result(FlutterMethodNotImplemented);
     }
 }
@@ -143,6 +159,42 @@
 - (void)setEnableHardwareDecoder:(FlutterMethodCall*)call result:(FlutterResult)result {
     NSNumber* val = [call arguments];
     [self.aliPlayer setEnableHardwareDecoder:val.boolValue];
+}
+
+- (void)getRotateMode:(FlutterMethodCall*)call result:(FlutterResult)result {
+    result(@(self.aliPlayer.rotateMode));
+}
+
+- (void)setRotateMode:(FlutterMethodCall*)call result:(FlutterResult)result {
+    NSNumber* val = [call arguments];
+    [self.aliPlayer setRotateMode:val.intValue];
+}
+
+- (void)getScalingMode:(FlutterMethodCall*)call result:(FlutterResult)result {
+    result(@(self.aliPlayer.scalingMode));
+}
+
+- (void)setScalingMode:(FlutterMethodCall*)call result:(FlutterResult)result {
+    NSNumber* val = [call arguments];
+    [self.aliPlayer setScalingMode:val.intValue];
+}
+
+- (void)getMirrorMode:(FlutterMethodCall*)call result:(FlutterResult)result {
+    result(@(self.aliPlayer.mirrorMode));
+}
+
+- (void)setMirrorMode:(FlutterMethodCall*)call result:(FlutterResult)result {
+    NSNumber* val = [call arguments];
+    [self.aliPlayer setMirrorMode:val.intValue];
+}
+
+- (void)getRate:(FlutterMethodCall*)call result:(FlutterResult)result {
+    result(@(self.aliPlayer.rate));
+}
+
+- (void)setRate:(FlutterMethodCall*)call result:(FlutterResult)result {
+    NSNumber* val = [call arguments];
+    [self.aliPlayer setRate:val.floatValue];
 }
 
 #pragma --mark getters
