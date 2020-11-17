@@ -12,7 +12,7 @@ class ReginDropDownButton extends StatefulWidget {
 }
 
 class _ReginDropDownButtonState extends State<ReginDropDownButton> {
-  String _currentHint = "Region";
+  String _currentHint = "cn-shanghai";
 
   List<DropdownMenuItem> getItemList() {
     List<DropdownMenuItem> items = List();

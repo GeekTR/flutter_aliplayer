@@ -37,7 +37,8 @@ class FlutterAliplayer {
   }
 
   Future<void> setLoop(bool isloop) async {
-    return _channel.invokeMethod('setLoop',isloop);
+    print("abc : setLoop $isLoop");
+    return _channel.invokeMethod('setLoop', isloop);
   }
 
   Future<bool> isAutoPlay() async {
@@ -45,7 +46,7 @@ class FlutterAliplayer {
   }
 
   Future<void> setAutoPlay(bool isAutoPlay) async {
-    return _channel.invokeMethod('setAutoPlay',isAutoPlay);
+    return _channel.invokeMethod('setAutoPlay', isAutoPlay);
   }
 
   Future<bool> isMuted() async {
@@ -53,8 +54,7 @@ class FlutterAliplayer {
   }
 
   Future<void> setMuted(bool isMuted) async {
-    print('isMuted===$isMuted');
-    return _channel.invokeMethod('setMuted',isMuted);
+    return _channel.invokeMethod('setMuted', isMuted);
   }
 
   Future<bool> enableHardwareDecoder() async {
@@ -62,9 +62,12 @@ class FlutterAliplayer {
   }
 
   Future<void> setEnableHardwareDecoder(bool isHardWare) async {
-    return _channel.invokeMethod('setEnableHardwareDecoder',isHardWare);
+    return _channel.invokeMethod('setEnableHardwareDecoder', isHardWare);
   }
 
+  Future<void> setVidSts(Map<String, String> stsInfo) async {
+    return _channel.invokeMethod("setVidSts", stsInfo);
+  }
 }
 
 typedef void AliPlayerViewCreatedCallback();
@@ -90,7 +93,6 @@ class AliPlayerView extends StatefulWidget {
 }
 
 class _VideoPlayerState extends State<AliPlayerView> {
-
   @override
   void initState() {
     super.initState();
@@ -134,5 +136,4 @@ class _VideoPlayerState extends State<AliPlayerView> {
       widget.onCreated();
     }
   }
-
 }

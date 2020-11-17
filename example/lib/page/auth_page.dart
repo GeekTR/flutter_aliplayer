@@ -78,7 +78,7 @@ class _AuthPageState extends State<AuthPage> {
                 RaisedButton(
                   child: Text("AUTH播放"),
                   onPressed: () {
-                    _netWorkUtils.getHttp(HttpConstant.GET_AUTH);
+                    // _netWorkUtils.getHttp(HttpConstant.GET_AUTH);
                   },
                 ),
                 Expanded(

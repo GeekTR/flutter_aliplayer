@@ -11,8 +11,7 @@ class UrlPage extends StatefulWidget {
 
 class _UrlPageState extends State<UrlPage> {
   TextEditingController urlSourceController = new TextEditingController();
-  String _qrcode_result =
-      "https://alivc-demo-vod.aliyuncs.com/6b357371ef3c45f4a06e2536fd534380/eb3f139a4b437d1e9b623ee1b671115b-ld.mp4";
+  String _qrcode_result = DataSourceRelated.DEFAULT_URL;
 
   Future<void> getQrcodeState() async {
     _qrcode_result = await QRCodeReader()
@@ -50,7 +49,9 @@ class _UrlPageState extends State<UrlPage> {
           RaisedButton(
             child: Text("开始播放"),
             onPressed: () {
-              CommomUtils.pushPage(context, PlayerPage(_qrcode_result));
+              var map = {DataSourceRelated.URL_KEY: _qrcode_result};
+              CommomUtils.pushPage(context,
+                  PlayerPage(playMode: PlayMode.URL, dataSourceMap: map));
             },
           )
         ],

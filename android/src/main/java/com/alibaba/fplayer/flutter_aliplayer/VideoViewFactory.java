@@ -1,4 +1,4 @@
-package com.alibaba.fplayer.flutter_aliplayer_example;
+package com.alibaba.fplayer.flutter_aliplayer;
 
 import android.content.Context;
 

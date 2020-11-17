@@ -5,13 +5,15 @@ import 'package:flutter_aliplayer_example/page/player_fragment/cache_config_frag
 import 'package:flutter_aliplayer_example/page/player_fragment/options_fragment.dart';
 import 'package:flutter_aliplayer_example/page/player_fragment/play_config_fragment.dart';
 import 'package:flutter_aliplayer_example/page/player_fragment/track_fragment.dart';
+import 'package:flutter_aliplayer_example/util/common_utils.dart';
 
 class PlayerPage extends StatefulWidget {
-  final String urlPath;
+  final PlayMode playMode;
+  final Map<String, dynamic> dataSourceMap;
 
-  PlayerPage([
-    this.urlPath,
-  ]) : assert(urlPath != null);
+  PlayerPage({Key key, this.playMode, this.dataSourceMap})
+      : assert(playMode != null),
+        super(key: key);
 
   @override
   _PlayerPageState createState() => _PlayerPageState();
@@ -21,13 +23,15 @@ class _PlayerPageState extends State<PlayerPage> {
   FlutterAliplayer fAliplayer;
   int bottomIndex;
   List<Widget> mFramePage;
-  String urlPath;
+  PlayMode _playMode;
+  Map<String, dynamic> _dataSourceMap;
 
   @override
   void initState() {
     super.initState();
     bottomIndex = 0;
-    urlPath = widget.urlPath;
+    _playMode = widget.playMode;
+    _dataSourceMap = widget.dataSourceMap;
 
     fAliplayer = FlutterAliplayer.init(0);
     mFramePage = [
@@ -51,42 +55,56 @@ class _PlayerPageState extends State<PlayerPage> {
         width: width,
         height: height);
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Plugin for aliplayer'),
-        ),
-        body: Column(
-          children: [
-            Container(child: aliPlayerView, width: width, height: height),
-            _buildControlBtns(),
-            mFramePage[bottomIndex],
-          ],
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          items: [
-            BottomNavigationBarItem(
-                title: Text('options'), icon: Icon(Icons.control_point)),
-            BottomNavigationBarItem(
-                title: Text('play_cfg'), icon: Icon(Icons.control_point)),
-            BottomNavigationBarItem(
-                title: Text('cache_cfg'), icon: Icon(Icons.control_point)),
-            BottomNavigationBarItem(
-                title: Text('track'), icon: Icon(Icons.control_point)),
-          ],
-          currentIndex: bottomIndex,
-          onTap: (index) {
-            if (index != bottomIndex) {
-              setState(() {
-                bottomIndex = index;
-              });
-            }
-          },
-        ),
+      appBar: AppBar(
+        title: const Text('Plugin for aliplayer'),
+      ),
+      body: Column(
+        children: [
+          Container(child: aliPlayerView, width: width, height: height),
+          _buildControlBtns(),
+          mFramePage[bottomIndex],
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        items: [
+          BottomNavigationBarItem(
+              title: Text('options'), icon: Icon(Icons.control_point)),
+          BottomNavigationBarItem(
+              title: Text('play_cfg'), icon: Icon(Icons.control_point)),
+          BottomNavigationBarItem(
+              title: Text('cache_cfg'), icon: Icon(Icons.control_point)),
+          BottomNavigationBarItem(
+              title: Text('track'), icon: Icon(Icons.control_point)),
+        ],
+        currentIndex: bottomIndex,
+        onTap: (index) {
+          if (index != bottomIndex) {
+            setState(() {
+              bottomIndex = index;
+            });
+          }
+        },
+      ),
     );
   }
 
   void onViewPlayerCreated() async {
-    this.fAliplayer.setUrl(urlPath);
+    print("abc : created");
+    switch (_playMode) {
+      case PlayMode.URL:
+        this.fAliplayer.setUrl(_dataSourceMap[DataSourceRelated.URL_KEY]);
+        break;
+      case PlayMode.STS:
+        print("abc : sts");
+        this.fAliplayer.setVidSts(_dataSourceMap);
+        break;
+      case PlayMode.AUTH:
+        break;
+      case PlayMode.MPS:
+        break;
+      default:
+    }
   }
 
   /// MARK: 私有方法

@@ -110,7 +110,7 @@ class _MpsPagePageState extends State<MpsPage> {
                 RaisedButton(
                   child: Text("MPS播放"),
                   onPressed: () {
-                    _netWorkUtils.getHttp(HttpConstant.GET_MPS);
+                    // _netWorkUtils.getHttp(HttpConstant.GET_MPS);
                   },
                 ),
                 Expanded(

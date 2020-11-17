@@ -5,5 +5,5 @@ class HttpConstant {
 
   static const String GET_STS = 'player/getVideoSts';
   static const String GET_AUTH = 'player/getVideoPlayAuth';
-  static const String GET_MPS = '/player/getVideoMps';
+  static const String GET_MPS = 'player/getVideoMps';
 }

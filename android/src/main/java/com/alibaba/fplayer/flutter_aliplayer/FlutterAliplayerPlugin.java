@@ -2,7 +2,7 @@ package com.alibaba.fplayer.flutter_aliplayer;
 
 import androidx.annotation.NonNull;
 
-import com.alibaba.fplayer.flutter_aliplayer_example.VideoViewFactory;
+import com.alibaba.fplayer.flutter_aliplayer.VideoViewFactory;
 import com.aliyun.player.AliPlayer;
 import com.aliyun.player.AliPlayerFactory;
 

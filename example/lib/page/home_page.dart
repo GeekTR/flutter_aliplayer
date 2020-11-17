@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_aliplayer_example/page/auth_page.dart';
+import 'package:flutter_aliplayer_example/page/download_page.dart';
 import 'package:flutter_aliplayer_example/page/mps_page.dart';
 import 'package:flutter_aliplayer_example/page/setting_page.dart';
 import 'package:flutter_aliplayer_example/page/sts_page.dart';
@@ -18,6 +19,8 @@ class _MyAppState extends State<HomePage> {
     'AUTH播放',
     'MPS播放',
     '本地视频播放',
+    '列表播放',
+    '断点下载',
   ];
 
   @override
@@ -57,6 +60,13 @@ class _MyAppState extends State<HomePage> {
                   break;
                 case 3:
                   CommomUtils.pushPage(context, MpsPage());
+                  break;
+                case 4:
+                  break;
+                case 5:
+                  break;
+                case 6:
+                  CommomUtils.pushPage(context, DownloadPage());
                   break;
                 default:
               }

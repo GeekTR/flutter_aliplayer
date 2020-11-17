@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_aliplayer_example/config.dart';
+import 'package:flutter_aliplayer_example/page/player_page.dart';
+import 'package:flutter_aliplayer_example/util/common_utils.dart';
 import 'package:flutter_aliplayer_example/util/network_utils.dart';
 import 'package:flutter_aliplayer_example/widget/aliyun_regin_dropdown.dart';
 
@@ -10,16 +12,19 @@ class StsPage extends StatefulWidget {
 
 class _StsHomePageState extends State<StsPage> {
   NetWorkUtils _netWorkUtils;
-  TextEditingController _vidController = TextEditingController();
+  TextEditingController _vidController =
+      TextEditingController.fromValue(TextEditingValue(
+    text: DataSourceRelated.DEFAULT_VID,
+  ));
   TextEditingController _accessKeyIdController = TextEditingController();
   TextEditingController _accessKeySecretController = TextEditingController();
   TextEditingController _previewController = TextEditingController();
   TextEditingController _securityTokenController = TextEditingController();
+  String _region = "cn-shanghai";
 
   @override
   void initState() {
     super.initState();
-    //NetWorkUtils
     _netWorkUtils = NetWorkUtils.instance;
   }
 
@@ -40,9 +45,7 @@ class _StsHomePageState extends State<StsPage> {
             Container(
               width: double.infinity,
               child: ReginDropDownButton(
-                onRegionChanged: (region) => {
-                  print("region = $region"),
-                },
+                onRegionChanged: (region) => _region = region,
               ),
             ),
             //vid
@@ -94,7 +97,31 @@ class _StsHomePageState extends State<StsPage> {
                 RaisedButton(
                   child: Text("STS播放"),
                   onPressed: () {
-                    _netWorkUtils.getHttp(HttpConstant.GET_STS);
+                    _netWorkUtils.getHttp(HttpConstant.GET_STS, (data) {
+                      _accessKeyIdController.text = data["accessKeyId"];
+                      _accessKeySecretController.text = data["accessKeySecret"];
+                      _securityTokenController.text = data["securityToken"];
+                      var map = {
+                        DataSourceRelated.VID_KEY: _vidController.text,
+                        DataSourceRelated.ACCESSKEYID_KEY:
+                            _accessKeyIdController.text,
+                        DataSourceRelated.ACCESSKEYSECRET_KEY:
+                            _accessKeySecretController.text,
+                        DataSourceRelated.SECURITYTOKEN_KEY:
+                            _securityTokenController.text,
+                        DataSourceRelated.REGION_KEY: _region,
+                        DataSourceRelated.PREVIEWTIME_KEY:
+                            _previewController.text
+                      };
+                      CommomUtils.pushPage(
+                          context,
+                          PlayerPage(
+                            playMode: PlayMode.STS,
+                            dataSourceMap: map,
+                          ));
+                    }, (error) {
+                      print("error");
+                    });
                   },
                 ),
                 Expanded(
@@ -102,7 +129,13 @@ class _StsHomePageState extends State<StsPage> {
                 ),
                 RaisedButton(
                   child: Text("清除"),
-                  onPressed: () {},
+                  onPressed: () {
+                    _vidController.clear();
+                    _previewController.clear();
+                    _accessKeyIdController.clear();
+                    _accessKeySecretController.clear();
+                    _securityTokenController.clear();
+                  },
                 ),
               ],
             ),

@@ -201,7 +201,6 @@ class _OptionsFragmentState extends State<OptionsFragment> {
   /// 旋转模式
   Container _buildRotate() {
     double width = MediaQuery.of(context).size.width;
-    print("abc : 屏幕宽度 width = $width");
     return Container(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
