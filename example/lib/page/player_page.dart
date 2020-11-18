@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_aliplayer/flutter_aliplayer.dart';
+import 'package:flutter_aliplayer_example/config.dart';
 import 'package:flutter_aliplayer_example/page/player_fragment/cache_config_fragment.dart';
 import 'package:flutter_aliplayer_example/page/player_fragment/options_fragment.dart';
 import 'package:flutter_aliplayer_example/page/player_fragment/play_config_fragment.dart';
 import 'package:flutter_aliplayer_example/page/player_fragment/track_fragment.dart';
-import 'package:flutter_aliplayer_example/util/common_utils.dart';
 
 class PlayerPage extends StatefulWidget {
   final PlayMode playMode;
