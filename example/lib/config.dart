@@ -8,10 +8,14 @@ class HttpConstant {
   static const String GET_MPS = 'player/getVideoMps';
 
   static const String GET_VIDEO_LIST = 'player/getVideoList';
+  static const String GET_RANDOM_USER = 'user/randomUser';
+  static const String GET_RECOMMEND_VIDEO_LIST = 'vod/getRecommendVideoList';
 }
 
 /// 播放方式
 enum PlayMode { URL, STS, AUTH, MPS }
+
+enum VideoShowMode{Grid,Srceen}
 
 ///播放源相关
 class DataSourceRelated {

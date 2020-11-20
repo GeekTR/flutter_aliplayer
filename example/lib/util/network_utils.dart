@@ -20,7 +20,7 @@ class NetWorkUtils {
   }
 
   void getHttp(String url,
-      {Map<String, String> params,
+      {Map<String, dynamic> params,
       Function successCallback,
       Function errorCallback}) async {
     Response response = await _dio.get(url, queryParameters: params);
