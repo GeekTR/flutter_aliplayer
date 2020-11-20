@@ -112,7 +112,7 @@ class _MpsPagePageState extends State<MpsPage> {
                 RaisedButton(
                   child: Text("MPS播放"),
                   onPressed: () {
-                    NetWorkUtils.getHttp(HttpConstant.GET_MPS,
+                    NetWorkUtils.instance.getHttp(HttpConstant.GET_MPS,
                         successCallback: (data) {
                       _region = data["RegionId"];
                       _vidController.text = data["MediaId"];
