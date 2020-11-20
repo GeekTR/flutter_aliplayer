@@ -8,7 +8,7 @@ class NetWorkUtils {
     return _instance;
   }
 
-  Dio _dio;
+  static Dio _dio;
 
   NetWorkUtils._privateConstructor() {
     if (_dio == null) {
@@ -19,7 +19,7 @@ class NetWorkUtils {
     }
   }
 
-  void getHttp(String url,
+  static void getHttp(String url,
       {Map<String, String> params,
       Function successCallback,
       Function errorCallback}) async {

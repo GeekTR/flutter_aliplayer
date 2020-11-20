@@ -24,8 +24,6 @@ class _MpsPagePageState extends State<MpsPage> {
   @override
   void initState() {
     super.initState();
-    //NetWorkUtils
-    _netWorkUtils = NetWorkUtils.instance;
   }
 
   @override
@@ -114,7 +112,7 @@ class _MpsPagePageState extends State<MpsPage> {
                 RaisedButton(
                   child: Text("MPS播放"),
                   onPressed: () {
-                    _netWorkUtils.getHttp(HttpConstant.GET_MPS,
+                    NetWorkUtils.getHttp(HttpConstant.GET_MPS,
                         successCallback: (data) {
                       _region = data["RegionId"];
                       _vidController.text = data["MediaId"];

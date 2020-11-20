@@ -11,19 +11,11 @@ class AuthPage extends StatefulWidget {
 }
 
 class _AuthPageState extends State<AuthPage> {
-  NetWorkUtils _netWorkUtils;
   TextEditingController _vidController = TextEditingController.fromValue(
       TextEditingValue(text: DataSourceRelated.DEFAULT_VID));
   TextEditingController _previewController = TextEditingController();
   TextEditingController _playAuthController = TextEditingController();
   String _region = DataSourceRelated.DEFAULT_REGION;
-
-  @override
-  void initState() {
-    super.initState();
-    //NetWorkUtils
-    _netWorkUtils = NetWorkUtils.instance;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +73,7 @@ class _AuthPageState extends State<AuthPage> {
                   child: Text("AUTH播放"),
                   onPressed: () {
                     var params = {"videoId": _vidController.text};
-                    _netWorkUtils.getHttp(HttpConstant.GET_AUTH, params: params,
+                    NetWorkUtils.getHttp(HttpConstant.GET_AUTH, params: params,
                         successCallback: (data) {
                       _playAuthController.text = data["playAuth"];
                       var map = {

@@ -99,7 +99,7 @@ class _StsHomePageState extends State<StsPage> {
                 RaisedButton(
                   child: Text("STS播放"),
                   onPressed: () {
-                    _netWorkUtils.getHttp(HttpConstant.GET_STS,
+                    NetWorkUtils.getHttp(HttpConstant.GET_STS,
                         successCallback: (data) {
                       _accessKeyIdController.text = data["accessKeyId"];
                       _accessKeySecretController.text = data["accessKeySecret"];

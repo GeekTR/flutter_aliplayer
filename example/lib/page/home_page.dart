@@ -5,6 +5,7 @@ import 'package:flutter_aliplayer_example/page/mps_page.dart';
 import 'package:flutter_aliplayer_example/page/setting_page.dart';
 import 'package:flutter_aliplayer_example/page/sts_page.dart';
 import 'package:flutter_aliplayer_example/page/url_page.dart';
+import 'package:flutter_aliplayer_example/page/video_grid_page.dart';
 import 'package:flutter_aliplayer_example/util/common_utils.dart';
 
 class HomePage extends StatefulWidget {
@@ -64,6 +65,7 @@ class _MyAppState extends State<HomePage> {
                 case 4:
                   break;
                 case 5:
+                  CommomUtils.pushPage(context, VideoGridPage());
                   break;
                 case 6:
                   CommomUtils.pushPage(context, DownloadPage());
