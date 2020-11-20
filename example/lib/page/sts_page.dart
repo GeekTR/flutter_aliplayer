@@ -11,7 +11,6 @@ class StsPage extends StatefulWidget {
 }
 
 class _StsHomePageState extends State<StsPage> {
-  NetWorkUtils _netWorkUtils;
   TextEditingController _vidController =
       TextEditingController.fromValue(TextEditingValue(
     text: DataSourceRelated.DEFAULT_VID,
@@ -21,12 +20,6 @@ class _StsHomePageState extends State<StsPage> {
   TextEditingController _previewController = TextEditingController();
   TextEditingController _securityTokenController = TextEditingController();
   String _region = DataSourceRelated.DEFAULT_REGION;
-
-  @override
-  void initState() {
-    super.initState();
-    _netWorkUtils = NetWorkUtils.instance;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +92,7 @@ class _StsHomePageState extends State<StsPage> {
                 RaisedButton(
                   child: Text("STS播放"),
                   onPressed: () {
-                    NetWorkUtils.getHttp(HttpConstant.GET_STS,
+                    NetWorkUtils.instance.getHttp(HttpConstant.GET_STS,
                         successCallback: (data) {
                       _accessKeyIdController.text = data["accessKeyId"];
                       _accessKeySecretController.text = data["accessKeySecret"];

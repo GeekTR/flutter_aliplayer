@@ -15,11 +15,11 @@ class NetWorkUtils {
       _dio = Dio();
       _dio.options.connectTimeout = 5000;
       _dio.options.receiveTimeout = 5000;
-      _dio.options.baseUrl = HttpConstant.HTTP_HOST;
+      _dio.options.baseUrl = HttpConstant.HTTP_HOST;  
     }
   }
 
-  static void getHttp(String url,
+  void getHttp(String url,
       {Map<String, String> params,
       Function successCallback,
       Function errorCallback}) async {
@@ -31,4 +31,5 @@ class NetWorkUtils {
       errorCallback(data);
     }
   }
+
 }

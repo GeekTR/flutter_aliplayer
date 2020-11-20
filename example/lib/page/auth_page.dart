@@ -73,7 +73,7 @@ class _AuthPageState extends State<AuthPage> {
                   child: Text("AUTH播放"),
                   onPressed: () {
                     var params = {"videoId": _vidController.text};
-                    NetWorkUtils.getHttp(HttpConstant.GET_AUTH, params: params,
+                    NetWorkUtils.instance.getHttp(HttpConstant.GET_AUTH, params: params,
                         successCallback: (data) {
                       _playAuthController.text = data["playAuth"];
                       var map = {
