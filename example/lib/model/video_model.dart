@@ -29,7 +29,7 @@ class VideoModel {
   String title;
   String tags;
   String status;
-  Null size;
+  int size;
   double duration;
   String description;
   String createTime;

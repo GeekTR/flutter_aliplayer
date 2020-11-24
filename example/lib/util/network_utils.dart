@@ -19,8 +19,8 @@ class NetWorkUtils {
     }
   }
 
-  void getHttpCallback(String url,
-      {Map<String, String> params,
+  void getHttp(String url,
+      {Map<String, dynamic> params,
       Function successCallback,
       Function errorCallback}) async {
     Response response = await _dio.get(url, queryParameters: params);
@@ -32,7 +32,7 @@ class NetWorkUtils {
     }
   }
 
-  Future<Map> getHttp(String url, {Map<String, String> params}) async {
+  Future<Map> getHttpFuture(String url, {Map<String, String> params}) async {
     Response response = await _dio.get(url, queryParameters: params);
     Map<String, dynamic> data = response.data;
     if (data.isNotEmpty && data['result'] == 'true') {
