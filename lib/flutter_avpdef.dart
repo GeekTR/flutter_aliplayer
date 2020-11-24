@@ -22,3 +22,12 @@ class FlutterAvpdef {
   static const int AVP_MIRRORMODE_HORIZONTAL = 1;
   static const int AVP_MIRRORMODE_VERTICAL = 2;
 }
+
+class EventChanneldef {
+  static const String TYPE_KEY = "method";
+
+  static const String DOWNLOAD_PREPARED = "download_prepared";
+  static const String DOWNLOAD_PROGRESS = "download_progress";
+  static const String DOWNLOAD_PROCESS = "download_process";
+  static const String DOWNLOAD_COMPLETION = "download_completion";
+}

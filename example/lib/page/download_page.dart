@@ -1,20 +1,33 @@
+import 'package:flutter_aliplayer_example/config.dart';
+import 'package:flutter_aliplayer_example/model/custom_downloader_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_aliplayer_example/util/database_utils.dart';
+import 'package:flutter_aliplayer_example/page/player_page.dart';
+import 'package:flutter_aliplayer_example/util/aliyun_download_manager.dart';
+import 'package:flutter_aliplayer_example/util/common_utils.dart';
+import 'package:flutter_aliplayer_example/util/formatter_utils.dart';
+import 'package:flutter_aliplayer_example/util/network_utils.dart';
+import 'package:flutter_aliplayer_example/widget/aliyun_download_dialog.dart';
+
+typedef void AliDownloadManagerCreatedCallback();
 
 class DownloadPage extends StatefulWidget {
+  final AliDownloadManagerCreatedCallback onCreated;
+
+  DownloadPage({this.onCreated});
+
   @override
   _DownloadPageState createState() => _DownloadPageState();
 }
 
 class _DownloadPageState extends State<DownloadPage> {
-  List<String> _dataList = List<String>();
+  AliyunDownloadManager _aliyunDownloadManager;
+
+  List<CustomDownloaderModel> _dataList = List<CustomDownloaderModel>();
 
   @override
   void initState() {
     super.initState();
-    for (var i = 0; i <= 10; i++) {
-      _dataList.add("$i");
-    }
+    _aliyunDownloadManager = AliyunDownloadManager.instance;
   }
 
   @override
@@ -23,18 +36,47 @@ class _DownloadPageState extends State<DownloadPage> {
       appBar: AppBar(
         title: Text("Download"),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AliyunDownloadDialog(
+                      onItemAdd: (data) {
+                        _aliyunDownloadManager.add(data).then((value) {
+                          setState(() {
+                            _dataList.add(value);
+                          });
+                        }).catchError((e) {
+                          print("aliyun download error : $e");
+                        });
+                      },
+                      onClose: () {
+                        Navigator.of(context).pop();
+                      },
+                    );
+                  });
+            },
+          ),
+        ],
       ),
-      body: ListView.builder(
-          itemCount: _dataList.length,
-          itemBuilder: (BuildContext context, int index) {
-            return _buildListViewItem();
-          }),
+      body: Stack(
+        children: [
+          ListView.builder(
+              itemCount: _dataList.length == 0 ? 0 : _dataList.length,
+              itemBuilder: (BuildContext context, int index) {
+                return _buildListViewItem(index);
+              }),
+        ],
+      ),
     );
   }
 
-  Widget _buildListViewItem() {
+  Widget _buildListViewItem(int index) {
     return Padding(
-      padding: const EdgeInsets.only(top: 8.0),
+      padding: const EdgeInsets.only(bottom: 8.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
@@ -42,13 +84,13 @@ class _DownloadPageState extends State<DownloadPage> {
             alignment: Alignment.center,
             children: [
               Image.network(
-                "https://alivc-demo-vod.aliyuncs.com/6609a2f737cb43e1a79ec2bc6aee781b/snapshots/1231cd3803654152b529207a2081757b-00005.jpg",
+                _dataList[index].coverUrl,
                 width: 85.0,
                 height: 85.0,
                 fit: BoxFit.cover,
               ),
               Text(
-                "准备完成",
+                _dataList[index].stateMsg,
                 style: TextStyle(fontSize: 20, color: Colors.red),
               ),
             ],
@@ -58,11 +100,12 @@ class _DownloadPageState extends State<DownloadPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "标题",
+                  _dataList[index].title,
                   maxLines: 1,
                 ),
                 Text(
-                  "大小M",
+                  FormatterUtils.getFileSizeDescription(
+                      _dataList[index].vodFileSize),
                   maxLines: 1,
                 ),
                 Row(
@@ -72,27 +115,98 @@ class _DownloadPageState extends State<DownloadPage> {
                       child: RaisedButton(
                         child: Text("开始"),
                         onPressed: () {
-                          // DBUtils.openDB("download.db");
-                          print("开始");
+                          CustomDownloaderModel customDownloaderModel =
+                              _dataList[index];
+                          if (customDownloaderModel.downloadState ==
+                                  DownloadState.COMPLETE ||
+                              customDownloaderModel.downloadState ==
+                                  DownloadState.START) {
+                          } else {
+                            NetWorkUtils.instance
+                                .getHttpFuture(HttpConstant.GET_STS)
+                                .then((value) {
+                              var map = {
+                                DataSourceRelated.VID_KEY:
+                                    customDownloaderModel.videoId,
+                                DataSourceRelated.TYPE_KEY: "sts",
+                                "mIndex": customDownloaderModel.index,
+                                DataSourceRelated.ACCESSKEYID_KEY:
+                                    value["accessKeyId"],
+                                DataSourceRelated.ACCESSKEYSECRET_KEY:
+                                    value["accessKeySecret"],
+                                DataSourceRelated.SECURITYTOKEN_KEY:
+                                    value["securityToken"],
+                              };
+
+                              _aliyunDownloadManager
+                                  .prepare(map)
+                                  .whenComplete(() {
+                                _aliyunDownloadManager
+                                    .start(customDownloaderModel)
+                                    .listen((event) {
+                                  setState(() {});
+                                }, onDone: () {});
+                              });
+                            });
+                          }
                         },
                       ),
                     ),
                     Expanded(
                       child: RaisedButton(
                         child: Text("停止"),
-                        onPressed: () => print("停止"),
+                        onPressed: () {
+                          CustomDownloaderModel customDownloaderModel =
+                              _dataList[index];
+                          _aliyunDownloadManager
+                              .stop(customDownloaderModel)
+                              .then((value) {
+                            setState(() {
+                              customDownloaderModel = value;
+                            });
+                          });
+                        },
                       ),
                     ),
                     Expanded(
                       child: RaisedButton(
                         child: Text("播放"),
-                        onPressed: () => print("播放"),
+                        onPressed: () {
+                          CustomDownloaderModel customDownloaderModel =
+                              _dataList[index];
+                          if (customDownloaderModel.downloadState ==
+                              DownloadState.COMPLETE) {
+                            Map<String, String> dataSourcecMap = {
+                              DataSourceRelated.URL_KEY:
+                                  customDownloaderModel.savePath
+                            };
+                            CommomUtils.pushPage(
+                                context,
+                                PlayerPage(
+                                    playMode: PlayMode.URL,
+                                    dataSourceMap: dataSourcecMap));
+                          }
+                        },
                       ),
                     ),
                     Expanded(
                       child: RaisedButton(
                         child: Text("删除"),
-                        onPressed: () => print("删除"),
+                        onPressed: () {
+                          _aliyunDownloadManager
+                              .delete(_dataList[index])
+                              .then((value) {
+                            setState(() {
+                              _dataList.removeAt(index);
+                            });
+                          });
+                          // rootBundle
+                          //     .loadString('assets/encryptedApp.txt')
+                          //     .then((value) {})
+                          //     .catchError((e) {
+                          //   print("abc : load error $e");
+                          // });
+                        },
                       ),
                     ),
                   ],

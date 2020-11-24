@@ -109,6 +109,10 @@ class FlutterAliplayer {
   Future<void> setRate(double mode) async {
     return _channel.invokeMethod('setRate', mode);
   }
+
+  Future<String> getSDKVersion() async {
+    return _channel.invokeMethod("getSDKVersion");
+  }
 }
 
 typedef void AliPlayerViewCreatedCallback();

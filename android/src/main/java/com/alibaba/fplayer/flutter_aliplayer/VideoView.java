@@ -2,7 +2,6 @@ package com.alibaba.fplayer.flutter_aliplayer;
 
 import android.content.Context;
 import android.graphics.SurfaceTexture;
-import android.os.Looper;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
@@ -16,7 +15,6 @@ import com.aliyun.player.source.VidAuth;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugin.platform.PlatformView;
 import com.aliyun.player.source.VidSts;
 import com.aliyun.player.source.VidMps;
@@ -80,6 +78,7 @@ public class VideoView implements PlatformView, MethodChannel.MethodCallHandler 
 
     @Override
     public void onMethodCall(MethodCall methodCall, MethodChannel.Result result) {
+        System.out.println("abc : methodCall view");
         switch (methodCall.method) {
             case "setUrl":
                 mUrl = methodCall.arguments.toString();
@@ -158,7 +157,7 @@ public class VideoView implements PlatformView, MethodChannel.MethodCallHandler 
                 
                 break;
             case "getSDKVersion":
-                getSDKVersion();
+                result.success(getSDKVersion());
                 break;
             default:
                 result.notImplemented();
