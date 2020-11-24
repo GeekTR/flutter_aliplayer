@@ -15,11 +15,11 @@ class NetWorkUtils {
       _dio = Dio();
       _dio.options.connectTimeout = 5000;
       _dio.options.receiveTimeout = 5000;
-      _dio.options.baseUrl = HttpConstant.HTTP_HOST;  
+      _dio.options.baseUrl = HttpConstant.HTTP_HOST;
     }
   }
 
-  void getHttp(String url,
+  void getHttpCallback(String url,
       {Map<String, String> params,
       Function successCallback,
       Function errorCallback}) async {
@@ -32,4 +32,13 @@ class NetWorkUtils {
     }
   }
 
+  Future<Map> getHttp(String url, {Map<String, String> params}) async {
+    Response response = await _dio.get(url, queryParameters: params);
+    Map<String, dynamic> data = response.data;
+    if (data.isNotEmpty && data['result'] == 'true') {
+      return Future.value(data['data']);
+    } else {
+      return Future.error("$url request error");
+    }
+  }
 }

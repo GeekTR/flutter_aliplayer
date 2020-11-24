@@ -2,10 +2,6 @@ package com.alibaba.fplayer.flutter_aliplayer;
 
 import androidx.annotation.NonNull;
 
-import com.alibaba.fplayer.flutter_aliplayer.VideoViewFactory;
-import com.aliyun.player.AliPlayer;
-import com.aliyun.player.AliPlayerFactory;
-
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -19,11 +15,13 @@ public class FlutterAliplayerPlugin implements FlutterPlugin, MethodCallHandler 
   ///
   /// This local reference serves to register the plugin with the Flutter Engine and unregister it
   /// when the Flutter Engine is detached from the Activity
-  private MethodChannel channel;
+  private static MethodChannel channel;
+  private AliyunDownload mAliyunDownload;
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
     flutterPluginBinding.getPlatformViewRegistry().registerViewFactory("plugins.flutter_aliplayer",new VideoViewFactory(flutterPluginBinding));
+    mAliyunDownload = new AliyunDownload(flutterPluginBinding.getApplicationContext(),flutterPluginBinding);
   }
 
 //   This static function is optional and equivalent to onAttachedToEngine. It supports the old
