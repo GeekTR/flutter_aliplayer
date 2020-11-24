@@ -34,7 +34,7 @@
         CGFloat width = [dic[@"width"] floatValue];
         CGFloat height = [dic[@"height"] floatValue];
         _videoView.frame = CGRectMake(x, y, width, height);
-        NSString* channelName = [NSString stringWithFormat:@"flutter_aliplayer_%lld", viewId];
+        NSString* channelName = @"flutter_aliplayer";//[NSString stringWithFormat:@"flutter_aliplayer", viewId];
         _channel = [FlutterMethodChannel methodChannelWithName:channelName binaryMessenger:messenger];
         __weak __typeof__(self) weakSelf = self;
         [_channel setMethodCallHandler:^(FlutterMethodCall* call, FlutterResult result) {
@@ -93,6 +93,8 @@
         [self getRate:call result:result];
     }else if ([method isEqualToString:@"setRate"]) {
         [self setRate:call result:result];
+    }else if ([method isEqualToString:@"setVidSts"]) {
+        [self setVidSts:call result:result];
     }else {
         result(FlutterMethodNotImplemented);
     }
@@ -195,6 +197,17 @@
 - (void)setRate:(FlutterMethodCall*)call result:(FlutterResult)result {
     NSNumber* val = [call arguments];
     [self.aliPlayer setRate:val.floatValue];
+}
+
+- (void)setVidSts:(FlutterMethodCall*)call result:(FlutterResult)result {
+    AVPVidStsSource *source = [[AVPVidStsSource alloc] init];
+    NSDictionary *dic = call.arguments;
+    [dic enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop){
+        if([obj length]>0){
+         [source setValue:obj forKey:(NSString *)key];
+        }
+    }];
+    [self.aliPlayer setStsSource:source];
 }
 
 #pragma --mark getters

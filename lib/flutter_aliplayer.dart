@@ -9,7 +9,7 @@ export 'flutter_avpdef.dart';
 class FlutterAliplayer {
   MethodChannel _channel;
   FlutterAliplayer.init(int id) {
-    _channel = new MethodChannel('flutter_aliplayer_$id');
+    _channel = new MethodChannel('flutter_aliplayer');
   }
 
   Future<void> setUrl(String url) async {

@@ -4,6 +4,7 @@ import 'package:flutter_aliplayer_example/config.dart';
 import 'package:flutter_aliplayer_example/model/video_model.dart';
 import 'package:flutter_aliplayer_example/util/network_utils.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:flutter_aliplayer/flutter_alilistplayer.dart';
 
 class VideoGridPage extends StatefulWidget {
   @override
@@ -17,11 +18,15 @@ class _VideoGridPageState extends State<VideoGridPage> {
 
   RefreshController _refreshController =
       RefreshController(initialRefresh: true);
-  final PageController _pageController = PageController();
+
+  FlutterAliListPlayer fAliListPlayer;
+
+  int _curIdx = 0;
 
   @override
   void initState() {
     super.initState();
+    fAliListPlayer = FlutterAliListPlayer.init(1);
   }
 
   _onRefresh() async {
@@ -66,9 +71,11 @@ class _VideoGridPageState extends State<VideoGridPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _showMode == VideoShowMode.Srceen?null:AppBar(
-        title: Text('播放列表'),
-      ),
+      appBar: _showMode == VideoShowMode.Srceen
+          ? null
+          : AppBar(
+              title: Text('播放列表'),
+            ),
       body: SmartRefresher(
         enablePullDown: true,
         enablePullUp: true,
@@ -78,18 +85,37 @@ class _VideoGridPageState extends State<VideoGridPage> {
         onRefresh: _onRefresh,
         onLoading: _onLoadMore,
         child: _showMode == VideoShowMode.Srceen
-            ? CustomScrollView(
-                controller: _pageController,
+            ? PageView.builder(
+                scrollDirection: Axis.vertical,
+                itemCount: _dataList.length,
                 physics: PageScrollPhysics(),
-                slivers: _dataList
-                    .map((model) => SliverFillViewport(
-                            delegate: SliverChildListDelegate([
-                          Image.network(
-                            model.coverUrl,
-                            fit: BoxFit.fitWidth,
-                          )
-                        ])))
-                    .toList())
+                onPageChanged: (value) {
+                  print('object===$value');
+                  _curIdx = value;
+                  start();
+                },
+                itemBuilder: (BuildContext context, int index) {
+                  VideoModel model = _dataList[index];
+                  return Container(
+                    child: Stack(
+                      children: [
+                        Image.network(
+                          model.coverUrl,
+                          fit: BoxFit.fitWidth,
+                          alignment: Alignment.center,
+                          width: double.infinity,
+                          height: double.infinity,
+                        ),
+                        AliPlayerView(
+                            onCreated: onViewPlayerCreated,
+                            x: 0,
+                            y: 0,
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height),
+                      ],
+                    ),
+                  );
+                })
             : GridView.builder(
                 shrinkWrap: true,
                 itemCount: _dataList.length,
@@ -111,5 +137,40 @@ class _VideoGridPageState extends State<VideoGridPage> {
               ),
       ),
     );
+  }
+
+  void onViewPlayerCreated() async {
+    fAliListPlayer.setAutoPlay(true);
+    fAliListPlayer.setLoop(true);
+    print('onViewPlayerCreated===');
+  }
+
+  void start() async {
+    if (_dataList != null &&
+        _dataList.length > 0 &&
+        _curIdx < _dataList.length) {
+      print('start===$_curIdx');
+      VideoModel model = _dataList[_curIdx];
+      print('url===${model.fileUrl}');
+      // this.fAliListPlayer.setUrl(model.fileUrl);
+      NetWorkUtils.instance.getHttp(HttpConstant.GET_STS,
+          successCallback: (data) {
+        var map = {
+          DataSourceRelated.VID_KEY: model.videoId,
+          DataSourceRelated.ACCESSKEYID_KEY: data["accessKeyId"],
+          DataSourceRelated.ACCESSKEYSECRET_KEY: data["accessKeySecret"],
+          DataSourceRelated.SECURITYTOKEN_KEY: data["securityToken"],
+          DataSourceRelated.REGION_KEY: DataSourceRelated.DEFAULT_REGION,
+          DataSourceRelated.PREVIEWTIME_KEY: ""
+        };
+
+        this.fAliListPlayer.setVidSts(Map<String, String>.from(map));
+        this.fAliListPlayer.prepare();
+        this.fAliListPlayer.play();
+        setState(() {});
+      }, errorCallback: (error) {
+        print("error");
+      });
+    }
   }
 }
