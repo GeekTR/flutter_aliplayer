@@ -1,6 +1,7 @@
 package com.alibaba.fplayer.flutter_aliplayer;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
@@ -174,6 +175,59 @@ public class AliyunDownload implements FlutterPlugin,MethodChannel.MethodCallHan
                 }
             }
                 break;
+            case "updateSource":
+            {
+                Map<String, Object> updateSourceMap = (Map<String, Object>) methodCall.arguments;
+                String videoId = (String) updateSourceMap.get("mVideoId");
+                Integer index = (Integer) updateSourceMap.get("mIndex");
+                String type = (String) updateSourceMap.get("type");
+                String vid = (String) updateSourceMap.get("vid");
+                AliMediaDownloader aliMediaDownloader = mAliMediaDownloadMap.remove(videoId + SEPARA_SYMBOLS + index);
+                if(aliMediaDownloader != null){
+                    if (type != null && type.equals("sts")) {
+                        VidSts vidSts = new VidSts();
+                        vidSts.setVid(vid);
+                        vidSts.setAccessKeyId((String) updateSourceMap.get("accessKeyId"));
+                        vidSts.setAccessKeySecret((String) updateSourceMap.get("accessKeySecret"));
+                        vidSts.setSecurityToken((String) updateSourceMap.get("securityToken"));
+                        updateSource(aliMediaDownloader,vidSts);
+
+                    } else if (type != null && type.equals("auth")) {
+                        VidAuth vidAuth = new VidAuth();
+                        vidAuth.setVid(vid);
+                        vidAuth.setPlayAuth((String) updateSourceMap.get("playAuth"));
+                        updateSource(aliMediaDownloader,vidAuth);
+                    }
+                }
+            }
+                break;
+            case "setDownloaderConfig":
+            {
+                Map<String, Object> downloadConfigMap = (Map<String, Object>) methodCall.arguments;
+                String videoId = (String) downloadConfigMap.get("mVideoId");
+                Integer index = (Integer) downloadConfigMap.get("mIndex");
+                AliMediaDownloader aliMediaDownloader = mAliMediaDownloadMap.remove(videoId + SEPARA_SYMBOLS + index);
+                if(aliMediaDownloader != null){
+                    DownloaderConfig downloaderConfig = new DownloaderConfig();
+                    String mUserAgent = (String) downloadConfigMap.get("mUserAgent");
+                    downloaderConfig.mUserAgent = TextUtils.isEmpty(mUserAgent) ? "" : mUserAgent;
+
+                    String mReferrer = (String) downloadConfigMap.get("mReferrer");
+                    downloaderConfig.mReferrer = TextUtils.isEmpty(mReferrer) ? "" : mReferrer;
+
+                    String mHttpProxy = (String) downloadConfigMap.get("mHttpProxy");
+                    downloaderConfig.mHttpProxy = TextUtils.isEmpty(mHttpProxy) ? "" : mHttpProxy;
+
+                    Integer mConnectTimeoutS = (Integer) downloadConfigMap.get("mConnectTimeoutS");
+                    downloaderConfig.mConnectTimeoutS = mConnectTimeoutS == null ? 0 : mConnectTimeoutS;
+
+                    Integer mNetworkTimeoutMs = (Integer) downloadConfigMap.get("mNetworkTimeoutMs");
+                    downloaderConfig.mNetworkTimeoutMs = mNetworkTimeoutMs == null ? 0 : mNetworkTimeoutMs;
+
+                    setDownloaderConfig(aliMediaDownloader,downloaderConfig);
+                }
+            }
+                break;
             default:
                 break;
         }
@@ -212,7 +266,7 @@ public class AliyunDownload implements FlutterPlugin,MethodChannel.MethodCallHan
         aliMediaDownloader.setOnErrorListener(new AliMediaDownloader.OnErrorListener() {
             @Override
             public void onError(ErrorInfo errorInfo) {
-//                result.error(errorInfo.getCode().toString(),errorInfo.getMsg(),errorInfo.getExtra());
+                result.error(errorInfo.getCode().toString(),errorInfo.getMsg(),errorInfo.getExtra());
             }
         });
         aliMediaDownloader.prepare(vidAuth);
@@ -235,7 +289,7 @@ public class AliyunDownload implements FlutterPlugin,MethodChannel.MethodCallHan
         aliMediaDownloader.setOnErrorListener(new AliMediaDownloader.OnErrorListener() {
             @Override
             public void onError(ErrorInfo errorInfo) {
-//                result.error(errorInfo.getCode().toString(),errorInfo.getMsg(),errorInfo.getExtra());
+                result.error(errorInfo.getCode().toString(),errorInfo.getMsg(),errorInfo.getExtra());
             }
         });
 
@@ -262,7 +316,7 @@ public class AliyunDownload implements FlutterPlugin,MethodChannel.MethodCallHan
         aliMediaDownloader.setOnErrorListener(new AliMediaDownloader.OnErrorListener() {
             @Override
             public void onError(ErrorInfo errorInfo) {
-//                result.error(errorInfo.getCode().toString(),errorInfo.getMsg(),errorInfo.getExtra());
+                result.error(errorInfo.getCode().toString(),errorInfo.getMsg(),errorInfo.getExtra());
             }
         });
         aliMediaDownloader.prepare(vidSts);
@@ -285,7 +339,7 @@ public class AliyunDownload implements FlutterPlugin,MethodChannel.MethodCallHan
         aliMediaDownloader.setOnErrorListener(new AliMediaDownloader.OnErrorListener() {
             @Override
             public void onError(ErrorInfo errorInfo) {
-//                result.error(errorInfo.getCode().toString(),errorInfo.getMsg(),errorInfo.getExtra());
+                result.error(errorInfo.getCode().toString(),errorInfo.getMsg(),errorInfo.getExtra());
             }
         });
 
