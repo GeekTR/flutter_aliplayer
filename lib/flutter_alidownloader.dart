@@ -44,6 +44,10 @@ class FlutterAliDownloader {
     return _methodChannel.invokeMethod("getFilePath", map);
   }
 
+  Future<dynamic> release(Map map) {
+    return _methodChannel.invokeMethod("release", map);
+  }
+
   void setOnProgressListener(OnProgress onProgress) {
     this.onProgress = onProgress;
   }

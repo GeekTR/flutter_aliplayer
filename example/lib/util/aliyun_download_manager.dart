@@ -24,8 +24,8 @@ class AliyunDownloadManager {
   }
 
   AliyunDownloadManager._privateConstructor() {
-    _flutterAliDownloader = FlutterAliDownloader.init();
     _dbUtils = DBUtils.instance;
+    _flutterAliDownloader = FlutterAliDownloader.init();
 
     if (Platform.isAndroid) {
       getExternalStorageDirectories().then((value) {
@@ -57,6 +57,26 @@ class AliyunDownloadManager {
         src.vodDefinition == dst.vodDefinition;
   }
 
+  Future<List<CustomDownloaderModel>> findAllDownload() {
+    return _dbUtils.selectAll().then((value) {
+      if (_preparedList.length > 0) {
+        _preparedList.clear();
+      }
+      value.forEach((element) {
+        CustomDownloaderModel customDownloaderModel =
+            CustomDownloaderModel.fromJson(element);
+        if (customDownloaderModel != null) {
+          if (customDownloaderModel.downloadState != DownloadState.COMPLETE) {
+            customDownloaderModel.downloadState = DownloadState.PREPARE;
+            customDownloaderModel.stateMsg = "准备完成";
+          }
+          _preparedList.add(customDownloaderModel);
+        }
+      });
+      return _preparedList;
+    });
+  }
+
   Future<dynamic> prepare(Map map) {
     return _flutterAliDownloader.prepare(map).then((value) {
       return value;
@@ -70,19 +90,18 @@ class AliyunDownloadManager {
             '${customDownloaderModel.videoId} , ${customDownloaderModel.vodDefinition}  has added');
       }
     });
+    var json = customDownloaderModel.toJson();
     _preparedList.add(customDownloaderModel);
-    _flutterAliDownloader.selectItem(customDownloaderModel.toJson());
+    _flutterAliDownloader.selectItem(json);
+    _dbUtils.insert(json);
     return Future.value(customDownloaderModel);
-    //TODO 添加数据库
   }
 
   Stream<dynamic> start(CustomDownloaderModel customDownloaderModel) {
     String key = customDownloaderModel.videoId +
         '_' +
         customDownloaderModel.index.toString();
-    print("abc : key = $key");
     StreamController _controller = _controllerMap[key];
-    print("abc : controller = ${_controller == null}");
     if (_controller == null) {
       _controller = StreamController<dynamic>();
       _controllerMap.putIfAbsent(key, () => _controller);
@@ -117,6 +136,8 @@ class AliyunDownloadManager {
           customDownloaderModel.downloadState = DownloadState.COMPLETE;
           customDownloaderModel.stateMsg = "下载完成";
           customDownloaderModel.savePath = event['mSavePath'];
+
+          _dbUtils.update(customDownloaderModel.toJson());
           _sink.add(customDownloaderModel);
         }
       });
@@ -136,9 +157,11 @@ class AliyunDownloadManager {
   }
 
   Future<dynamic> delete(CustomDownloaderModel customDownloaderModel) {
-    //TODO 数据库
+    var map = customDownloaderModel.toJson();
     _preparedList.remove(customDownloaderModel);
-    _flutterAliDownloader.delete(customDownloaderModel.toJson());
+    _dbUtils.delete(map);
+    _flutterAliDownloader.delete(map);
+    _flutterAliDownloader.release(map);
     return Future.value(customDownloaderModel);
   }
 }

@@ -73,8 +73,8 @@ class _AuthPageState extends State<AuthPage> {
                   child: Text("AUTH播放"),
                   onPressed: () {
                     var params = {"videoId": _vidController.text};
-                    NetWorkUtils.instance.getHttp(HttpConstant.GET_AUTH, params: params,
-                        successCallback: (data) {
+                    NetWorkUtils.instance.getHttp(HttpConstant.GET_AUTH,
+                        params: params, successCallback: (data) {
                       _playAuthController.text = data["playAuth"];
                       var map = {
                         DataSourceRelated.VID_KEY: _vidController.text,
@@ -87,7 +87,7 @@ class _AuthPageState extends State<AuthPage> {
                       CommomUtils.pushPage(
                           context,
                           PlayerPage(
-                            playMode: PlayMode.AUTH,
+                            playMode: ModeType.AUTH,
                             dataSourceMap: map,
                           ));
                     }, errorCallback: (error) {});

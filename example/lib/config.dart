@@ -17,9 +17,9 @@ class HttpConstant {
 }
 
 /// 播放方式
-enum PlayMode { URL, STS, AUTH, MPS }
+enum ModeType { URL, STS, AUTH, MPS }
 
-enum VideoShowMode{Grid,Srceen}
+enum VideoShowMode { Grid, Srceen }
 
 ///播放源相关
 class DataSourceRelated {

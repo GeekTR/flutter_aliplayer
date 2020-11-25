@@ -145,7 +145,7 @@ class _MpsPagePageState extends State<MpsPage> {
                       CommomUtils.pushPage(
                           context,
                           PlayerPage(
-                            playMode: PlayMode.MPS,
+                            playMode: ModeType.MPS,
                             dataSourceMap: map,
                           ));
                     }, errorCallback: (error) {});

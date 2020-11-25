@@ -30,6 +30,7 @@ class AliyunDownloadDialog extends Dialog {
   Function onClose;
   //当前选中的下标
   int _selectedIndex = -1;
+  ModeType _mCurrentModeType = ModeType.STS;
 
   AliyunDownloadDialog({this.onItemAdd, this.onClose});
 
@@ -104,6 +105,7 @@ class AliyunDownloadDialog extends Dialog {
                           child: RaisedButton(
                             child: Text("sts"),
                             onPressed: () {
+                              _mCurrentModeType = ModeType.STS;
                               _requestStsInfo(state);
                             },
                           ),
@@ -115,7 +117,8 @@ class AliyunDownloadDialog extends Dialog {
                           child: RaisedButton(
                             child: Text("auth"),
                             onPressed: () {
-                              _requestAuthInfo();
+                              _mCurrentModeType = ModeType.AUTH;
+                              _requestAuthInfo(state);
                             },
                           ),
                         ),
@@ -131,12 +134,6 @@ class AliyunDownloadDialog extends Dialog {
                                     _downloadModel.trackInfos[_selectedIndex];
                                 CustomDownloaderModel customDownloaderModel =
                                     CustomDownloaderModel(
-                                        // accessKeyId:
-                                        //     _accessKeyIdController.text,
-                                        // accessKeySecret:
-                                        //     _accessKeySecretController.text,
-                                        // securityToken:
-                                        //     _securityTokenController.text,
                                         videoId: _downloadModel.videoId,
                                         title: _downloadModel.title,
                                         coverUrl: _downloadModel.coverUrl,
@@ -146,6 +143,7 @@ class AliyunDownloadDialog extends Dialog {
                                         vodFileSize: trackInfoModel.vodFileSize,
                                         vodFormat: trackInfoModel.vodFormat,
                                         stateMsg: "准备完成",
+                                        downloadModeType: _mCurrentModeType,
                                         downloadState: DownloadState.PREPARE);
                                 onItemAdd(customDownloaderModel);
                               }
@@ -204,15 +202,23 @@ class AliyunDownloadDialog extends Dialog {
   }
 
   ///auth info request
-  void _requestAuthInfo() {
+  void _requestAuthInfo(StateSetter setState) {
     var params = {"videoId": _vidController.text};
     _netWorkUtils.getHttp(HttpConstant.GET_AUTH, params: params,
         successCallback: (data) {
       _playAuthController.text = data["playAuth"];
       var map = {
+        DataSourceRelated.TYPE_KEY: "auth",
         DataSourceRelated.VID_KEY: _vidController.text,
         DataSourceRelated.PLAYAUTH_KEY: _playAuthController.text,
       };
+      if (_aliyunDownloadManager != null) {
+        _aliyunDownloadManager.prepare(map).then((value) {
+          setState(() {
+            _downloadModel = DownloadModel.fromJson(json.decode(value));
+          });
+        });
+      }
     }, errorCallback: (error) {});
   }
 

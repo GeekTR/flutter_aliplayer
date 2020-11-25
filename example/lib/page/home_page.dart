@@ -7,6 +7,7 @@ import 'package:flutter_aliplayer_example/page/sts_page.dart';
 import 'package:flutter_aliplayer_example/page/url_page.dart';
 import 'package:flutter_aliplayer_example/page/video_grid_page.dart';
 import 'package:flutter_aliplayer_example/util/common_utils.dart';
+import 'package:flutter_aliplayer_example/util/database_utils.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -27,6 +28,7 @@ class _MyAppState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    DBUtils.openDB();
   }
 
   @override

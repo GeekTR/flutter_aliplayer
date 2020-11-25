@@ -7,6 +7,7 @@ import 'package:flutter_aliplayer_example/util/common_utils.dart';
 import 'package:flutter_aliplayer_example/util/formatter_utils.dart';
 import 'package:flutter_aliplayer_example/util/network_utils.dart';
 import 'package:flutter_aliplayer_example/widget/aliyun_download_dialog.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 typedef void AliDownloadManagerCreatedCallback();
 
@@ -28,6 +29,17 @@ class _DownloadPageState extends State<DownloadPage> {
   void initState() {
     super.initState();
     _aliyunDownloadManager = AliyunDownloadManager.instance;
+    _aliyunDownloadManager.findAllDownload().then((value) {
+      setState(() {
+        _dataList.addAll(value);
+      });
+    });
+
+    // rootBundle.loadString('assets/encryptedApp.txt').then((value) {
+    //   print("abc : load success $value");
+    // }).catchError((e) {
+    //   print("abc : load error $e");
+    // });
   }
 
   @override
@@ -183,7 +195,7 @@ class _DownloadPageState extends State<DownloadPage> {
                             CommomUtils.pushPage(
                                 context,
                                 PlayerPage(
-                                    playMode: PlayMode.URL,
+                                    playMode: ModeType.URL,
                                     dataSourceMap: dataSourcecMap));
                           }
                         },
@@ -200,12 +212,6 @@ class _DownloadPageState extends State<DownloadPage> {
                               _dataList.removeAt(index);
                             });
                           });
-                          // rootBundle
-                          //     .loadString('assets/encryptedApp.txt')
-                          //     .then((value) {})
-                          //     .catchError((e) {
-                          //   print("abc : load error $e");
-                          // });
                         },
                       ),
                     ),

@@ -49,9 +49,10 @@ public class AliyunDownload implements FlutterPlugin,MethodChannel.MethodCallHan
                 Map<String, Object> prepareMap = (Map<String, Object>) methodCall.arguments;
                 Integer index = (Integer) prepareMap.get("mIndex");
                 String type = (String) prepareMap.get("type");
+                String vid = (String) prepareMap.get("vid");
                 if (type != null && type.equals("sts")) {
                     VidSts vidSts = new VidSts();
-                    vidSts.setVid((String) prepareMap.get("vid"));
+                    vidSts.setVid(vid);
                     vidSts.setAccessKeyId((String) prepareMap.get("accessKeyId"));
                     vidSts.setAccessKeySecret((String) prepareMap.get("accessKeySecret"));
                     vidSts.setSecurityToken((String) prepareMap.get("securityToken"));
@@ -62,7 +63,14 @@ public class AliyunDownload implements FlutterPlugin,MethodChannel.MethodCallHan
                     }
 
                 } else if (type != null && type.equals("auth")) {
-                    //TODO
+                    VidAuth vidAuth = new VidAuth();
+                    vidAuth.setVid(vid);
+                    vidAuth.setPlayAuth((String) prepareMap.get("playAuth"));
+                    if(index == null){
+                        prepare(vidAuth, result);
+                    }else{
+                        prepare(vidAuth,index, result);
+                    }
                 }
             }
                 break;
@@ -155,6 +163,17 @@ public class AliyunDownload implements FlutterPlugin,MethodChannel.MethodCallHan
 
             }
                 break;
+            case "release":
+            {
+                Map<String, Object> releasMap = (Map<String, Object>) methodCall.arguments;
+                String videoId = (String) releasMap.get("mVideoId");
+                Integer index = (Integer) releasMap.get("mIndex");
+                AliMediaDownloader aliMediaDownloader = mAliMediaDownloadMap.remove(videoId + SEPARA_SYMBOLS + index);
+                if(aliMediaDownloader != null){
+                    release(aliMediaDownloader);
+                }
+            }
+                break;
             default:
                 break;
         }
@@ -171,6 +190,56 @@ public class AliyunDownload implements FlutterPlugin,MethodChannel.MethodCallHan
 
     private void createMediaDownloader(){
         AliMediaDownloader aliMediaDownloader = AliDownloaderFactory.create(mContext);
+    }
+
+    private void prepare(VidAuth vidAuth, final int index, final MethodChannel.Result result){
+        AliMediaDownloader aliMediaDownloader = mAliMediaDownloadMap.get(vidAuth.getVid());
+        if(aliMediaDownloader == null){
+            aliMediaDownloader = AliDownloaderFactory.create(mContext);
+        }
+        final AliMediaDownloader finalAliMediaDownloader = aliMediaDownloader;
+        aliMediaDownloader.setOnPreparedListener(new AliMediaDownloader.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaInfo mediaInfo) {
+                Gson gson = new Gson();
+                String mediaInfoJson = gson.toJson(mediaInfo);
+                finalAliMediaDownloader.selectItem(index);
+                mAliMediaDownloadMap.put(mediaInfo.getVideoId() + SEPARA_SYMBOLS + index, finalAliMediaDownloader);
+                result.success(mediaInfoJson);
+            }
+        });
+
+        aliMediaDownloader.setOnErrorListener(new AliMediaDownloader.OnErrorListener() {
+            @Override
+            public void onError(ErrorInfo errorInfo) {
+//                result.error(errorInfo.getCode().toString(),errorInfo.getMsg(),errorInfo.getExtra());
+            }
+        });
+        aliMediaDownloader.prepare(vidAuth);
+    }
+
+    private void prepare(VidAuth vidAuth, final MethodChannel.Result result){
+        AliMediaDownloader aliMediaDownloader = mAliMediaDownloadMap.get(vidAuth.getVid());
+        if(aliMediaDownloader == null){
+            aliMediaDownloader = AliDownloaderFactory.create(mContext);
+        }
+        aliMediaDownloader.setOnPreparedListener(new AliMediaDownloader.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaInfo mediaInfo) {
+                Gson gson = new Gson();
+                String mediaInfoJson = gson.toJson(mediaInfo);
+                result.success(mediaInfoJson);
+            }
+        });
+
+        aliMediaDownloader.setOnErrorListener(new AliMediaDownloader.OnErrorListener() {
+            @Override
+            public void onError(ErrorInfo errorInfo) {
+//                result.error(errorInfo.getCode().toString(),errorInfo.getMsg(),errorInfo.getExtra());
+            }
+        });
+
+        aliMediaDownloader.prepare(vidAuth);
     }
 
     private void prepare(VidSts vidSts, final int index, final MethodChannel.Result result){

@@ -30,7 +30,7 @@ public class VideoView implements PlatformView, MethodChannel.MethodCallHandler 
 
     VideoView(Context context, int viewId, Object args, FlutterPlugin.FlutterPluginBinding flutterPluginBinding) {
         mAliPlayer = AliPlayerFactory.createAliPlayer(context);
-        this.methodChannel = new MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(),"flutter_aliplayer_"+viewId);
+        this.methodChannel = new MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(),"flutter_aliplayer");
         this.methodChannel.setMethodCallHandler(this);
         initRenderView(context);
     }

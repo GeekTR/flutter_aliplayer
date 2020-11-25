@@ -112,7 +112,7 @@ class _StsHomePageState extends State<StsPage> {
                       CommomUtils.pushPage(
                           context,
                           PlayerPage(
-                            playMode: PlayMode.STS,
+                            playMode: ModeType.STS,
                             dataSourceMap: map,
                           ));
                     }, errorCallback: (error) {

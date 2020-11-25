@@ -8,7 +8,7 @@ import 'package:flutter_aliplayer_example/page/player_fragment/play_config_fragm
 import 'package:flutter_aliplayer_example/page/player_fragment/track_fragment.dart';
 
 class PlayerPage extends StatefulWidget {
-  final PlayMode playMode;
+  final ModeType playMode;
   final Map<String, dynamic> dataSourceMap;
 
   PlayerPage({Key key, this.playMode, this.dataSourceMap})
@@ -23,7 +23,7 @@ class _PlayerPageState extends State<PlayerPage> {
   FlutterAliplayer fAliplayer;
   int bottomIndex;
   List<Widget> mFramePage;
-  PlayMode _playMode;
+  ModeType _playMode;
   Map<String, dynamic> _dataSourceMap;
 
   @override
@@ -91,16 +91,16 @@ class _PlayerPageState extends State<PlayerPage> {
 
   void onViewPlayerCreated() async {
     switch (_playMode) {
-      case PlayMode.URL:
+      case ModeType.URL:
         this.fAliplayer.setUrl(_dataSourceMap[DataSourceRelated.URL_KEY]);
         break;
-      case PlayMode.STS:
+      case ModeType.STS:
         this.fAliplayer.setVidSts(_dataSourceMap);
         break;
-      case PlayMode.AUTH:
+      case ModeType.AUTH:
         this.fAliplayer.setVidAuth(_dataSourceMap);
         break;
-      case PlayMode.MPS:
+      case ModeType.MPS:
         this.fAliplayer.setVidMps(_dataSourceMap);
         break;
       default:

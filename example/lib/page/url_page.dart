@@ -52,7 +52,7 @@ class _UrlPageState extends State<UrlPage> {
             onPressed: () {
               var map = {DataSourceRelated.URL_KEY: _qrcode_result};
               CommomUtils.pushPage(context,
-                  PlayerPage(playMode: PlayMode.URL, dataSourceMap: map));
+                  PlayerPage(playMode: ModeType.URL, dataSourceMap: map));
             },
           )
         ],
