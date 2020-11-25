@@ -134,32 +134,37 @@ class _DownloadPageState extends State<DownloadPage> {
                               customDownloaderModel.downloadState ==
                                   DownloadState.START) {
                           } else {
-                            NetWorkUtils.instance
-                                .getHttpFuture(HttpConstant.GET_STS)
-                                .then((value) {
-                              var map = {
-                                DataSourceRelated.VID_KEY:
-                                    customDownloaderModel.videoId,
-                                DataSourceRelated.TYPE_KEY: "sts",
-                                "mIndex": customDownloaderModel.index,
-                                DataSourceRelated.ACCESSKEYID_KEY:
-                                    value["accessKeyId"],
-                                DataSourceRelated.ACCESSKEYSECRET_KEY:
-                                    value["accessKeySecret"],
-                                DataSourceRelated.SECURITYTOKEN_KEY:
-                                    value["securityToken"],
-                              };
-
+                            if (customDownloaderModel.downloadState ==
+                                DownloadState.STOP) {
                               _aliyunDownloadManager
-                                  .prepare(map)
-                                  .whenComplete(() {
+                                  .start(customDownloaderModel);
+                            } else {
+                              NetWorkUtils.instance
+                                  .getHttpFuture(HttpConstant.GET_STS)
+                                  .then((value) {
+                                var map = {
+                                  DataSourceRelated.VID_KEY:
+                                      customDownloaderModel.videoId,
+                                  DataSourceRelated.TYPE_KEY: "sts",
+                                  "mIndex": customDownloaderModel.index,
+                                  DataSourceRelated.ACCESSKEYID_KEY:
+                                      value["accessKeyId"],
+                                  DataSourceRelated.ACCESSKEYSECRET_KEY:
+                                      value["accessKeySecret"],
+                                  DataSourceRelated.SECURITYTOKEN_KEY:
+                                      value["securityToken"],
+                                };
                                 _aliyunDownloadManager
-                                    .start(customDownloaderModel)
-                                    .listen((event) {
-                                  setState(() {});
-                                }, onDone: () {});
+                                    .prepare(map)
+                                    .whenComplete(() {
+                                  _aliyunDownloadManager
+                                      .start(customDownloaderModel)
+                                      .listen((event) {
+                                    setState(() {});
+                                  }, onDone: () {});
+                                });
                               });
-                            });
+                            }
                           }
                         },
                       ),

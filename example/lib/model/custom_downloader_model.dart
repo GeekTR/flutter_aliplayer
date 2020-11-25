@@ -63,11 +63,11 @@ class CustomDownloaderModel {
     }
     int modeState = jsonMap[DOWNLOADMODETYPE];
     if (modeState == ModeType.STS.index) {
-      modeState = ModeType.STS.index;
+      this.downloadModeType = ModeType.STS;
     } else if (modeState == ModeType.AUTH.index) {
-      modeState = ModeType.AUTH.index;
+      this.downloadModeType = ModeType.AUTH;
     } else {
-      modeState = ModeType.STS.index;
+      this.downloadModeType = ModeType.STS;
     }
   }
 
