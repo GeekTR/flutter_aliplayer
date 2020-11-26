@@ -9,6 +9,7 @@ import android.text.TextUtils;
 
 import com.aliyun.player.AliPlayer;
 import com.aliyun.player.AliPlayerFactory;
+import com.aliyun.player.IPlayer;
 import com.aliyun.player.source.UrlSource;
 import com.aliyun.player.source.VidAuth;
 
@@ -78,7 +79,6 @@ public class VideoView implements PlatformView, MethodChannel.MethodCallHandler 
 
     @Override
     public void onMethodCall(MethodCall methodCall, MethodChannel.Result result) {
-        System.out.println("abc : methodCall view");
         switch (methodCall.method) {
             case "setUrl":
                 mUrl = methodCall.arguments.toString();
@@ -146,15 +146,49 @@ public class VideoView implements PlatformView, MethodChannel.MethodCallHandler 
                 setLoop((Boolean)methodCall.arguments);
                 break;
             case "isLoop":
-
+                result.success(isLoop());
                 break;
             case "setAutoPlay":
                 setAutoPlay((Boolean)methodCall.arguments);
                 break;
             case "setMuted":
+                setMuted((Boolean)methodCall.arguments);
                 break;
             case "setEnableHardwareDecoder":
                 
+                break;
+            case "setScalingMode":
+                setScaleMode((Integer) methodCall.arguments);
+                break;
+            case "getScalingMode":
+                result.success(getScaleMode());
+                break;
+            case "setMirrorMode":
+                setMirrorMode((Integer) methodCall.arguments);
+                break;
+            case "getMirrorMode":
+                result.success(getMirrorMode());
+                break;
+            case "setRotateMode":
+                setRotateMode((Integer) methodCall.arguments);
+                break;
+            case "getRotateMode":
+                result.success(getRotateMode());
+                break;
+            case "setRate":
+                setSpeed((Double) methodCall.arguments);
+                break;
+            case "getRate":
+                result.success(getSpeed());
+                break;
+            case "setVideoBackgroundColor":
+                setVideoBackgroundColor((Integer) methodCall.arguments);
+                break;
+            case "setVolume":
+                setVolume((Double) methodCall.arguments);
+                break;
+            case "getVolume":
+                result.success(getVolume());
                 break;
             case "getSDKVersion":
                 result.success(getSDKVersion());
@@ -224,9 +258,121 @@ public class VideoView implements PlatformView, MethodChannel.MethodCallHandler 
         }
     }
 
+    private Boolean isLoop(){
+        return mAliPlayer != null && mAliPlayer.isLoop();
+    }
+
     private void setAutoPlay(Boolean isAutoPlay){
         if(mAliPlayer != null){
             mAliPlayer.setAutoPlay(isAutoPlay);
         }
+    }
+
+    private void setMuted(Boolean muted){
+        if(mAliPlayer != null){
+            mAliPlayer.setMute(muted);
+        }
+    }
+
+    private void setScaleMode(int model){
+        if(mAliPlayer != null){
+            IPlayer.ScaleMode mScaleMode = IPlayer.ScaleMode.SCALE_ASPECT_FIT;
+            if(model == IPlayer.ScaleMode.SCALE_ASPECT_FIT.getValue()){
+                mScaleMode = IPlayer.ScaleMode.SCALE_ASPECT_FIT;
+            }else if(model == IPlayer.ScaleMode.SCALE_ASPECT_FILL.getValue()){
+                mScaleMode = IPlayer.ScaleMode.SCALE_ASPECT_FILL;
+            }else if(model == IPlayer.ScaleMode.SCALE_TO_FILL.getValue()){
+                mScaleMode = IPlayer.ScaleMode.SCALE_TO_FILL;
+            }
+            mAliPlayer.setScaleMode(mScaleMode);
+        }
+    }
+
+    private int getScaleMode(){
+        int scaleMode = IPlayer.ScaleMode.SCALE_ASPECT_FIT.getValue();
+        if (mAliPlayer != null) {
+            scaleMode =  mAliPlayer.getScaleMode().getValue();
+        }
+        return scaleMode;
+    }
+
+    private void setMirrorMode(int mirrorMode){
+        if(mAliPlayer != null){
+            IPlayer.MirrorMode mMirrorMode;
+            if(mirrorMode == IPlayer.MirrorMode.MIRROR_MODE_HORIZONTAL.getValue()){
+                mMirrorMode = IPlayer.MirrorMode.MIRROR_MODE_HORIZONTAL;
+            }else if(mirrorMode == IPlayer.MirrorMode.MIRROR_MODE_VERTICAL.getValue()){
+                mMirrorMode = IPlayer.MirrorMode.MIRROR_MODE_VERTICAL;
+            }else{
+                mMirrorMode = IPlayer.MirrorMode.MIRROR_MODE_NONE;
+            }
+            mAliPlayer.setMirrorMode(mMirrorMode);
+        }
+    }
+
+    private int getMirrorMode(){
+        int mirrorMode = IPlayer.MirrorMode.MIRROR_MODE_NONE.getValue();
+        if (mAliPlayer != null) {
+            mirrorMode = mAliPlayer.getMirrorMode().getValue();
+        }
+        return mirrorMode;
+    }
+
+    private void setRotateMode(int rotateMode){
+        if(mAliPlayer != null){
+            IPlayer.RotateMode mRotateMode;
+            if(rotateMode == IPlayer.RotateMode.ROTATE_90.getValue()){
+                mRotateMode = IPlayer.RotateMode.ROTATE_90;
+            }else if(rotateMode == IPlayer.RotateMode.ROTATE_180.getValue()){
+                mRotateMode = IPlayer.RotateMode.ROTATE_180;
+            }else if(rotateMode == IPlayer.RotateMode.ROTATE_270.getValue()){
+                mRotateMode = IPlayer.RotateMode.ROTATE_270;
+            }else{
+                mRotateMode = IPlayer.RotateMode.ROTATE_0;
+            }
+            mAliPlayer.setRotateMode(mRotateMode);
+        }
+    }
+
+    private int getRotateMode(){
+        int rotateMode = IPlayer.RotateMode.ROTATE_0.getValue();
+        if(mAliPlayer != null){
+            rotateMode =  mAliPlayer.getRotateMode().getValue();
+        }
+        return rotateMode;
+    }
+
+    private void setSpeed(double speed){
+        if(mAliPlayer != null){
+            mAliPlayer.setSpeed((float) speed);
+        }
+    }
+
+    private double getSpeed(){
+        double speed = 0;
+        if(mAliPlayer != null){
+            speed = mAliPlayer.getSpeed();
+        }
+        return speed;
+    }
+
+    private void setVideoBackgroundColor(int color){
+        if(mAliPlayer != null){
+            mAliPlayer.setVideoBackgroundColor(color);
+        }
+    }
+
+    private void setVolume(double volume){
+        if(mAliPlayer != null){
+            mAliPlayer.setVolume((float)volume);
+        }
+    }
+
+    private double getVolume(){
+        double volume = 1.0;
+        if(mAliPlayer != null){
+            volume = mAliPlayer.getVolume();
+        }
+        return volume;
     }
 }

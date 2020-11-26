@@ -38,11 +38,11 @@ class FlutterAliplayer {
   }
 
   Future<void> setLoop(bool isloop) async {
-    print("abc : setLoop $isLoop");
     return _channel.invokeMethod('setLoop', isloop);
   }
 
-  Future<bool> isAutoPlay() async {
+  Future<bool> isAutoPlay() {
+    print("abc : isAutoPlay");
     return _channel.invokeMethod('isAutoPlay');
   }
 
@@ -108,6 +108,14 @@ class FlutterAliplayer {
 
   Future<void> setRate(double mode) async {
     return _channel.invokeMethod('setRate', mode);
+  }
+
+  Future<void> setVideoBackgroundColor(var color) async {
+    return _channel.invokeMethod('setVideoBackgroundColor', color);
+  }
+
+  Future<void> setVolume(double volume) async {
+    return _channel.invokeMethod('setVolume', volume);
   }
 
   Future<String> getSDKVersion() async {

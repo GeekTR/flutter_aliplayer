@@ -23,21 +23,20 @@ class _OptionsFragmentState extends State<OptionsFragment> {
   int mMirrorGroupValue = 1;
   int mRotateGroupValue = FlutterAvpdef.AVP_ROTATE_0;
   double mSpeedGroupValue = 1;
+  double _volume = 100;
 
-  _loadInitData() async{
+  _loadInitData() async {
     mLoop = await widget.fAliplayer.isLoop();
     mAutoPlay = await widget.fAliplayer.isAutoPlay();
     mMute = await widget.fAliplayer.isMuted();
     mEnableHardwareDecoder = await widget.fAliplayer.enableHardwareDecoder();
-    setState(() {
-      
-    });
+    setState(() {});
   }
 
   @override
   void initState() {
     super.initState();
-    _loadInitData();
+    // _loadInitData();
   }
 
   @override
@@ -120,7 +119,8 @@ class _OptionsFragmentState extends State<OptionsFragment> {
                 setState(() {
                   mEnableHardwareDecoder = !mEnableHardwareDecoder;
                 });
-                widget.fAliplayer.setEnableHardwareDecoder(mEnableHardwareDecoder);
+                widget.fAliplayer
+                    .setEnableHardwareDecoder(mEnableHardwareDecoder);
               },
             ),
             Text("硬解"),
@@ -153,8 +153,14 @@ class _OptionsFragmentState extends State<OptionsFragment> {
         Text("音量"),
         Expanded(
           child: Slider(
-            value: 50,
-            max: 100,
+            value: _volume,
+            max: 200,
+            onChanged: (value) {
+              setState(() {
+                _volume = value;
+              });
+              widget.fAliplayer.setVolume(_volume / 100);
+            },
           ),
         ),
       ],
@@ -168,15 +174,18 @@ class _OptionsFragmentState extends State<OptionsFragment> {
       children: [
         Text('缩放模式'),
         Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal:8),
-                    child: AliyunSegment(titles: ['比例填充','比例全屏','拉伸全屏'],selIdx: 0,onSelectAtIdx: (value) {
-                      mScaleGroupValue = value;
-                      widget.fAliplayer.setScalingMode(mScaleGroupValue);
-                    },),
-                  ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8),
+            child: AliyunSegment(
+              titles: ['比例填充', '比例全屏', '拉伸全屏'],
+              selIdx: 0,
+              onSelectAtIdx: (value) {
+                mScaleGroupValue = value;
+                widget.fAliplayer.setScalingMode(mScaleGroupValue);
+              },
+            ),
+          ),
         ),
-
       ],
     );
   }
@@ -187,14 +196,18 @@ class _OptionsFragmentState extends State<OptionsFragment> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Text('镜像模式'),
-         Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal:8),
-                    child: AliyunSegment(titles: ['无镜像','水平镜像','垂直镜像'],selIdx: 0,onSelectAtIdx: (value) {
-                      mMirrorGroupValue = value;
-                      widget.fAliplayer.setMirrorMode(mMirrorGroupValue);
-                    },),
-                  ),
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8),
+            child: AliyunSegment(
+              titles: ['无镜像', '水平镜像', '垂直镜像'],
+              selIdx: 0,
+              onSelectAtIdx: (value) {
+                mMirrorGroupValue = value;
+                widget.fAliplayer.setMirrorMode(mMirrorGroupValue);
+              },
+            ),
+          ),
         ),
       ],
     );
@@ -204,56 +217,57 @@ class _OptionsFragmentState extends State<OptionsFragment> {
   Container _buildRotate() {
     double width = MediaQuery.of(context).size.width;
     return Container(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Text('旋转模式'),
-          Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal:8),
-                    child: AliyunSegment(titles: ['0°','90°','180°',"270°"],selIdx: 0,onSelectAtIdx: (value) {
-                      mRotateGroupValue = value*90;
-                      widget.fAliplayer.setRotateMode(mRotateGroupValue);
-                    },),
-                  ),
+      child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+        Text('旋转模式'),
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8),
+            child: AliyunSegment(
+              titles: ['0°', '90°', '180°', "270°"],
+              selIdx: 0,
+              onSelectAtIdx: (value) {
+                mRotateGroupValue = value * 90;
+                widget.fAliplayer.setRotateMode(mRotateGroupValue);
+              },
+            ),
+          ),
         ),
-        ]
-      ),  
+      ]),
     );
   }
 
   /// 倍速播放
   Row _buildSpeed() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        Text('倍速播放'),
-        Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal:8),
-                    child: AliyunSegment(titles: ['正常','0.5倍速','1.5倍速',"2.0倍速"],selIdx: 0,onSelectAtIdx: (value) {
-                      switch (value) {
-                        case 0:
-                          mSpeedGroupValue = 1.0;
-                          break;
-                          case 1:
-                          mSpeedGroupValue = 0.5;
-                          break;
-                          case 2:
-                          mSpeedGroupValue = 1.5;
-                          break;
-                          case 3:
-                          mSpeedGroupValue = 2.0;
-                          break;
-                        default:
-                      }
-                      widget.fAliplayer.setRate(mSpeedGroupValue);
-                    },),
-                  ),
+    return Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+      Text('倍速播放'),
+      Expanded(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8),
+          child: AliyunSegment(
+            titles: ['正常', '0.5倍速', '1.5倍速', "2.0倍速"],
+            selIdx: 0,
+            onSelectAtIdx: (value) {
+              switch (value) {
+                case 0:
+                  mSpeedGroupValue = 1.0;
+                  break;
+                case 1:
+                  mSpeedGroupValue = 0.5;
+                  break;
+                case 2:
+                  mSpeedGroupValue = 1.5;
+                  break;
+                case 3:
+                  mSpeedGroupValue = 2.0;
+                  break;
+                default:
+              }
+              widget.fAliplayer.setRate(mSpeedGroupValue);
+            },
+          ),
         ),
-      ]
-    );
-        
+      ),
+    ]);
   }
 
   /// 背景色
