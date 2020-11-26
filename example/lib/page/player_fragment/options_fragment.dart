@@ -36,7 +36,7 @@ class _OptionsFragmentState extends State<OptionsFragment> {
   @override
   void initState() {
     super.initState();
-    // _loadInitData();
+    _loadInitData();
   }
 
   @override
