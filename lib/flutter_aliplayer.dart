@@ -7,119 +7,118 @@ import 'package:flutter/services.dart';
 export 'flutter_avpdef.dart';
 
 class FlutterAliplayer {
-  MethodChannel _channel;
+  MethodChannel channel;
   FlutterAliplayer.init(int id) {
-    _channel = new MethodChannel('flutter_aliplayer');
+    channel = new MethodChannel('flutter_aliplayer');
   }
 
   Future<void> setUrl(String url) async {
     assert(url != null);
-    return _channel.invokeMethod('setUrl', url);
+    return channel.invokeMethod('setUrl', url);
   }
 
   Future<void> prepare() async {
-    return _channel.invokeMethod('prepare');
+    return channel.invokeMethod('prepare');
   }
 
   Future<void> play() async {
-    return _channel.invokeMethod('play');
+    return channel.invokeMethod('play');
   }
 
   Future<void> pause() async {
-    return _channel.invokeMethod('pause');
+    return channel.invokeMethod('pause');
   }
 
   Future<void> stop() async {
-    return _channel.invokeMethod('stop');
+    return channel.invokeMethod('stop');
   }
 
   Future<bool> isLoop() async {
-    return _channel.invokeMethod('isLoop');
+    return channel.invokeMethod('isLoop');
   }
 
   Future<void> setLoop(bool isloop) async {
-    return _channel.invokeMethod('setLoop', isloop);
+    return channel.invokeMethod('setLoop', isloop);
   }
 
-  Future<bool> isAutoPlay() {
-    print("abc : isAutoPlay");
-    return _channel.invokeMethod('isAutoPlay');
+  Future<bool> isAutoPlay() async {
+    return channel.invokeMethod('isAutoPlay');
   }
 
   Future<void> setAutoPlay(bool isAutoPlay) async {
-    return _channel.invokeMethod('setAutoPlay', isAutoPlay);
+    return channel.invokeMethod('setAutoPlay', isAutoPlay);
   }
 
   Future<bool> isMuted() async {
-    return _channel.invokeMethod('isMuted');
+    return channel.invokeMethod('isMuted');
   }
 
   Future<void> setMuted(bool isMuted) async {
-    return _channel.invokeMethod('setMuted', isMuted);
+    return channel.invokeMethod('setMuted', isMuted);
   }
 
   Future<bool> enableHardwareDecoder() async {
-    return _channel.invokeMethod('enableHardwareDecoder');
+    return channel.invokeMethod('enableHardwareDecoder');
   }
 
   Future<void> setEnableHardwareDecoder(bool isHardWare) async {
-    return _channel.invokeMethod('setEnableHardwareDecoder', isHardWare);
+    return channel.invokeMethod('setEnableHardwareDecoder', isHardWare);
   }
 
   Future<void> setVidSts(Map<String, String> stsInfo) async {
-    return _channel.invokeMethod("setVidSts", stsInfo);
+    return channel.invokeMethod("setVidSts", stsInfo);
   }
 
   Future<void> setVidAuth(Map<String, String> authInfo) async {
-    return _channel.invokeMethod("setVidAuth", authInfo);
+    return channel.invokeMethod("setVidAuth", authInfo);
   }
 
   Future<void> setVidMps(Map<String, String> mpsInfo) async {
-    return _channel.invokeMethod("setVidMps", mpsInfo);
+    return channel.invokeMethod("setVidMps", mpsInfo);
   }
 
   Future<int> getRotateMode() async {
-    return _channel.invokeMethod('getRotateMode');
+    return channel.invokeMethod('getRotateMode');
   }
 
   Future<void> setRotateMode(int mode) async {
-    return _channel.invokeMethod('setRotateMode', mode);
+    return channel.invokeMethod('setRotateMode', mode);
   }
 
   Future<int> getScalingMode() async {
-    return _channel.invokeMethod('getScalingMode');
+    return channel.invokeMethod('getScalingMode');
   }
 
   Future<void> setScalingMode(int mode) async {
-    return _channel.invokeMethod('setScalingMode', mode);
+    return channel.invokeMethod('setScalingMode', mode);
   }
 
   Future<int> getMirrorMode() async {
-    return _channel.invokeMethod('getMirrorMode');
+    return channel.invokeMethod('getMirrorMode');
   }
 
   Future<void> setMirrorMode(int mode) async {
-    return _channel.invokeMethod('setMirrorMode', mode);
+    return channel.invokeMethod('setMirrorMode', mode);
   }
 
   Future<double> getRate() async {
-    return _channel.invokeMethod('getRate');
+    return channel.invokeMethod('getRate');
   }
 
   Future<void> setRate(double mode) async {
-    return _channel.invokeMethod('setRate', mode);
+    return channel.invokeMethod('setRate', mode);
   }
 
   Future<void> setVideoBackgroundColor(var color) async {
-    return _channel.invokeMethod('setVideoBackgroundColor', color);
+    return channel.invokeMethod('setVideoBackgroundColor', color);
   }
 
   Future<void> setVolume(double volume) async {
-    return _channel.invokeMethod('setVolume', volume);
+    return channel.invokeMethod('setVolume', volume);
   }
 
   Future<String> getSDKVersion() async {
-    return _channel.invokeMethod("getSDKVersion");
+    return channel.invokeMethod("getSDKVersion");
   }
 }
 

@@ -1,68 +1,75 @@
 //
-//  FlutterAliPlayer.m
+//  VideoViewFactory.m
 //  flutter_aliplayer
 //
-//  Created by lileilei on 2020/9/24.
+//  Created by lileilei on 2020/10/9.
 //
-#import "FlutterAliPlayer.h"
-#import <AliyunPlayer/AliyunPlayer.h>
+#import "AliPlayerFactory.h"
+#import "FlutterAliPlayerView.h"
 
-@interface FlutterAliPlayer ()<AVPDelegate>
-
-@property(nonatomic,strong)AliPlayer *aliPlayer;
-
-@end
-
-@implementation FlutterAliPlayer{
-    UIView * _videoView;
-    int64_t _viewId;
+@implementation AliPlayerFactory {
+  NSObject<FlutterBinaryMessenger>* _messenger;
     FlutterMethodChannel* _channel;
+    FlutterMethodChannel* _listPlayerchannel;
+    UIView *playerView;
 }
 
-#pragma mark - life cycle
+- (instancetype)initWithMessenger:(NSObject<FlutterBinaryMessenger>*)messenger {
+  self = [super init];
+  if (self) {
+    _messenger = messenger;
+     _channel = [FlutterMethodChannel methodChannelWithName:@"flutter_aliplayer" binaryMessenger:messenger];
+     __weak __typeof__(self) weakSelf = self;
+     [_channel setMethodCallHandler:^(FlutterMethodCall* call, FlutterResult result) {
+         [weakSelf onMethodCall:call result:result atObj:weakSelf.aliPlayer];
+     }];
+     
+     _listPlayerchannel = [FlutterMethodChannel methodChannelWithName:@"flutter_alilistplayer" binaryMessenger:messenger];
+     [_listPlayerchannel setMethodCallHandler:^(FlutterMethodCall* call, FlutterResult result) {
+         [weakSelf onMethodCall:call result:result atObj:weakSelf.aliListPlayer];
+     }];
+  }
+  return self;
+}
 
-- (instancetype)initWithWithFrame:(CGRect)frame
-                   viewIdentifier:(int64_t)viewId
-                        arguments:(id _Nullable)args
-                  binaryMessenger:(NSObject<FlutterBinaryMessenger>*)messenger {
-    if ([super init]) {
-        _viewId = viewId;
-        _videoView = [UIView new];
-        NSDictionary *dic = args;
-        CGFloat x = [dic[@"x"] floatValue];
-        CGFloat y = [dic[@"y"] floatValue];
-        CGFloat width = [dic[@"width"] floatValue];
-        CGFloat height = [dic[@"height"] floatValue];
-        _videoView.frame = CGRectMake(x, y, width, height);
-        NSString* channelName = @"flutter_aliplayer";//[NSString stringWithFormat:@"flutter_aliplayer", viewId];
-        _channel = [FlutterMethodChannel methodChannelWithName:channelName binaryMessenger:messenger];
-        __weak __typeof__(self) weakSelf = self;
-        [_channel setMethodCallHandler:^(FlutterMethodCall* call, FlutterResult result) {
-            [weakSelf onMethodCall:call result:result];
-        }];
-        
+- (NSObject<FlutterMessageCodec>*)createArgsCodec {
+  return [FlutterStandardMessageCodec sharedInstance];
+}
+
+- (nonnull NSObject<FlutterPlatformView> *)createWithFrame:(CGRect)frame
+                                            viewIdentifier:(int64_t)viewId
+                                                 arguments:(id _Nullable)args {
+    FlutterAliPlayerView* player =
+      [[FlutterAliPlayerView alloc] initWithWithFrame:frame
+                                       viewIdentifier:viewId
+                                            arguments:args
+                                      binaryMessenger:_messenger];
+    playerView = player.view;
+    if (_aliPlayer) {
+        _aliPlayer.playerView = playerView;
     }
-    return self;
+    if (_aliListPlayer) {
+        _aliListPlayer.playerView = playerView;
+    }
+    return player;
 }
 
-- (nonnull UIView *)view {
-    return _videoView;
-}
-
-- (void)onMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
+- (void)onMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result atObj:(NSObject*)player{
     NSString* method = [call method];
     if ([method isEqualToString:@"setUrl"]) {
         [self setUrl:call result:result];
     } else if ([method isEqualToString:@"prepare"]) {
-        [self prepare:call result:result];
+//        [self prepare:call result:result];
+        [(AliPlayer*)player prepare];
     }else if ([method isEqualToString:@"play"]) {
-        [self play:call result:result];
+//        [self play:call result:result];
+        [(AliPlayer*)player start];
     }else if ([method isEqualToString:@"pause"]) {
-        [self pause:call result:result];
+        [(AliPlayer*)player pause];
     }else if ([method isEqualToString:@"stop"]) {
-        [self stop:call result:result];
+        [(AliPlayer*)player stop];
     }else if ([method isEqualToString:@"setLoop"]) {
-        [self setLoop:call result:result];
+        [self setLoop:call result:result atObj:(AliPlayer*)player];
     }else if ([method isEqualToString:@"isLoop"]) {
         [self isLoop:call result:result];
     }else if ([method isEqualToString:@"setMuted"]) {
@@ -70,7 +77,7 @@
     }else if ([method isEqualToString:@"isMuted"]) {
         [self isMuted:call result:result];
     }else if ([method isEqualToString:@"setAutoPlay"]) {
-        [self setAutoPlay:call result:result];
+        [self setAutoPlay:call result:result atObj:(AliPlayer*)player];
     }else if ([method isEqualToString:@"isAutoPlay"]) {
         [self isAutoPlay:call result:result];
     }else if ([method isEqualToString:@"enableHardwareDecoder"]) {
@@ -95,6 +102,14 @@
         [self setRate:call result:result];
     }else if ([method isEqualToString:@"setVidSts"]) {
         [self setVidSts:call result:result];
+    }else if ([method isEqualToString:@"addVidSource"]) {
+        [self addVidSource:call result:result];
+    }else if ([method isEqualToString:@"addUrlSource"]) {
+        [self addUrlSource:call result:result];
+    }else if ([method isEqualToString:@"moveTo"]) {
+        [self moveTo:call result:result];
+    }else if ([method isEqualToString:@"moveToNext"]) {
+        [self moveToNext:call result:result];
     }else {
         result(FlutterMethodNotImplemented);
     }
@@ -131,18 +146,18 @@
     result(@([self.aliPlayer isLoop]));
 }
 
-- (void)setLoop:(FlutterMethodCall*)call result:(FlutterResult)result {
+- (void)setLoop:(FlutterMethodCall*)call result:(FlutterResult)result atObj:(AliPlayer*)player{
     NSNumber* isLoop = [call arguments];
-    [self.aliPlayer setLoop:isLoop.boolValue];
+    [player setLoop:isLoop.boolValue];
 }
 
 - (void)isAutoPlay:(FlutterMethodCall*)call result:(FlutterResult)result {
     result(@([self.aliPlayer isAutoPlay]));
 }
 
-- (void)setAutoPlay:(FlutterMethodCall*)call result:(FlutterResult)result {
+- (void)setAutoPlay:(FlutterMethodCall*)call result:(FlutterResult)result atObj:(AliPlayer*)player{
     NSNumber* val = [call arguments];
-    [self.aliPlayer setAutoPlay:val.boolValue];
+    [player setAutoPlay:val.boolValue];
 }
 
 - (void)isMuted:(FlutterMethodCall*)call result:(FlutterResult)result {
@@ -210,6 +225,27 @@
     [self.aliPlayer setStsSource:source];
 }
 
+- (void)addVidSource:(FlutterMethodCall*)call result:(FlutterResult)result {
+    NSDictionary *dic = [call arguments];
+    NSLog(@"addVidSource==vid:%@,uid,%@",dic[@"vid"],dic[@"uid"]);
+    [self.aliListPlayer addVidSource:dic[@"vid"] uid:dic[@"uid"]];
+}
+
+- (void)addUrlSource:(FlutterMethodCall*)call result:(FlutterResult)result {
+    NSDictionary *dic = [call arguments];
+    [self.aliListPlayer addUrlSource:dic[@"url"] uid:dic[@"uid"]];
+}
+
+- (void)moveTo:(FlutterMethodCall*)call result:(FlutterResult)result {
+    NSDictionary *dic = [call arguments];
+    [self.aliListPlayer moveTo:dic[@"uid"] accId:dic[@"accId"] accKey:dic[@"accKey"] token:dic[@"token"] region:dic[@"region"]];
+}
+
+- (void)moveToNext:(FlutterMethodCall*)call result:(FlutterResult)result {
+    NSDictionary *dic = [call arguments];
+    [self.aliListPlayer moveToNext:dic[@"accId"] accKey:dic[@"accKey"] token:dic[@"token"] region:dic[@"region"]];
+}
+
 #pragma --mark getters
 - (AliPlayer *)aliPlayer{
     if (!_aliPlayer) {
@@ -217,9 +253,22 @@
         _aliPlayer.scalingMode =  AVP_SCALINGMODE_SCALEASPECTFIT;
         _aliPlayer.rate = 1;
         _aliPlayer.delegate = self;
-        _aliPlayer.playerView = _videoView;
+        _aliPlayer.playerView = playerView;
     }
     return _aliPlayer;
 }
 
+- (AliListPlayer*) aliListPlayer{
+    if(!_aliListPlayer){
+        _aliListPlayer = [[AliListPlayer alloc] init];
+       _aliListPlayer.scalingMode =  AVP_SCALINGMODE_SCALEASPECTFIT;
+       _aliListPlayer.rate = 1;
+       _aliListPlayer.delegate = self;
+       _aliListPlayer.playerView = playerView;
+       _aliListPlayer.stsPreloadDefinition = @"FD";
+}
+    return _aliListPlayer;
+}
+
 @end
+

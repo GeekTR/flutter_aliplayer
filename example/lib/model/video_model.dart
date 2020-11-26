@@ -26,6 +26,7 @@ class VideoListModel {
 
 class VideoModel {
   String videoId;
+  String uuid;
   String title;
   String tags;
   String status;
@@ -44,6 +45,7 @@ class VideoModel {
 
   VideoModel(
       {this.videoId,
+      this.uuid,
       this.title,
       this.tags,
       this.status,
@@ -62,6 +64,7 @@ class VideoModel {
 
   VideoModel.fromJson(Map<String, dynamic> json) {
     videoId = json['videoId'];
+    uuid = json['uuid'];
     title = json['title'];
     tags = json['tags'];
     status = json['status'];
@@ -82,6 +85,7 @@ class VideoModel {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['videoId'] = this.videoId;
+    data['uuid'] = this.uuid;
     data['title'] = this.title;
     data['tags'] = this.tags;
     data['status'] = this.status;

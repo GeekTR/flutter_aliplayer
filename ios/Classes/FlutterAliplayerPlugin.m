@@ -1,5 +1,5 @@
 #import "FlutterAliplayerPlugin.h"
-#import "VideoViewFactory.h"
+#import "AliPlayerFactory.h"
 
 @implementation FlutterAliplayerPlugin
 //+ (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
@@ -11,8 +11,8 @@
 //}
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-  VideoViewFactory* factory =
-      [[VideoViewFactory alloc] initWithMessenger:registrar.messenger];
+  AliPlayerFactory* factory =
+      [[AliPlayerFactory alloc] initWithMessenger:registrar.messenger];
   [registrar registerViewFactory:factory withId:@"plugins.flutter_aliplayer"];
 }
 
