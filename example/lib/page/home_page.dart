@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_aliplayer_example/config.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_aliplayer_example/page/auth_page.dart';
 import 'package:flutter_aliplayer_example/page/download_page.dart';
 import 'package:flutter_aliplayer_example/page/mps_page.dart';
@@ -30,6 +31,8 @@ class _MyAppState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    SystemChrome.setPreferredOrientations(
+        [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     DBUtils.openDB();
   }
 
@@ -69,10 +72,12 @@ class _MyAppState extends State<HomePage> {
                 case 4:
                   break;
                 case 5:
-                  CommomUtils.pushPage(context, VideoGridPage(playMode: ModeType.STS));
+                  CommomUtils.pushPage(
+                      context, VideoGridPage(playMode: ModeType.STS));
                   break;
                 case 6:
-                  CommomUtils.pushPage(context, VideoGridPage(playMode: ModeType.URL));
+                  CommomUtils.pushPage(
+                      context, VideoGridPage(playMode: ModeType.URL));
                   break;
                 case 7:
                   CommomUtils.pushPage(context, DownloadPage());

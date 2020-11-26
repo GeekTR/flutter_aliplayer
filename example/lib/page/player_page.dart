@@ -19,27 +19,79 @@ class PlayerPage extends StatefulWidget {
   _PlayerPageState createState() => _PlayerPageState();
 }
 
-class _PlayerPageState extends State<PlayerPage> {
+class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   FlutterAliplayer fAliplayer;
   int bottomIndex;
   List<Widget> mFramePage;
   ModeType _playMode;
   Map<String, dynamic> _dataSourceMap;
+  bool _mEnablePlayBack = false;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     bottomIndex = 0;
     _playMode = widget.playMode;
     _dataSourceMap = widget.dataSourceMap;
 
     fAliplayer = FlutterAliplayer.init(0);
+    OptionsFragment mOptionsFragment = OptionsFragment(fAliplayer);
     mFramePage = [
-      OptionsFragment(fAliplayer),
+      mOptionsFragment,
       PlayConfigFragment(fAliplayer),
       CacheConfigFragment(fAliplayer),
       TrackFragment(),
     ];
+
+    mOptionsFragment.setOnEnablePlayBackChanged((mEnablePlayBack) {
+      this._mEnablePlayBack = mEnablePlayBack;
+    });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    switch (state) {
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.resumed:
+        fAliplayer.play();
+        break;
+      case AppLifecycleState.paused:
+        if (!_mEnablePlayBack) {
+          fAliplayer.pause();
+        }
+        break;
+      case AppLifecycleState.detached:
+        break;
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    print("abc : didChangeDependencies");
+  }
+
+  @override
+  void didUpdateWidget(PlayerPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    print("abc : didUpateWidget");
+  }
+
+  @override
+  void deactivate() {
+    super.deactivate();
+    print("abc : deactivate");
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    fAliplayer.stop();
+    fAliplayer.release();
+    WidgetsBinding.instance.removeObserver(this);
   }
 
   @override

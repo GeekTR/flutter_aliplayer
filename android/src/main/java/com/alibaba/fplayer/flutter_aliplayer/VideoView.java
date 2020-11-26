@@ -147,6 +147,9 @@ public class VideoView implements PlatformView, MethodChannel.MethodCallHandler 
             case "stop":
                 stop();
                 break;
+            case "release":
+                release();
+                break;
             case "setLoop":
                 setLoop((Boolean)methodCall.arguments);
                 break;
@@ -283,6 +286,12 @@ public class VideoView implements PlatformView, MethodChannel.MethodCallHandler 
     private void stop(){
         if(mAliPlayer != null){
             mAliPlayer.stop();
+        }
+    }
+
+    private void release(){
+        if(mAliPlayer != null){
+            mAliPlayer.release();
         }
     }
 

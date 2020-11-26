@@ -4,9 +4,16 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_aliplayer/flutter_aliplayer.dart';
 import 'package:flutter_aliplayer_example/widget/aliyun_segment.dart';
 
+typedef OnEnablePlayBackChanged = Function(bool mEnablePlayBack);
+
 class OptionsFragment extends StatefulWidget {
   final FlutterAliplayer fAliplayer;
+  Function playBackChanged;
   OptionsFragment(this.fAliplayer);
+
+  void setOnEnablePlayBackChanged(OnEnablePlayBackChanged enable) {
+    this.playBackChanged = enable;
+  }
 
   @override
   _OptionsFragmentState createState() => _OptionsFragmentState();
@@ -314,6 +321,9 @@ class _OptionsFragmentState extends State<OptionsFragment> {
             CupertinoSwitch(
               value: mEnablePlayBack,
               onChanged: (value) {
+                if (widget.playBackChanged != null) {
+                  widget.playBackChanged(value);
+                }
                 setState(() {
                   mEnablePlayBack = value;
                 });
