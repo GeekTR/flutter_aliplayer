@@ -37,7 +37,7 @@ class _PlayerPageState extends State<PlayerPage> {
     mFramePage = [
       OptionsFragment(fAliplayer),
       PlayConfigFragment(fAliplayer),
-      CacheConfigFragment(),
+      CacheConfigFragment(fAliplayer),
       TrackFragment(),
     ];
   }

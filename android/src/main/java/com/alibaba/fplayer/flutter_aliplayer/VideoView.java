@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import com.aliyun.player.AliPlayer;
 import com.aliyun.player.AliPlayerFactory;
 import com.aliyun.player.IPlayer;
+import com.aliyun.player.nativeclass.CacheConfig;
 import com.aliyun.player.nativeclass.PlayerConfig;
 import com.aliyun.player.source.UrlSource;
 import com.aliyun.player.source.VidAuth;
@@ -22,17 +23,14 @@ import com.aliyun.player.source.VidSts;
 import com.aliyun.player.source.VidMps;
 import com.aliyun.player.VidPlayerConfigGen;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.util.Map;
-import java.util.Set;
 
 public class VideoView implements PlatformView, MethodChannel.MethodCallHandler {
 
     private MethodChannel methodChannel;
     private AliPlayer mAliPlayer;
     private TextureView mTextureView;
-    private String mUrl;
     private final Gson mGson;
 
     VideoView(Context context, int viewId, Object args, FlutterPlugin.FlutterPluginBinding flutterPluginBinding) {
@@ -88,8 +86,8 @@ public class VideoView implements PlatformView, MethodChannel.MethodCallHandler 
     public void onMethodCall(MethodCall methodCall, MethodChannel.Result result) {
         switch (methodCall.method) {
             case "setUrl":
-                mUrl = methodCall.arguments.toString();
-                setDataSource(mUrl);
+                String url = methodCall.arguments.toString();
+                setDataSource(url);
                 break;
             case "setVidSts":
                 Map<String,String> stsMap = (Map<String,String>)methodCall.arguments;
@@ -214,6 +212,18 @@ public class VideoView implements PlatformView, MethodChannel.MethodCallHandler 
                 Map<String,Object> configMap = mGson.fromJson(json,Map.class);
                 result.success(configMap);
                 break;
+            case "getCacheConfig":
+                CacheConfig cacheConfig = getCacheConfig();
+                String cacheConfigJson = mGson.toJson(cacheConfig);
+                Map<String,Object> cacheConfigMap = mGson.fromJson(cacheConfigJson,Map.class);
+                result.success(cacheConfigMap);
+                break;
+            case "setCacheConfig":
+                Map<String,Object> setCacheConnfigMap = (Map<String, Object>) methodCall.arguments;
+                String setCacheConfigJson = mGson.toJson(setCacheConnfigMap);
+                CacheConfig setCacheConfig = mGson.fromJson(setCacheConfigJson,CacheConfig.class);
+                setCacheConfig(setCacheConfig);
+                break;
             case "getSDKVersion":
                 result.success(getSDKVersion());
                 break;
@@ -229,7 +239,7 @@ public class VideoView implements PlatformView, MethodChannel.MethodCallHandler 
     private void setDataSource(String url){
         if(mAliPlayer != null){
             UrlSource urlSource = new UrlSource();
-            urlSource.setUri(mUrl);
+            urlSource.setUri(url);
             mAliPlayer.setDataSource(urlSource);
         }
     }
@@ -411,5 +421,15 @@ public class VideoView implements PlatformView, MethodChannel.MethodCallHandler 
             return mAliPlayer.getConfig();
         }
         return null;
+    }
+
+    private CacheConfig getCacheConfig(){
+        return new CacheConfig();
+    }
+
+    private void setCacheConfig(CacheConfig cacheConfig){
+        if(mAliPlayer != null){
+            mAliPlayer.setCacheConfig(cacheConfig);
+        }
     }
 }

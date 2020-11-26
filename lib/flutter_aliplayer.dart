@@ -118,11 +118,19 @@ class FlutterAliplayer {
   }
 
   Future<dynamic> getConfig() async {
-    return _channel.invokeMethod("getConfig");
+    return channel.invokeMethod("getConfig");
   }
 
   Future<void> setConfig(Map map) async {
-    return _channel.invokeMethod("setConfig", map);
+    return channel.invokeMethod("setConfig", map);
+  }
+
+  Future<dynamic> getCacheConfig() async {
+    return channel.invokeMethod("getCacheConfig");
+  }
+
+  Future<void> setCacheConfig(Map map) async {
+    return channel.invokeMethod("setCacheConfig", map);
   }
 
   Future<String> getSDKVersion() async {
