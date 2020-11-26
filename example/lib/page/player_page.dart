@@ -36,7 +36,7 @@ class _PlayerPageState extends State<PlayerPage> {
     fAliplayer = FlutterAliplayer.init(0);
     mFramePage = [
       OptionsFragment(fAliplayer),
-      PlayConfigFragment(),
+      PlayConfigFragment(fAliplayer),
       CacheConfigFragment(),
       TrackFragment(),
     ];

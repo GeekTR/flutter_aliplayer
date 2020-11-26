@@ -1,15 +1,78 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_aliplayer/flutter_aliplayer.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class PlayConfigFragment extends StatefulWidget {
+  final FlutterAliplayer fAliplayer;
+  PlayConfigFragment(this.fAliplayer);
+
   @override
   _PlayConfigFragmentState createState() => _PlayConfigFragmentState();
 }
 
 class _PlayConfigFragmentState extends State<PlayConfigFragment> {
+  TextEditingController _mStartBufferDurationController;
+  TextEditingController _mHighBufferDurationController;
+  TextEditingController _mMaxBufferDurationController;
+  TextEditingController _mMaxDelayTimeController;
+  TextEditingController _mNetworkTimeoutController;
+  TextEditingController _mNetworkRetryCountController;
+  TextEditingController _mMaxProbeSizeController;
+  TextEditingController _mReferrerController;
+  TextEditingController _mHttpProxyController;
+
   bool mShowFrameWhenStop = true;
   bool mEnableSEI = true;
+  dynamic _configMap;
+
+  @override
+  void initState() {
+    super.initState();
+    _getPlayerConfig();
+  }
+
+  _getPlayerConfig() async {
+    _configMap = await widget.fAliplayer.getConfig();
+    _mStartBufferDurationController =
+        TextEditingController.fromValue(TextEditingValue(
+      text: _configMap['mStartBufferDuration'].toString(),
+    ));
+    _mHighBufferDurationController =
+        TextEditingController.fromValue(TextEditingValue(
+      text: _configMap['mHighBufferDuration'].toString(),
+    ));
+    _mMaxBufferDurationController =
+        TextEditingController.fromValue(TextEditingValue(
+      text: _configMap['mMaxBufferDuration'].toString(),
+    ));
+    _mMaxDelayTimeController = TextEditingController.fromValue(TextEditingValue(
+      text: _configMap['mMaxDelayTime'].toString(),
+    ));
+    _mNetworkTimeoutController =
+        TextEditingController.fromValue(TextEditingValue(
+      text: _configMap['mNetworkTimeout'].toString(),
+    ));
+    _mNetworkRetryCountController =
+        TextEditingController.fromValue(TextEditingValue(
+      text: _configMap['mNetworkRetryCount'].toString(),
+    ));
+    _mMaxProbeSizeController = TextEditingController.fromValue(TextEditingValue(
+      text: _configMap['mMaxProbeSize'].toString(),
+    ));
+    _mReferrerController = TextEditingController.fromValue(TextEditingValue(
+      text: _configMap['mReferrer'],
+    ));
+    _mHttpProxyController = TextEditingController.fromValue(TextEditingValue(
+      text: _configMap['mHttpProxy'],
+    ));
+    mEnableSEI = _configMap['mEnableSEI'];
+    mShowFrameWhenStop = _configMap['mClearFrameWhenStop'];
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +86,7 @@ class _PlayConfigFragmentState extends State<PlayConfigFragment> {
               children: [
                 TextField(
                   maxLines: 1,
+                  controller: _mStartBufferDurationController,
                   decoration: InputDecoration(
                     labelText: "起播缓冲区",
                   ),
@@ -30,6 +94,7 @@ class _PlayConfigFragmentState extends State<PlayConfigFragment> {
                 ),
                 TextField(
                   maxLines: 1,
+                  controller: _mHighBufferDurationController,
                   decoration: InputDecoration(
                     labelText: "卡顿恢复",
                   ),
@@ -37,6 +102,7 @@ class _PlayConfigFragmentState extends State<PlayConfigFragment> {
                 ),
                 TextField(
                   maxLines: 1,
+                  controller: _mMaxBufferDurationController,
                   decoration: InputDecoration(
                     labelText: "最大缓冲区",
                   ),
@@ -44,6 +110,7 @@ class _PlayConfigFragmentState extends State<PlayConfigFragment> {
                 ),
                 TextField(
                   maxLines: 1,
+                  controller: _mMaxDelayTimeController,
                   decoration: InputDecoration(
                     labelText: "直播最大延时",
                   ),
@@ -51,6 +118,7 @@ class _PlayConfigFragmentState extends State<PlayConfigFragment> {
                 ),
                 TextField(
                   maxLines: 1,
+                  controller: _mNetworkTimeoutController,
                   decoration: InputDecoration(
                     labelText: "网络超时",
                   ),
@@ -58,6 +126,7 @@ class _PlayConfigFragmentState extends State<PlayConfigFragment> {
                 ),
                 TextField(
                   maxLines: 1,
+                  controller: _mNetworkRetryCountController,
                   decoration: InputDecoration(
                     labelText: "网络重试次数",
                   ),
@@ -65,6 +134,7 @@ class _PlayConfigFragmentState extends State<PlayConfigFragment> {
                 ),
                 TextField(
                   maxLines: 1,
+                  controller: _mMaxProbeSizeController,
                   decoration: InputDecoration(
                     labelText: "probe大小",
                   ),
@@ -72,12 +142,14 @@ class _PlayConfigFragmentState extends State<PlayConfigFragment> {
                 ),
                 TextField(
                   maxLines: 1,
+                  controller: _mReferrerController,
                   decoration: InputDecoration(
                     labelText: "referer",
                   ),
                 ),
                 TextField(
                   maxLines: 1,
+                  controller: _mHttpProxyController,
                   decoration: InputDecoration(
                     labelText: "httpProxy",
                   ),
@@ -119,6 +191,27 @@ class _PlayConfigFragmentState extends State<PlayConfigFragment> {
                         "应用配置",
                         style: TextStyle(color: Colors.blue),
                       ),
+                      onTap: () {
+                        var configMap = {
+                          'mStartBufferDuration':
+                              _mStartBufferDurationController.text,
+                          'mHighBufferDuratio':
+                              _mHighBufferDurationController.text,
+                          'mMaxBufferDuration':
+                              _mMaxBufferDurationController.text,
+                          'mMaxDelayTime': _mMaxDelayTimeController.text,
+                          'mNetworkTimeout': _mNetworkTimeoutController.text,
+                          'mNetworkRetryCount':
+                              _mNetworkRetryCountController.text,
+                          'mMaxProbeSize': _mMaxProbeSizeController.text,
+                          'mReferrer': _mReferrerController.text,
+                          'mHttpProxy': _mHttpProxyController.text,
+                          'mEnableSEI': mEnableSEI,
+                          'mClearFrameWhenStop': mShowFrameWhenStop,
+                        };
+                        widget.fAliplayer.setConfig(configMap);
+                        Fluttertoast.showToast(msg: "应用配置成功");
+                      },
                     ),
                   ],
                 ),

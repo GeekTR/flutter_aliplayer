@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import com.aliyun.player.AliPlayer;
 import com.aliyun.player.AliPlayerFactory;
 import com.aliyun.player.IPlayer;
+import com.aliyun.player.nativeclass.PlayerConfig;
 import com.aliyun.player.source.UrlSource;
 import com.aliyun.player.source.VidAuth;
 
@@ -20,7 +21,11 @@ import io.flutter.plugin.platform.PlatformView;
 import com.aliyun.player.source.VidSts;
 import com.aliyun.player.source.VidMps;
 import com.aliyun.player.VidPlayerConfigGen;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import java.util.Map;
+import java.util.Set;
 
 public class VideoView implements PlatformView, MethodChannel.MethodCallHandler {
 
@@ -28,11 +33,13 @@ public class VideoView implements PlatformView, MethodChannel.MethodCallHandler 
     private AliPlayer mAliPlayer;
     private TextureView mTextureView;
     private String mUrl;
+    private final Gson mGson;
 
     VideoView(Context context, int viewId, Object args, FlutterPlugin.FlutterPluginBinding flutterPluginBinding) {
         mAliPlayer = AliPlayerFactory.createAliPlayer(context);
         this.methodChannel = new MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(),"flutter_aliplayer");
         this.methodChannel.setMethodCallHandler(this);
+        mGson = new Gson();
         initRenderView(context);
     }
 
@@ -189,6 +196,23 @@ public class VideoView implements PlatformView, MethodChannel.MethodCallHandler 
                 break;
             case "getVolume":
                 result.success(getVolume());
+                break;
+            case "setConfig":
+            {
+                Map<String,Object> setConfigMap = (Map<String, Object>) methodCall.arguments;
+                PlayerConfig config = getConfig();
+                if(config != null){
+                    String configJson = mGson.toJson(setConfigMap);
+                    config = mGson.fromJson(configJson,PlayerConfig.class);
+                    setConfig(config);
+                }
+            }
+                break;
+            case "getConfig":
+                PlayerConfig config = getConfig();
+                String json = mGson.toJson(config);
+                Map<String,Object> configMap = mGson.fromJson(json,Map.class);
+                result.success(configMap);
                 break;
             case "getSDKVersion":
                 result.success(getSDKVersion());
@@ -374,5 +398,18 @@ public class VideoView implements PlatformView, MethodChannel.MethodCallHandler 
             volume = mAliPlayer.getVolume();
         }
         return volume;
+    }
+
+    private void setConfig(PlayerConfig playerConfig){
+        if(mAliPlayer != null){
+            mAliPlayer.setConfig(playerConfig);
+        }
+    }
+
+    private PlayerConfig getConfig(){
+        if(mAliPlayer != null){
+            return mAliPlayer.getConfig();
+        }
+        return null;
     }
 }
