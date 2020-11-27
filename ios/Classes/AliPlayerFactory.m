@@ -6,6 +6,7 @@
 //
 #import "AliPlayerFactory.h"
 #import "FlutterAliPlayerView.h"
+#import "NSDictionary+ext.h"
 
 @implementation AliPlayerFactory {
     NSObject<FlutterBinaryMessenger>* _messenger;
@@ -221,6 +222,35 @@
     [player setStsSource:source];
 }
 
+- (void)setVidAuth:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    AliPlayer *player = arr[2];
+    AVPVidAuthSource *source = [[AVPVidAuthSource alloc] init];
+    NSDictionary *dic = call.arguments;
+    [dic enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop){
+        if([obj length]>0){
+            [source setValue:obj forKey:(NSString *)key];
+        }
+    }];
+    [player setAuthSource:source];
+}
+
+- (void)setVidMps:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    AliPlayer *player = arr[2];
+    AVPVidMpsSource *source = [[AVPVidMpsSource alloc] init];
+    NSDictionary *dic = [call.arguments removeNull];
+    [source setVid:dic[@"vid"]];
+    [source setAccId:dic[@"accessKeyId"]];
+    [source setRegion:dic[@"region"]];
+    [source setStsToken:dic[@"securityToken"]];
+    [source setAccSecret:dic[@"accessKeySecret"]];
+    [source setPlayDomain:dic[@"playDomain"]];
+    [source setAuthInfo:dic[@"authInfo"]];
+    [source setMtsHlsUriToken:dic[@"hlsUriToken"]];
+    [player setMpsSource:source];
+}
+
 - (void)addVidSource:(NSArray*)arr {
     FlutterMethodCall* call = arr.firstObject;
     AliListPlayer *player = arr[2];
@@ -238,14 +268,20 @@
 - (void)moveTo:(NSArray*)arr {
     FlutterMethodCall* call = arr.firstObject;
     AliListPlayer *player = arr[2];
-    NSDictionary *dic = [call arguments];
-    [player moveTo:dic[@"uid"] accId:dic[@"accId"] accKey:dic[@"accKey"] token:dic[@"token"] region:dic[@"region"]];
+    NSDictionary *dic = [[call arguments] removeNull];
+    
+    NSString *aacId = [dic getStrByKey:@"accId"];
+    if (aacId.length>0) {
+        [player moveTo:dic[@"uid"] accId:dic[@"accId"] accKey:dic[@"accKey"] token:dic[@"token"] region:dic[@"region"]];
+    }else{
+        [player moveTo:dic[@"uid"]];
+    }
 }
 
 - (void)moveToNext:(NSArray*)arr {
     FlutterMethodCall* call = arr.firstObject;
     AliListPlayer *player = arr[2];
-    NSDictionary *dic = [call arguments];
+    NSDictionary *dic = [[call arguments] removeNull];
     [player moveToNext:dic[@"accId"] accKey:dic[@"accKey"] token:dic[@"token"] region:dic[@"region"]];
 }
 
