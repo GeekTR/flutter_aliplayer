@@ -95,6 +95,16 @@
     [player stop];
 }
 
+- (void)destroy:(NSArray*)arr {
+    AliPlayer *player = arr[2];
+    [player destroy];
+    if([player isKindOfClass:AliListPlayer.class]){
+        self.aliListPlayer = nil;
+    }else{
+        self.aliPlayer = nil;
+    }
+}
+
 - (void)isLoop:(NSArray*)arr {
     FlutterResult result = arr[1];
     AliPlayer *player = arr[2];

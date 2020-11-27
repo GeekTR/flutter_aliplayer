@@ -33,6 +33,10 @@ class FlutterAliplayer {
     return channel.invokeMethod('stop');
   }
 
+  Future<void> destroy() async {
+    return channel.invokeMethod('destroy');
+  }
+
   Future<bool> isLoop() async {
     return channel.invokeMethod('isLoop');
   }

@@ -12,8 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface AliPlayerFactory : NSObject<FlutterPlatformViewFactory,AVPDelegate>
 
-@property(nonatomic,strong)AliPlayer *aliPlayer;
-@property(nonatomic,strong)AliListPlayer *aliListPlayer;
+@property(nonatomic,strong,nullable)AliPlayer *aliPlayer;
+@property(nonatomic,strong,nullable)AliListPlayer *aliListPlayer;
 
 - (instancetype)initWithMessenger:(NSObject<FlutterBinaryMessenger>*)messenger;
 

@@ -37,6 +37,13 @@ class _VideoGridPageState extends State<VideoGridPage> {
     fAliListPlayer.setLoop(true);
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    this.fAliListPlayer.stop();
+    this.fAliListPlayer.destroy();
+  }
+
   _onRefresh() async {
     _page = 1;
     _dataList = [];
@@ -184,12 +191,14 @@ class _VideoGridPageState extends State<VideoGridPage> {
                       onTap: () {
                         _exitScreenMode();
                       },
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Icon(
-                          Icons.arrow_back_ios,
-                          size: 24,
-                          color: Colors.white,
+                      child: SafeArea(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Icon(
+                            Icons.arrow_back_ios,
+                            size: 24,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     )
