@@ -22,7 +22,7 @@ import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 
-public class AliyunDownload implements FlutterPlugin,MethodChannel.MethodCallHandler, EventChannel.StreamHandler {
+public class FlutterAliDownloader implements FlutterPlugin,MethodChannel.MethodCallHandler, EventChannel.StreamHandler {
 
     private static final String SEPARA_SYMBOLS = "_";
     private MethodChannel mMethodChannel;
@@ -32,7 +32,7 @@ public class AliyunDownload implements FlutterPlugin,MethodChannel.MethodCallHan
     private String mSavePath;
     private Map<String,AliMediaDownloader> mAliMediaDownloadMap = new HashMap<>();
 
-    public AliyunDownload(Context context, FlutterPlugin.FlutterPluginBinding flutterPluginBinding){
+    public FlutterAliDownloader(Context context, FlutterPlugin.FlutterPluginBinding flutterPluginBinding){
         this.mContext = context;
         this.mMethodChannel = new MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(),"plugins.flutter_alidownload");
         this.mEventChannel = new EventChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(),"plugins.flutter_alidownload_event");

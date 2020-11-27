@@ -2,88 +2,109 @@ package com.alibaba.fplayer.flutter_aliplayer;
 
 import android.content.Context;
 import android.graphics.SurfaceTexture;
+import android.text.TextUtils;
 import android.view.Surface;
 import android.view.TextureView;
-import android.view.View;
-import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+
+import com.aliyun.player.AliListPlayer;
 import com.aliyun.player.AliPlayer;
 import com.aliyun.player.AliPlayerFactory;
 import com.aliyun.player.IPlayer;
+import com.aliyun.player.VidPlayerConfigGen;
 import com.aliyun.player.nativeclass.CacheConfig;
 import com.aliyun.player.nativeclass.PlayerConfig;
+import com.aliyun.player.source.StsInfo;
 import com.aliyun.player.source.UrlSource;
 import com.aliyun.player.source.VidAuth;
-
-import io.flutter.embedding.engine.plugins.FlutterPlugin;
-import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugin.platform.PlatformView;
-import com.aliyun.player.source.VidSts;
 import com.aliyun.player.source.VidMps;
-import com.aliyun.player.VidPlayerConfigGen;
+import com.aliyun.player.source.VidSts;
 import com.google.gson.Gson;
 
 import java.util.Map;
 
-public class VideoView implements PlatformView, MethodChannel.MethodCallHandler {
+import io.flutter.embedding.engine.plugins.FlutterPlugin;
+import io.flutter.plugin.common.MethodCall;
+import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugin.common.StandardMessageCodec;
+import io.flutter.plugin.platform.PlatformView;
+import io.flutter.plugin.platform.PlatformViewFactory;
 
-    private MethodChannel methodChannel;
-    private AliPlayer mAliPlayer;
-    private TextureView mTextureView;
+public class FluttreAliPlayerFactory extends PlatformViewFactory {
+
+    private FlutterPlugin.FlutterPluginBinding mFlutterPluginBinding;
+
     private final Gson mGson;
+    private IPlayer mIPlayer;
 
-    VideoView(Context context, int viewId, Object args, FlutterPlugin.FlutterPluginBinding flutterPluginBinding) {
-        mAliPlayer = AliPlayerFactory.createAliPlayer(context);
-        this.methodChannel = new MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(),"flutter_aliplayer");
-        this.methodChannel.setMethodCallHandler(this);
-        mGson = new Gson();
-        initRenderView(context);
-    }
-
-    private void initRenderView(Context context){
-        mTextureView = new TextureView(context);
-        mTextureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
+    public FluttreAliPlayerFactory(FlutterPlugin.FlutterPluginBinding flutterPluginBinding) {
+        super(StandardMessageCodec.INSTANCE);
+        final AliPlayer mAliPlayer = AliPlayerFactory.createAliPlayer(flutterPluginBinding.getApplicationContext());
+        final AliListPlayer mAliListPlayer = AliPlayerFactory.createAliListPlayer(flutterPluginBinding.getApplicationContext());
+        final MethodChannel mAliPlayerMethodChannel = new MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(),"flutter_aliplayer");
+        mAliPlayerMethodChannel.setMethodCallHandler(new MethodChannel.MethodCallHandler() {
             @Override
-            public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-               Surface mSurface = new Surface(surface);
-               if(mAliPlayer != null){
-                   mAliPlayer.setSurface(mSurface);
-               }
-            }
-
-            @Override
-            public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-                if(mAliPlayer != null){
-                    mAliPlayer.surfaceChanged();
-                }
-            }
-
-            @Override
-            public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-                if(mAliPlayer != null){
-                    mAliPlayer.setSurface(null);
-                }
-                return false;
-            }
-
-            @Override
-            public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-
+            public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
+                FluttreAliPlayerFactory.this.onMethodCall(call,result,mAliPlayer);
             }
         });
+
+        MethodChannel mAliListPlayerMethodChannel = new MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(),"flutter_alilistplayer");
+        mAliListPlayerMethodChannel.setMethodCallHandler(new MethodChannel.MethodCallHandler() {
+            @Override
+            public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
+                FluttreAliPlayerFactory.this.onMethodCall(call,result,mAliListPlayer);
+            }
+        });
+        this.mFlutterPluginBinding = flutterPluginBinding;
+        mGson = new Gson();
     }
 
     @Override
-    public View getView() {
-        return mTextureView;
+    public PlatformView create(Context context, int viewId, Object args) {
+        FlutterAliPlayerView flutterAliPlayerView = new FlutterAliPlayerView(context, viewId, args, mFlutterPluginBinding);
+        initRenderView(flutterAliPlayerView);
+        return flutterAliPlayerView;
     }
 
-    @Override
-    public void dispose() { }
+    private void initRenderView(FlutterAliPlayerView flutterAliPlayerView){
+        TextureView mTextureView = (TextureView) flutterAliPlayerView.getView();
+        if(mTextureView != null){
+            mTextureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
+                @Override
+                public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+                    Surface mSurface = new Surface(surface);
+                    if(mIPlayer != null){
+                        mIPlayer.setSurface(mSurface);
+                    }
+                }
 
-    @Override
-    public void onMethodCall(MethodCall methodCall, MethodChannel.Result result) {
+                @Override
+                public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+                    if(mIPlayer != null){
+                        mIPlayer.surfaceChanged();
+                    }
+                }
+
+                @Override
+                public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+                    if(mIPlayer != null){
+                        mIPlayer.setSurface(null);
+                    }
+                    return false;
+                }
+
+                @Override
+                public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+
+                }
+            });
+        }
+    }
+
+    public void onMethodCall(MethodCall methodCall, MethodChannel.Result result,IPlayer player) {
+        mIPlayer = player;
         switch (methodCall.method) {
             case "setUrl":
                 String url = methodCall.arguments.toString();
@@ -159,11 +180,18 @@ public class VideoView implements PlatformView, MethodChannel.MethodCallHandler 
             case "setAutoPlay":
                 setAutoPlay((Boolean)methodCall.arguments);
                 break;
+            case "isAutoPlay":
+                result.success(isAutoPlay());
+                break;
             case "setMuted":
                 setMuted((Boolean)methodCall.arguments);
                 break;
+            case "isMuted":
+                result.success(isMuted());
+                break;
             case "setEnableHardwareDecoder":
-                
+                Boolean setEnableHardwareDecoderArgumnt = (Boolean) methodCall.arguments;
+                setEnableHardWareDecoder(setEnableHardwareDecoderArgumnt);
                 break;
             case "setScalingMode":
                 setScaleMode((Integer) methodCall.arguments);
@@ -208,7 +236,7 @@ public class VideoView implements PlatformView, MethodChannel.MethodCallHandler 
                     setConfig(config);
                 }
             }
-                break;
+            break;
             case "getConfig":
                 PlayerConfig config = getConfig();
                 String json = mGson.toJson(config);
@@ -230,95 +258,169 @@ public class VideoView implements PlatformView, MethodChannel.MethodCallHandler 
             case "getSDKVersion":
                 result.success(getSDKVersion());
                 break;
+            case "addVidSource":
+                String addSourceVid = methodCall.argument("vid");
+                String vidUid = methodCall.argument("uid");
+                addVidSource(addSourceVid,vidUid);
+                break;
+            case "addUrlSource":
+                String addSourceUrl = methodCall.argument("url");
+                String urlUid = methodCall.argument("uid");
+                addUrlSource(addSourceUrl,urlUid);
+                break;
+            case "removeSource":
+                String removeUid = methodCall.arguments();
+                removeSource(removeUid);
+                break;
+            case "clear":
+                clear();
+                break;
+            case "moveToNext":
+                String moveToNextAccessKeyId = methodCall.argument("accId");
+                String moveToNextAccessKeySecret = methodCall.argument("accKey");
+                String moveToNextSecurityToken = methodCall.argument("token");
+                String moveToNextRegion = methodCall.argument("region");
+                StsInfo moveToNextStsInfo = new StsInfo();
+                moveToNextStsInfo.setAccessKeyId(moveToNextAccessKeyId);
+                moveToNextStsInfo.setAccessKeySecret(moveToNextAccessKeySecret);
+                moveToNextStsInfo.setSecurityToken(moveToNextSecurityToken);
+                moveToNextStsInfo.setRegion(moveToNextRegion);
+                moveToNext(moveToNextStsInfo);
+                break;
+            case "moveToPre":
+                String moveToPreAccessKeyId = methodCall.argument("accId");
+                String moveToPreAccessKeySecret = methodCall.argument("accKey");
+                String moveToPreSecurityToken = methodCall.argument("token");
+                String moveToPreRegion = methodCall.argument("region");
+                StsInfo moveToPreStsInfo = new StsInfo();
+                moveToPreStsInfo.setAccessKeyId(moveToPreAccessKeyId);
+                moveToPreStsInfo.setAccessKeySecret(moveToPreAccessKeySecret);
+                moveToPreStsInfo.setSecurityToken(moveToPreSecurityToken);
+                moveToPreStsInfo.setRegion(moveToPreRegion);
+                moveToPre(moveToPreStsInfo);
+                break;
+            case "moveTo":
+                String moveToAccessKeyId = methodCall.argument("accId");
+                String moveToAccessKeySecret = methodCall.argument("accKey");
+                String moveToSecurityToken = methodCall.argument("token");
+                String moveToRegion = methodCall.argument("region");
+                String moveToUid = methodCall.argument("uid");
+                StsInfo moveToStsInfo = new StsInfo();
+                moveToStsInfo.setAccessKeyId(moveToAccessKeyId);
+                moveToStsInfo.setAccessKeySecret(moveToAccessKeySecret);
+                moveToStsInfo.setSecurityToken(moveToSecurityToken);
+                moveToStsInfo.setRegion(moveToRegion);
+                moveTo(moveToUid,moveToStsInfo);
+                break;
             default:
                 result.notImplemented();
         }
     }
 
     private String getSDKVersion(){
-        return AliPlayerFactory.getSdkVersion();
+        return com.aliyun.player.AliPlayerFactory.getSdkVersion();
     }
 
     private void setDataSource(String url){
-        if(mAliPlayer != null){
+        if(mIPlayer != null){
             UrlSource urlSource = new UrlSource();
             urlSource.setUri(url);
-            mAliPlayer.setDataSource(urlSource);
+            ((AliPlayer)mIPlayer).setDataSource(urlSource);
         }
     }
 
     private void setDataSource(VidSts vidSts){
-        if(mAliPlayer != null){
-            mAliPlayer.setDataSource(vidSts);
+        if(mIPlayer != null){
+            ((AliPlayer)mIPlayer).setDataSource(vidSts);
         }
     }
 
     private void setDataSource(VidAuth vidAuth){
-        if(mAliPlayer != null){
-            mAliPlayer.setDataSource(vidAuth);
-        }   
+        if(mIPlayer != null){
+            ((AliPlayer)mIPlayer).setDataSource(vidAuth);
+        }
     }
 
     private void setDataSource(VidMps vidMps){
-        if(mAliPlayer != null){
-            mAliPlayer.setDataSource(vidMps);
-        }  
+        if(mIPlayer != null){
+            ((AliPlayer)mIPlayer).setDataSource(vidMps);
+        }
     }
 
     private void prepare(){
-        if(mAliPlayer != null){
-            mAliPlayer.prepare();
+        if(mIPlayer != null){
+            mIPlayer.prepare();
         }
     }
 
     private void start(){
-        if(mAliPlayer != null){
-            mAliPlayer.start();
+        if(mIPlayer != null){
+            mIPlayer.start();
         }
     }
 
     private void pause(){
-        if(mAliPlayer != null){
-            mAliPlayer.pause();
+        if(mIPlayer != null){
+            mIPlayer.pause();
         }
     }
 
     private void stop(){
-        if(mAliPlayer != null){
-            mAliPlayer.stop();
+        if(mIPlayer != null){
+            mIPlayer.stop();
         }
     }
 
     private void release(){
-        if(mAliPlayer != null){
-            mAliPlayer.release();
+        if(mIPlayer != null){
+            mIPlayer.release();
         }
     }
 
     private void setLoop(Boolean isLoop){
-        if(mAliPlayer != null){
-            mAliPlayer.setLoop(isLoop);
+        if(mIPlayer != null){
+            mIPlayer.setLoop(isLoop);
         }
     }
 
     private Boolean isLoop(){
-        return mAliPlayer != null && mAliPlayer.isLoop();
+        return mIPlayer != null && mIPlayer.isLoop();
     }
 
     private void setAutoPlay(Boolean isAutoPlay){
-        if(mAliPlayer != null){
-            mAliPlayer.setAutoPlay(isAutoPlay);
+        if(mIPlayer != null){
+            mIPlayer.setAutoPlay(isAutoPlay);
         }
     }
 
+    private Boolean isAutoPlay(){
+        if (mIPlayer != null) {
+            mIPlayer.isAutoPlay();
+        }
+        return false;
+    }
+
     private void setMuted(Boolean muted){
-        if(mAliPlayer != null){
-            mAliPlayer.setMute(muted);
+        if(mIPlayer != null){
+            mIPlayer.setMute(muted);
+        }
+    }
+
+    private Boolean isMuted(){
+        if (mIPlayer != null) {
+            mIPlayer.isMute();
+        }
+        return false;
+    }
+
+    private void setEnableHardWareDecoder(Boolean mEnableHardwareDecoder){
+        if(mIPlayer != null){
+            mIPlayer.enableHardwareDecoder(mEnableHardwareDecoder);
         }
     }
 
     private void setScaleMode(int model){
-        if(mAliPlayer != null){
+        if(mIPlayer != null){
             IPlayer.ScaleMode mScaleMode = IPlayer.ScaleMode.SCALE_ASPECT_FIT;
             if(model == IPlayer.ScaleMode.SCALE_ASPECT_FIT.getValue()){
                 mScaleMode = IPlayer.ScaleMode.SCALE_ASPECT_FIT;
@@ -327,20 +429,20 @@ public class VideoView implements PlatformView, MethodChannel.MethodCallHandler 
             }else if(model == IPlayer.ScaleMode.SCALE_TO_FILL.getValue()){
                 mScaleMode = IPlayer.ScaleMode.SCALE_TO_FILL;
             }
-            mAliPlayer.setScaleMode(mScaleMode);
+            mIPlayer.setScaleMode(mScaleMode);
         }
     }
 
     private int getScaleMode(){
         int scaleMode = IPlayer.ScaleMode.SCALE_ASPECT_FIT.getValue();
-        if (mAliPlayer != null) {
-            scaleMode =  mAliPlayer.getScaleMode().getValue();
+        if (mIPlayer != null) {
+            scaleMode =  mIPlayer.getScaleMode().getValue();
         }
         return scaleMode;
     }
 
     private void setMirrorMode(int mirrorMode){
-        if(mAliPlayer != null){
+        if(mIPlayer != null){
             IPlayer.MirrorMode mMirrorMode;
             if(mirrorMode == IPlayer.MirrorMode.MIRROR_MODE_HORIZONTAL.getValue()){
                 mMirrorMode = IPlayer.MirrorMode.MIRROR_MODE_HORIZONTAL;
@@ -349,20 +451,20 @@ public class VideoView implements PlatformView, MethodChannel.MethodCallHandler 
             }else{
                 mMirrorMode = IPlayer.MirrorMode.MIRROR_MODE_NONE;
             }
-            mAliPlayer.setMirrorMode(mMirrorMode);
+            mIPlayer.setMirrorMode(mMirrorMode);
         }
     }
 
     private int getMirrorMode(){
         int mirrorMode = IPlayer.MirrorMode.MIRROR_MODE_NONE.getValue();
-        if (mAliPlayer != null) {
-            mirrorMode = mAliPlayer.getMirrorMode().getValue();
+        if (mIPlayer != null) {
+            mirrorMode = mIPlayer.getMirrorMode().getValue();
         }
         return mirrorMode;
     }
 
     private void setRotateMode(int rotateMode){
-        if(mAliPlayer != null){
+        if(mIPlayer != null){
             IPlayer.RotateMode mRotateMode;
             if(rotateMode == IPlayer.RotateMode.ROTATE_90.getValue()){
                 mRotateMode = IPlayer.RotateMode.ROTATE_90;
@@ -373,61 +475,61 @@ public class VideoView implements PlatformView, MethodChannel.MethodCallHandler 
             }else{
                 mRotateMode = IPlayer.RotateMode.ROTATE_0;
             }
-            mAliPlayer.setRotateMode(mRotateMode);
+            mIPlayer.setRotateMode(mRotateMode);
         }
     }
 
     private int getRotateMode(){
         int rotateMode = IPlayer.RotateMode.ROTATE_0.getValue();
-        if(mAliPlayer != null){
-            rotateMode =  mAliPlayer.getRotateMode().getValue();
+        if(mIPlayer != null){
+            rotateMode =  mIPlayer.getRotateMode().getValue();
         }
         return rotateMode;
     }
 
     private void setSpeed(double speed){
-        if(mAliPlayer != null){
-            mAliPlayer.setSpeed((float) speed);
+        if(mIPlayer != null){
+            mIPlayer.setSpeed((float) speed);
         }
     }
 
     private double getSpeed(){
         double speed = 0;
-        if(mAliPlayer != null){
-            speed = mAliPlayer.getSpeed();
+        if(mIPlayer != null){
+            speed = mIPlayer.getSpeed();
         }
         return speed;
     }
 
     private void setVideoBackgroundColor(int color){
-        if(mAliPlayer != null){
-            mAliPlayer.setVideoBackgroundColor(color);
+        if(mIPlayer != null){
+            mIPlayer.setVideoBackgroundColor(color);
         }
     }
 
     private void setVolume(double volume){
-        if(mAliPlayer != null){
-            mAliPlayer.setVolume((float)volume);
+        if(mIPlayer != null){
+            mIPlayer.setVolume((float)volume);
         }
     }
 
     private double getVolume(){
         double volume = 1.0;
-        if(mAliPlayer != null){
-            volume = mAliPlayer.getVolume();
+        if(mIPlayer != null){
+            volume = mIPlayer.getVolume();
         }
         return volume;
     }
 
     private void setConfig(PlayerConfig playerConfig){
-        if(mAliPlayer != null){
-            mAliPlayer.setConfig(playerConfig);
+        if(mIPlayer != null){
+            mIPlayer.setConfig(playerConfig);
         }
     }
 
     private PlayerConfig getConfig(){
-        if(mAliPlayer != null){
-            return mAliPlayer.getConfig();
+        if(mIPlayer != null){
+            return mIPlayer.getConfig();
         }
         return null;
     }
@@ -437,8 +539,51 @@ public class VideoView implements PlatformView, MethodChannel.MethodCallHandler 
     }
 
     private void setCacheConfig(CacheConfig cacheConfig){
-        if(mAliPlayer != null){
-            mAliPlayer.setCacheConfig(cacheConfig);
+        if(mIPlayer != null){
+            mIPlayer.setCacheConfig(cacheConfig);
+        }
+    }
+
+    /** ========================================================= */
+
+    private void addVidSource(String vid,String uid){
+        if(mIPlayer != null){
+            ((AliListPlayer)mIPlayer).addVid(vid,uid);
+        }
+    }
+    private void addUrlSource(String url,String uid){
+        if(mIPlayer != null){
+            ((AliListPlayer)mIPlayer).addUrl(url,uid);
+        }
+    }
+
+    private void removeSource(String uid){
+        if(mIPlayer != null){
+            ((AliListPlayer)mIPlayer).removeSource(uid);
+        }
+    }
+
+    private void clear(){
+        if(mIPlayer != null){
+            ((AliListPlayer)mIPlayer).clear();
+        }
+    }
+
+    private void moveToNext(StsInfo stsInfo) {
+        if(mIPlayer != null){
+            ((AliListPlayer)mIPlayer).moveToNext(stsInfo);
+        }
+    }
+
+    private void moveToPre(StsInfo stsInfo){
+        if(mIPlayer != null){
+            ((AliListPlayer)mIPlayer).moveToPrev(stsInfo);
+        }
+    }
+
+    private void moveTo(String uid,StsInfo stsInfo){
+        if(mIPlayer != null){
+            ((AliListPlayer)mIPlayer).moveTo(uid,stsInfo);
         }
     }
 }

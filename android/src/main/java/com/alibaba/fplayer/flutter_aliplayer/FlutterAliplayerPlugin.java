@@ -15,13 +15,13 @@ public class FlutterAliplayerPlugin implements FlutterPlugin, MethodCallHandler 
   ///
   /// This local reference serves to register the plugin with the Flutter Engine and unregister it
   /// when the Flutter Engine is detached from the Activity
-  private static MethodChannel channel;
-  private AliyunDownload mAliyunDownload;
+  private FlutterAliDownloader mAliyunDownload;
+
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
-    flutterPluginBinding.getPlatformViewRegistry().registerViewFactory("plugins.flutter_aliplayer",new VideoViewFactory(flutterPluginBinding));
-    mAliyunDownload = new AliyunDownload(flutterPluginBinding.getApplicationContext(),flutterPluginBinding);
+     flutterPluginBinding.getPlatformViewRegistry().registerViewFactory("plugins.flutter_aliplayer",new FluttreAliPlayerFactory(flutterPluginBinding));
+    mAliyunDownload = new FlutterAliDownloader(flutterPluginBinding.getApplicationContext(),flutterPluginBinding);
   }
 
 //   This static function is optional and equivalent to onAttachedToEngine. It supports the old
@@ -47,6 +47,5 @@ public class FlutterAliplayerPlugin implements FlutterPlugin, MethodCallHandler 
 
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
-    channel.setMethodCallHandler(null);
   }
 }

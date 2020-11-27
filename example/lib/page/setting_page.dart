@@ -1,8 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_aliplayer/flutter_aliplayer.dart';
 
 class SettingPage extends StatefulWidget {
+  FlutterAliplayer _flutterAliPlayre;
+
   @override
   _SettingHomePageState createState() => _SettingHomePageState();
 }
@@ -12,10 +15,17 @@ class _SettingHomePageState extends State<SettingPage> {
   int _currentLogIndex = 5;
   bool _enableLog = true;
   bool _enableHardwareDecoder = true;
+  String _sdkVersion;
 
   @override
   void initState() {
     super.initState();
+    widget._flutterAliPlayre = FlutterAliplayer.init(0);
+    widget._flutterAliPlayre.getSDKVersion().then((value) {
+      setState(() {
+        _sdkVersion = value;
+      });
+    });
   }
 
   @override
@@ -33,7 +43,7 @@ class _SettingHomePageState extends State<SettingPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             //VersionCode
-            Text("版本号"),
+            Text("版本号:$_sdkVersion"),
 
             //硬解开关
             Row(
