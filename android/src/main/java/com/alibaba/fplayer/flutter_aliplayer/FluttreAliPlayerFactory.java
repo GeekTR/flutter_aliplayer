@@ -168,7 +168,7 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory {
             case "stop":
                 stop();
                 break;
-            case "release":
+            case "destroy":
                 release();
                 break;
             case "setLoop":
