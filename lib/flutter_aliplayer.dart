@@ -137,6 +137,20 @@ class FlutterAliplayer {
     return channel.invokeMethod("setCacheConfig", map);
   }
 
+  ///return deviceInfo
+  Future<String> createDeviceInfo() async {
+    return channel.invokeMethod("createDeviceInfo");
+  }
+
+  ///type : {FlutterAvpdef.BLACK_DEVICES_H264 / FlutterAvpdef.BLACK_DEVICES_HEVC}
+  Future<void> addBlackDevice(String type, String model) async {
+    var map = {
+      'black_type': type,
+      'black_device': model,
+    };
+    return channel.invokeMethod("addBlackDevice", map);
+  }
+
   Future<String> getSDKVersion() async {
     return channel.invokeMethod("getSDKVersion");
   }

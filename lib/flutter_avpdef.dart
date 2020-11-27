@@ -34,6 +34,10 @@ class FlutterAvpdef {
   ///下载方式
   static const String DOWNLOADTYPE_STS = "download_sts";
   static const String DOWNLOADTYPE_AUTH = "download_auth";
+
+  ///黑名单
+  static const String BLACK_DEVICES_H264 = "HW_Decode_H264";
+  static const String BLACK_DEVICES_HEVC = "HW_Decode_HEVC";
 }
 
 class EventChanneldef {

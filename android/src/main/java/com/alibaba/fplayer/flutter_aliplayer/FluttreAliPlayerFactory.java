@@ -2,6 +2,7 @@ package com.alibaba.fplayer.flutter_aliplayer;
 
 import android.content.Context;
 import android.graphics.SurfaceTexture;
+import android.os.Build;
 import android.text.TextUtils;
 import android.view.Surface;
 import android.view.TextureView;
@@ -326,6 +327,15 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory {
             case "getLogLevel":
                 result.success(getLogLevel());
                 break;
+            case "createDeviceInfo":
+                result.success(createDeviceInfo());
+                break;
+            case "addBlackDevice":
+                Map<String,String> addBlackDeviceMap = methodCall.arguments();
+                String blackType = addBlackDeviceMap.get("black_type");
+                String blackDevice = addBlackDeviceMap.get("black_device");
+                addBlackDevice(blackType,blackDevice);
+                break;
             default:
                 result.notImplemented();
         }
@@ -586,6 +596,24 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory {
 
     private Integer getLogLevel(){
         return Logger.getInstance(mContext).getLogLevel().getValue();
+    }
+
+    private String createDeviceInfo(){
+        AliPlayerFactory.DeviceInfo deviceInfo = new AliPlayerFactory.DeviceInfo();
+        deviceInfo.model = Build.MODEL;
+        return deviceInfo.model;
+    }
+
+    private void addBlackDevice(String blackType,String modelInfo){
+        AliPlayerFactory.DeviceInfo deviceInfo = new AliPlayerFactory.DeviceInfo();
+        deviceInfo.model = modelInfo;
+        AliPlayerFactory.BlackType aliPlayerBlackType;
+        if(!TextUtils.isEmpty(blackType) && blackType.equals("HW_Decode_H264")){
+            aliPlayerBlackType = AliPlayerFactory.BlackType.HW_Decode_H264;
+        }else{
+            aliPlayerBlackType = AliPlayerFactory.BlackType.HW_Decode_HEVC;
+        }
+        AliPlayerFactory.addBlackDevice(aliPlayerBlackType,deviceInfo);
     }
 
 

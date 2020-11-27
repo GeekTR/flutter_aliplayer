@@ -108,14 +108,24 @@ class _SettingHomePageState extends State<SettingPage> {
         children: [
           RaisedButton(
             child: Text("HEVC黑名单"),
-            onPressed: () => print("h265黑名单"),
+            onPressed: () {
+              widget._flutterAliPlayre.createDeviceInfo().then((value) {
+                widget._flutterAliPlayre
+                    .addBlackDevice(FlutterAvpdef.BLACK_DEVICES_HEVC, value);
+              });
+            },
           ),
           SizedBox(
             width: 10.0,
           ),
           RaisedButton(
             child: Text("H264黑名单"),
-            onPressed: () => print("h264黑名单"),
+            onPressed: () {
+              widget._flutterAliPlayre.createDeviceInfo().then((value) {
+                widget._flutterAliPlayre
+                    .addBlackDevice(FlutterAvpdef.BLACK_DEVICES_H264, value);
+              });
+            },
           ),
         ],
       );

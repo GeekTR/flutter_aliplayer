@@ -21,7 +21,7 @@ public class FlutterAliplayerPlugin implements FlutterPlugin, MethodCallHandler 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
      flutterPluginBinding.getPlatformViewRegistry().registerViewFactory("plugins.flutter_aliplayer",new FluttreAliPlayerFactory(flutterPluginBinding));
-    mAliyunDownload = new FlutterAliDownloader(flutterPluginBinding.getApplicationContext(),flutterPluginBinding);
+     mAliyunDownload = new FlutterAliDownloader(flutterPluginBinding.getApplicationContext(),flutterPluginBinding);
   }
 
 //   This static function is optional and equivalent to onAttachedToEngine. It supports the old
