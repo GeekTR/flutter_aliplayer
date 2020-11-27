@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter_aliplayer/flutter_alidownloader.dart';
 import 'package:flutter_aliplayer/flutter_avpdef.dart';
+import 'package:flutter_aliplayer_example/config.dart';
 import 'package:flutter_aliplayer_example/model/custom_downloader_model.dart';
 import 'package:flutter_aliplayer_example/util/database_utils.dart';
 import 'package:path_provider/path_provider.dart';
@@ -78,7 +79,15 @@ class AliyunDownloadManager {
   }
 
   Future<dynamic> prepare(Map map) {
-    return _flutterAliDownloader.prepare(map).then((value) {
+    return _flutterAliDownloader
+        .prepare(
+            map[DataSourceRelated.TYPE_KEY], map[DataSourceRelated.VID_KEY],
+            accessKeyId: map[DataSourceRelated.ACCESSKEYID_KEY],
+            accessKeySecret: map[DataSourceRelated.ACCESSKEYSECRET_KEY],
+            securityToken: map[DataSourceRelated.SECURITYTOKEN_KEY],
+            playAuth: map[DataSourceRelated.PLAYAUTH_KEY],
+            index: map[DataSourceRelated.INDEX_KEY])
+        .then((value) {
       return value;
     });
   }
@@ -92,7 +101,8 @@ class AliyunDownloadManager {
     });
     var json = customDownloaderModel.toJson();
     _preparedList.add(customDownloaderModel);
-    _flutterAliDownloader.selectItem(json);
+    _flutterAliDownloader.selectItem(
+        customDownloaderModel.videoId, customDownloaderModel.index);
     _dbUtils.insert(json);
     return Future.value(customDownloaderModel);
   }
@@ -109,14 +119,14 @@ class AliyunDownloadManager {
     StreamController<dynamic> _callbackController = StreamController();
     StreamSink<dynamic> _sink = _callbackController.sink;
     customDownloaderModel.downloadState = DownloadState.START;
-    _controller
-        .addStream(_flutterAliDownloader.start(customDownloaderModel.toJson()));
+    _controller.addStream(_flutterAliDownloader.start(
+        customDownloaderModel.videoId, customDownloaderModel.index));
     if (!_controller.hasListener) {
       _controller.stream.listen((event) {
         if (event[EventChanneldef.TYPE_KEY] ==
                 EventChanneldef.DOWNLOAD_PROGRESS &&
-            customDownloaderModel.videoId == event['mVideoId'] &&
-            customDownloaderModel.index == event['mIndex'] &&
+            customDownloaderModel.videoId == event['vid'] &&
+            customDownloaderModel.index == event['index'] &&
             customDownloaderModel.downloadState != DownloadState.STOP) {
           //调用stop后,放置event时间消息继续发送,而导致其实已经停止了下载,但是界面还是在继续消费管道中的下载进度消息
           customDownloaderModel.stateMsg =
@@ -124,19 +134,19 @@ class AliyunDownloadManager {
           _sink.add(customDownloaderModel);
         } else if (event[EventChanneldef.TYPE_KEY] ==
                 EventChanneldef.DOWNLOAD_PROCESS &&
-            customDownloaderModel.videoId == event['mVideoId'] &&
-            customDownloaderModel.index == event['mIndex']) {
+            customDownloaderModel.videoId == event['vid'] &&
+            customDownloaderModel.index == event['index']) {
           customDownloaderModel.stateMsg = "ProcessingProgress \n" +
               event[EventChanneldef.DOWNLOAD_PROGRESS] +
               "%";
           _sink.add(customDownloaderModel);
         } else if (event[EventChanneldef.TYPE_KEY] ==
                 EventChanneldef.DOWNLOAD_COMPLETION &&
-            customDownloaderModel.videoId == event['mVideoId'] &&
-            customDownloaderModel.index == event['mIndex']) {
+            customDownloaderModel.videoId == event['vid'] &&
+            customDownloaderModel.index == event['index']) {
           customDownloaderModel.downloadState = DownloadState.COMPLETE;
           customDownloaderModel.stateMsg = "下载完成";
-          customDownloaderModel.savePath = event['mSavePath'];
+          customDownloaderModel.savePath = event['savePath'];
 
           _dbUtils.update(customDownloaderModel.toJson());
           _sink.add(customDownloaderModel);
@@ -154,7 +164,8 @@ class AliyunDownloadManager {
   Future<dynamic> stop(CustomDownloaderModel customDownloaderModel) {
     if (customDownloaderModel.downloadState == DownloadState.START ||
         customDownloaderModel.downloadState == DownloadState.PREPARE) {
-      _flutterAliDownloader.stop(customDownloaderModel.toJson());
+      _flutterAliDownloader.stop(
+          customDownloaderModel.videoId, customDownloaderModel.index);
       customDownloaderModel.downloadState = DownloadState.STOP;
       customDownloaderModel.stateMsg = "暂停下载";
       String key = customDownloaderModel.videoId +
@@ -169,8 +180,10 @@ class AliyunDownloadManager {
     var map = customDownloaderModel.toJson();
     _preparedList.remove(customDownloaderModel);
     _dbUtils.delete(map);
-    _flutterAliDownloader.delete(map);
-    _flutterAliDownloader.release(map);
+    _flutterAliDownloader.delete(
+        customDownloaderModel.videoId, customDownloaderModel.index);
+    _flutterAliDownloader.release(
+        customDownloaderModel.videoId, customDownloaderModel.index);
     String key = customDownloaderModel.videoId +
         '_' +
         customDownloaderModel.index.toString();

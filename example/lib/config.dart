@@ -44,6 +44,7 @@ class DataSourceRelated {
   static const String REGION_KEY = "region";
   static const String URL_KEY = "url";
   static const String VID_KEY = "vid";
+  static const String INDEX_KEY = "index";
   static const String ACCESSKEYID_KEY = "accessKeyId";
   static const String ACCESSKEYSECRET_KEY = "accessKeySecret";
   static const String SECURITYTOKEN_KEY = "securityToken";

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_aliplayer/flutter_aliplayer.dart';
 import 'package:flutter_aliplayer_example/config.dart';
 import 'package:flutter_aliplayer_example/model/custom_downloader_model.dart';
 import 'package:flutter_aliplayer_example/model/downloader_model.dart';
@@ -182,7 +183,7 @@ class AliyunDownloadDialog extends Dialog {
       _accessKeySecretController.text = data["accessKeySecret"];
       _securityTokenController.text = data["securityToken"];
       var map = {
-        DataSourceRelated.TYPE_KEY: "sts",
+        DataSourceRelated.TYPE_KEY: FlutterAvpdef.DOWNLOADTYPE_STS,
         DataSourceRelated.VID_KEY: _vidController.text,
         DataSourceRelated.ACCESSKEYID_KEY: _accessKeyIdController.text,
         DataSourceRelated.ACCESSKEYSECRET_KEY: _accessKeySecretController.text,
@@ -208,7 +209,7 @@ class AliyunDownloadDialog extends Dialog {
         successCallback: (data) {
       _playAuthController.text = data["playAuth"];
       var map = {
-        DataSourceRelated.TYPE_KEY: "auth",
+        DataSourceRelated.TYPE_KEY: FlutterAvpdef.DOWNLOADTYPE_AUTH,
         DataSourceRelated.VID_KEY: _vidController.text,
         DataSourceRelated.PLAYAUTH_KEY: _playAuthController.text,
       };

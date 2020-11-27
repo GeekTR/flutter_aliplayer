@@ -30,6 +30,10 @@ class FlutterAvpdef {
   static const int AF_LOG_LEVEL_INFO = 32;
   static const int AF_LOG_LEVEL_DEBUG = 48;
   static const int AF_LOG_LEVEL_TRACE = 56;
+
+  ///下载方式
+  static const String DOWNLOADTYPE_STS = "download_sts";
+  static const String DOWNLOADTYPE_AUTH = "download_auth";
 }
 
 class EventChanneldef {

@@ -1,3 +1,4 @@
+import 'package:flutter_aliplayer/flutter_aliplayer.dart';
 import 'package:flutter_aliplayer_example/config.dart';
 import 'package:flutter_aliplayer_example/model/custom_downloader_model.dart';
 import 'package:flutter/material.dart';
@@ -145,8 +146,10 @@ class _DownloadPageState extends State<DownloadPage> {
                                 var map = {
                                   DataSourceRelated.VID_KEY:
                                       customDownloaderModel.videoId,
-                                  DataSourceRelated.TYPE_KEY: "sts",
-                                  "mIndex": customDownloaderModel.index,
+                                  DataSourceRelated.TYPE_KEY:
+                                      FlutterAvpdef.DOWNLOADTYPE_STS,
+                                  DataSourceRelated.INDEX_KEY:
+                                      customDownloaderModel.index,
                                   DataSourceRelated.ACCESSKEYID_KEY:
                                       value["accessKeyId"],
                                   DataSourceRelated.ACCESSKEYSECRET_KEY:

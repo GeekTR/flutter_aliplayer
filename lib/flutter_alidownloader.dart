@@ -1,7 +1,4 @@
 import 'package:flutter/services.dart';
-import 'package:flutter_aliplayer/flutter_avpdef.dart';
-
-typedef OnProgress(Map<String, dynamic> map);
 
 class FlutterAliDownloader {
   MethodChannel _methodChannel = MethodChannel("plugins.flutter_alidownload");
@@ -9,22 +6,40 @@ class FlutterAliDownloader {
       EventChannel("plugins.flutter_alidownload_event");
 
   Stream<dynamic> _receiveStream;
-  OnProgress onProgress;
 
   FlutterAliDownloader.init() {
     _receiveStream = _eventChannel.receiveBroadcastStream();
   }
 
-  Future<dynamic> prepare(Map map) async {
+  ///type {FlutterAvpdef.DOWNLOADTYPE_STS / FlutterAvpdef.DOWNLOADTYPE_AUTH}
+  ///STS {vid,accessKeyId,accessKeySecret,securityToken}
+  ///AUTH {vid,playAuth}
+  Future<dynamic> prepare(String type, String vid,
+      {int index,
+      String accessKeyId,
+      String accessKeySecret,
+      String securityToken,
+      String playAuth}) async {
+    var map = {
+      'type': type,
+      'vid': vid,
+      'index': index,
+      'accessKeyId': accessKeyId,
+      'accessKeySecret': accessKeySecret,
+      'securityToken': securityToken,
+      'playAuth': playAuth
+    };
     return _methodChannel.invokeMethod("prepare", map);
   }
 
-  Stream<dynamic> start(Map map) {
+  Stream<dynamic> start(String vid, int index) {
+    var map = {'vid': vid, 'index': index};
     _methodChannel.invokeMethod("start", map);
     return _receiveStream;
   }
 
-  Future<dynamic> selectItem(Map map) {
+  Future<dynamic> selectItem(String vid, int index) {
+    var map = {'vid': vid, 'index': index};
     return _methodChannel.invokeMethod("selectItem", map);
   }
 
@@ -32,45 +47,62 @@ class FlutterAliDownloader {
     _methodChannel.invokeMethod("setSaveDir", path);
   }
 
-  Future<dynamic> stop(Map map) {
+  Future<dynamic> stop(String vid, int index) {
+    var map = {'vid': vid, 'index': index};
     return _methodChannel.invokeMethod("stop", map);
   }
 
-  Future<dynamic> delete(Map map) {
+  Future<dynamic> delete(String vid, int index) {
+    var map = {'vid': vid, 'index': index};
     return _methodChannel.invokeMethod("delete", map);
   }
 
-  Future<dynamic> getFilePath(Map map) {
+  Future<dynamic> getFilePath(String vid, int index) {
+    var map = {'vid': vid, 'index': index};
     return _methodChannel.invokeMethod("getFilePath", map);
   }
 
-  Future<dynamic> release(Map map) {
+  Future<dynamic> release(String vid, int index) {
+    var map = {'vid': vid, 'index': index};
     return _methodChannel.invokeMethod("release", map);
   }
 
-  Future<dynamic> updateSource(Map map) {
+  Future<dynamic> updateSource(String type, String vid, String index,
+      {String accessKeyId,
+      String accessKeySecret,
+      String securityToken,
+      String playAuth}) {
+    var map = {
+      'type': type,
+      'vid': vid,
+      'index': index,
+      'accessKeyId': accessKeyId,
+      'accessKeySecret': accessKeySecret,
+      'securityToken': securityToken,
+      'playAuth': playAuth
+    };
     return _methodChannel.invokeMethod("updateSource", map);
   }
 
-  Future<dynamic> setDownloaderConfig(Map map) {
+  Future<dynamic> setDownloaderConfig(String vid, String index,
+      {String userAgent,
+      String referrer,
+      String httpProxy,
+      int connectTimeoutS,
+      int networkTimeoutMs}) {
+    var map = {
+      'vid': vid,
+      'index': index,
+      'UserAgent': userAgent,
+      'Referrer': referrer,
+      'HttpProxy': httpProxy,
+      'ConnectTimeoutS': connectTimeoutS,
+      'NetworkTimeoutMs': networkTimeoutMs
+    };
     return _methodChannel.invokeMethod("setDownloaderConfig", map);
   }
 
-  void setOnProgressListener(OnProgress onProgress) {
-    this.onProgress = onProgress;
-  }
-
-  void _onEvent(dynamic event) {
-    if (event[EventChanneldef.TYPE_KEY] == EventChanneldef.DOWNLOAD_PREPARED) {
-    } else if (event[EventChanneldef.TYPE_KEY] ==
-        EventChanneldef.DOWNLOAD_PROGRESS) {
-      // if (onProgress != null) {
-      //   onProgress(event);
-      // }
-      print(
-          "abc : progress ${event['download_progress']} ,,, ${event['mVodDefinition']}");
-    }
-  }
+  void _onEvent(dynamic event) {}
 
   void _onError(dynamic error) {
     print("abc : 原生发送消息 onError");
