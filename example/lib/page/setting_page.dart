@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_aliplayer/flutter_aliplayer.dart';
+import 'package:flutter_aliplayer_example/config.dart';
 
 class SettingPage extends StatefulWidget {
   FlutterAliplayer _flutterAliPlayre;
@@ -12,9 +13,6 @@ class SettingPage extends StatefulWidget {
 
 class _SettingHomePageState extends State<SettingPage> {
   TextEditingController _dnsTextEditingController = TextEditingController();
-  int _currentLogIndex = 5;
-  bool _enableLog = true;
-  bool _enableHardwareDecoder = true;
   String _sdkVersion;
 
   @override
@@ -24,6 +22,11 @@ class _SettingHomePageState extends State<SettingPage> {
     widget._flutterAliPlayre.getSDKVersion().then((value) {
       setState(() {
         _sdkVersion = value;
+      });
+    });
+    widget._flutterAliPlayre.getLogLevel().then((value) {
+      setState(() {
+        GlobalSettings.mLogLevel = value;
       });
     });
   }
@@ -54,10 +57,12 @@ class _SettingHomePageState extends State<SettingPage> {
                   width: 5.0,
                 ),
                 Switch(
-                    value: _enableHardwareDecoder,
+                    value: GlobalSettings.mEnableHardwareDecoder,
                     onChanged: (value) {
+                      widget._flutterAliPlayre.setEnableHardwareDecoder(value);
+                      GlobalSettings.mEnableHardwareDecoder = value;
                       setState(() {
-                        _enableHardwareDecoder = value;
+                        GlobalSettings.mEnableHardwareDecoder = value;
                       });
                     }),
               ],
@@ -79,10 +84,12 @@ class _SettingHomePageState extends State<SettingPage> {
               children: [
                 Text("Log日志开关"),
                 Switch(
-                    value: _enableLog,
+                    value: GlobalSettings.mEnableAliPlayerLog,
                     onChanged: (value) {
+                      widget._flutterAliPlayre.enableConsoleLog(value);
+                      GlobalSettings.mEnableAliPlayerLog = value;
                       setState(() {
-                        _enableLog = value;
+                        GlobalSettings.mEnableAliPlayerLog = value;
                       });
                     })
               ],
@@ -148,7 +155,7 @@ class _SettingHomePageState extends State<SettingPage> {
 
   //Log
   Widget _buildLog() {
-    if (_enableLog) {
+    if (GlobalSettings.mEnableAliPlayerLog) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -157,11 +164,12 @@ class _SettingHomePageState extends State<SettingPage> {
             child: RadioListTile(
                 dense: true,
                 title: Text("AF_LOG_LEVEL_NONE"),
-                value: 0,
-                groupValue: _currentLogIndex,
+                value: FlutterAvpdef.AF_LOG_LEVEL_NONE,
+                groupValue: GlobalSettings.mLogLevel,
                 onChanged: (value) {
+                  widget._flutterAliPlayre.setLogLevel(value);
                   setState(() {
-                    _currentLogIndex = value;
+                    GlobalSettings.mLogLevel = value;
                   });
                 }),
           ),
@@ -170,11 +178,12 @@ class _SettingHomePageState extends State<SettingPage> {
             child: RadioListTile(
                 dense: true,
                 title: Text("AF_LOG_LEVEL_FATAL"),
-                value: 1,
-                groupValue: _currentLogIndex,
+                value: FlutterAvpdef.AF_LOG_LEVEL_FATAL,
+                groupValue: GlobalSettings.mLogLevel,
                 onChanged: (value) {
+                  widget._flutterAliPlayre.setLogLevel(value);
                   setState(() {
-                    _currentLogIndex = value;
+                    GlobalSettings.mLogLevel = value;
                   });
                 }),
           ),
@@ -183,11 +192,12 @@ class _SettingHomePageState extends State<SettingPage> {
             child: RadioListTile(
                 dense: true,
                 title: Text("AF_LOG_LEVEL_ERROR"),
-                value: 2,
-                groupValue: _currentLogIndex,
+                value: FlutterAvpdef.AF_LOG_LEVEL_ERROR,
+                groupValue: GlobalSettings.mLogLevel,
                 onChanged: (value) {
+                  widget._flutterAliPlayre.setLogLevel(value);
                   setState(() {
-                    _currentLogIndex = value;
+                    GlobalSettings.mLogLevel = value;
                   });
                 }),
           ),
@@ -196,11 +206,12 @@ class _SettingHomePageState extends State<SettingPage> {
             child: RadioListTile(
                 dense: true,
                 title: Text("AF_LOG_LEVEL_WARNING"),
-                value: 3,
-                groupValue: _currentLogIndex,
+                value: FlutterAvpdef.AF_LOG_LEVEL_WARNING,
+                groupValue: GlobalSettings.mLogLevel,
                 onChanged: (value) {
+                  widget._flutterAliPlayre.setLogLevel(value);
                   setState(() {
-                    _currentLogIndex = value;
+                    GlobalSettings.mLogLevel = value;
                   });
                 }),
           ),
@@ -209,11 +220,12 @@ class _SettingHomePageState extends State<SettingPage> {
             child: RadioListTile(
                 dense: true,
                 title: Text("AF_LOG_LEVEL_INFO"),
-                value: 4,
-                groupValue: _currentLogIndex,
+                value: FlutterAvpdef.AF_LOG_LEVEL_INFO,
+                groupValue: GlobalSettings.mLogLevel,
                 onChanged: (value) {
+                  widget._flutterAliPlayre.setLogLevel(value);
                   setState(() {
-                    _currentLogIndex = value;
+                    GlobalSettings.mLogLevel = value;
                   });
                 }),
           ),
@@ -222,11 +234,12 @@ class _SettingHomePageState extends State<SettingPage> {
             child: RadioListTile(
                 dense: true,
                 title: Text("AF_LOG_LEVEL_DEBUG"),
-                value: 5,
-                groupValue: _currentLogIndex,
+                value: FlutterAvpdef.AF_LOG_LEVEL_DEBUG,
+                groupValue: GlobalSettings.mLogLevel,
                 onChanged: (value) {
+                  widget._flutterAliPlayre.setLogLevel(value);
                   setState(() {
-                    _currentLogIndex = value;
+                    GlobalSettings.mLogLevel = value;
                   });
                 }),
           ),
@@ -235,11 +248,12 @@ class _SettingHomePageState extends State<SettingPage> {
             child: RadioListTile(
                 dense: true,
                 title: Text("AF_LOG_LEVEL_TRACE"),
-                value: 6,
-                groupValue: _currentLogIndex,
+                value: FlutterAvpdef.AF_LOG_LEVEL_TRACE,
+                groupValue: GlobalSettings.mLogLevel,
                 onChanged: (value) {
+                  widget._flutterAliPlayre.setLogLevel(value);
                   setState(() {
-                    _currentLogIndex = value;
+                    GlobalSettings.mLogLevel = value;
                   });
                 }),
           ),

@@ -140,6 +140,18 @@ class FlutterAliplayer {
   Future<String> getSDKVersion() async {
     return channel.invokeMethod("getSDKVersion");
   }
+
+  Future<void> enableConsoleLog(bool enable) {
+    return channel.invokeMethod("enableConsoleLog", enable);
+  }
+
+  Future<void> setLogLevel(int level) async {
+    return channel.invokeMethod("setLogLevel", level);
+  }
+
+  Future<int> getLogLevel() {
+    return channel.invokeMethod("getLogLevel");
+  }
 }
 
 typedef void AliPlayerViewCreatedCallback();

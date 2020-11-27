@@ -15,7 +15,6 @@ public class MainActivity extends FlutterActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        System.out.println("abc : onCreate");
 //        AliPlayer mAliPlayer = AliPlayerFactory.createAliPlayer(this);
     }
 }

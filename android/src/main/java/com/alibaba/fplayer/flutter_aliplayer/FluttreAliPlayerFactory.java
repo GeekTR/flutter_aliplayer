@@ -20,6 +20,7 @@ import com.aliyun.player.source.UrlSource;
 import com.aliyun.player.source.VidAuth;
 import com.aliyun.player.source.VidMps;
 import com.aliyun.player.source.VidSts;
+import com.cicada.player.utils.Logger;
 import com.google.gson.Gson;
 
 import java.util.Map;
@@ -37,9 +38,11 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory {
 
     private final Gson mGson;
     private IPlayer mIPlayer;
+    private Context mContext;
 
     public FluttreAliPlayerFactory(FlutterPlugin.FlutterPluginBinding flutterPluginBinding) {
         super(StandardMessageCodec.INSTANCE);
+        this.mContext = flutterPluginBinding.getApplicationContext();
         final AliPlayer mAliPlayer = AliPlayerFactory.createAliPlayer(flutterPluginBinding.getApplicationContext());
         final AliListPlayer mAliListPlayer = AliPlayerFactory.createAliListPlayer(flutterPluginBinding.getApplicationContext());
         final MethodChannel mAliPlayerMethodChannel = new MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(),"flutter_aliplayer");
@@ -312,6 +315,17 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory {
                 moveToStsInfo.setRegion(moveToRegion);
                 moveTo(moveToUid,moveToStsInfo);
                 break;
+            case "enableConsoleLog":
+                Boolean enableLog = (Boolean) methodCall.arguments;
+                enableConsoleLog(enableLog);
+                break;
+            case "setLogLevel":
+                Integer level = (Integer) methodCall.arguments;
+                setLogLevel(level);
+                break;
+            case "getLogLevel":
+                result.success(getLogLevel());
+                break;
             default:
                 result.notImplemented();
         }
@@ -543,6 +557,37 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory {
             mIPlayer.setCacheConfig(cacheConfig);
         }
     }
+
+    private void enableConsoleLog(Boolean enableLog){
+        Logger.getInstance(mContext).enableConsoleLog(enableLog);
+    }
+
+    private void setLogLevel(int level){
+        Logger.LogLevel mLogLevel;
+        if(level == Logger.LogLevel.AF_LOG_LEVEL_NONE.getValue()){
+            mLogLevel = Logger.LogLevel.AF_LOG_LEVEL_NONE;
+        }else if(level == Logger.LogLevel.AF_LOG_LEVEL_FATAL.getValue()){
+            mLogLevel = Logger.LogLevel.AF_LOG_LEVEL_FATAL;
+        }else if(level == Logger.LogLevel.AF_LOG_LEVEL_ERROR.getValue()){
+            mLogLevel = Logger.LogLevel.AF_LOG_LEVEL_ERROR;
+        }else if(level == Logger.LogLevel.AF_LOG_LEVEL_WARNING.getValue()){
+            mLogLevel = Logger.LogLevel.AF_LOG_LEVEL_WARNING;
+        }else if(level == Logger.LogLevel.AF_LOG_LEVEL_INFO.getValue()){
+            mLogLevel = Logger.LogLevel.AF_LOG_LEVEL_INFO;
+        }else if(level == Logger.LogLevel.AF_LOG_LEVEL_DEBUG.getValue()){
+            mLogLevel = Logger.LogLevel.AF_LOG_LEVEL_DEBUG;
+        }else if(level == Logger.LogLevel.AF_LOG_LEVEL_TRACE.getValue()){
+            mLogLevel = Logger.LogLevel.AF_LOG_LEVEL_TRACE;
+        }else{
+            mLogLevel = Logger.LogLevel.AF_LOG_LEVEL_NONE;
+        }
+        Logger.getInstance(mContext).setLogLevel(mLogLevel);
+    }
+
+    private Integer getLogLevel(){
+        return Logger.getInstance(mContext).getLogLevel().getValue();
+    }
+
 
     /** ========================================================= */
 

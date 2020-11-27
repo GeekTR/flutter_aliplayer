@@ -69,28 +69,10 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    print("abc : didChangeDependencies");
-  }
-
-  @override
-  void didUpdateWidget(PlayerPage oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    print("abc : didUpateWidget");
-  }
-
-  @override
-  void deactivate() {
-    super.deactivate();
-    print("abc : deactivate");
-  }
-
-  @override
   void dispose() {
     super.dispose();
     fAliplayer.stop();
-    fAliplayer.release();
+    fAliplayer.destroy();
     WidgetsBinding.instance.removeObserver(this);
   }
 

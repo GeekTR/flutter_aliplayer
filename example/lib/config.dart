@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter_aliplayer/flutter_avpdef.dart';
 import 'package:path_provider/path_provider.dart';
 
 class HttpConstant {
@@ -14,6 +15,17 @@ class HttpConstant {
   static const String GET_VIDEO_LIST = 'player/getVideoList';
   static const String GET_RANDOM_USER = 'user/randomUser';
   static const String GET_RECOMMEND_VIDEO_LIST = 'vod/getRecommendVideoList';
+}
+
+class GlobalSettings {
+  ///软硬解开关
+  static bool mEnableHardwareDecoder = true;
+
+  ///播放器日志开关
+  static bool mEnableAliPlayerLog = true;
+
+  ///播放器日志级别
+  static int mLogLevel = FlutterAvpdef.AF_LOG_LEVEL_INFO;
 }
 
 /// 播放方式

@@ -21,6 +21,15 @@ class FlutterAvpdef {
   static const int AVP_MIRRORMODE_NONE = 0;
   static const int AVP_MIRRORMODE_HORIZONTAL = 1;
   static const int AVP_MIRRORMODE_VERTICAL = 2;
+
+  /// Log 日志级别
+  static const int AF_LOG_LEVEL_NONE = 0;
+  static const int AF_LOG_LEVEL_FATAL = 8;
+  static const int AF_LOG_LEVEL_ERROR = 16;
+  static const int AF_LOG_LEVEL_WARNING = 24;
+  static const int AF_LOG_LEVEL_INFO = 32;
+  static const int AF_LOG_LEVEL_DEBUG = 48;
+  static const int AF_LOG_LEVEL_TRACE = 56;
 }
 
 class EventChanneldef {
