@@ -55,7 +55,9 @@ class FlutterAliListPlayer extends FlutterAliplayer{
     return channel.invokeMethod("moveToPre",info);
   }
 
-  Future<void> moveTo({@required uid,@required accId,@required accKey,@required token,@required region}) async {
+///移动到指定位置开始准备播放,url播放方式只需要填写uid；sts播放方式，需要更新sts信息
+///uid 指定资源的uid，代表在列表中的唯一标识
+  Future<void> moveTo({@required String uid,String accId, accKey,String token,String region}) async {
     Map<String, dynamic> info = {
       'uid':uid,
       'accId':accId,
@@ -65,5 +67,5 @@ class FlutterAliListPlayer extends FlutterAliplayer{
     };
     return channel.invokeMethod("moveTo",info);
   }
-  
+
 }

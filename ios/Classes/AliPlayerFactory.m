@@ -239,7 +239,13 @@
     FlutterMethodCall* call = arr.firstObject;
     AliListPlayer *player = arr[2];
     NSDictionary *dic = [call arguments];
-    [player moveTo:dic[@"uid"] accId:dic[@"accId"] accKey:dic[@"accKey"] token:dic[@"token"] region:dic[@"region"]];
+    
+    NSString *aacId = dic[@"accId"];
+    if (![aacId isKindOfClass:[NSNull class]] && aacId.length>0) {
+        [player moveTo:dic[@"uid"] accId:dic[@"accId"] accKey:dic[@"accKey"] token:dic[@"token"] region:dic[@"region"]];
+    }else{
+        [player moveTo:dic[@"uid"]];
+    }
 }
 
 - (void)moveToNext:(NSArray*)arr {

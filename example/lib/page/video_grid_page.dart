@@ -56,16 +56,10 @@ class _VideoGridPageState extends State<VideoGridPage> {
   }
 
   _loadData() async {
-    String url;
-    if (widget.playMode == ModeType.URL) {
-      url = HttpConstant.GET_VIDEO_LIST;
-    } else if (widget.playMode == ModeType.STS) {
-      url = HttpConstant.GET_RECOMMEND_VIDEO_LIST;
-    }
     NetWorkUtils.instance.getHttp(HttpConstant.GET_RANDOM_USER,
         successCallback: (data) {
       String token = data['token'];
-      NetWorkUtils.instance.getHttp(url,
+      NetWorkUtils.instance.getHttp(HttpConstant.GET_RECOMMEND_VIDEO_LIST,
           params: {'token': token, "pageIndex": _page, "pageSize": 10},
           successCallback: (data) {
         print('data=$data');
@@ -135,7 +129,6 @@ class _VideoGridPageState extends State<VideoGridPage> {
                         itemCount: _dataList.length,
                         physics: PageScrollPhysics(),
                         onPageChanged: (value) {
-                          print('object===$value');
                           _curIdx = value;
                           start();
                         },
@@ -250,14 +243,12 @@ class _VideoGridPageState extends State<VideoGridPage> {
     if (_dataList != null &&
         _dataList.length > 0 &&
         _curIdx < _dataList.length) {
-      print('start===$_curIdx');
       VideoModel model = _dataList[_curIdx];
-      print('url===${model.fileUrl}');
       setState(() {
         _isPause = false;
       });
       if (widget.playMode == ModeType.URL) {
-        this.fAliListPlayer.setUrl(model.fileUrl);
+        this.fAliListPlayer.moveTo(uid: model.videoId);
       } else if (widget.playMode == ModeType.STS) {
         NetWorkUtils.instance.getHttp(HttpConstant.GET_STS,
             successCallback: (data) {
@@ -280,4 +271,5 @@ class _VideoGridPageState extends State<VideoGridPage> {
     });
     this.fAliListPlayer.stop();
   }
+  
 }
