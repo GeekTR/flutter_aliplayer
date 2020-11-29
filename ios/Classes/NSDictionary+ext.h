@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 -(NSDictionary*)removeNull;
 
--(NSString*)getStrByKey:(NSString*)key;
+-(id)getStrByKey:(NSString*)key;
 
 @end
 

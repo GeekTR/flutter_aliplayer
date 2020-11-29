@@ -20,8 +20,8 @@
     return resDic;
 }
 
--(NSString*)getStrByKey:(NSString*)key{
-    NSString *val = [self objectForKey:key];
+-(id)getStrByKey:(NSString*)key{
+    id val = [self objectForKey:key];
     if([val isKindOfClass:[NSNull class]]){
         val = @"";
     }

@@ -47,6 +47,7 @@ class AliyunDownloadManager {
       });
     } else if (Platform.isIOS) {
       //TODO  IOS
+       _flutterAliDownloader.setSaveDir(_downloadSavePath);
     }
   }
 

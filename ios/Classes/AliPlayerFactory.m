@@ -18,6 +18,9 @@
 - (instancetype)initWithMessenger:(NSObject<FlutterBinaryMessenger>*)messenger {
     self = [super init];
     if (self) {
+        [AliPlayer setEnableLog:YES];
+        [AliPlayer setLogCallbackInfo:LOG_LEVEL_DEBUG callbackBlock:nil];
+        
         _messenger = messenger;
         _channel = [FlutterMethodChannel methodChannelWithName:@"flutter_aliplayer" binaryMessenger:messenger];
         __weak __typeof__(self) weakSelf = self;
