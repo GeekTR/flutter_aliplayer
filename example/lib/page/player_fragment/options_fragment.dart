@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_aliplayer/flutter_aliplayer.dart';
+import 'package:flutter_aliplayer_example/config.dart';
 import 'package:flutter_aliplayer_example/widget/aliyun_segment.dart';
 
 typedef OnEnablePlayBackChanged = Function(bool mEnablePlayBack);
@@ -36,7 +39,12 @@ class _OptionsFragmentState extends State<OptionsFragment> {
     mLoop = await widget.fAliplayer.isLoop();
     mAutoPlay = await widget.fAliplayer.isAutoPlay();
     mMute = await widget.fAliplayer.isMuted();
-    mEnableHardwareDecoder = await widget.fAliplayer.enableHardwareDecoder();
+    if (Platform.isIOS) {
+      mEnableHardwareDecoder = await widget.fAliplayer.enableHardwareDecoder();
+    } else if (Platform.isAndroid) {
+      mEnableHardwareDecoder = GlobalSettings.mEnableHardwareDecoder;
+    }
+
     setState(() {});
   }
 
@@ -121,14 +129,8 @@ class _OptionsFragmentState extends State<OptionsFragment> {
         Column(
           children: [
             CupertinoSwitch(
-              value: true,
-              onChanged: (value) {
-                setState(() {
-                  mEnableHardwareDecoder = !mEnableHardwareDecoder;
-                });
-                widget.fAliplayer
-                    .setEnableHardwareDecoder(mEnableHardwareDecoder);
-              },
+              value: mEnableHardwareDecoder,
+              onChanged: (value) {},
             ),
             Text("硬解"),
           ],

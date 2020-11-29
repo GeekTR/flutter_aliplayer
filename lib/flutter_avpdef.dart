@@ -31,6 +31,29 @@ class FlutterAvpdef {
   static const int AF_LOG_LEVEL_DEBUG = 48;
   static const int AF_LOG_LEVEL_TRACE = 56;
 
+  ///infoCode
+  static const int UNKNOWN = -1;
+  static const int LOOPINGSTART = 0;
+  static const int BUFFEREDPOSITION = 1;
+  static const int CURRENTPOSITION = 2;
+  static const int AUTOPLAYSTART = 3;
+  static const int SWITCHTOSOFTWAREVIDEODECODER = 100;
+  static const int AUDIOCODECNOTSUPPORT = 101;
+  static const int AUDIODECODERDEVICEERROR = 102;
+  static const int VIDEOCODECNOTSUPPORT = 103;
+  static const int VIDEODECODERDEVICEERROR = 104;
+  static const int VIDEORENDERINITERROR = 105;
+  static const int DEMUXERTRACEID = 106;
+  static const int NETWORKRETRY = 108;
+  static const int CACHESUCCESS = 109;
+  static const int CACHEERROR = 110;
+  static const int LOWMEMORY = 111;
+  static const int NETWORKRETRYSUCCESS = 113;
+  static const int SUBTITLESELECTERROR = 114;
+  static const int DIRECTCOMPONENTMSG = 116;
+  static const int RTSSERVERMAYBEDISCONNECT = 805371905;
+  static const int RTSSERVERRECOVER = 805371906;
+
   ///下载方式
   static const String DOWNLOADTYPE_STS = "download_sts";
   static const String DOWNLOADTYPE_AUTH = "download_auth";

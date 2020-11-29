@@ -1,6 +1,7 @@
 package com.alibaba.fplayer.flutter_aliplayer;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
 import android.os.Build;
 import android.text.TextUtils;
@@ -14,8 +15,12 @@ import com.aliyun.player.AliPlayer;
 import com.aliyun.player.AliPlayerFactory;
 import com.aliyun.player.IPlayer;
 import com.aliyun.player.VidPlayerConfigGen;
+import com.aliyun.player.bean.ErrorInfo;
+import com.aliyun.player.bean.InfoBean;
 import com.aliyun.player.nativeclass.CacheConfig;
+import com.aliyun.player.nativeclass.MediaInfo;
 import com.aliyun.player.nativeclass.PlayerConfig;
+import com.aliyun.player.nativeclass.TrackInfo;
 import com.aliyun.player.source.StsInfo;
 import com.aliyun.player.source.UrlSource;
 import com.aliyun.player.source.VidAuth;
@@ -24,22 +29,25 @@ import com.aliyun.player.source.VidSts;
 import com.cicada.player.utils.Logger;
 import com.google.gson.Gson;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
+import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.StandardMessageCodec;
 import io.flutter.plugin.platform.PlatformView;
 import io.flutter.plugin.platform.PlatformViewFactory;
 
-public class FluttreAliPlayerFactory extends PlatformViewFactory {
+public class FluttreAliPlayerFactory extends PlatformViewFactory implements EventChannel.StreamHandler {
 
     private FlutterPlugin.FlutterPluginBinding mFlutterPluginBinding;
 
     private final Gson mGson;
     private IPlayer mIPlayer;
     private Context mContext;
+    private EventChannel.EventSink mEventSink;
 
     public FluttreAliPlayerFactory(FlutterPlugin.FlutterPluginBinding flutterPluginBinding) {
         super(StandardMessageCodec.INSTANCE);
@@ -47,6 +55,8 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory {
         final AliPlayer mAliPlayer = AliPlayerFactory.createAliPlayer(flutterPluginBinding.getApplicationContext());
         final AliListPlayer mAliListPlayer = AliPlayerFactory.createAliListPlayer(flutterPluginBinding.getApplicationContext());
         final MethodChannel mAliPlayerMethodChannel = new MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(),"flutter_aliplayer");
+        EventChannel mEventChannel = new EventChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "flutter_aliplayer_event");
+        mEventChannel.setStreamHandler(this);
         mAliPlayerMethodChannel.setMethodCallHandler(new MethodChannel.MethodCallHandler() {
             @Override
             public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
@@ -63,6 +73,186 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory {
         });
         this.mFlutterPluginBinding = flutterPluginBinding;
         mGson = new Gson();
+
+        initListener(mAliPlayer);
+    }
+
+    private void initListener(final IPlayer player){
+        player.setOnPreparedListener(new IPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared() {
+                System.out.println("abc : player " + player.getDuration());
+                Map<String,Object> map = new HashMap<>();
+                map.put("method","onPrepared");
+                mEventSink.success(map);
+            }
+        });
+
+        player.setOnRenderingStartListener(new IPlayer.OnRenderingStartListener() {
+            @Override
+            public void onRenderingStart() {
+                Map<String,Object> map = new HashMap<>();
+                map.put("method","onRenderingStart");
+                mEventSink.success(map);
+            }
+        });
+
+        player.setOnVideoSizeChangedListener(new IPlayer.OnVideoSizeChangedListener() {
+            @Override
+            public void onVideoSizeChanged(int width, int height) {
+                Map<String,Object> map = new HashMap<>();
+                map.put("method","onVideoSizeChanged");
+                map.put("width",width);
+                map.put("height",height);
+                mEventSink.success(map);
+            }
+        });
+
+        player.setOnSnapShotListener(new IPlayer.OnSnapShotListener() {
+            @Override
+            public void onSnapShot(Bitmap bitmap, int width, int height) {
+                Map<String,Object> map = new HashMap<>();
+                map.put("method","onSnapShot");
+                //TODO
+                mEventSink.success(map);
+            }
+        });
+
+        player.setOnTrackChangedListener(new IPlayer.OnTrackChangedListener() {
+            @Override
+            public void onChangedSuccess(TrackInfo trackInfo) {
+                Map<String,Object> map = new HashMap<>();
+                map.put("method","onChangedSuccess");
+                //TODO
+                mEventSink.success(map);
+            }
+
+            @Override
+            public void onChangedFail(TrackInfo trackInfo, ErrorInfo errorInfo) {
+                Map<String,Object> map = new HashMap<>();
+                map.put("method","onChangedFail");
+                //TODO
+                mEventSink.success(map);
+            }
+        });
+
+        player.setOnSeekCompleteListener(new IPlayer.OnSeekCompleteListener() {
+            @Override
+            public void onSeekComplete() {
+                Map<String,Object> map = new HashMap<>();
+                map.put("method","onSeekComplete");
+                mEventSink.success(map);
+            }
+        });
+
+        player.setOnSeiDataListener(new IPlayer.OnSeiDataListener() {
+            @Override
+            public void onSeiData(int type, byte[] bytes) {
+                Map<String,Object> map = new HashMap<>();
+                map.put("method","onSeiData");
+                //TODO
+                mEventSink.success(map);
+            }
+        });
+
+        player.setOnLoadingStatusListener(new IPlayer.OnLoadingStatusListener() {
+            @Override
+            public void onLoadingBegin() {
+                Map<String,Object> map = new HashMap<>();
+                map.put("method","onLoadingBegin");
+                mEventSink.success(map);
+            }
+
+            @Override
+            public void onLoadingProgress(int percent, float netSpeed) {
+                Map<String,Object> map = new HashMap<>();
+                map.put("method","onLoadingProgress");
+                map.put("percent",percent);
+                map.put("netSpeed",netSpeed);
+                mEventSink.success(map);
+            }
+
+            @Override
+            public void onLoadingEnd() {
+                Map<String,Object> map = new HashMap<>();
+                map.put("method","onLoadingEnd");
+                mEventSink.success(map);
+            }
+        });
+
+        player.setOnStateChangedListener(new IPlayer.OnStateChangedListener() {
+            @Override
+            public void onStateChanged(int newState) {
+                Map<String,Object> map = new HashMap<>();
+                map.put("method","onStateChanged");
+                map.put("newState",newState);
+                mEventSink.success(map);
+            }
+        });
+
+        player.setOnSubtitleDisplayListener(new IPlayer.OnSubtitleDisplayListener() {
+            @Override
+            public void onSubtitleExtAdded(int trackIndex, String url) {
+                Map<String,Object> map = new HashMap<>();
+                map.put("method","onSubtitleExtAdded");
+                mEventSink.success(map);
+            }
+
+            @Override
+            public void onSubtitleShow(int trackIndex, long id, String data) {
+                Map<String,Object> map = new HashMap<>();
+                map.put("method","onSubtitleShow");
+                mEventSink.success(map);
+            }
+
+            @Override
+            public void onSubtitleHide(int trackIndex, long id) {
+                Map<String,Object> map = new HashMap<>();
+                map.put("method","onSubtitleHide");
+                mEventSink.success(map);
+            }
+        });
+
+        player.setOnInfoListener(new IPlayer.OnInfoListener() {
+            @Override
+            public void onInfo(InfoBean infoBean) {
+                Map<String,Object> map = new HashMap<>();
+                map.put("method","onInfo");
+                map.put("infoCode",infoBean.getCode().getValue());
+                map.put("extraValue",infoBean.getExtraValue());
+                map.put("extraMsg",infoBean.getExtraMsg());
+                mEventSink.success(map);
+            }
+        });
+
+        player.setOnErrorListener(new IPlayer.OnErrorListener() {
+            @Override
+            public void onError(ErrorInfo errorInfo) {
+                Map<String,Object> map = new HashMap<>();
+                map.put("method","onError");
+                mEventSink.success(map);
+            }
+        });
+
+        player.setOnCompletionListener(new IPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion() {
+                Map<String,Object> map = new HashMap<>();
+                map.put("method","onCompletion");
+                mEventSink.success(map);
+            }
+        });
+
+    }
+
+    @Override
+    public void onListen(Object arguments, EventChannel.EventSink events) {
+        this.mEventSink = events;
+    }
+
+    @Override
+    public void onCancel(Object arguments) {
+
     }
 
     @Override
@@ -174,6 +364,12 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory {
                 break;
             case "destroy":
                 release();
+                break;
+            case "getMediaInfo":
+
+                break;
+            case "snapshot":
+                snapshot();
                 break;
             case "setLoop":
                 setLoop((Boolean)methodCall.arguments);
@@ -398,6 +594,19 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory {
     private void release(){
         if(mIPlayer != null){
             mIPlayer.release();
+        }
+    }
+
+    private MediaInfo getMediaInfo(){
+        if(mIPlayer != null){
+            return mIPlayer.getMediaInfo();
+        }
+        return null;
+    }
+
+    private void snapshot(){
+        if(mIPlayer != null){
+            mIPlayer.snapshot();
         }
     }
 

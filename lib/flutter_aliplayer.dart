@@ -3,13 +3,95 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_aliplayer/flutter_avpdef.dart';
+
+import 'flutter_avpdef.dart';
 
 export 'flutter_avpdef.dart';
 
+typedef OnPrepared = void Function();
+typedef OnRenderingStart = void Function();
+typedef OnVideoSizeChanged = void Function(int width, int height);
+typedef OnSnapShot = void Function(); //TODO
+
+// typedef OnTrackChangedListener = void Function(); //TODO
+typedef OnChangedSuccess = void Function();
+typedef OnChangedFail = void Function();
+
+typedef OnSeekComplete = void Function();
+typedef OnSeiData = void Function(); //TODO
+
+typedef OnLoadingBegin = void Function();
+typedef OnLoadingProgress = void Function(int percent, double netSpeed);
+typedef OnLoadingEnd = void Function();
+
+typedef OnStateChanged = void Function(int newState);
+
+// typedef OnSubtitleDisplayListener = void Function(); //TODO
+typedef OnSubtitleExtAdded = void Function(); //TODO
+typedef OnSubtitleShow = void Function(); //TODO
+typedef OnSubtitleHide = void Function(); //TODO
+
+typedef OnInfo = void Function(int infoCode, int extraValue, String extraMsg);
+typedef OnError = void Function(); //
+typedef OnCompletion = void Function();
+
 class FlutterAliplayer {
+  OnLoadingBegin onLoadingBegin;
+  OnLoadingProgress onLoadingProgress;
+  OnLoadingEnd onLoadingEnd;
+  OnPrepared onPrepared;
+  OnRenderingStart onRenderingStart;
+  OnVideoSizeChanged onVideoSizeChanged;
+  OnSeekComplete onSeekComplete;
+  OnStateChanged onStateChanged;
+  OnInfo onInfo;
+  OnCompletion onCompletion;
+
   MethodChannel channel;
+  EventChannel eventChannel;
+
   FlutterAliplayer.init(int id) {
     channel = new MethodChannel('flutter_aliplayer');
+    eventChannel = EventChannel("flutter_aliplayer_event");
+    eventChannel.receiveBroadcastStream().listen(_onEvent, onError: _onError);
+  }
+
+  void setOnPrepard(OnPrepared prepared) {
+    this.onPrepared = prepared;
+  }
+
+  void setOnRenderingStart(OnRenderingStart renderingStart) {
+    this.onRenderingStart = renderingStart;
+  }
+
+  void setOnVideoSizeChanged(OnVideoSizeChanged videoSizeChanged) {
+    this.onVideoSizeChanged = videoSizeChanged;
+  }
+
+  void setOnSeekComplete(OnSeekComplete seekComplete) {
+    this.onSeekComplete = seekComplete;
+  }
+
+  void setOnLoadingStatusListener(
+      {OnLoadingBegin loadingBegin,
+      OnLoadingProgress loadingProgress,
+      OnLoadingEnd loadingEnd}) {
+    this.onLoadingBegin = loadingBegin;
+    this.onLoadingProgress = loadingProgress;
+    this.onLoadingEnd = loadingEnd;
+  }
+
+  void setOnStateChanged(OnStateChanged stateChanged) {
+    this.onStateChanged = stateChanged;
+  }
+
+  void setOnInfo(OnInfo info) {
+    this.onInfo = info;
+  }
+
+  void setOnCompletion(OnCompletion completion) {
+    this.onCompletion = completion;
   }
 
   Future<void> setUrl(String url) async {
@@ -27,6 +109,10 @@ class FlutterAliplayer {
 
   Future<void> pause() async {
     return channel.invokeMethod('pause');
+  }
+
+  Future<void> snapshot() async {
+    return channel.invokeMethod('snapshot');
   }
 
   Future<void> stop() async {
@@ -166,6 +252,88 @@ class FlutterAliplayer {
   Future<int> getLogLevel() {
     return channel.invokeMethod("getLogLevel");
   }
+
+  void _onEvent(dynamic event) {
+    String method = event[EventChanneldef.TYPE_KEY];
+    switch (method) {
+      case "onPrepared":
+        if (onPrepared != null) {
+          onPrepared();
+        }
+        break;
+      case "onRenderingStart":
+        if (onRenderingStart != null) {
+          onRenderingStart();
+        }
+        break;
+      case "onVideoSizeChanged":
+        if (onVideoSizeChanged != null) {
+          int width = event['width'];
+          int height = event['height'];
+          onVideoSizeChanged(width, height);
+        }
+        break;
+      case "onSnapShot":
+        break;
+      case "onChangedSuccess":
+        break;
+      case "onChangedFail":
+        break;
+      case "onSeekComplete":
+        if (onSeekComplete != null) {
+          onSeekComplete();
+        }
+        break;
+      case "onSeiData":
+        break;
+      case "onLoadingBegin":
+        if (onLoadingBegin != null) {
+          onLoadingBegin();
+        }
+        break;
+      case "onLoadingProgress":
+        int percent = event['percent'];
+        double netSpeed = event['netSpeed'];
+        if (onLoadingProgress != null) {
+          onLoadingProgress(percent, netSpeed);
+        }
+        break;
+      case "onLoadingEnd":
+        if (onLoadingEnd != null) {
+          onLoadingEnd();
+        }
+        break;
+      case "onStateChanged":
+        if (onStateChanged != null) {
+          int newState = event['newState'];
+          onStateChanged(newState);
+        }
+        break;
+      case "onSubtitleExtAdded":
+        break;
+      case "onSubtitleShow":
+        break;
+      case "onSubtitleHide":
+        break;
+      case "onInfo":
+        if (onInfo != null) {
+          int infoCode = event['infoCode'];
+          int extraValue = event['extraValue'];
+          String extraMsg = event['extraMsg'];
+          onInfo(infoCode, extraValue, extraMsg);
+        }
+        break;
+      case "onError":
+        break;
+      case "onCompletion":
+        if (onCompletion != null) {
+          onCompletion();
+        }
+        break;
+    }
+  }
+
+  void _onError(dynamic error) {}
 }
 
 typedef void AliPlayerViewCreatedCallback();
