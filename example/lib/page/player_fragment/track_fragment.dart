@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_aliplayer/flutter_aliplayer.dart';
+import 'package:flutter_aliplayer_example/model/downloader_model.dart';
 
 class TrackUIModel {
   bool isOpen;
   var selValue;
   String title;
-  List<SubTrackUIModel> children;
+  List<AVPTrackInfo> children;
   TrackUIModel({this.selValue, this.isOpen, this.title, this.children});
 }
 
-class SubTrackUIModel {
-  String title;
-  var value;
-  SubTrackUIModel({this.title, this.value});
-}
-
 class TrackFragment extends StatefulWidget {
+  final FlutterAliplayer fAliplayer;
+  final bool isTrackReady;
+  TrackFragment(this.fAliplayer,{this.isTrackReady});
   @override
   _TrackFragmentState createState() => _TrackFragmentState();
 }
@@ -26,60 +25,29 @@ class _TrackFragmentState extends State<TrackFragment> {
   void initState() {
     super.initState();
 
+    _loadData();
+
     _list = [
       TrackUIModel(
           isOpen: false,
           title: '---- VIDEO ----',
           selValue: 1000,
           children: [
-            SubTrackUIModel(
-              title: '1000',
-              value: 1000,
-            ),
-            SubTrackUIModel(
-              title: '2000',
-              value: 2000,
-            ),
-            SubTrackUIModel(
-              title: '3000',
-              value: 3000,
-            ),
+            
           ]),
       TrackUIModel(
           isOpen: false,
           title: '---- VIDEO ----',
           selValue: 1000,
           children: [
-            SubTrackUIModel(
-              title: '1000',
-              value: 1000,
-            ),
-            SubTrackUIModel(
-              title: '2000',
-              value: 2000,
-            ),
-            SubTrackUIModel(
-              title: '3000',
-              value: 3000,
-            ),
+            
           ]),
       TrackUIModel(
           isOpen: false,
           title: '---- VIDEO ----',
           selValue: 1000,
           children: [
-            SubTrackUIModel(
-              title: '1000',
-              value: 1000,
-            ),
-            SubTrackUIModel(
-              title: '2000',
-              value: 2000,
-            ),
-            SubTrackUIModel(
-              title: '3000',
-              value: 3000,
-            ),
+            
           ]),
     ];
   }
@@ -104,20 +72,20 @@ class _TrackFragmentState extends State<TrackFragment> {
             },
             body: Column(
               children: element.children
-                  .map((SubTrackUIModel e) =>
+                  .map((AVPTrackInfo e) =>
                       InkWell(
                         onTap: () {
-                          element.selValue = e.value;
+                          element.selValue = e.trackDefinition;
                           setState(() {});
                         },
                         child: Row(
                           children: [
-                            Expanded(child: Center(child: Text('${e.title}'))),
+                            Expanded(child: Center(child: Text('${e.trackDefinition}'))),
                             Container(
                                 width: 80,
                                 height: 33,
                                 alignment: Alignment.center,
-                                child: element.selValue==e.value?Icon(
+                                child: element.selValue==e.trackDefinition?Icon(
                                   Icons.check,
                                   color: Theme.of(context).accentColor,
                                   size: 18,
@@ -133,4 +101,38 @@ class _TrackFragmentState extends State<TrackFragment> {
       )),
     ));
   }
+
+  _loadData(){
+    // if(widget.isTrackReady){
+      widget.fAliplayer.getMediaInfo().then((value) {
+        AVPMediaInfo info = AVPMediaInfo.fromJson(value);
+        if(info.tracks.length>0){
+          info.tracks.forEach((element) {
+            _list[element.trackType].children.add(element);
+            // switch (element.trackType) {
+            //   case FlutterAvpdef.AVPTRACK_TYPE_VIDEO: {
+            //     [videoTracksArray addObject:track];
+            // }
+            //     break;
+            // case FlutterAvpdef.AVPTRACK_TYPE_AUDIO: {
+            //     [audioTracksArray addObject:track];
+            // }
+            //     break;
+            // case FlutterAvpdef.AVPTRACK_TYPE_SUBTITLE: {
+            //     [subtitleTracksArray addObject:track];
+            // }
+            //     break;
+            // case FlutterAvpdef.AVPTRACK_TYPE_SAAS_VOD: {
+            //     [vodTracksArray addObject:track];
+            // }
+            //     break;
+            // default:
+            //     break;
+            // }
+           });
+        }
+      });
+    // }
+  }
+
 }

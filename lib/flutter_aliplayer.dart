@@ -31,6 +31,7 @@ typedef OnStateChanged = void Function(int newState);
 typedef OnSubtitleExtAdded = void Function(); //TODO
 typedef OnSubtitleShow = void Function(); //TODO
 typedef OnSubtitleHide = void Function(); //TODO
+typedef OnTrackReady = void Function();
 
 typedef OnInfo = void Function(int infoCode, int extraValue, String extraMsg);
 typedef OnError = void Function(); //
@@ -47,6 +48,7 @@ class FlutterAliplayer {
   OnStateChanged onStateChanged;
   OnInfo onInfo;
   OnCompletion onCompletion;
+  OnTrackReady onTrackReady;
 
   MethodChannel channel;
   EventChannel eventChannel;
@@ -92,6 +94,10 @@ class FlutterAliplayer {
 
   void setOnCompletion(OnCompletion completion) {
     this.onCompletion = completion;
+  }
+
+  void setOnTrackReady(OnTrackReady onTrackReady) {
+    this.onTrackReady = onTrackReady;
   }
 
   Future<void> setUrl(String url) async {
@@ -253,6 +259,10 @@ class FlutterAliplayer {
     return channel.invokeMethod("getLogLevel");
   }
 
+  Future<dynamic> getMediaInfo() {
+    return channel.invokeMethod("getMediaInfo");
+  }
+
   void _onEvent(dynamic event) {
     String method = event[EventChanneldef.TYPE_KEY];
     switch (method) {
@@ -328,6 +338,11 @@ class FlutterAliplayer {
       case "onCompletion":
         if (onCompletion != null) {
           onCompletion();
+        }
+        break;
+      case "onTrackReady":
+        if (onTrackReady != null) {
+          this.onTrackReady();
         }
         break;
     }

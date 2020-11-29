@@ -61,6 +61,11 @@ class FlutterAvpdef {
   ///黑名单
   static const String BLACK_DEVICES_H264 = "HW_Decode_H264";
   static const String BLACK_DEVICES_HEVC = "HW_Decode_HEVC";
+
+  static const int AVPTRACK_TYPE_VIDEO = 0;
+  static const int AVPTRACK_TYPE_AUDIO = 1;
+  static const int AVPTRACK_TYPE_SUBTITLE = 2;
+  static const int AVPTRACK_TYPE_SAAS_VOD = 3;
 }
 
 class EventChanneldef {
@@ -70,4 +75,148 @@ class EventChanneldef {
   static const String DOWNLOAD_PROGRESS = "download_progress";
   static const String DOWNLOAD_PROCESS = "download_process";
   static const String DOWNLOAD_COMPLETION = "download_completion";
+}
+
+
+class AVPMediaInfo {
+  String status;
+  String mediaType;
+  List<AVPThumbnailInfo> thumbnails;
+  List<AVPTrackInfo> tracks;
+  String title;
+  int duration;
+  String transcodeMode;
+  String coverURL;
+
+  AVPMediaInfo(
+      {this.status,
+      this.mediaType,
+      this.thumbnails,
+      this.tracks,
+      this.title,
+      this.duration,
+      this.transcodeMode,
+      this.coverURL});
+
+  AVPMediaInfo.fromJson(Map<dynamic, dynamic> json) {
+    status = json['status'];
+    mediaType = json['mediaType'];
+    if (json['thumbnails'] != null) {
+      thumbnails = new List<AVPThumbnailInfo>();
+      json['thumbnails'].forEach((v) {
+        thumbnails.add(new AVPThumbnailInfo.fromJson(v));
+      });
+    }
+    if (json['tracks'] != null) {
+      tracks = new List<AVPTrackInfo>();
+      json['tracks'].forEach((v) {
+        tracks.add(new AVPTrackInfo.fromJson(v));
+      });
+    }
+    title = json['title'];
+    duration = json['duration'];
+    transcodeMode = json['transcodeMode'];
+    coverURL = json['coverURL'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<dynamic, dynamic> data = new Map<dynamic, dynamic>();
+    data['status'] = this.status;
+    data['mediaType'] = this.mediaType;
+    if (this.thumbnails != null) {
+      data['thumbnails'] = this.thumbnails.map((v) => v.toJson()).toList();
+    }
+    if (this.tracks != null) {
+      data['tracks'] = this.tracks.map((v) => v.toJson()).toList();
+    }
+    data['title'] = this.title;
+    data['duration'] = this.duration;
+    data['transcodeMode'] = this.transcodeMode;
+    data['coverURL'] = this.coverURL;
+    return data;
+  }
+}
+
+
+class AVPTrackInfo {
+  String vodFormat;
+  int videoHeight;
+  String subtitleLanguage;
+  int videoWidth;
+  int trackBitrate;
+  int vodFileSize;
+  int trackIndex;
+  String trackDefinition;
+  int audioSampleFormat;
+  String audioLanguage;
+  String vodPlayUrl;
+  int trackType;
+  int audioSamplerate;
+  int audioChannels;
+
+  AVPTrackInfo(
+      {this.vodFormat,
+      this.videoHeight,
+      this.subtitleLanguage,
+      this.videoWidth,
+      this.trackBitrate,
+      this.vodFileSize,
+      this.trackIndex,
+      this.trackDefinition,
+      this.audioSampleFormat,
+      this.audioLanguage,
+      this.vodPlayUrl,
+      this.trackType,
+      this.audioSamplerate,
+      this.audioChannels});
+
+  AVPTrackInfo.fromJson(Map<dynamic, dynamic> json) {
+    vodFormat = json['vodFormat'];
+    videoHeight = json['videoHeight'];
+    subtitleLanguage = json['subtitleLanguage'];
+    videoWidth = json['videoWidth'];
+    trackBitrate = json['trackBitrate'];
+    vodFileSize = json['vodFileSize'];
+    trackIndex = json['trackIndex'];
+    trackDefinition = json['trackDefinition'];
+    audioSampleFormat = json['audioSampleFormat'];
+    audioLanguage = json['audioLanguage'];
+    vodPlayUrl = json['vodPlayUrl'];
+    trackType = json['trackType'];
+    audioSamplerate = json['audioSamplerate'];
+    audioChannels = json['audioChannels'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<dynamic, dynamic> data = new Map<String, dynamic>();
+    data['vodFormat'] = this.vodFormat;
+    data['videoHeight'] = this.videoHeight;
+    data['subtitleLanguage'] = this.subtitleLanguage;
+    data['videoWidth'] = this.videoWidth;
+    data['trackBitrate'] = this.trackBitrate;
+    data['vodFileSize'] = this.vodFileSize;
+    data['trackIndex'] = this.trackIndex;
+    data['trackDefinition'] = this.trackDefinition;
+    data['audioSampleFormat'] = this.audioSampleFormat;
+    data['audioLanguage'] = this.audioLanguage;
+    data['vodPlayUrl'] = this.vodPlayUrl;
+    data['trackType'] = this.trackType;
+    data['audioSamplerate'] = this.audioSamplerate;
+    data['audioChannels'] = this.audioChannels;
+    return data;
+  }
+}
+
+class AVPThumbnailInfo{
+String url;
+
+AVPThumbnailInfo.fromJson(Map<dynamic, dynamic> json) {
+    url = json['url'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<dynamic, dynamic>();
+    data['url'] = this.url;
+    return data;
+  }
 }
