@@ -12,6 +12,7 @@ import 'package:flutter_aliplayer_example/page/player_fragment/track_fragment.da
 import 'package:flutter_aliplayer_example/util/formatter_utils.dart';
 import 'package:flutter_aliplayer_example/widget/aliyun_slider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:path_provider/path_provider.dart';
 
 class PlayerPage extends StatefulWidget {
   final ModeType playMode;
@@ -44,6 +45,8 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   int _loadingPercent = 0;
   //视频时长
   int _videoDuration = 100;
+  //截图保存路径
+  String _snapShotPath;
 
   ///seek中
   bool _inSeek = false;
@@ -57,6 +60,13 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     bottomIndex = 0;
     _playMode = widget.playMode;
     _dataSourceMap = widget.dataSourceMap;
+
+    getExternalStorageDirectories().then((value) {
+      if (value.length > 0) {
+        _snapShotPath = value[0].path + "/snapshot_" + new DateTime.now().millisecondsSinceEpoch.toString() + ".png";
+        return _snapShotPath;
+      }
+    });
 
     fAliplayer = FlutterAliplayer.init(0);
     mOptionsFragment = OptionsFragment(fAliplayer);
@@ -107,7 +117,9 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     fAliplayer.setOnInfo((infoCode, extraValue, extraMsg) {
       if (infoCode == FlutterAvpdef.CURRENTPOSITION) {
         _currentPosition = extraValue;
-        setState(() {});
+        if(!_inSeek){
+          setState(() {});
+        }
       } else if (infoCode == FlutterAvpdef.BUFFEREDPOSITION) {
         _bufferPosition = extraValue;
         setState(() {});
@@ -129,6 +141,10 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     fAliplayer.setOnTrackReady(() { 
       _isTrackReady = true;
       setState(() {});
+    });
+    fAliplayer.setOnSnapShot((path) {
+      print("aliyun : snapShotPath = $path");
+      Fluttertoast.showToast(msg: "SnapShot Save : $path");
     });
     fAliplayer.setOnError((errorCode, errorExtra, errorMsg) {
       Fluttertoast.showToast(msg: "error : $errorCode : $errorMsg");
@@ -158,9 +174,9 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   void dispose() {
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-    super.dispose();
     fAliplayer.stop();
     fAliplayer.destroy();
+    super.dispose();
     WidgetsBinding.instance.removeObserver(this);
   }
 
@@ -203,6 +219,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                       alignment: FractionalOffset.bottomCenter),
                 ],
               ),
+
               _buildControlBtns(orientation),
               _buildFragmentPage(orientation),
             ],
@@ -215,6 +232,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   }
 
   void onViewPlayerCreated() async {
+    fAliplayer.createAliPlayer();
     switch (_playMode) {
       case ModeType.URL:
         this.fAliplayer.setUrl(_dataSourceMap[DataSourceRelated.URL_KEY]);
@@ -273,7 +291,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
             InkWell(
                 child: Text('截图'),
                 onTap: () {
-                  fAliplayer.snapshot();
+                  fAliplayer.snapshot(_snapShotPath);
                 }),
           ],
         ),

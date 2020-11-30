@@ -12,7 +12,7 @@ export 'flutter_avpdef.dart';
 typedef OnPrepared = void Function();
 typedef OnRenderingStart = void Function();
 typedef OnVideoSizeChanged = void Function(int width, int height);
-typedef OnSnapShot = void Function(); //TODO
+typedef OnSnapShot = void Function(String path);
 
 // typedef OnTrackChangedListener = void Function(); //TODO
 typedef OnChangedSuccess = void Function();
@@ -50,13 +50,12 @@ class FlutterAliplayer {
   OnCompletion onCompletion;
   OnTrackReady onTrackReady;
   OnError onError;
+  OnSnapShot onSnapShot;
 
-  MethodChannel channel;
-  EventChannel eventChannel;
+  MethodChannel channel = new MethodChannel('flutter_aliplayer');
+  EventChannel eventChannel = EventChannel("flutter_aliplayer_event");
 
   FlutterAliplayer.init(int id) {
-    channel = new MethodChannel('flutter_aliplayer');
-    eventChannel = EventChannel("flutter_aliplayer_event");
     eventChannel.receiveBroadcastStream().listen(_onEvent, onError: _onError);
   }
 
@@ -70,6 +69,10 @@ class FlutterAliplayer {
 
   void setOnVideoSizeChanged(OnVideoSizeChanged videoSizeChanged) {
     this.onVideoSizeChanged = videoSizeChanged;
+  }
+
+  void setOnSnapShot(OnSnapShot snapShot){
+    this.onSnapShot = snapShot;
   }
 
   void setOnSeekComplete(OnSeekComplete seekComplete) {
@@ -105,6 +108,10 @@ class FlutterAliplayer {
     this.onTrackReady = onTrackReady;
   }
 
+  Future<void> createAliPlayer() async {
+    return channel.invokeMethod('createAliPlayer');
+  }
+
   Future<void> setUrl(String url) async {
     assert(url != null);
     return channel.invokeMethod('setUrl', url);
@@ -122,8 +129,8 @@ class FlutterAliplayer {
     return channel.invokeMethod('pause');
   }
 
-  Future<void> snapshot() async {
-    return channel.invokeMethod('snapshot');
+  Future<dynamic> snapshot(String path) async {
+    return channel.invokeMethod('snapshot',path);
   }
 
   Future<void> stop() async {
@@ -294,6 +301,10 @@ class FlutterAliplayer {
         }
         break;
       case "onSnapShot":
+        if(onSnapShot != null){
+          String snapShotPath = event['snapShotPath'];
+          onSnapShot(snapShotPath);
+        }
         break;
       case "onChangedSuccess":
         break;

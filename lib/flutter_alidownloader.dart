@@ -105,6 +105,5 @@ class FlutterAliDownloader {
   void _onEvent(dynamic event) {}
 
   void _onError(dynamic error) {
-    print("abc : 原生发送消息 onError");
   }
 }
