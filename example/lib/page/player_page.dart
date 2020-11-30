@@ -42,6 +42,8 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   bool _showLoading = false;
   //loading进度
   int _loadingPercent = 0;
+  //视频时长
+  int _videoDuration = 100;
 
   ///seek中
   bool _inSeek = false;
@@ -74,7 +76,12 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
 
   _initListener() {
     fAliplayer.setOnPrepard(() {
-      print("abc : onPrepared");
+       fAliplayer.getMediaInfo().then((value){
+         _videoDuration = value['duration'];
+         setState(() {
+
+         });
+       });
     });
     fAliplayer.setOnRenderingStart(() {
       print("abc : onRenderingStart");
@@ -117,11 +124,14 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
       }
     });
     fAliplayer.setOnCompletion(() {
-      print("abc : setOnCompletion");
+      Fluttertoast.showToast(msg: "onCompletion");
     });
     fAliplayer.setOnTrackReady(() { 
       _isTrackReady = true;
       setState(() {});
+    });
+    fAliplayer.setOnError((errorCode, errorExtra, errorMsg) {
+      Fluttertoast.showToast(msg: "error : $errorCode : $errorMsg");
     });
   }
 
@@ -313,7 +323,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.only(left: 10.0),
+          padding: EdgeInsets.only(left: 5.0),
           child: Text(
             "buffer : ${FormatterUtils.getTimeformatByMs(_bufferPosition)}",
             style: TextStyle(color: Colors.white, fontSize: 11),
@@ -322,21 +332,19 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
         Row(
           children: [
             SizedBox(
-              width: 10.0,
+              width: 5.0,
             ),
             Text(
-              "${FormatterUtils.getTimeformatByMs(_currentPosition)}/123",
+              "${FormatterUtils.getTimeformatByMs(_currentPosition)} / ${FormatterUtils.getTimeformatByMs(_videoDuration)}",
               style: TextStyle(color: Colors.white, fontSize: 11),
             ),
             Expanded(
               child: AliyunSlider(
-                max: 114180,
+                max: _videoDuration.toDouble(),
+                min:0,
                 bufferColor: Colors.white,
-                bufferValue: double.parse(_bufferPosition.toString()),
-                value: double.parse(_currentPosition.toString()),
-                // max: 100,
-                // bufferValue: 80,
-                // value: 50,
+                bufferValue: _bufferPosition.toDouble(),
+                value: _currentPosition.toDouble(),
                 onChangeStart: (value) {
                   _inSeek = true;
                 },

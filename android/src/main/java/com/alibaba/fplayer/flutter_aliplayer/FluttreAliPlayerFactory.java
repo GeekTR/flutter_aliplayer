@@ -20,6 +20,7 @@ import com.aliyun.player.bean.InfoBean;
 import com.aliyun.player.nativeclass.CacheConfig;
 import com.aliyun.player.nativeclass.MediaInfo;
 import com.aliyun.player.nativeclass.PlayerConfig;
+import com.aliyun.player.nativeclass.Thumbnail;
 import com.aliyun.player.nativeclass.TrackInfo;
 import com.aliyun.player.source.StsInfo;
 import com.aliyun.player.source.UrlSource;
@@ -29,7 +30,9 @@ import com.aliyun.player.source.VidSts;
 import com.cicada.player.utils.Logger;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -81,7 +84,6 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
         player.setOnPreparedListener(new IPlayer.OnPreparedListener() {
             @Override
             public void onPrepared() {
-                System.out.println("abc : player " + player.getDuration());
                 Map<String,Object> map = new HashMap<>();
                 map.put("method","onPrepared");
                 mEventSink.success(map);
@@ -230,6 +232,18 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
             public void onError(ErrorInfo errorInfo) {
                 Map<String,Object> map = new HashMap<>();
                 map.put("method","onError");
+                map.put("errorCode",errorInfo.getCode().getValue());
+                map.put("errorExtra",errorInfo.getExtra());
+                map.put("errorMsg",errorInfo.getMsg());
+                mEventSink.success(map);
+            }
+        });
+
+        player.setOnTrackReadyListener(new IPlayer.OnTrackReadyListener() {
+            @Override
+            public void onTrackReady(MediaInfo mediaInfo) {
+                Map<String,Object> map = new HashMap<>();
+                map.put("method","onTrackReady");
                 mEventSink.success(map);
             }
         });
@@ -374,7 +388,48 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
             }
                 break;
             case "getMediaInfo":
-
+            {
+                MediaInfo mediaInfo = getMediaInfo();
+                if(mediaInfo != null){
+                    Map<String,Object> getMediaInfoMap = new HashMap<>();
+                    getMediaInfoMap.put("title",mediaInfo.getTitle());
+                    getMediaInfoMap.put("status",mediaInfo.getStatus());
+                    getMediaInfoMap.put("mediaType",mediaInfo.getMediaType());
+                    getMediaInfoMap.put("duration",mediaInfo.getDuration());
+                    getMediaInfoMap.put("transcodeMode",mediaInfo.getTransCodeMode());
+                    getMediaInfoMap.put("coverURL",mediaInfo.getCoverUrl());
+                    List<Thumbnail> thumbnail = mediaInfo.getThumbnailList();
+                    List<Map<String,Object>> thumbailList = new ArrayList<>();
+                    for (Thumbnail thumb : thumbnail) {
+                        Map<String,Object> map = new HashMap<>();
+                        map.put("url",thumb.mURL);
+                        thumbailList.add(map);
+                        getMediaInfoMap.put("thumbnails",thumbailList);
+                    }
+                    List<TrackInfo> trackInfos = mediaInfo.getTrackInfos();
+                    List<Map<String,Object>> trackInfoList = new ArrayList<>();
+                    for (TrackInfo trackInfo : trackInfos) {
+                        Map<String,Object> map = new HashMap<>();
+                        map.put("vodFormat",trackInfo.getVodFormat());
+                        map.put("videoHeight",trackInfo.getVideoHeight());
+                        map.put("videoWidth",trackInfo.getVideoHeight());
+                        map.put("subtitleLanguage",trackInfo.getSubtitleLang());
+                        map.put("trackBitrate",trackInfo.getVideoBitrate());
+                        map.put("vodFileSize",trackInfo.getVodFileSize());
+                        map.put("trackIndex",trackInfo.getIndex());
+                        map.put("trackDefinition",trackInfo.getVodDefinition());
+                        map.put("audioSampleFormat",trackInfo.getAudioSampleFormat());
+                        map.put("audioLanguage",trackInfo.getAudioLang());
+                        map.put("vodPlayUrl",trackInfo.getVodPlayUrl());
+                        map.put("trackType",trackInfo.getType().ordinal());
+                        map.put("audioSamplerate",trackInfo.getAudioSampleRate());
+                        map.put("audioChannels",trackInfo.getAudioChannels());
+                        trackInfoList.add(map);
+                        getMediaInfoMap.put("tracks",trackInfoList);
+                    }
+                    result.success(getMediaInfoMap);
+                }
+            }
                 break;
             case "snapshot":
                 snapshot();

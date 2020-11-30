@@ -1,29 +1,21 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'flutter_aliplayer.dart';
 export 'flutter_aliplayer.dart';
 
-class FlutterAliListPlayer extends FlutterAliplayer{
-
-  FlutterAliListPlayer.init(int id) : super.init(id){
+class FlutterAliListPlayer extends FlutterAliplayer {
+  FlutterAliListPlayer.init(int id) : super.init(id) {
     channel = new MethodChannel('flutter_alilistplayer');
   }
 
-  Future<void> addVidSource({@required vid,@required uid}) async {
-    Map<String, dynamic> info = {
-      'vid':vid,
-      'uid':uid
-    };
+  Future<void> addVidSource({@required vid, @required uid}) async {
+    Map<String, dynamic> info = {'vid': vid, 'uid': uid};
     return channel.invokeMethod("addVidSource", info);
   }
 
-  Future<void> addUrlSource({@required url,@required uid}) async {
-    Map<String, dynamic> info = {
-      'url':url,
-      'uid':uid
-    };
+  Future<void> addUrlSource({@required url, @required uid}) async {
+    Map<String, dynamic> info = {'url': url, 'uid': uid};
     return channel.invokeMethod("addUrlSource", info);
   }
 
@@ -35,37 +27,49 @@ class FlutterAliListPlayer extends FlutterAliplayer{
     return channel.invokeMethod("clear");
   }
 
-  Future<void> moveToNext({@required accId,@required accKey,@required token,@required region}) async {
+  Future<void> moveToNext(
+      {@required accId,
+      @required accKey,
+      @required token,
+      @required region}) async {
     Map<String, dynamic> info = {
-      'accId':accId,
-      'accKey':accKey,
-      'token':token,
-      'region':region
+      'accId': accId,
+      'accKey': accKey,
+      'token': token,
+      'region': region
     };
-    return channel.invokeMethod("moveToNext",info);
+    return channel.invokeMethod("moveToNext", info);
   }
 
-  Future<void> moveToPre({@required accId,@required accKey,@required token,@required region}) async {
+  Future<void> moveToPre(
+      {@required accId,
+      @required accKey,
+      @required token,
+      @required region}) async {
     Map<String, dynamic> info = {
-      'accId':accId,
-      'accKey':accKey,
-      'token':token,
-      'region':region
+      'accId': accId,
+      'accKey': accKey,
+      'token': token,
+      'region': region
     };
-    return channel.invokeMethod("moveToPre",info);
+    return channel.invokeMethod("moveToPre", info);
   }
 
-///移动到指定位置开始准备播放,url播放方式只需要填写uid；sts播放方式，需要更新sts信息
-///uid 指定资源的uid，代表在列表中的唯一标识
-  Future<void> moveTo({@required String uid,String accId, accKey,String token,String region}) async {
+  ///移动到指定位置开始准备播放,url播放方式只需要填写uid；sts播放方式，需要更新sts信息
+  ///uid 指定资源的uid，代表在列表中的唯一标识
+  Future<void> moveTo(
+      {@required String uid,
+      String accId,
+      accKey,
+      String token,
+      String region}) async {
     Map<String, dynamic> info = {
-      'uid':uid,
-      'accId':accId,
-      'accKey':accKey,
-      'token':token,
-      'region':region
+      'uid': uid,
+      'accId': accId,
+      'accKey': accKey,
+      'token': token,
+      'region': region
     };
-    return channel.invokeMethod("moveTo",info);
+    return channel.invokeMethod("moveTo", info);
   }
-
 }

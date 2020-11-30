@@ -34,7 +34,7 @@ typedef OnSubtitleHide = void Function(); //TODO
 typedef OnTrackReady = void Function();
 
 typedef OnInfo = void Function(int infoCode, int extraValue, String extraMsg);
-typedef OnError = void Function(); //
+typedef OnError = void Function(int errorCode,String errorExtra,String errorMsg);
 typedef OnCompletion = void Function();
 
 class FlutterAliplayer {
@@ -49,6 +49,7 @@ class FlutterAliplayer {
   OnInfo onInfo;
   OnCompletion onCompletion;
   OnTrackReady onTrackReady;
+  OnError onError;
 
   MethodChannel channel;
   EventChannel eventChannel;
@@ -73,6 +74,10 @@ class FlutterAliplayer {
 
   void setOnSeekComplete(OnSeekComplete seekComplete) {
     this.onSeekComplete = seekComplete;
+  }
+
+  void setOnError(OnError onError){
+    this.onError = onError;
   }
 
   void setOnLoadingStatusListener(
@@ -339,6 +344,12 @@ class FlutterAliplayer {
         }
         break;
       case "onError":
+        if(onError != null){
+          int errorCode = event['errorCode'];
+          String errorExtra = event['errorExtra'];
+          String errorMsg = event['errorMsg'];
+          onError(errorCode,errorExtra,errorMsg);
+        }
         break;
       case "onCompletion":
         if (onCompletion != null) {
