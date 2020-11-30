@@ -37,6 +37,8 @@ typedef OnInfo = void Function(int infoCode, int extraValue, String extraMsg);
 typedef OnError = void Function(int errorCode,String errorExtra,String errorMsg);
 typedef OnCompletion = void Function();
 
+typedef OnTrackChanged = void Function(dynamic value);
+
 class FlutterAliplayer {
   OnLoadingBegin onLoadingBegin;
   OnLoadingProgress onLoadingProgress;
@@ -51,6 +53,8 @@ class FlutterAliplayer {
   OnTrackReady onTrackReady;
   OnError onError;
   OnSnapShot onSnapShot;
+
+  OnTrackChanged onTrackChanged;
 
   MethodChannel channel = new MethodChannel('flutter_aliplayer');
   EventChannel eventChannel = EventChannel("flutter_aliplayer_event");
@@ -108,8 +112,13 @@ class FlutterAliplayer {
     this.onTrackReady = onTrackReady;
   }
 
+
   Future<void> createAliPlayer() async {
     return channel.invokeMethod('createAliPlayer');
+  }
+  
+  void setOnTrackChanged(OnTrackChanged onTrackChanged){
+    this.onTrackChanged = onTrackChanged;
   }
 
   Future<void> setUrl(String url) async {
@@ -280,6 +289,19 @@ class FlutterAliplayer {
     return channel.invokeMethod("getMediaInfo");
   }
 
+  Future<dynamic> getCurrentTrack(int trackIdx) {
+    return channel.invokeMethod("getCurrentTrack",trackIdx);
+  }
+
+  // accurate 0 为不精确  1 为精确  不填为忽略
+  Future<void> selectTrack(int trackIdx,{int accurate = -1}) {
+    var map = {
+        'trackIdx': trackIdx,
+        'accurate': accurate,
+      };
+    return channel.invokeMethod("selectTrack",map);
+  }
+
   void _onEvent(dynamic event) {
     String method = event[EventChanneldef.TYPE_KEY];
     switch (method) {
@@ -370,6 +392,12 @@ class FlutterAliplayer {
       case "onTrackReady":
         if (onTrackReady != null) {
           this.onTrackReady();
+        }
+        break;
+      case "onTrackChanged":
+        if(onTrackChanged != null){
+          dynamic info = event['info'];
+          this.onTrackChanged(info);
         }
         break;
     }

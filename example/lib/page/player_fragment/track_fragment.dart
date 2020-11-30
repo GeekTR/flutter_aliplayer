@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_aliplayer/flutter_aliplayer.dart';
-import 'package:flutter_aliplayer_example/model/downloader_model.dart';
 
 class TrackUIModel {
   bool isOpen;
   var selValue;
   String title;
-  List<AVPTrackInfo> children;
+  List<SubTrackUIModel> children;
   TrackUIModel({this.selValue, this.isOpen, this.title, this.children});
 }
 
@@ -16,6 +15,12 @@ class TrackFragment extends StatefulWidget {
   TrackFragment(this.fAliplayer,{this.isTrackReady});
   @override
   _TrackFragmentState createState() => _TrackFragmentState();
+}
+
+class SubTrackUIModel {
+  String title;
+  var value;
+  SubTrackUIModel({this.title, this.value});
 }
 
 class _TrackFragmentState extends State<TrackFragment> {
@@ -44,7 +49,21 @@ class _TrackFragmentState extends State<TrackFragment> {
           ]),
       TrackUIModel(
           isOpen: false,
-          title: '---- VIDEO ----',
+          title: '---- SUBTITLE ----',
+          selValue: 1000,
+          children: [
+            
+          ]),
+      TrackUIModel(
+          isOpen: false,
+          title: '---- VOD ----',
+          selValue: 1000,
+          children: [
+            
+          ]),
+          TrackUIModel(
+          isOpen: false,
+          title: '---- 外挂字幕 ----',
           selValue: 1000,
           children: [
             
@@ -72,20 +91,21 @@ class _TrackFragmentState extends State<TrackFragment> {
             },
             body: Column(
               children: element.children
-                  .map((AVPTrackInfo e) =>
+                  .map((SubTrackUIModel e) =>
                       InkWell(
                         onTap: () {
-                          element.selValue = e.trackDefinition;
+                          element.selValue = e.value;
+                          widget.fAliplayer.selectTrack(element.selValue,accurate:0);
                           setState(() {});
                         },
                         child: Row(
                           children: [
-                            Expanded(child: Center(child: Text('${e.trackDefinition}'))),
+                            Expanded(child: Center(child: Text('${e.title}'))),
                             Container(
                                 width: 80,
                                 height: 33,
                                 alignment: Alignment.center,
-                                child: element.selValue==e.trackDefinition?Icon(
+                                child: element.selValue==e.value?Icon(
                                   Icons.check,
                                   color: Theme.of(context).accentColor,
                                   size: 18,
@@ -108,28 +128,21 @@ class _TrackFragmentState extends State<TrackFragment> {
         AVPMediaInfo info = AVPMediaInfo.fromJson(value);
         if(info.tracks.length>0){
           info.tracks.forEach((element) {
-            _list[element.trackType].children.add(element);
-            // switch (element.trackType) {
-            //   case FlutterAvpdef.AVPTRACK_TYPE_VIDEO: {
-            //     [videoTracksArray addObject:track];
-            // }
-            //     break;
-            // case FlutterAvpdef.AVPTRACK_TYPE_AUDIO: {
-            //     [audioTracksArray addObject:track];
-            // }
-            //     break;
-            // case FlutterAvpdef.AVPTRACK_TYPE_SUBTITLE: {
-            //     [subtitleTracksArray addObject:track];
-            // }
-            //     break;
-            // case FlutterAvpdef.AVPTRACK_TYPE_SAAS_VOD: {
-            //     [vodTracksArray addObject:track];
-            // }
-            //     break;
-            // default:
-            //     break;
-            // }
+             SubTrackUIModel model = SubTrackUIModel();
+             model.value = element.trackIndex;
+             model.title = element.trackDefinition;
+             _list[element.trackType].children.add(model);
            });
+
+           //获取当前选中状态值
+           for(int i=0;i<4;i++){
+             widget.fAliplayer.getCurrentTrack(i).then((value){
+               if(value!=null){
+                AVPTrackInfo track = AVPTrackInfo.fromJson(value);
+                _list[i].selValue = track.trackIndex;
+               }
+             });
+           }
         }
       });
     // }
