@@ -12,14 +12,23 @@ typedef OnEnablePlayBackChanged = Function(bool mEnablePlayBack);
 class OptionsFragment extends StatefulWidget {
   final FlutterAliplayer fAliplayer;
   Function playBackChanged;
+  _OptionsFragmentState _optionsFragmentState;
   OptionsFragment(this.fAliplayer);
 
+  ///硬解失败切换到软解
   void setOnEnablePlayBackChanged(OnEnablePlayBackChanged enable) {
     this.playBackChanged = enable;
   }
 
+  void switchHardwareDecoder() {
+    if (_optionsFragmentState != null) {
+      _optionsFragmentState.switchHardwareDecoder();
+    }
+  }
+
   @override
-  _OptionsFragmentState createState() => _OptionsFragmentState();
+  _OptionsFragmentState createState() =>
+      _optionsFragmentState = _OptionsFragmentState();
 }
 
 class _OptionsFragmentState extends State<OptionsFragment> {
@@ -27,7 +36,6 @@ class _OptionsFragmentState extends State<OptionsFragment> {
   bool mMute = false;
   bool mLoop = false;
   bool mEnableHardwareDecoder = false;
-  bool mAccurateSeek = false;
   bool mEnablePlayBack = false;
   int mScaleGroupValue = 1;
   int mMirrorGroupValue = 1;
@@ -45,6 +53,12 @@ class _OptionsFragmentState extends State<OptionsFragment> {
       mEnableHardwareDecoder = GlobalSettings.mEnableHardwareDecoder;
     }
 
+    setState(() {});
+  }
+
+  ///硬解失败切换到软解
+  void switchHardwareDecoder() {
+    mEnableHardwareDecoder = false;
     setState(() {});
   }
 
@@ -138,10 +152,10 @@ class _OptionsFragmentState extends State<OptionsFragment> {
         Column(
           children: [
             CupertinoSwitch(
-              value: mAccurateSeek,
+              value: GlobalSettings.mEnableAccurateSeek,
               onChanged: (value) {
                 setState(() {
-                  mAccurateSeek = value;
+                  GlobalSettings.mEnableAccurateSeek = value;
                 });
               },
             ),

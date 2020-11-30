@@ -365,6 +365,14 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
             case "destroy":
                 release();
                 break;
+            case "seekTo":
+            {
+                Map<String,Object> seekToMap = (Map<String,Object>)methodCall.arguments;
+                Integer position = (Integer) seekToMap.get("position");
+                Integer seekMode = (Integer) seekToMap.get("seekMode");
+                seekTo(position,seekMode);
+            }
+                break;
             case "getMediaInfo":
 
                 break;
@@ -594,6 +602,18 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
     private void release(){
         if(mIPlayer != null){
             mIPlayer.release();
+        }
+    }
+
+    private void seekTo(long position,int seekMode){
+        if(mIPlayer != null){
+            IPlayer.SeekMode mSeekMode;
+            if(seekMode == IPlayer.SeekMode.Accurate.getValue()){
+                mSeekMode = IPlayer.SeekMode.Accurate;
+            }else{
+                mSeekMode = IPlayer.SeekMode.Inaccurate;
+            }
+            mIPlayer.seekTo(position,mSeekMode);
         }
     }
 

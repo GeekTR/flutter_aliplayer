@@ -54,6 +54,10 @@ class FlutterAvpdef {
   static const int RTSSERVERMAYBEDISCONNECT = 805371905;
   static const int RTSSERVERRECOVER = 805371906;
 
+  ///精准seek
+  static const int ACCURATE = 1;
+  static const int INACCURATE = 16;
+
   ///下载方式
   static const String DOWNLOADTYPE_STS = "download_sts";
   static const String DOWNLOADTYPE_AUTH = "download_auth";

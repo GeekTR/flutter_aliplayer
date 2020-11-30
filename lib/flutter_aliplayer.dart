@@ -123,6 +123,11 @@ class FlutterAliplayer {
     return channel.invokeMethod('destroy');
   }
 
+  Future<void> seekTo(int position, int seekMode) async {
+    var map = {"position": position, "seekMode": seekMode};
+    return channel.invokeMethod("seekTo", map);
+  }
+
   Future<bool> isLoop() async {
     return channel.invokeMethod('isLoop');
   }

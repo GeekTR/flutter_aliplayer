@@ -26,6 +26,9 @@ class GlobalSettings {
 
   ///播放器日志级别
   static int mLogLevel = FlutterAvpdef.AF_LOG_LEVEL_INFO;
+
+  ///是否是精准seek
+  static bool mEnableAccurateSeek = false;
 }
 
 /// 播放方式
