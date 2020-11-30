@@ -10,6 +10,8 @@ import 'package:flutter_aliplayer_example/page/player_fragment/options_fragment.
 import 'package:flutter_aliplayer_example/page/player_fragment/play_config_fragment.dart';
 import 'package:flutter_aliplayer_example/page/player_fragment/track_fragment.dart';
 import 'package:flutter_aliplayer_example/util/formatter_utils.dart';
+import 'package:flutter_aliplayer_example/widget/aliyun_slider.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class PlayerPage extends StatefulWidget {
   final ModeType playMode;
@@ -29,16 +31,17 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   List<Widget> mFramePage;
   ModeType _playMode;
   Map<String, dynamic> _dataSourceMap;
+  OptionsFragment mOptionsFragment;
   //是否允许后台播放
   bool _mEnablePlayBack = false;
   //当前播放进度
   int _currentPosition = 0;
   //当前buffer进度
-  int _buffering;
+  int _bufferPosition = 0;
   //是否展示loading
   bool _showLoading = false;
   //loading进度
-  int _loadingPercent;
+  int _loadingPercent = 0;
 
   ///seek中
   bool _inSeek = false;
@@ -52,7 +55,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     _dataSourceMap = widget.dataSourceMap;
 
     fAliplayer = FlutterAliplayer.init(0);
-    OptionsFragment mOptionsFragment = OptionsFragment(fAliplayer);
+    mOptionsFragment = OptionsFragment(fAliplayer);
     mFramePage = [
       mOptionsFragment,
       PlayConfigFragment(fAliplayer),
@@ -90,15 +93,25 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
       _showLoading = false;
     });
     fAliplayer.setOnSeekComplete(() {
-      print("abc : onSeekComplete");
+      _inSeek = false;
     });
     fAliplayer.setOnInfo((infoCode, extraValue, extraMsg) {
       if (infoCode == FlutterAvpdef.CURRENTPOSITION) {
         _currentPosition = extraValue;
         setState(() {});
       } else if (infoCode == FlutterAvpdef.BUFFEREDPOSITION) {
-        _buffering = extraValue;
+        _bufferPosition = extraValue;
         setState(() {});
+      } else if (infoCode == FlutterAvpdef.AUTOPLAYSTART) {
+        Fluttertoast.showToast(msg: "AutoPlay");
+      } else if (infoCode == FlutterAvpdef.CACHESUCCESS) {
+        Fluttertoast.showToast(msg: "Cache Success");
+      } else if (infoCode == FlutterAvpdef.CACHEERROR) {
+        Fluttertoast.showToast(msg: "Cache Error $extraMsg");
+      } else if (infoCode == FlutterAvpdef.LOOPINGSTART) {
+        Fluttertoast.showToast(msg: "Looping Start");
+      } else if (infoCode == FlutterAvpdef.SWITCHTOSOFTWAREVIDEODECODER) {
+        mOptionsFragment.switchHardwareDecoder();
       }
     });
     fAliplayer.setOnCompletion(() {
@@ -163,10 +176,11 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
               Stack(
                 children: [
                   Container(child: aliPlayerView, width: width, height: height),
-                  Align(
-                      child: _buildContentWidget(orientation),
-                      alignment: FractionalOffset.bottomCenter,
-                      heightFactor: 3.3),
+                  Container(
+                    width: width,
+                    height: height,
+                    child: _buildContentWidget(orientation),
+                  ),
                   Align(
                       child: _buildProgressBar(),
                       heightFactor: 2.0,
@@ -289,12 +303,13 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   ///播放进度和buffer
   _buildContentWidget(Orientation orientation) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: EdgeInsets.only(left: 10.0),
           child: Text(
-            "buffer : ${FormatterUtils.getTimeformatByMs(_buffering)}",
+            "buffer : ${FormatterUtils.getTimeformatByMs(_bufferPosition)}",
             style: TextStyle(color: Colors.white, fontSize: 11),
           ),
         ),
@@ -308,30 +323,29 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
               style: TextStyle(color: Colors.white, fontSize: 11),
             ),
             Expanded(
-              child: SliderTheme(
-                data: SliderTheme.of(context).copyWith(
-                  inactiveTickMarkColor: Colors.red,
-                  activeTickMarkColor: Colors.blue,
-                  inactiveTrackColor: Colors.white,
-                ),
-                child: CupertinoSlider(
-                  max: 114180,
-                  value: double.parse(_currentPosition.toString()),
-                  onChangeStart: (value) {
-                    _inSeek = true;
-                    print("abc : onnChangeStart   ");
-                  },
-                  onChangeEnd: (value) {
-                    _inSeek = false;
-                    //TODO  123123123   seekTo
-                    print("abc : onChangeEnd");
-                  },
-                  onChanged: (value) {
-                    setState(() {
-                      _currentPosition = value.ceil();
-                    });
-                  },
-                ),
+              child: AliyunSlider(
+                max: 114180,
+                bufferColor: Colors.white,
+                bufferValue: double.parse(_bufferPosition.toString()),
+                value: double.parse(_currentPosition.toString()),
+                // max: 100,
+                // bufferValue: 80,
+                // value: 50,
+                onChangeStart: (value) {
+                  _inSeek = true;
+                },
+                onChangeEnd: (value) {
+                  fAliplayer.seekTo(
+                      value.ceil(),
+                      GlobalSettings.mEnableAccurateSeek
+                          ? FlutterAvpdef.ACCURATE
+                          : FlutterAvpdef.INACCURATE);
+                },
+                onChanged: (value) {
+                  setState(() {
+                    _currentPosition = value.ceil();
+                  });
+                },
               ),
             ),
             IconButton(
