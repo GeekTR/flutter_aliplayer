@@ -46,6 +46,8 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   ///seek中
   bool _inSeek = false;
 
+  bool _isTrackReady = false;
+
   @override
   void initState() {
     super.initState();
@@ -60,7 +62,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
       mOptionsFragment,
       PlayConfigFragment(fAliplayer),
       CacheConfigFragment(fAliplayer),
-      TrackFragment(),
+      TrackFragment(fAliplayer,isTrackReady: _isTrackReady),
     ];
 
     mOptionsFragment.setOnEnablePlayBackChanged((mEnablePlayBack) {
@@ -116,6 +118,10 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     });
     fAliplayer.setOnCompletion(() {
       print("abc : setOnCompletion");
+    });
+    fAliplayer.setOnTrackReady(() { 
+      _isTrackReady = true;
+      setState(() {});
     });
   }
 
