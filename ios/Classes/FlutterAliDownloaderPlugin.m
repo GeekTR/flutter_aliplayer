@@ -10,25 +10,40 @@
 #import "NSDictionary+ext.h"
 #import "AliDownloaderProxy.h"
 
-@interface FlutterAliDownloaderPlugin ()<AMDDelegate>{
-    FlutterMethodChannel* _channel;
-    FlutterEventSink eventSink;
+@interface FlutterAliDownloaderPlugin (){
     NSString *mSavePath;
-    AliMediaDownloader *downloader;
 }
 
 @property(strong,nonatomic) NSMutableDictionary * mAliMediaDownloadMap;
+@property(strong,nonatomic) NSMutableDictionary * mProxyMap;
+@property (nonatomic, strong) FlutterEventSink eventSink;
 
 @end
 
 @implementation FlutterAliDownloaderPlugin
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-  FlutterMethodChannel* channel = [FlutterMethodChannel
-      methodChannelWithName:@"plugins.flutter_alidownload"
-            binaryMessenger:[registrar messenger]];
-  FlutterAliDownloaderPlugin* instance = [[FlutterAliDownloaderPlugin alloc] init];
-  [registrar addMethodCallDelegate:instance channel:channel];
+    FlutterMethodChannel* channel = [FlutterMethodChannel
+                                     methodChannelWithName:@"plugins.flutter_alidownload"
+                                     binaryMessenger:[registrar messenger]];
+    FlutterAliDownloaderPlugin* instance = [[FlutterAliDownloaderPlugin alloc] init];
+    instance.mAliMediaDownloadMap = @{}.mutableCopy;
+    instance.mProxyMap = @{}.mutableCopy;
+    [registrar addMethodCallDelegate:instance channel:channel];
+    
+    FlutterEventChannel *eventChannel = [FlutterEventChannel eventChannelWithName:@"plugins.flutter_alidownload_event" binaryMessenger:registrar.messenger];
+    [eventChannel setStreamHandler:instance];
+}
+
+#pragma mark - FlutterStreamHandler
+- (FlutterError* _Nullable)onListenWithArguments:(id _Nullable)arguments
+                                       eventSink:(FlutterEventSink)eventSink{
+    self.eventSink = eventSink;
+    return nil;
+}
+ 
+- (FlutterError* _Nullable)onCancelWithArguments:(id _Nullable)arguments {
+    return nil;
 }
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
@@ -43,15 +58,6 @@
         result(FlutterMethodNotImplemented);
     }
 }
-
-//- (FlutterError * _Nullable)onCancelWithArguments:(id _Nullable)arguments {
-//    return nil;
-//}
-//
-//- (FlutterError * _Nullable)onListenWithArguments:(id _Nullable)arguments eventSink:(nonnull FlutterEventSink)events {
-//    eventSink = events;
-//    return nil;
-//}
 
 -(void)setSaveDir:(NSArray*)arr {
     FlutterMethodCall* call = arr.firstObject;
@@ -73,26 +79,61 @@
             [source setAccessKeyId:dic[@"accessKeyId"]];
             [source setAccessKeySecret:dic[@"accessKeySecret"]];
             [source setSecurityToken:dic[@"securityToken"]];
-            [source setRegion:@"cn-shanghai"];
-            [self prepareVidSts:source result:result];
+//            [source setRegion:@"cn-shanghai"];
+            if (idxNum) {
+                [self prepareVidSts:source result:result idx:idxNum.intValue];
+            }else{
+                [self prepareVidSts:source result:result idx:-1];
+            }
         }else if([type isEqualToString:@"download_auth"]){
             
         }
     }
 }
 
-- (void)prepareVidSts:(AVPVidStsSource*)vidSts result:(FlutterResult)result{
-    downloader = [self.mAliMediaDownloadMap objectForKey:vidSts.vid];
+- (void)prepareVidSts:(AVPVidStsSource*)vidSts result:(FlutterResult)result idx:(int)idx{
+    AliMediaDownloader *downloader = [self.mAliMediaDownloadMap objectForKey:vidSts.vid];
     if(!downloader){
         downloader = [[AliMediaDownloader alloc] init];
         [self.mAliMediaDownloadMap setObject:downloader forKey:vidSts.vid];
     }
     
-    AliDownloaderProxy *proxy = [[AliDownloaderProxy alloc] init];
-//    [proxy setResult:result];
-//    [downloader setSaveDirectory:mSavePath];
+    //TODO 后续移走
+    if (idx>=0) {
+        [downloader selectTrack:idx];
+        [self.mAliMediaDownloadMap setObject:downloader forKey:[NSString stringWithFormat:@"%@_%i",vidSts.vid,idx]];
+    }
+    
+    AliDownloaderProxy *proxy = [self.mProxyMap objectForKey:vidSts.vid];
+    if (!proxy) {
+        proxy = [[AliDownloaderProxy alloc] init];
+        [self.mProxyMap setObject:proxy forKey:vidSts.vid];
+    }
+    
+    [proxy setResult:result];
     [downloader setDelegate:proxy];
     [downloader prepareWithVid:vidSts];
+}
+
+
+- (void)selectItem:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    NSDictionary *dic = [call.arguments removeNull];
+    NSNumber *idxNum = dic[@"index"];
+    NSString *vid = dic[@"vid"];
+    AliMediaDownloader *downloader = [self.mAliMediaDownloadMap objectForKey:vid];
+    if(downloader){
+        [self.mAliMediaDownloadMap removeObjectForKey:vid];
+        [self.mAliMediaDownloadMap setObject:downloader forKey:[NSString stringWithFormat:@"%@_%@",vid,idxNum]];
+        
+        AliDownloaderProxy *proxy = [self.mProxyMap objectForKey:vid];
+        if (proxy) {
+            [self.mProxyMap removeObjectForKey:vid];
+            [self.mProxyMap setObject:proxy forKey:[NSString stringWithFormat:@"%@_%@",vid,idxNum]];
+        }
+        
+        [downloader selectTrack:idxNum.intValue];
+    }
 }
 
 - (void)start:(NSArray*)arr {
@@ -101,33 +142,63 @@
     NSString *vid = dic[@"vid"];
     NSString *index = dic[@"index"];
     AliMediaDownloader *downloader = [self.mAliMediaDownloadMap objectForKey:[NSString stringWithFormat:@"%@_%@",vid,index]];
-    if (!downloader) {
+    if (downloader) {
         [downloader setSaveDirectory:mSavePath];
+        AliDownloaderProxy *proxy = [self.mProxyMap objectForKey:[NSString stringWithFormat:@"%@_%@",vid,index]];
+        if (proxy) {
+            proxy.eventSink = self.eventSink;
+            proxy.argMap = dic.mutableCopy;
+            [downloader setDelegate:proxy];
+        }
         [downloader start];
     }
 }
 
-
-#pragma --mark AMDDelegate
--(void)onPrepared:(AliMediaDownloader*)downloader mediaInfo:(AVPMediaInfo*)info{
-    NSLog(@"aaaaaaa");
+- (void)stop:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    NSDictionary *dic = [call.arguments removeNull];
+    NSString *vid = dic[@"vid"];
+    NSString *index = dic[@"index"];
+    AliMediaDownloader *downloader = [self.mAliMediaDownloadMap objectForKey:[NSString stringWithFormat:@"%@_%@",vid,index]];
+    if (downloader) {
+        [downloader stop];
+    }
 }
 
-- (void)onError:(AliMediaDownloader*)downloader errorModel:(AVPErrorModel *)errorModel{
-//    eventSink.
-    NSLog(@"bbbbb");
+- (void)delete:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    NSDictionary *dic = [call.arguments removeNull];
+    NSString *vid = dic[@"vid"];
+    NSString *index = dic[@"index"];
+    AliMediaDownloader *downloader = [self.mAliMediaDownloadMap objectForKey:[NSString stringWithFormat:@"%@_%@",vid,index]];
+    if (downloader) {
+        [downloader deleteFile];
+    }
 }
 
-- (void)onDownloadingProgress:(AliMediaDownloader*)downloader percentage:(int)percent{
-    
+- (void)release:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    NSDictionary *dic = [call.arguments removeNull];
+    NSString *vid = dic[@"vid"];
+    NSString *index = dic[@"index"];
+    AliMediaDownloader *downloader = [self.mAliMediaDownloadMap objectForKey:[NSString stringWithFormat:@"%@_%@",vid,index]];
+    if (downloader) {
+        [downloader destroy];
+    }
 }
 
-- (void)onProcessingProgress:(AliMediaDownloader*)downloader percentage:(int)percent{
-    
+- (void)getFilePath:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    FlutterResult result = arr[1];
+    NSDictionary *dic = [call.arguments removeNull];
+    NSString *vid = dic[@"vid"];
+    NSString *index = dic[@"index"];
+    AliMediaDownloader *downloader = [self.mAliMediaDownloadMap objectForKey:[NSString stringWithFormat:@"%@_%@",vid,index]];
+    if (downloader) {
+        NSMutableDictionary *argMap = dic.mutableCopy;
+        [argMap setObject:downloader.downloadedFilePath forKey:@"savePath"];
+        result(argMap);
+    }
 }
 
-- (void)onCompletion:(AliMediaDownloader*)downloader{
-    
-}
-    
 @end
