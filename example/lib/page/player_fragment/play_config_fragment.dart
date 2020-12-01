@@ -70,7 +70,7 @@ class _PlayConfigFragmentState extends State<PlayConfigFragment> {
       text: _configMap['mHttpProxy'],
     ));
     mEnableSEI = _configMap['mEnableSEI'];
-    mShowFrameWhenStop = _configMap['mClearFrameWhenStop'];
+    mShowFrameWhenStop = !_configMap['mClearFrameWhenStop'];
     setState(() {});
   }
 
@@ -207,7 +207,7 @@ class _PlayConfigFragmentState extends State<PlayConfigFragment> {
                           'mReferrer': _mReferrerController.text,
                           'mHttpProxy': _mHttpProxyController.text,
                           'mEnableSEI': mEnableSEI,
-                          'mClearFrameWhenStop': mShowFrameWhenStop,
+                          'mClearFrameWhenStop': !mShowFrameWhenStop,
                         };
                         widget.fAliplayer.setConfig(configMap);
                         Fluttertoast.showToast(msg: "应用配置成功");
