@@ -10,7 +10,7 @@
 #import "NSDictionary+ext.h"
 #import "AliDownloaderProxy.h"
 
-@interface FlutterAliDownloaderPlugin (){
+@interface FlutterAliDownloaderPlugin ()<FlutterStreamHandler>{
     NSString *mSavePath;
 }
 
@@ -31,7 +31,7 @@
     instance.mProxyMap = @{}.mutableCopy;
     [registrar addMethodCallDelegate:instance channel:channel];
     
-    FlutterEventChannel *eventChannel = [FlutterEventChannel eventChannelWithName:@"plugins.flutter_alidownload_event" binaryMessenger:registrar.messenger];
+    FlutterEventChannel *eventChannel = [FlutterEventChannel eventChannelWithName:@"plugins.flutter_alidownload_event" binaryMessenger:[registrar messenger]];
     [eventChannel setStreamHandler:instance];
 }
 
@@ -63,6 +63,9 @@
     FlutterMethodCall* call = arr.firstObject;
     NSLog(@"savePath==%@",call.arguments);
     mSavePath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
+    if (mSavePath) {
+        mSavePath = [mSavePath stringByAppendingPathComponent:call.arguments];
+    }
 }
 
 - (void)prepare:(NSArray*)arr {
@@ -79,14 +82,20 @@
             [source setAccessKeyId:dic[@"accessKeyId"]];
             [source setAccessKeySecret:dic[@"accessKeySecret"]];
             [source setSecurityToken:dic[@"securityToken"]];
-//            [source setRegion:@"cn-shanghai"];
-            if (idxNum) {
+            if ([idxNum isKindOfClass:NSNumber.class]) {
                 [self prepareVidSts:source result:result idx:idxNum.intValue];
             }else{
                 [self prepareVidSts:source result:result idx:-1];
             }
         }else if([type isEqualToString:@"download_auth"]){
-            
+            AVPVidAuthSource *source = [[AVPVidAuthSource alloc] init];
+            [source setVid:vid];
+            [source setPlayAuth:dic[@"playAuth"]];
+            if ([idxNum isKindOfClass:NSNumber.class]) {
+                [self prepareVidAuth:source result:result idx:idxNum.intValue];
+            }else{
+                [self prepareVidAuth:source result:result idx:-1];
+            }
         }
     }
 }
@@ -110,9 +119,45 @@
         [self.mProxyMap setObject:proxy forKey:vidSts.vid];
     }
     
+    //TODO 后续移走
+    if (idx>=0) {
+        [self.mProxyMap setObject:proxy forKey:[NSString stringWithFormat:@"%@_%i",vidSts.vid,idx]];
+    }
+    
+    [proxy setMVideoId:vidSts.vid];
     [proxy setResult:result];
     [downloader setDelegate:proxy];
     [downloader prepareWithVid:vidSts];
+}
+
+- (void)prepareVidAuth:(AVPVidAuthSource*)vidAuth result:(FlutterResult)result idx:(int)idx{
+    AliMediaDownloader *downloader = [self.mAliMediaDownloadMap objectForKey:vidAuth.vid];
+    if(!downloader){
+        downloader = [[AliMediaDownloader alloc] init];
+        [self.mAliMediaDownloadMap setObject:downloader forKey:vidAuth.vid];
+    }
+    
+    //TODO 后续移走
+    if (idx>=0) {
+        [downloader selectTrack:idx];
+        [self.mAliMediaDownloadMap setObject:downloader forKey:[NSString stringWithFormat:@"%@_%i",vidAuth.vid,idx]];
+    }
+    
+    AliDownloaderProxy *proxy = [self.mProxyMap objectForKey:vidAuth.vid];
+    if (!proxy) {
+        proxy = [[AliDownloaderProxy alloc] init];
+        [self.mProxyMap setObject:proxy forKey:vidAuth.vid];
+    }
+    
+    //TODO 后续移走
+    if (idx>=0) {
+        [self.mProxyMap setObject:proxy forKey:[NSString stringWithFormat:@"%@_%i",vidAuth.vid,idx]];
+    }
+    
+    [proxy setMVideoId:vidAuth.vid];
+    [proxy setResult:result];
+    [downloader setDelegate:proxy];
+    [downloader prepareWithPlayAuth:vidAuth];
 }
 
 

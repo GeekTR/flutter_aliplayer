@@ -14,8 +14,10 @@ NS_ASSUME_NONNULL_BEGIN
 @interface AliDownloaderProxy : NSObject<AMDDelegate>
 
 @property(nonatomic,strong) FlutterResult result;
-@property (nonatomic, weak) FlutterEventSink eventSink;
+@property (nonatomic, copy) FlutterEventSink eventSink;
 @property(nonatomic,strong) NSMutableDictionary *argMap;
+
+@property(nonatomic,strong) NSString *mVideoId;
 
 @end
 
