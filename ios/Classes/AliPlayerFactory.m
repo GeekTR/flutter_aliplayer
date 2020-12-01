@@ -316,7 +316,32 @@
     FlutterResult result = arr[1];
     AliPlayer *player = arr[2];
     AVPMediaInfo * info = [player getMediaInfo];
+    NSLog(@"getMediaInfo==%@",info.mj_JSONString);
     result(info.mj_keyValues);
+}
+
+- (void)getCurrentTrack:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    FlutterResult result = arr[1];
+    AliPlayer *player = arr[2];
+    NSNumber *idxNum = call.arguments;
+    AVPTrackInfo * info = [player getCurrentTrack:idxNum.intValue];
+    NSLog(@"getCurrentTrack==%@",info.mj_JSONString);
+    result(info.mj_keyValues);
+}
+
+- (void)selectTrack:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    AliListPlayer *player = arr[2];
+    NSDictionary *dic = [[call arguments] removeNull];
+    NSNumber *trackIdxNum = dic[@"trackIdx"];
+    NSNumber *accurateNum = dic[@"accurate"];
+    if (accurateNum.intValue==-1) {
+        [player selectTrack:trackIdxNum.intValue];
+    }else{
+        [player selectTrack:trackIdxNum.intValue accurate:accurateNum.boolValue];
+    }
+    
 }
 
 #pragma --mark getters
@@ -450,7 +475,8 @@
  @param info 切换后的信息 参考AVPTrackInfo
  */
 - (void)onTrackChanged:(AliPlayer*)player info:(AVPTrackInfo*)info {
-    
+    NSLog(@"onTrackChanged==%@",info.mj_JSONString);
+    self.eventSink(@{kAliPlayerMethod:@"onTrackChanged",@"info":info.mj_keyValues});
 }
 
 /**

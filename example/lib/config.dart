@@ -39,7 +39,7 @@ enum VideoShowMode { Grid, Srceen }
 ///播放源相关
 class DataSourceRelated {
   static const String DEFAULT_REGION = "cn-shanghai";
-  static const String DEFAULT_VID = "63566edb9f61417bb46b0bb2b26cb29e";
+  static const String DEFAULT_VID = "979559fa48d445e9b80c8eddff0c1509";
   static const String DEFAULT_URL =
       "https://alivc-demo-vod.aliyuncs.com/6b357371ef3c45f4a06e2536fd534380/eb3f139a4b437d1e9b623ee1b671115b-ld.mp4";
 

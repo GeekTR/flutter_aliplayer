@@ -6,31 +6,56 @@
 //
 
 #import "AliDownloaderProxy.h"
-#import "NSObject+Json.h"
+#import "MJExtension.h"
 
 @implementation AliDownloaderProxy
 
 
 #pragma --mark AMDDelegate
 -(void)onPrepared:(AliMediaDownloader*)downloader mediaInfo:(AVPMediaInfo*)info{
- NSLog(@"=========aaaa");
-    //    self.result([info JSONString]);
+    [AVPMediaInfo mj_setupReplacedKeyFromPropertyName:^NSDictionary *{
+        return @{
+                 @"title" : @"mTitle",
+                 @"coverURL":@"mCoverUrl",
+                 @"tracks":@"mTrackInfos",
+                 };
+    }];
+    
+    [AVPTrackInfo mj_setupReplacedKeyFromPropertyName:^NSDictionary *{
+        return @{
+                 @"trackDefinition" : @"vodDefinition",
+                 };
+    }];
+    
+    self.result(info.mj_JSONString);
 }
 
 - (void)onError:(AliMediaDownloader*)downloader errorModel:(AVPErrorModel *)errorModel{
-    NSLog(@"=========ddddd");
+    NSLog(@"=========onErr==%@",errorModel.mj_JSONString);
 }
 
 - (void)onDownloadingProgress:(AliMediaDownloader*)downloader percentage:(int)percent{
-    
+    if(self.eventSink){
+        [self.argMap setObject:@"download_progress" forKey:@"method"];
+        [self.argMap setObject:[NSString stringWithFormat:@"%i",percent] forKey:@"download_progress"];
+        self.eventSink(self.argMap);
+    }
 }
 
 - (void)onProcessingProgress:(AliMediaDownloader*)downloader percentage:(int)percent{
-    
+    if(self.eventSink){
+        [self.argMap setObject:@"download_progress" forKey:@"method"];
+        [self.argMap setObject:[NSString stringWithFormat:@"%i",percent] forKey:@"download_progress"];
+        self.eventSink(self.argMap);
+    }
 }
 
 - (void)onCompletion:(AliMediaDownloader*)downloader{
-    
+    if(self.eventSink){
+        [self.argMap setObject:@"download_completion" forKey:@"method"];
+        [self.argMap setObject:[NSString stringWithFormat:@"%@",downloader.downloadedFilePath] forKey:@"savePath"];
+        self.eventSink(self.argMap);
+    }
 }
 
 @end

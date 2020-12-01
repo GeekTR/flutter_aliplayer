@@ -152,6 +152,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
       _isTrackReady = true;
       setState(() {});
     });
+    
     fAliplayer.setOnSnapShot((path) {
       print("aliyun : snapShotPath = $path");
       Fluttertoast.showToast(msg: "SnapShot Save : $path");
@@ -164,6 +165,14 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
 
       });
     });
+
+    fAliplayer.setOnTrackChanged((value) {
+      AVPTrackInfo info = AVPTrackInfo.fromJson(value);
+      if(info!=null && info.trackDefinition.length>0){
+        Fluttertoast.showToast(msg: "${info.trackDefinition}切换成功");
+      }
+    });
+
   }
 
   @override
