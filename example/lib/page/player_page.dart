@@ -64,6 +64,8 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
 
   bool _isTrackReady = false;
 
+  String extSubTitleText = '';
+
   @override
   void initState() {
     super.initState();
@@ -204,6 +206,20 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
           });
         },
         onThumbnailGetFail: () {});
+
+
+    this.fAliplayer.setOnSubtitleHide((trackIndex, subtitleID) {
+      setState(() {
+        extSubTitleText = '';
+      });
+    });
+    
+    this.fAliplayer.setOnSubtitleShow((trackIndex, subtitleID, subtitle) {
+      setState(() {
+        extSubTitleText = subtitle;
+      });
+    });
+
   }
 
   @override
@@ -274,6 +290,10 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                       alignment: FractionalOffset.bottomCenter),
                   _buildTipsWidget(width, height),
                   _buildThumbnail(width, height),
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: Text(extSubTitleText,style: TextStyle(color:Colors.red),),
+                  )
                 ],
               ),
               _buildControlBtns(orientation),

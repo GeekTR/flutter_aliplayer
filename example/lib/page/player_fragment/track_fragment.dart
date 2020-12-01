@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_aliplayer/flutter_aliplayer.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class TrackUIModel {
   bool isOpen;
@@ -26,9 +27,33 @@ class SubTrackUIModel {
 class _TrackFragmentState extends State<TrackFragment> {
   List<TrackUIModel> _list;
 
+  Map extSubTitleMap = {
+          "cn": "https://alivc-player.oss-cn-shanghai.aliyuncs.com/cnjap.vtt",
+          "en": "https://alivc-player.oss-cn-shanghai.aliyuncs.com/6137c3dedd00a00547a1e8e5e3355369.vtt",
+          "ja": "https://alivc-player.oss-cn-shanghai.aliyuncs.com/6b4949a8c3950f8aa76f1fed6730e525.vtt"
+        };
+
   @override
   void initState() {
     super.initState();
+
+    widget.fAliplayer.setOnSubtitleExtAdded((trackIndex, url) {
+        String curKey = '';
+        extSubTitleMap.forEach((key, value) {
+          if(url==value){
+            curKey = key;
+          }
+        });
+        if(trackIndex<0){
+            Fluttertoast.showToast(msg: '外挂字幕${curKey}添加失败');
+        }else{
+          _list[4].children.add(SubTrackUIModel(title: curKey,value: trackIndex));
+            Fluttertoast.showToast(msg: '外挂字幕${curKey}添加成功');
+            setState(() {
+              
+            });
+        }
+     });
 
     _loadData();
 
@@ -94,8 +119,14 @@ class _TrackFragmentState extends State<TrackFragment> {
                   .map((SubTrackUIModel e) =>
                       InkWell(
                         onTap: () {
-                          element.selValue = e.value;
-                          widget.fAliplayer.selectTrack(element.selValue,accurate:0);
+                          if(element.title=='---- 外挂字幕 ----'){
+                            bool isSelected = element.selValue == e.value;
+                            element.selValue = e.value;
+                            widget.fAliplayer.selectExtSubtitle(element.selValue, !isSelected);
+                          }else{
+                              element.selValue = e.value;
+                              widget.fAliplayer.selectTrack(element.selValue,accurate:0);
+                          }
                           setState(() {});
                         },
                         child: Row(
@@ -123,6 +154,12 @@ class _TrackFragmentState extends State<TrackFragment> {
   }
 
   _loadData(){
+
+    //添加外挂字幕
+    extSubTitleMap.forEach((key, value) {
+      widget.fAliplayer.addExtSubtitle(value);
+    });
+
     // if(widget.isTrackReady){
       widget.fAliplayer.getMediaInfo().then((value) {
         AVPMediaInfo info = AVPMediaInfo.fromJson(value);

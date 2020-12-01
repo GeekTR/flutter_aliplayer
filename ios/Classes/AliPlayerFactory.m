@@ -504,6 +504,22 @@
     
 }
 
+- (void)addExtSubtitle:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    AliListPlayer *player = arr[2];
+    NSString *url = [call arguments];
+    [player addExtSubtitle:url];
+}
+
+- (void)selectExtSubtitle:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    AliListPlayer *player = arr[2];
+    NSDictionary *dic = [[call arguments] removeNull];
+    NSNumber *trackIdxNum = dic[@"trackIndex"];
+    NSNumber *enableNum = dic[@"enable"];
+    [player selectExtSubtitle:trackIdxNum.intValue enable:enableNum.boolValue];
+}
+
 #pragma --mark getters
 - (AliPlayer *)aliPlayer{
     if (!_aliPlayer) {
@@ -624,6 +640,16 @@
 }
 
 /**
+ @brief 外挂字幕被添加
+ @param player 播放器player指针
+ @param trackIndex 字幕显示的索引号
+ @param URL 字幕url
+ */
+- (void)onSubtitleExtAdded:(AliPlayer*)player trackIndex:(int)trackIndex URL:(NSString *)URL {
+    self.eventSink(@{kAliPlayerMethod:@"onSubtitleExtAdded",@"trackIndex":@(trackIndex),@"url":URL});
+}
+
+/**
  @brief 字幕显示回调
  @param player 播放器player指针
  @param trackIndex 字幕流索引.
@@ -631,7 +657,7 @@
  @param subtitle 字幕显示的字符串
  */
 - (void)onSubtitleShow:(AliPlayer*)player trackIndex:(int)trackIndex subtitleID:(long)subtitleID subtitle:(NSString *)subtitle {
-    
+    self.eventSink(@{kAliPlayerMethod:@"onSubtitleShow",@"trackIndex":@(trackIndex),@"subtitleID":@(subtitleID),@"subtitle":subtitle});
 }
 
 /**
@@ -641,7 +667,7 @@
  @param subtitleID  字幕ID.
  */
 - (void)onSubtitleHide:(AliPlayer*)player trackIndex:(int)trackIndex subtitleID:(long)subtitleID {
-    
+    self.eventSink(@{kAliPlayerMethod:@"onSubtitleHide",@"trackIndex":@(trackIndex),@"subtitleID":@(subtitleID)});
 }
 
 /**
@@ -692,16 +718,6 @@
  */
 - (void)onLoadingProgress:(AliPlayer*)player progress:(float)progress {
     self.eventSink(@{kAliPlayerMethod:@"onLoadingProgress",@"percent":@((int)progress)});
-}
-
-/**
- @brief 外挂字幕被添加
- @param player 播放器player指针
- @param trackIndex 字幕显示的索引号
- @param URL 字幕url
- */
-- (void)onSubtitleExtAdded:(AliPlayer*)player trackIndex:(int)trackIndex URL:(NSString *)URL {
-    
 }
 
 @end

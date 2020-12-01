@@ -29,9 +29,9 @@ typedef OnLoadingEnd = void Function();
 typedef OnStateChanged = void Function(int newState);
 
 // typedef OnSubtitleDisplayListener = void Function(); //TODO
-typedef OnSubtitleExtAdded = void Function(); //TODO
-typedef OnSubtitleShow = void Function(); //TODO
-typedef OnSubtitleHide = void Function(); //TODO
+typedef OnSubtitleExtAdded = void Function(int trackIndex,String url);
+typedef OnSubtitleShow = void Function(int trackIndex,int subtitleID,String subtitle);
+typedef OnSubtitleHide = void Function(int trackIndex,int subtitleID);
 typedef OnTrackReady = void Function();
 
 typedef OnInfo = void Function(int infoCode, int extraValue, String extraMsg);
@@ -69,6 +69,11 @@ class FlutterAliplayer {
 
   OnThumbnailGetSuccess onThumbnailGetSuccess;
   OnThumbnailGetFail onThumbnailGetFail;
+
+  //外挂字幕
+  OnSubtitleExtAdded onSubtitleExtAdded;
+  OnSubtitleHide onSubtitleHide;
+  OnSubtitleShow onSubtitleShow;
 
   MethodChannel channel = new MethodChannel('flutter_aliplayer');
   EventChannel eventChannel = EventChannel("flutter_aliplayer_event");
@@ -142,6 +147,18 @@ class FlutterAliplayer {
       OnThumbnailGetFail onThumbnailGetFail}) {
     this.onThumbnailGetSuccess = onThumbnailGetSuccess;
     this.onThumbnailGetSuccess = onThumbnailGetSuccess;
+  }
+
+  void setOnSubtitleShow(OnSubtitleShow onSubtitleShow){
+    this.onSubtitleShow = onSubtitleShow;
+  }
+
+  void setOnSubtitleHide(OnSubtitleHide onSubtitleHide){
+    this.onSubtitleHide = onSubtitleHide;
+  }
+
+  void setOnSubtitleExtAdded(OnSubtitleExtAdded onSubtitleExtAdded){
+    this.onSubtitleExtAdded = onSubtitleExtAdded;
   }
 
   Future<void> createAliPlayer() async {
@@ -328,6 +345,18 @@ class FlutterAliplayer {
     return channel.invokeMethod("requestBitmapAtPosition", position);
   }
 
+  Future<void> addExtSubtitle(String url) {
+    return channel.invokeMethod("addExtSubtitle", url);
+  }
+
+  Future<void> selectExtSubtitle(int trackIndex,bool enable) {
+    var map = {
+      'trackIndex':trackIndex,
+      'enable':enable
+    };
+    return channel.invokeMethod("selectExtSubtitle", map);
+  }
+
   // accurate 0 为不精确  1 为精确  不填为忽略
   Future<void> selectTrack(int trackIdx, {int accurate = -1}) {
     var map = {
@@ -398,12 +427,6 @@ class FlutterAliplayer {
           onStateChanged(newState);
         }
         break;
-      case "onSubtitleExtAdded":
-        break;
-      case "onSubtitleShow":
-        break;
-      case "onSubtitleHide":
-        break;
       case "onInfo":
         if (onInfo != null) {
           int infoCode = event['infoCode'];
@@ -456,6 +479,29 @@ class FlutterAliplayer {
       case "onThumbnailGetFail":
         if (onThumbnailGetFail != null) {
           onThumbnailGetFail();
+        }
+        break;
+      case "onSubtitleExtAdded":
+        if(onSubtitleExtAdded!=null){
+          print('onSubtitleExtAdded=======');
+          int trackIndex = event['trackIndex'];
+          String url = event['url'];
+          onSubtitleExtAdded(trackIndex,url);
+        }
+        break;
+      case "onSubtitleShow":
+        if(onSubtitleShow!=null){
+          int trackIndex = event['trackIndex'];
+          int subtitleID = event['subtitleID'];
+          String subtitle = event['subtitle'];
+          onSubtitleShow(trackIndex,subtitleID,subtitle);
+        }
+        break;
+      case "onSubtitleHide":
+        if(onSubtitleHide!=null){
+          int trackIndex = event['trackIndex'];
+          int subtitleID = event['subtitleID'];
+          onSubtitleHide(trackIndex,subtitleID);
         }
         break;
     }
