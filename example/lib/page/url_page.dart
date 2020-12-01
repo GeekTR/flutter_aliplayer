@@ -25,7 +25,8 @@ class _UrlPageState extends State<UrlPage> {
         .setExecuteAfterPermissionGranted(true) // default true
         .setFrontCamera(false) // default false
         .scan();
-    setState(() {});
+
+    setState(() {urlSourceController.text = _qrcode_result;});
   }
 
   @override

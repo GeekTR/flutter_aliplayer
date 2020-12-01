@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -34,10 +35,18 @@ typedef OnSubtitleHide = void Function(); //TODO
 typedef OnTrackReady = void Function();
 
 typedef OnInfo = void Function(int infoCode, int extraValue, String extraMsg);
-typedef OnError = void Function(int errorCode,String errorExtra,String errorMsg);
+typedef OnError = void Function(
+    int errorCode, String errorExtra, String errorMsg);
 typedef OnCompletion = void Function();
 
 typedef OnTrackChanged = void Function(dynamic value);
+
+typedef OnThumbnailPreparedSuccess = void Function();
+typedef OnThumbnailPreparedFail = void Function();
+
+typedef OnThumbnailGetSuccess = void Function(
+    Uint8List bitmap, Int64List range);
+typedef OnThumbnailGetFail = void Function();
 
 class FlutterAliplayer {
   OnLoadingBegin onLoadingBegin;
@@ -55,6 +64,11 @@ class FlutterAliplayer {
   OnSnapShot onSnapShot;
 
   OnTrackChanged onTrackChanged;
+  OnThumbnailPreparedSuccess onThumbnailPreparedSuccess;
+  OnThumbnailPreparedFail onThumbnailPreparedFail;
+
+  OnThumbnailGetSuccess onThumbnailGetSuccess;
+  OnThumbnailGetFail onThumbnailGetFail;
 
   MethodChannel channel = new MethodChannel('flutter_aliplayer');
   EventChannel eventChannel = EventChannel("flutter_aliplayer_event");
@@ -75,7 +89,7 @@ class FlutterAliplayer {
     this.onVideoSizeChanged = videoSizeChanged;
   }
 
-  void setOnSnapShot(OnSnapShot snapShot){
+  void setOnSnapShot(OnSnapShot snapShot) {
     this.onSnapShot = snapShot;
   }
 
@@ -83,7 +97,7 @@ class FlutterAliplayer {
     this.onSeekComplete = seekComplete;
   }
 
-  void setOnError(OnError onError){
+  void setOnError(OnError onError) {
     this.onError = onError;
   }
 
@@ -112,13 +126,26 @@ class FlutterAliplayer {
     this.onTrackReady = onTrackReady;
   }
 
+  void setOnTrackChanged(OnTrackChanged onTrackChanged) {
+    this.onTrackChanged = onTrackChanged;
+  }
+
+  void setOnThumbnailPreparedListener(
+      {OnThumbnailPreparedSuccess preparedSuccess,
+      OnThumbnailPreparedFail preparedFail}) {
+    this.onThumbnailPreparedSuccess = preparedSuccess;
+    this.onThumbnailPreparedFail = preparedFail;
+  }
+
+  void setOnThumbnailGetListener(
+      {OnThumbnailGetSuccess onThumbnailGetSuccess,
+      OnThumbnailGetFail onThumbnailGetFail}) {
+    this.onThumbnailGetSuccess = onThumbnailGetSuccess;
+    this.onThumbnailGetSuccess = onThumbnailGetSuccess;
+  }
 
   Future<void> createAliPlayer() async {
     return channel.invokeMethod('createAliPlayer');
-  }
-  
-  void setOnTrackChanged(OnTrackChanged onTrackChanged){
-    this.onTrackChanged = onTrackChanged;
   }
 
   Future<void> setUrl(String url) async {
@@ -139,7 +166,7 @@ class FlutterAliplayer {
   }
 
   Future<dynamic> snapshot(String path) async {
-    return channel.invokeMethod('snapshot',path);
+    return channel.invokeMethod('snapshot', path);
   }
 
   Future<void> stop() async {
@@ -290,16 +317,24 @@ class FlutterAliplayer {
   }
 
   Future<dynamic> getCurrentTrack(int trackIdx) {
-    return channel.invokeMethod("getCurrentTrack",trackIdx);
+    return channel.invokeMethod("getCurrentTrack", trackIdx);
+  }
+
+  Future<dynamic> createThumbnailHelper(String thumbnail) {
+    return channel.invokeMethod("createThumbnailHelper", thumbnail);
+  }
+
+  Future<dynamic> requestBitmapAtPosition(int position) {
+    return channel.invokeMethod("requestBitmapAtPosition", position);
   }
 
   // accurate 0 为不精确  1 为精确  不填为忽略
-  Future<void> selectTrack(int trackIdx,{int accurate = -1}) {
+  Future<void> selectTrack(int trackIdx, {int accurate = -1}) {
     var map = {
-        'trackIdx': trackIdx,
-        'accurate': accurate,
-      };
-    return channel.invokeMethod("selectTrack",map);
+      'trackIdx': trackIdx,
+      'accurate': accurate,
+    };
+    return channel.invokeMethod("selectTrack", map);
   }
 
   void _onEvent(dynamic event) {
@@ -323,7 +358,7 @@ class FlutterAliplayer {
         }
         break;
       case "onSnapShot":
-        if(onSnapShot != null){
+        if (onSnapShot != null) {
           String snapShotPath = event['snapShotPath'];
           onSnapShot(snapShotPath);
         }
@@ -377,11 +412,11 @@ class FlutterAliplayer {
         }
         break;
       case "onError":
-        if(onError != null){
+        if (onError != null) {
           int errorCode = event['errorCode'];
           String errorExtra = event['errorExtra'];
           String errorMsg = event['errorMsg'];
-          onError(errorCode,errorExtra,errorMsg);
+          onError(errorCode, errorExtra, errorMsg);
         }
         break;
       case "onCompletion":
@@ -395,9 +430,31 @@ class FlutterAliplayer {
         }
         break;
       case "onTrackChanged":
-        if(onTrackChanged != null){
+        if (onTrackChanged != null) {
           dynamic info = event['info'];
           this.onTrackChanged(info);
+        }
+        break;
+      case "thumbnail_onPrepared_Success":
+        if (onThumbnailPreparedSuccess != null) {
+          onThumbnailPreparedSuccess();
+        }
+        break;
+      case "thumbnail_onPrepared_Fail":
+        if (onThumbnailPreparedFail != null) {
+          onThumbnailPreparedFail();
+        }
+        break;
+      case "onThumbnailGetSuccess":
+        dynamic bitmap = event['thumbnailbitmap'];
+        dynamic range = event['thumbnailRange'];
+        if (onThumbnailGetSuccess != null) {
+          onThumbnailGetSuccess(bitmap, range);
+        }
+        break;
+      case "onThumbnailGetFail":
+        if (onThumbnailGetFail != null) {
+          onThumbnailGetFail();
         }
         break;
     }

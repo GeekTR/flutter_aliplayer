@@ -28,14 +28,18 @@ import com.aliyun.player.source.UrlSource;
 import com.aliyun.player.source.VidAuth;
 import com.aliyun.player.source.VidMps;
 import com.aliyun.player.source.VidSts;
+import com.aliyun.thumbnail.ThumbnailBitmapInfo;
+import com.aliyun.thumbnail.ThumbnailHelper;
 import com.aliyun.utils.ThreadManager;
 import com.cicada.player.utils.Logger;
 import com.google.gson.Gson;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,6 +66,7 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
     private final AliListPlayer mAliListPlayer;
     private final MethodChannel mAliPlayerMethodChannel;
     private String mSnapShotPath;
+    private ThumbnailHelper mThumbnailHelper;
 
     public FluttreAliPlayerFactory(FlutterPlugin.FlutterPluginBinding flutterPluginBinding) {
         super(StandardMessageCodec.INSTANCE);
@@ -644,6 +649,14 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
                 String blackDevice = addBlackDeviceMap.get("black_device");
                 addBlackDevice(blackType,blackDevice);
                 break;
+            case "createThumbnailHelper":
+                String thhumbnailUrl = (String) methodCall.arguments;
+                createThumbnailHelper(thhumbnailUrl);
+                break;
+            case "requestBitmapAtPosition":
+                Integer requestBitmapProgress = (Integer) methodCall.arguments;
+                requestBitmapAtPosition(requestBitmapProgress);
+                break;
             default:
                 result.notImplemented();
         }
@@ -953,6 +966,59 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
             aliPlayerBlackType = AliPlayerFactory.BlackType.HW_Decode_HEVC;
         }
         AliPlayerFactory.addBlackDevice(aliPlayerBlackType,deviceInfo);
+    }
+
+    private void createThumbnailHelper(String url){
+        mThumbnailHelper = new ThumbnailHelper(url);
+        mThumbnailHelper.setOnPrepareListener(new ThumbnailHelper.OnPrepareListener() {
+            @Override
+            public void onPrepareSuccess() {
+                Map<String,Object> map = new HashMap<>();
+                map.put("method","thumbnail_onPrepared_Success");
+                mEventSink.success(map);
+            }
+
+            @Override
+            public void onPrepareFail() {
+                Map<String,Object> map = new HashMap<>();
+                map.put("method","thumbnail_onPrepared_Fail");
+                mEventSink.success(map);
+            }
+        });
+
+        mThumbnailHelper.setOnThumbnailGetListener(new ThumbnailHelper.OnThumbnailGetListener() {
+            @Override
+            public void onThumbnailGetSuccess(long l, ThumbnailBitmapInfo thumbnailBitmapInfo) {
+                if(thumbnailBitmapInfo != null && thumbnailBitmapInfo.getThumbnailBitmap() != null){
+                    Map<String,Object> map = new HashMap<>();
+
+                    Bitmap thumbnailBitmap = thumbnailBitmapInfo.getThumbnailBitmap();
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    thumbnailBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                    thumbnailBitmap.recycle();
+                    long[] positionRange = thumbnailBitmapInfo.getPositionRange();
+
+                    map.put("method","onThumbnailGetSuccess");
+                    map.put("thumbnailbitmap",stream.toByteArray());
+                    map.put("thumbnailRange",positionRange);
+                    mEventSink.success(map);
+                }
+            }
+
+            @Override
+            public void onThumbnailGetFail(long l, String s) {
+                Map<String,Object> map = new HashMap<>();
+                map.put("method","onThumbnailGetFail");
+                mEventSink.success(map);
+            }
+        });
+        mThumbnailHelper.prepare();
+    }
+
+    private void requestBitmapAtPosition(int position){
+        if(mThumbnailHelper != null){
+            mThumbnailHelper.requestBitmapAtPosition(position);
+        }
     }
 
 

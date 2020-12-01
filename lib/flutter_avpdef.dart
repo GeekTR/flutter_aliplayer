@@ -192,7 +192,7 @@ class AVPTrackInfo {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<dynamic, dynamic> data = new Map<dynamic, dynamic>();
+    final Map<dynamic, dynamic> data = new Map<String, dynamic>();
     data['vodFormat'] = this.vodFormat;
     data['videoHeight'] = this.videoHeight;
     data['subtitleLanguage'] = this.subtitleLanguage;

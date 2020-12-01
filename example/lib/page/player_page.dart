@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
@@ -52,6 +53,11 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   String _tipsContent;
   //是否展示提示内容
   bool _showTipsWidget = false;
+  //是否有缩略图
+  bool _thumbnailSuccess = false;
+  //缩略图
+  // Uint8List _thumbnailBitmap;
+  ImageProvider _imageProvider;
 
   ///seek中
   bool _inSeek = false;
@@ -68,7 +74,10 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
 
     getExternalStorageDirectories().then((value) {
       if (value.length > 0) {
-        _snapShotPath = value[0].path + "/snapshot_" + new DateTime.now().millisecondsSinceEpoch.toString() + ".png";
+        _snapShotPath = value[0].path +
+            "/snapshot_" +
+            new DateTime.now().millisecondsSinceEpoch.toString() +
+            ".png";
         return _snapShotPath;
       }
     });
@@ -79,7 +88,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
       mOptionsFragment,
       PlayConfigFragment(fAliplayer),
       CacheConfigFragment(fAliplayer),
-      TrackFragment(fAliplayer,isTrackReady: _isTrackReady),
+      TrackFragment(fAliplayer, isTrackReady: _isTrackReady),
     ];
 
     mOptionsFragment.setOnEnablePlayBackChanged((mEnablePlayBack) {
@@ -91,28 +100,30 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
 
   _initListener() {
     fAliplayer.setOnPrepard(() {
-       fAliplayer.getMediaInfo().then((value){
-         _videoDuration = value['duration'];
-         setState(() {
-
-         });
-       });
+      Fluttertoast.showToast(msg: "OnPrepared ");
+      fAliplayer.getMediaInfo().then((value) {
+        _videoDuration = value['duration'];
+        setState(() {});
+        List thumbnails = value['thumbnails'];
+        if (thumbnails != null && thumbnails.isNotEmpty) {
+          fAliplayer.createThumbnailHelper(thumbnails[0]['url']);
+        } else {
+          _thumbnailSuccess = false;
+        }
+      });
     });
     fAliplayer.setOnRenderingStart(() {
-      print("abc : onRenderingStart");
+      Fluttertoast.showToast(msg: " OnFirstFrameShow ");
     });
-    fAliplayer.setOnVideoSizeChanged((width, height) {
-      print("abc : onVideoSizeChanged $width    $height");
-    });
+    fAliplayer.setOnVideoSizeChanged((width, height) {});
     fAliplayer.setOnStateChanged((newState) {
-      print("abc : onStateChanged $newState");
+      print("aliyun : onStateChanged $newState");
     });
     fAliplayer.setOnLoadingStatusListener(loadingBegin: () {
       _showLoading = true;
     }, loadingProgress: (percent, netSpeed) {
       _loadingPercent = percent;
       setState(() {});
-      print("abc : onLoadingProgress $percent");
     }, loadingEnd: () {
       _showLoading = false;
     });
@@ -121,8 +132,10 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     });
     fAliplayer.setOnInfo((infoCode, extraValue, extraMsg) {
       if (infoCode == FlutterAvpdef.CURRENTPOSITION) {
-        _currentPosition = extraValue;
-        if(!_inSeek){
+        if (_videoDuration != 0 && _currentPosition <= _videoDuration) {
+          _currentPosition = extraValue;
+        }
+        if (!_inSeek) {
           setState(() {});
         }
       } else if (infoCode == FlutterAvpdef.BUFFEREDPOSITION) {
@@ -144,35 +157,47 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
       // Fluttertoast.showToast(msg: "onCompletion");
       _showTipsWidget = true;
       _tipsContent = "播放完成";
-      setState(() {
-
-      });
+      setState(() {});
     });
-    fAliplayer.setOnTrackReady(() { 
+    fAliplayer.setOnTrackReady(() {
       _isTrackReady = true;
       setState(() {});
     });
-    
+
     fAliplayer.setOnSnapShot((path) {
       print("aliyun : snapShotPath = $path");
       Fluttertoast.showToast(msg: "SnapShot Save : $path");
     });
     fAliplayer.setOnError((errorCode, errorExtra, errorMsg) {
-      // Fluttertoast.showToast(msg: "error : $errorCode : $errorMsg");
       _showTipsWidget = true;
       _tipsContent = "$errorCode \n $errorMsg";
-      setState(() {
-
-      });
+      setState(() {});
     });
 
     fAliplayer.setOnTrackChanged((value) {
       AVPTrackInfo info = AVPTrackInfo.fromJson(value);
-      if(info!=null && info.trackDefinition.length>0){
+      if (info != null && info.trackDefinition.length > 0) {
         Fluttertoast.showToast(msg: "${info.trackDefinition}切换成功");
       }
     });
 
+    fAliplayer.setOnThumbnailPreparedListener(preparedSuccess: () {
+      _thumbnailSuccess = true;
+    }, preparedFail: () {
+      _thumbnailSuccess = false;
+    });
+
+    fAliplayer.setOnThumbnailGetListener(
+        onThumbnailGetSuccess: (bitmap, range) {
+          // _thumbnailBitmap = bitmap;
+          var provider = MemoryImage(bitmap);
+          precacheImage(provider, context).then((_) {
+            setState(() {
+              _imageProvider = provider;
+            });
+          });
+        },
+        onThumbnailGetFail: () {});
   }
 
   @override
@@ -241,10 +266,10 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                       child: _buildProgressBar(),
                       heightFactor: 2.0,
                       alignment: FractionalOffset.bottomCenter),
-                  _buildTipsWidget(width,height),
+                  _buildTipsWidget(width, height),
+                  _buildThumbnail(width, height),
                 ],
               ),
-
               _buildControlBtns(orientation),
               _buildFragmentPage(orientation),
             ],
@@ -334,17 +359,50 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     }
   }
 
-  _buildTipsWidget(double width,double height){
-    if(_showTipsWidget){
+  _buildThumbnail(double width, double height) {
+    if (_inSeek) {
       return Container(
         alignment: Alignment.center,
-        width: width, height: height,
+        width: width,
+        height: height,
         child: Wrap(
           direction: Axis.vertical,
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
-            Text(_tipsContent,style: TextStyle(color: Colors.red),textAlign:TextAlign.center),
-            SizedBox(height: 5.0,),
+            Text("${FormatterUtils.getTimeformatByMs(_currentPosition)}",
+                style: TextStyle(color: Colors.white),
+                textAlign: TextAlign.center),
+            _imageProvider == null
+                ? Container()
+                : Image(
+                    width: width / 2,
+                    height: height / 2,
+                    image: _imageProvider,
+                  ),
+          ],
+        ),
+      );
+    } else {
+      return Container();
+    }
+  }
+
+  _buildTipsWidget(double width, double height) {
+    if (_showTipsWidget) {
+      return Container(
+        alignment: Alignment.center,
+        width: width,
+        height: height,
+        child: Wrap(
+          direction: Axis.vertical,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            Text(_tipsContent,
+                style: TextStyle(color: Colors.red),
+                textAlign: TextAlign.center),
+            SizedBox(
+              height: 5.0,
+            ),
             OutlineButton(
               shape: BeveledRectangleBorder(
                 side: BorderSide(
@@ -354,8 +412,8 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                 ),
                 borderRadius: BorderRadius.circular(5),
               ),
-              child: Text("Replay",style: TextStyle(color: Colors.white)),
-              onPressed: (){
+              child: Text("Replay", style: TextStyle(color: Colors.white)),
+              onPressed: () {
                 setState(() {
                   _showTipsWidget = false;
                 });
@@ -365,10 +423,9 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
           ],
         ),
       );
-    }else{
+    } else {
       return Container();
     }
-
   }
 
   _buildProgressBar() {
@@ -421,7 +478,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
             Expanded(
               child: AliyunSlider(
                 max: _videoDuration.toDouble(),
-                min:0,
+                min: 0,
                 bufferColor: Colors.white,
                 bufferValue: _bufferPosition.toDouble(),
                 value: _currentPosition.toDouble(),
@@ -429,6 +486,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                   _inSeek = true;
                 },
                 onChangeEnd: (value) {
+                  _inSeek = false;
                   fAliplayer.seekTo(
                       value.ceil(),
                       GlobalSettings.mEnableAccurateSeek
@@ -436,6 +494,9 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                           : FlutterAvpdef.INACCURATE);
                 },
                 onChanged: (value) {
+                  if (_thumbnailSuccess) {
+                    fAliplayer.requestBitmapAtPosition(value.ceil());
+                  }
                   setState(() {
                     _currentPosition = value.ceil();
                   });
