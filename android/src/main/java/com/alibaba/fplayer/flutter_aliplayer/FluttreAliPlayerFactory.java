@@ -572,6 +572,34 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
                 CacheConfig setCacheConfig = mGson.fromJson(setCacheConfigJson,CacheConfig.class);
                 setCacheConfig(setCacheConfig);
                 break;
+            case "getCurrentTrack":
+                Integer currentTrackIndex = (Integer) methodCall.arguments;
+                TrackInfo currentTrack = getCurrentTrack(currentTrackIndex);
+                if(currentTrack != null){
+                    Map<String,Object> map = new HashMap<>();
+                    map.put("vodFormat",currentTrack.getVodFormat());
+                    map.put("videoHeight",currentTrack.getVideoHeight());
+                    map.put("videoWidth",currentTrack.getVideoHeight());
+                    map.put("subtitleLanguage",currentTrack.getSubtitleLang());
+                    map.put("trackBitrate",currentTrack.getVideoBitrate());
+                    map.put("vodFileSize",currentTrack.getVodFileSize());
+                    map.put("trackIndex",currentTrack.getIndex());
+                    map.put("trackDefinition",currentTrack.getVodDefinition());
+                    map.put("audioSampleFormat",currentTrack.getAudioSampleFormat());
+                    map.put("audioLanguage",currentTrack.getAudioLang());
+                    map.put("vodPlayUrl",currentTrack.getVodPlayUrl());
+                    map.put("trackType",currentTrack.getType().ordinal());
+                    map.put("audioSamplerate",currentTrack.getAudioSampleRate());
+                    map.put("audioChannels",currentTrack.getAudioChannels());
+                    result.success(map);
+                }
+                break;
+            case "selectTrack":
+                Map<String,Object> selectTrackMap = (Map<String, Object>) methodCall.arguments;
+                Integer trackIdx = (Integer) selectTrackMap.get("trackIdx");
+                Integer accurate = (Integer) selectTrackMap.get("accurate");
+                selectTrack(trackIdx, accurate == 1);
+                break;
             case "getSDKVersion":
                 result.success(getSDKVersion());
                 break;
@@ -917,6 +945,20 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
     private void setCacheConfig(CacheConfig cacheConfig){
         if(mIPlayer != null){
             mIPlayer.setCacheConfig(cacheConfig);
+        }
+    }
+
+    private TrackInfo getCurrentTrack(int currentTrackIndex){
+        if(mIPlayer != null){
+            return mIPlayer.currentTrack(currentTrackIndex);
+        }else{
+            return null;
+        }
+    }
+
+    private void selectTrack(int trackId,boolean accurate){
+        if(mIPlayer != null){
+            mIPlayer.selectTrack(trackId,accurate);
         }
     }
 

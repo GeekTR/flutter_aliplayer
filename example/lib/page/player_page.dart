@@ -45,7 +45,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   //loading进度
   int _loadingPercent = 0;
   //视频时长
-  int _videoDuration = 100;
+  int _videoDuration = 1;
   //截图保存路径
   String _snapShotPath;
   //提示内容
@@ -131,9 +131,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     });
     fAliplayer.setOnInfo((infoCode, extraValue, extraMsg) {
       if (infoCode == FlutterAvpdef.CURRENTPOSITION) {
-        print("abc : $_videoDuration ---------- $extraValue");
         if (_videoDuration != 0 && extraValue <= _videoDuration) {
-          print("abc : $_videoDuration ========== $extraValue");
           _currentPosition = extraValue;
         }
         if (!_inSeek) {
@@ -151,6 +149,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
       } else if (infoCode == FlutterAvpdef.LOOPINGSTART) {
         Fluttertoast.showToast(msg: "Looping Start");
       } else if (infoCode == FlutterAvpdef.SWITCHTOSOFTWAREVIDEODECODER) {
+        Fluttertoast.showToast(msg: "change to soft ware decoder");
         mOptionsFragment.switchHardwareDecoder();
       }
     });
@@ -321,6 +320,8 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
             InkWell(
                 child: Text('准备'),
                 onTap: () {
+                  _showTipsWidget = false;
+                  setState(() {});
                   fAliplayer.prepare();
                 }),
             InkWell(
@@ -360,8 +361,9 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     }
   }
 
+  ///缩略图
   _buildThumbnail(double width, double height) {
-    if (_inSeek) {
+    if (_inSeek && _thumbnailSuccess) {
       return Container(
         alignment: Alignment.center,
         width: width,
@@ -388,6 +390,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     }
   }
 
+  ///提示Widget
   _buildTipsWidget(double width, double height) {
     if (_showTipsWidget) {
       return Container(
@@ -429,6 +432,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     }
   }
 
+  ///Loading
   _buildProgressBar() {
     if (_showLoading) {
       return Align(
@@ -478,7 +482,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
             ),
             Expanded(
               child: AliyunSlider(
-                max: _videoDuration.toDouble(),
+                max: _videoDuration == 0 ? 1 : _videoDuration.toDouble(),
                 min: 0,
                 bufferColor: Colors.white,
                 bufferValue: _bufferPosition.toDouble(),
