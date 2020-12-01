@@ -16,6 +16,7 @@
     FlutterMethodChannel* _channel;
     FlutterMethodChannel* _listPlayerchannel;
     UIView *playerView;
+    NSString *mSnapshotPath;
 }
 
 @property (nonatomic, strong) FlutterEventSink eventSink;
@@ -27,9 +28,6 @@
 - (instancetype)initWithMessenger:(NSObject<FlutterBinaryMessenger>*)messenger {
     self = [super init];
     if (self) {
-        [AliPlayer setEnableLog:YES];
-        [AliPlayer setLogCallbackInfo:LOG_LEVEL_DEBUG callbackBlock:nil];
-        
         _messenger = messenger;
         _channel = [FlutterMethodChannel methodChannelWithName:@"flutter_aliplayer" binaryMessenger:messenger];
         __weak __typeof__(self) weakSelf = self;
@@ -55,7 +53,7 @@
     self.eventSink = eventSink;
     return nil;
 }
- 
+
 - (FlutterError* _Nullable)onCancelWithArguments:(id _Nullable)arguments {
     return nil;
 }
@@ -171,6 +169,7 @@
     AliPlayer *player = arr[2];
     [player setMuted:val.boolValue];
 }
+
 - (void)enableHardwareDecoder:(NSArray*)arr {
     FlutterResult result = arr[1];
     AliPlayer *player = arr[2];
@@ -234,6 +233,165 @@
     AliPlayer *player = arr[2];
     NSNumber* val = [call arguments];
     [player setRate:val.floatValue];
+}
+
+- (void)snapshot:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    AliPlayer *player = arr[2];
+    NSString* val = [call arguments];
+    mSnapshotPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
+    if (val.length>0) {
+        mSnapshotPath = [mSnapshotPath stringByAppendingPathComponent:val];
+    }
+    [player snapShot];
+}
+
+- (void)getVolume:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayer *player = arr[2];
+    result(@(player.volume));
+}
+
+- (void)setVolume:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    AliPlayer *player = arr[2];
+    NSNumber* val = [call arguments];
+    [player setVolume:val.floatValue];
+}
+
+- (void)setVideoBackgroundColor:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    AliPlayer *player = arr[2];
+    NSNumber* val = [call arguments];
+    int c = val.intValue;
+    UIColor *color = [UIColor colorWithRed:((c>>16)&0xFF)/255.0 green:((c>>8)&0xFF)/255.0 blue:((c)&0xFF)/255.0  alpha:((c>>24)&0xFF)/255.0];
+    [player setVideoBackgroundColor:color];
+}
+
+-(void)getSDKVersion:(NSArray*)arr{
+    FlutterResult result = arr[1];
+    result([AliPlayer getSDKVersion]);
+}
+
+- (void)enableConsoleLog:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    NSNumber* val = [call arguments];
+    [AliPlayer setEnableLog:val.boolValue];
+}
+
+- (void)getLogLevel:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    //TODO 拿不到
+    result(@(-1));
+}
+
+- (void)setLogLevel:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    NSNumber* val = [call arguments];
+    [AliPlayer setLogCallbackInfo:val.intValue callbackBlock:nil];
+}
+
+- (void)seekTo:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    AliPlayer *player = arr[2];
+    NSDictionary* dic = [call arguments];
+    NSNumber *position = dic[@"position"];
+    NSNumber *seekMode = dic[@"seekMode"];
+    [player seekToTime:position.integerValue seekMode:seekMode.intValue];
+}
+
+//TODO 应该是根据已经有的key 替换比较合理
+- (void)setConfig:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    AliPlayer *player = arr[2];
+    NSDictionary* val = [call arguments];
+    AVPConfig *config = [player getConfig];
+    
+    [AVPConfig mj_setupReplacedKeyFromPropertyName:^NSDictionary *{
+        return @{
+            @"httpProxy" : @"mHttpProxy",
+            @"referrer" :@"mReferrer",
+            @"networkTimeout" :@"mNetworkTimeout",
+            @"maxDelayTime" :@"mMaxDelayTime",
+            @"maxBufferDuration" :@"mMaxBufferDuration",
+            @"startBufferDuration" :@"mStartBufferDuration",
+            @"maxProbeSize" :@"mMaxProbeSize",
+            @"maxProbeSize" :@"mMaxProbeSize",
+            @"clearFrameWhenStop" :@"mClearFrameWhenStop",
+            @"enableVideoTunnelRender" :@"mEnableVideoTunnelRender",
+            @"enableSEI" :@"mEnableSEI",
+            @"userAgent" :@"mUserAgent",
+            @"networkRetryCount" :@"mNetworkRetryCount",
+            @"liveStartIndex" :@"mLiveStartIndex",
+            @"customHeaders" :@"mCustomHeaders",
+        };
+    }];
+    
+    config = [AVPConfig mj_objectWithKeyValues:val];
+    
+    [player setConfig:config];
+    
+}
+
+//- (void)getCacheConfig:(NSArray*)arr {
+//    FlutterResult result = arr[1];
+//    AliPlayer *player = arr[2];
+//    [AVPCacheConfig mj_setupReplacedKeyFromPropertyName:^NSDictionary *{
+//        return @{
+//                 @"enable" : @"mEnable",
+//                 @"path" :@"mDir",
+//                 @"maxSizeMB" :@"mMaxSizeMB",
+//                 @"maxDuration" :@"mMaxDurationS",
+//                 };
+//    }];
+//    result(config.mj_keyValues);
+//}
+
+- (void)setCacheConfig:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    AliPlayer *player = arr[2];
+    NSDictionary* val = [call arguments];
+    
+    [AVPCacheConfig mj_setupReplacedKeyFromPropertyName:^NSDictionary *{
+        return @{
+            @"enable" : @"mEnable",
+            @"path" :@"mDir",
+            @"maxSizeMB" :@"mMaxSizeMB",
+            @"maxDuration" :@"mMaxDurationS",
+        };
+    }];
+    
+    AVPCacheConfig *config = [AVPCacheConfig mj_objectWithKeyValues:val];
+    
+    [player setCacheConfig:config];
+    
+}
+
+- (void)getConfig:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayer *player = arr[2];
+    AVPConfig *config = [player getConfig];
+    
+    [AVPConfig mj_setupReplacedKeyFromPropertyName:^NSDictionary *{
+        return @{
+            @"httpProxy" : @"mHttpProxy",
+            @"referrer" :@"mReferrer",
+            @"networkTimeout" :@"mNetworkTimeout",
+            @"maxDelayTime" :@"mMaxDelayTime",
+            @"maxBufferDuration" :@"mMaxBufferDuration",
+            @"startBufferDuration" :@"mStartBufferDuration",
+            @"maxProbeSize" :@"mMaxProbeSize",
+            @"maxProbeSize" :@"mMaxProbeSize",
+            @"clearFrameWhenStop" :@"mClearFrameWhenStop",
+            @"enableVideoTunnelRender" :@"mEnableVideoTunnelRender",
+            @"enableSEI" :@"mEnableSEI",
+            @"userAgent" :@"mUserAgent",
+            @"networkRetryCount" :@"mNetworkRetryCount",
+            @"liveStartIndex" :@"mLiveStartIndex",
+            @"customHeaders" :@"mCustomHeaders",
+        };
+    }];
+    result(config.mj_keyValues);
 }
 
 - (void)setVidSts:(NSArray*)arr {
@@ -372,12 +530,22 @@
 #pragma mark AVPDelegate
 
 /**
+ @brief 播放器状态改变回调
+ @param player 播放器player指针
+ @param oldStatus 老的播放器状态 参考AVPStatus
+ @param newStatus 新的播放器状态 参考AVPStatus
+ */
+- (void)onPlayerStatusChanged:(AliPlayer*)player oldStatus:(AVPStatus)oldStatus newStatus:(AVPStatus)newStatus {
+    self.eventSink(@{kAliPlayerMethod:@"onStateChanged",@"newState":@(newStatus)});
+}
+
+/**
  @brief 错误代理回调
  @param player 播放器player指针
  @param errorModel 播放器错误描述，参考AliVcPlayerErrorModel
  */
 - (void)onError:(AliPlayer*)player errorModel:(AVPErrorModel *)errorModel {
-  
+    self.eventSink(@{kAliPlayerMethod:@"onError",@"errorCode":@(errorModel.code),@"errorMsg":errorModel.message});
 }
 
 - (void)onSEIData:(AliPlayer*)player type:(int)type data:(NSData *)data {
@@ -395,7 +563,21 @@
         case AVPEventPrepareDone:
             self.eventSink(@{kAliPlayerMethod:@"onPrepared"});
             break;
-            
+        case AVPEventFirstRenderedStart:
+            self.eventSink(@{kAliPlayerMethod:@"onRenderingStart"});
+            break;
+        case AVPEventLoadingStart:
+            self.eventSink(@{kAliPlayerMethod:@"onLoadingBegin"});
+            break;
+        case AVPEventLoadingEnd:
+            self.eventSink(@{kAliPlayerMethod:@"onLoadingEnd"});
+            break;
+        case AVPEventCompletion:
+            self.eventSink(@{kAliPlayerMethod:@"onCompletion"});
+            break;
+        case AVPEventSeekEnd:
+            self.eventSink(@{kAliPlayerMethod:@"onSeekComplete"});
+            break;
         default:
             break;
     }
@@ -409,7 +591,7 @@
  @see AVPEventType
  */
 -(void)onPlayerEvent:(AliPlayer*)player eventWithString:(AVPEventWithString)eventWithString description:(NSString *)description {
- 
+    self.eventSink(@{kAliPlayerMethod:@"onInfo",@"infoCode":@(eventWithString),@"extraMsg":description});
 }
 
 /**
@@ -466,7 +648,10 @@
  @param image 图像
  */
 - (void)onCaptureScreen:(AliPlayer *)player image:(UIImage *)image {
-    
+    BOOL result =[UIImagePNGRepresentation(image)writeToFile:mSnapshotPath atomically:YES]; // 保存成功会返回YES
+    if (result == YES) {
+        self.eventSink(@{kAliPlayerMethod:@"onTrackChanged",@"snapShotPath":mSnapshotPath});
+    }
 }
 
 /**
@@ -504,7 +689,7 @@
  @param progress 缓存进度0-100
  */
 - (void)onLoadingProgress:(AliPlayer*)player progress:(float)progress {
-    
+    self.eventSink(@{kAliPlayerMethod:@"onLoadingProgress",@"percent":@((int)progress)});
 }
 
 /**
