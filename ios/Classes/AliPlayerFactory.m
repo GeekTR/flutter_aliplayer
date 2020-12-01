@@ -618,7 +618,7 @@
  @param position 视频当前播放位置
  */
 - (void)onCurrentPositionUpdate:(AliPlayer*)player position:(int64_t)position {
-    
+     self.eventSink(@{kAliPlayerMethod:@"onInfo",@"infoCode":@(2),@"extraValue":@(position)});
 }
 
 /**
@@ -627,7 +627,7 @@
  @param position 视频当前缓存位置
  */
 - (void)onBufferedPositionUpdate:(AliPlayer*)player position:(int64_t)position {
-    
+    self.eventSink(@{kAliPlayerMethod:@"onInfo",@"infoCode":@(1),@"extraValue":@(position)});
 }
 
 /**
