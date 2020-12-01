@@ -7,7 +7,6 @@ import android.os.Build;
 import android.text.TextUtils;
 import android.view.Surface;
 import android.view.TextureView;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 
@@ -39,7 +38,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -61,21 +59,20 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
     private IPlayer mIPlayer;
     private Context mContext;
     private EventChannel.EventSink mEventSink;
-    private final EventChannel mEventChannel;
+    private EventChannel mEventChannel;
     private AliPlayer mAliPlayer;
-    private final AliListPlayer mAliListPlayer;
-    private final MethodChannel mAliPlayerMethodChannel;
+    private AliListPlayer mAliListPlayer;
+    private MethodChannel mAliPlayerMethodChannel;
     private String mSnapShotPath;
     private ThumbnailHelper mThumbnailHelper;
 
     public FluttreAliPlayerFactory(FlutterPlugin.FlutterPluginBinding flutterPluginBinding) {
         super(StandardMessageCodec.INSTANCE);
+        this.mFlutterPluginBinding = flutterPluginBinding;
         this.mContext = flutterPluginBinding.getApplicationContext();
-        mAliPlayer = AliPlayerFactory.createAliPlayer(flutterPluginBinding.getApplicationContext());
         mAliListPlayer = AliPlayerFactory.createAliListPlayer(flutterPluginBinding.getApplicationContext());
-        mAliPlayerMethodChannel = new MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(),"flutter_aliplayer");
-        mEventChannel = new EventChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "flutter_aliplayer_event");
-        mEventChannel.setStreamHandler(this);
+        initAliPlayer();
+        mAliPlayerMethodChannel = new MethodChannel(mFlutterPluginBinding.getFlutterEngine().getDartExecutor(),"flutter_aliplayer");
         mAliPlayerMethodChannel.setMethodCallHandler(new MethodChannel.MethodCallHandler() {
             @Override
             public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
@@ -90,9 +87,14 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
                 FluttreAliPlayerFactory.this.onMethodCall(call,result, mAliListPlayer);
             }
         });
-        this.mFlutterPluginBinding = flutterPluginBinding;
         mGson = new Gson();
 
+        mEventChannel = new EventChannel(mFlutterPluginBinding.getFlutterEngine().getDartExecutor(), "flutter_aliplayer_event");
+        mEventChannel.setStreamHandler(this);
+    }
+
+    private void initAliPlayer(){
+        mAliPlayer = AliPlayerFactory.createAliPlayer(mFlutterPluginBinding.getApplicationContext());
         initListener(mAliPlayer);
     }
 
@@ -313,13 +315,13 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
 
     @Override
     public void onCancel(Object arguments) {
-
     }
 
     @Override
     public PlatformView create(Context context, int viewId, Object args) {
         FlutterAliPlayerView flutterAliPlayerView = new FlutterAliPlayerView(context, viewId, args, mFlutterPluginBinding);
         initRenderView(flutterAliPlayerView);
+        initAliPlayer();
         return flutterAliPlayerView;
     }
 
@@ -751,8 +753,8 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
 
     private void release(){
         if(mIPlayer != null){
-//            mIPlayer.release();
-//            mIPlayer = null;
+            mIPlayer.release();
+            mIPlayer = null;
         }
     }
 
