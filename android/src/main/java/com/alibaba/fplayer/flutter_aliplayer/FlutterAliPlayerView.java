@@ -12,6 +12,7 @@ public class FlutterAliPlayerView implements PlatformView {
 
 
     private TextureView mTextureView;
+    private Context mContext;
 
 
     FlutterAliPlayerView(Context context, int viewId, Object args, FlutterPlugin.FlutterPluginBinding flutterPluginBinding) {
@@ -20,6 +21,7 @@ public class FlutterAliPlayerView implements PlatformView {
 
 
     private void initRenderView(Context context){
+        this.mContext = context;
         mTextureView = new TextureView(context);
     }
 

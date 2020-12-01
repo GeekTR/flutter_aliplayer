@@ -7,6 +7,7 @@ import android.os.Build;
 import android.text.TextUtils;
 import android.view.Surface;
 import android.view.TextureView;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 
@@ -318,13 +319,16 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
     }
 
     private void initRenderView(FlutterAliPlayerView flutterAliPlayerView){
-        TextureView mTextureView = (TextureView) flutterAliPlayerView.getView();
+        final TextureView mTextureView = (TextureView) flutterAliPlayerView.getView();
         if(mTextureView != null){
             mTextureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
                 @Override
                 public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
                     Surface mSurface = new Surface(surface);
                     if(mIPlayer != null){
+                        if(mAliListPlayer != null){
+                            mAliListPlayer.setSurface(null);
+                        }
                         mIPlayer.setSurface(mSurface);
                     }
                 }
@@ -338,8 +342,8 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
 
                 @Override
                 public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-                    if(mIPlayer != null){
-                        mIPlayer.setSurface(null);
+                    if(mAliPlayer != null){
+                        mAliPlayer.setSurface(null);
                     }
                     return false;
                 }
