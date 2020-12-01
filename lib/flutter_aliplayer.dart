@@ -388,6 +388,7 @@ class FlutterAliplayer {
         break;
       case "onLoadingEnd":
         if (onLoadingEnd != null) {
+          print("onLoadingEnd");
           onLoadingEnd();
         }
         break;

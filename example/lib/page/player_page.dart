@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
@@ -71,15 +72,17 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     _playMode = widget.playMode;
     _dataSourceMap = widget.dataSourceMap;
 
-    getExternalStorageDirectories().then((value) {
-      if (value.length > 0) {
-        _snapShotPath = value[0].path +
-            "/snapshot_" +
-            new DateTime.now().millisecondsSinceEpoch.toString() +
-            ".png";
-        return _snapShotPath;
-      }
-    });
+    if(Platform.isAndroid){
+        getExternalStorageDirectories().then((value) {
+        if (value.length > 0) {
+          _snapShotPath = value[0].path +
+              "/snapshot_" +
+              new DateTime.now().millisecondsSinceEpoch.toString() +
+              ".png";
+          return _snapShotPath;
+        }
+      });
+    }
 
     fAliplayer = FlutterAliplayer.init(0);
     mOptionsFragment = OptionsFragment(fAliplayer);
@@ -119,12 +122,16 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
       print("aliyun : onStateChanged $newState");
     });
     fAliplayer.setOnLoadingStatusListener(loadingBegin: () {
-      _showLoading = true;
+      setState(() {
+        _showLoading = true;
+      });
     }, loadingProgress: (percent, netSpeed) {
       _loadingPercent = percent;
       setState(() {});
     }, loadingEnd: () {
-      _showLoading = false;
+      setState(() {
+        _showLoading = false;
+      });
     });
     fAliplayer.setOnSeekComplete(() {
       _inSeek = false;
@@ -343,7 +350,11 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
             InkWell(
                 child: Text('截图'),
                 onTap: () {
-                  fAliplayer.snapshot(_snapShotPath);
+                  if(Platform.isIOS){
+                      fAliplayer.snapshot(DateTime.now().millisecondsSinceEpoch.toString() +".png");
+                  }else{
+                    fAliplayer.snapshot(_snapShotPath);
+                  }
                 }),
           ],
         ),
