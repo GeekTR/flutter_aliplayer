@@ -6,6 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_aliplayer/flutter_aliplayer.dart';
 import 'package:flutter_aliplayer_example/config.dart';
 import 'package:flutter_aliplayer_example/widget/aliyun_segment.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 typedef OnEnablePlayBackChanged = Function(bool mEnablePlayBack);
 
@@ -42,6 +43,7 @@ class _OptionsFragmentState extends State<OptionsFragment> {
   int mRotateGroupValue = FlutterAvpdef.AVP_ROTATE_0;
   double mSpeedGroupValue = 1;
   double _volume = 100;
+  TextEditingController _bgColorController = TextEditingController();
 
   _loadInitData() async {
     mLoop = await widget.fAliplayer.isLoop();
@@ -309,12 +311,21 @@ class _OptionsFragmentState extends State<OptionsFragment> {
           child: TextField(
             maxLines: 1,
             maxLength: 20,
+            controller: _bgColorController,
           ),
         ),
         SizedBox(
           width: 30.0,
         ),
         InkWell(
+          onTap: (){
+            int color = int.tryParse(_bgColorController.text);
+            if(color!=null){
+              widget.fAliplayer.setVideoBackgroundColor(color);
+            }else{
+              Fluttertoast.showToast(msg: '请输入int数字');
+            }
+          },
           child: Text(
             "确定",
             style: TextStyle(color: Colors.blue),
