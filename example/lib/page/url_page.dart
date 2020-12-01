@@ -11,7 +11,9 @@ class UrlPage extends StatefulWidget {
 }
 
 class _UrlPageState extends State<UrlPage> {
-  TextEditingController urlSourceController = new TextEditingController();
+  TextEditingController urlSourceController = new TextEditingController.fromValue(TextEditingValue(
+    text: DataSourceRelated.DEFAULT_URL,
+  ));
   String _qrcode_result = DataSourceRelated.DEFAULT_URL;
 
   Future<void> getQrcodeState() async {
@@ -43,14 +45,14 @@ class _UrlPageState extends State<UrlPage> {
             controller: urlSourceController,
             maxLines: 1,
             decoration: InputDecoration(
-              labelText: _qrcode_result,
+              labelText: "url",
             ),
             keyboardType: TextInputType.number,
           ),
           RaisedButton(
             child: Text("开始播放"),
             onPressed: () {
-              var map = {DataSourceRelated.URL_KEY: _qrcode_result};
+              var map = {DataSourceRelated.URL_KEY: urlSourceController.text};
               CommomUtils.pushPage(context,
                   PlayerPage(playMode: ModeType.URL, dataSourceMap: map));
             },
