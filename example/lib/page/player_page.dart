@@ -72,8 +72,8 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     _playMode = widget.playMode;
     _dataSourceMap = widget.dataSourceMap;
 
-    if(Platform.isAndroid){
-        getExternalStorageDirectories().then((value) {
+    if (Platform.isAndroid) {
+      getExternalStorageDirectories().then((value) {
         if (value.length > 0) {
           _snapShotPath = value[0].path +
               "/snapshot_" +
@@ -161,7 +161,6 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
       }
     });
     fAliplayer.setOnCompletion(() {
-      // Fluttertoast.showToast(msg: "onCompletion");
       _showTipsWidget = true;
       _tipsContent = "播放完成";
       setState(() {});
@@ -328,6 +327,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                 child: Text('准备'),
                 onTap: () {
                   _showTipsWidget = false;
+                  _showLoading = false;
                   setState(() {});
                   fAliplayer.prepare();
                 }),
@@ -350,9 +350,11 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
             InkWell(
                 child: Text('截图'),
                 onTap: () {
-                  if(Platform.isIOS){
-                      fAliplayer.snapshot(DateTime.now().millisecondsSinceEpoch.toString() +".png");
-                  }else{
+                  if (Platform.isIOS) {
+                    fAliplayer.snapshot(
+                        DateTime.now().millisecondsSinceEpoch.toString() +
+                            ".png");
+                  } else {
                     fAliplayer.snapshot(_snapShotPath);
                   }
                 }),
