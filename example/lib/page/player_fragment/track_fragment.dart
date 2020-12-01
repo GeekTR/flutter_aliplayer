@@ -120,9 +120,14 @@ class _TrackFragmentState extends State<TrackFragment> {
                       InkWell(
                         onTap: () {
                           if(element.title=='---- 外挂字幕 ----'){
+                            widget.fAliplayer.selectExtSubtitle(element.selValue, false);
                             bool isSelected = element.selValue == e.value;
-                            element.selValue = e.value;
-                            widget.fAliplayer.selectExtSubtitle(element.selValue, !isSelected);
+                            if(isSelected){
+                              element.selValue = -1;
+                            }else{
+                              element.selValue = e.value;
+                              widget.fAliplayer.selectExtSubtitle(element.selValue, true);
+                            }
                           }else{
                               element.selValue = e.value;
                               widget.fAliplayer.selectTrack(element.selValue,accurate:0);
