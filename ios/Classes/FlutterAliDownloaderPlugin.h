@@ -7,7 +7,7 @@
 
 #import <Flutter/Flutter.h>
 
-@interface FlutterAliDownloaderPlugin : NSObject<FlutterPlugin,FlutterStreamHandler>
+@interface FlutterAliDownloaderPlugin : NSObject<FlutterPlugin>
 
 @end
 

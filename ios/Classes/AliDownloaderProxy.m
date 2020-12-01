@@ -24,10 +24,15 @@
     [AVPTrackInfo mj_setupReplacedKeyFromPropertyName:^NSDictionary *{
         return @{
                  @"trackDefinition" : @"vodDefinition",
+                 @"trackIndex" :@"index",
                  };
     }];
     
-    self.result(info.mj_JSONString);
+    NSMutableDictionary *dic = info.mj_keyValues;
+    if (_mVideoId) {
+        [dic setObject:_mVideoId forKey:@"mVideoId"];
+    }
+    self.result(dic.mj_JSONString);
 }
 
 - (void)onError:(AliMediaDownloader*)downloader errorModel:(AVPErrorModel *)errorModel{

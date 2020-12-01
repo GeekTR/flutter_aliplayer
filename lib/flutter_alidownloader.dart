@@ -9,6 +9,8 @@ class FlutterAliDownloader {
 
   FlutterAliDownloader.init() {
     _receiveStream = _eventChannel.receiveBroadcastStream();
+    //TODO iOS必须在这里监听 才能回调
+    _eventChannel.receiveBroadcastStream().listen(_onEvent, onError: _onError);
   }
 
   ///type {FlutterAvpdef.DOWNLOADTYPE_STS / FlutterAvpdef.DOWNLOADTYPE_AUTH}
