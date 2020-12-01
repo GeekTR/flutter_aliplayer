@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
@@ -132,7 +131,9 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     });
     fAliplayer.setOnInfo((infoCode, extraValue, extraMsg) {
       if (infoCode == FlutterAvpdef.CURRENTPOSITION) {
-        if (_videoDuration != 0 && _currentPosition <= _videoDuration) {
+        print("abc : $_videoDuration ---------- $extraValue");
+        if (_videoDuration != 0 && extraValue <= _videoDuration) {
+          print("abc : $_videoDuration ========== $extraValue");
           _currentPosition = extraValue;
         }
         if (!_inSeek) {
