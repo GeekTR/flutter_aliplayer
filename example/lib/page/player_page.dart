@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+=======
+import 'dart:io';
+import 'dart:typed_data';
+>>>>>>> fix:截图功能
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
@@ -342,7 +347,11 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
             InkWell(
                 child: Text('截图'),
                 onTap: () {
-                  fAliplayer.snapshot(_snapShotPath);
+                  if(Platform.isIOS){
+                      fAliplayer.snapshot(DateTime.now().millisecondsSinceEpoch.toString() +".png");
+                  }else{
+                    fAliplayer.snapshot(_snapShotPath);
+                  }
                 }),
           ],
         ),

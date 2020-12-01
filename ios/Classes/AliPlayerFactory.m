@@ -650,7 +650,7 @@
 - (void)onCaptureScreen:(AliPlayer *)player image:(UIImage *)image {
     BOOL result =[UIImagePNGRepresentation(image)writeToFile:mSnapshotPath atomically:YES]; // 保存成功会返回YES
     if (result == YES) {
-        self.eventSink(@{kAliPlayerMethod:@"onTrackChanged",@"snapShotPath":mSnapshotPath});
+        self.eventSink(@{kAliPlayerMethod:@"onSnapShot",@"snapShotPath":mSnapshotPath});
     }
 }
 
