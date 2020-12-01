@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-=======
 import 'dart:io';
-import 'dart:typed_data';
->>>>>>> fix:截图功能
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';

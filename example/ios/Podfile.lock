@@ -1,10 +1,10 @@
 PODS:
-  - AliPlayerSDK_iOS (5.1.6):
-    - AliPlayerSDK_iOS/AliPlayerSDK (= 5.1.6)
-  - AliPlayerSDK_iOS/AliPlayerSDK (5.1.6)
+  - AliPlayerSDK_iOS (5.2.2):
+    - AliPlayerSDK_iOS/AliPlayerSDK (= 5.2.2)
+  - AliPlayerSDK_iOS/AliPlayerSDK (5.2.2)
   - Flutter (1.0.0)
   - flutter_aliplayer (0.0.1):
-    - AliPlayerSDK_iOS (= 5.1.6)
+    - AliPlayerSDK_iOS (= 5.2.2)
     - Flutter
     - MJExtension
   - fluttertoast (0.0.2):
@@ -53,9 +53,9 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/sqflite/ios"
 
 SPEC CHECKSUMS:
-  AliPlayerSDK_iOS: d349d7f8acc0f86b0fccef9aa4e0f1369c938ca7
+  AliPlayerSDK_iOS: 8a8f4b021e2354b869739c55d23fab6a8a642dd9
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
-  flutter_aliplayer: be5c5fac674d08ebd2ce19e6a8484d29902aac9d
+  flutter_aliplayer: 9b5eac6dab2465029469104b8a34d149a0f13cf8
   fluttertoast: 6122fa75143e992b1d3470f61000f591a798cc58
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   MJExtension: d9b9c74cbdeb724c1e9ecbb157b318276e62e876
