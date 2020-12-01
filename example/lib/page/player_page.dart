@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_aliplayer/flutter_aliplayer.dart';
 import 'package:flutter_aliplayer_example/config.dart';
@@ -47,6 +48,10 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   int _videoDuration = 100;
   //截图保存路径
   String _snapShotPath;
+  //提示内容
+  String _tipsContent;
+  //是否展示提示内容
+  bool _showTipsWidget = false;
 
   ///seek中
   bool _inSeek = false;
@@ -136,7 +141,12 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
       }
     });
     fAliplayer.setOnCompletion(() {
-      Fluttertoast.showToast(msg: "onCompletion");
+      // Fluttertoast.showToast(msg: "onCompletion");
+      _showTipsWidget = true;
+      _tipsContent = "播放完成";
+      setState(() {
+
+      });
     });
     fAliplayer.setOnTrackReady(() { 
       _isTrackReady = true;
@@ -147,7 +157,12 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
       Fluttertoast.showToast(msg: "SnapShot Save : $path");
     });
     fAliplayer.setOnError((errorCode, errorExtra, errorMsg) {
-      Fluttertoast.showToast(msg: "error : $errorCode : $errorMsg");
+      // Fluttertoast.showToast(msg: "error : $errorCode : $errorMsg");
+      _showTipsWidget = true;
+      _tipsContent = "$errorCode \n $errorMsg";
+      setState(() {
+
+      });
     });
   }
 
@@ -217,6 +232,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                       child: _buildProgressBar(),
                       heightFactor: 2.0,
                       alignment: FractionalOffset.bottomCenter),
+                  _buildTipsWidget(width,height),
                 ],
               ),
 
@@ -232,7 +248,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   }
 
   void onViewPlayerCreated() async {
-    fAliplayer.createAliPlayer();
+    // fAliplayer.createAliPlayer();
     switch (_playMode) {
       case ModeType.URL:
         this.fAliplayer.setUrl(_dataSourceMap[DataSourceRelated.URL_KEY]);
@@ -307,6 +323,43 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     } else {
       return Container();
     }
+  }
+
+  _buildTipsWidget(double width,double height){
+    if(_showTipsWidget){
+      return Container(
+        alignment: Alignment.center,
+        width: width, height: height,
+        child: Wrap(
+          direction: Axis.vertical,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            Text(_tipsContent,style: TextStyle(color: Colors.red),textAlign:TextAlign.center),
+            SizedBox(height: 5.0,),
+            OutlineButton(
+              shape: BeveledRectangleBorder(
+                side: BorderSide(
+                  style: BorderStyle.solid,
+                  color: Colors.blue,
+                  width: 5,
+                ),
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: Text("Replay",style: TextStyle(color: Colors.white)),
+              onPressed: (){
+                setState(() {
+                  _showTipsWidget = false;
+                });
+                fAliplayer.prepare();
+              },
+            ),
+          ],
+        ),
+      );
+    }else{
+      return Container();
+    }
+
   }
 
   _buildProgressBar() {
