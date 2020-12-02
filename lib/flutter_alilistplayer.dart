@@ -60,7 +60,7 @@ class FlutterAliListPlayer extends FlutterAliplayer {
   Future<void> moveTo(
       {@required String uid,
       String accId,
-      accKey,
+      String accKey,
       String token,
       String region}) async {
     Map<String, dynamic> info = {
