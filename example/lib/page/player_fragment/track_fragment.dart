@@ -67,7 +67,7 @@ class _TrackFragmentState extends State<TrackFragment> {
           ]),
       TrackUIModel(
           isOpen: false,
-          title: '---- VIDEO ----',
+          title: '---- AUDIO ----',
           selValue: 1000,
           children: [
             

@@ -361,8 +361,9 @@
             @"maxDuration" :@"mMaxDurationS",
         };
     }];
-    
     AVPCacheConfig *config = [AVPCacheConfig mj_objectWithKeyValues:val];
+    NSString *path = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
+    [config setPath:[path stringByAppendingPathComponent:config.path]];
     
     [player setCacheConfig:config];
     

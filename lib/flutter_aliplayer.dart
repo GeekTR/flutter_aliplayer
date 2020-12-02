@@ -483,7 +483,6 @@ class FlutterAliplayer {
         break;
       case "onSubtitleExtAdded":
         if(onSubtitleExtAdded!=null){
-          print('onSubtitleExtAdded=======');
           int trackIndex = event['trackIndex'];
           String url = event['url'];
           onSubtitleExtAdded(trackIndex,url);
