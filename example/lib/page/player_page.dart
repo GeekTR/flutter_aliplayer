@@ -105,16 +105,6 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   _initListener() {
     fAliplayer.setOnPrepard(() {
       Fluttertoast.showToast(msg: "OnPrepared ");
-      fAliplayer.getMediaInfo().then((value) {
-        _videoDuration = value['duration'];
-        setState(() {});
-        List thumbnails = value['thumbnails'];
-        if (thumbnails != null && thumbnails.isNotEmpty) {
-          fAliplayer.createThumbnailHelper(thumbnails[0]['url']);
-        } else {
-          _thumbnailSuccess = false;
-        }
-      });
     });
     fAliplayer.setOnRenderingStart(() {
       Fluttertoast.showToast(msg: " OnFirstFrameShow ");
@@ -169,6 +159,16 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     });
     fAliplayer.setOnTrackReady(() {
       _isTrackReady = true;
+      fAliplayer.getMediaInfo().then((value) {
+        _videoDuration = value['duration'];
+        setState(() {});
+        List thumbnails = value['thumbnails'];
+        if (thumbnails != null && thumbnails.isNotEmpty) {
+          fAliplayer.createThumbnailHelper(thumbnails[0]['url']);
+        } else {
+          _thumbnailSuccess = false;
+        }
+      });
       setState(() {});
     });
 
@@ -458,6 +458,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                   _showTipsWidget = false;
                 });
                 fAliplayer.prepare();
+                fAliplayer.play();
               },
             ),
           ],

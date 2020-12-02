@@ -246,6 +246,21 @@
     [player snapShot];
 }
 
+- (void)createThumbnailHelper:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    AliPlayer *player = arr[2];
+    NSString* val = [call arguments];
+    [player setThumbnailUrl:val];
+    self.eventSink(@{kAliPlayerMethod:@"thumbnail_onPrepared_Success"});
+}
+
+- (void)requestBitmapAtPosition:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    AliPlayer *player = arr[2];
+    NSNumber* val = [call arguments];
+    [player getThumbnail:val.integerValue];
+}
+
 - (void)getVolume:(NSArray*)arr {
     FlutterResult result = arr[1];
     AliPlayer *player = arr[2];
@@ -477,6 +492,11 @@
     FlutterResult result = arr[1];
     AliPlayer *player = arr[2];
     AVPMediaInfo * info = [player getMediaInfo];
+    [AVPThumbnailInfo mj_setupReplacedKeyFromPropertyName:^NSDictionary *{
+        return @{
+                 @"URL" : @"url",
+                 };
+    }];
     NSLog(@"getMediaInfo==%@",info.mj_JSONString);
     result(info.mj_keyValues);
 }
@@ -701,7 +721,9 @@
  @param image 缩图略图像指针,对于mac是NSImage，iOS平台是UIImage指针
  */
 - (void)onGetThumbnailSuc:(int64_t)positionMs fromPos:(int64_t)fromPos toPos:(int64_t)toPos image:(id)image {
-    
+    NSData *imageData = UIImageJPEGRepresentation(image,1);
+//    FlutterStandardTypedData * fdata = [FlutterStandardTypedData typedDataWithBytes:imageData];
+    self.eventSink(@{kAliPlayerMethod:@"onThumbnailGetSuccess",@"thumbnailRange":@[@(fromPos),@(toPos)],@"thumbnailbitmap":imageData});
 }
 
 /**
@@ -709,7 +731,7 @@
  @param positionMs 指定的缩略图位置
  */
 - (void)onGetThumbnailFailed:(int64_t)positionMs {
-    
+    self.eventSink(@{kAliPlayerMethod:@"onThumbnailGetFail"});
 }
 
 /**

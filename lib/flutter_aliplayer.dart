@@ -475,6 +475,9 @@ class FlutterAliplayer {
         dynamic bitmap = event['thumbnailbitmap'];
         dynamic range = event['thumbnailRange'];
         if (onThumbnailGetSuccess != null) {
+          if(Platform.isIOS){
+            range = Int64List.fromList(range.cast<int>());
+          }
           onThumbnailGetSuccess(bitmap, range);
         }
         break;
