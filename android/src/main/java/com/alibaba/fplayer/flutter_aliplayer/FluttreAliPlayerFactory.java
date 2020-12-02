@@ -669,12 +669,17 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
                 String moveToSecurityToken = methodCall.argument("token");
                 String moveToRegion = methodCall.argument("region");
                 String moveToUid = methodCall.argument("uid");
-                StsInfo moveToStsInfo = new StsInfo();
-                moveToStsInfo.setAccessKeyId(moveToAccessKeyId);
-                moveToStsInfo.setAccessKeySecret(moveToAccessKeySecret);
-                moveToStsInfo.setSecurityToken(moveToSecurityToken);
-                moveToStsInfo.setRegion(moveToRegion);
-                moveTo(moveToUid,moveToStsInfo);
+                if(!TextUtils.isEmpty(moveToAccessKeyId)){
+                    StsInfo moveToStsInfo = new StsInfo();
+                    moveToStsInfo.setAccessKeyId(moveToAccessKeyId);
+                    moveToStsInfo.setAccessKeySecret(moveToAccessKeySecret);
+                    moveToStsInfo.setSecurityToken(moveToSecurityToken);
+                    moveToStsInfo.setRegion(moveToRegion);
+                    moveTo(moveToUid,moveToStsInfo);
+                }else{
+                    moveTo(moveToUid);
+                }
+
                 break;
             case "enableConsoleLog":
                 Boolean enableLog = (Boolean) methodCall.arguments;
@@ -1135,6 +1140,12 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
     private void moveTo(String uid,StsInfo stsInfo){
         if(mIPlayer != null){
             ((AliListPlayer)mIPlayer).moveTo(uid,stsInfo);
+        }
+    }
+
+    private void moveTo(String uid){
+        if(mIPlayer != null){
+            ((AliListPlayer)mIPlayer).moveTo(uid);
         }
     }
 }
