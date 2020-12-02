@@ -70,8 +70,9 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
         super(StandardMessageCodec.INSTANCE);
         this.mFlutterPluginBinding = flutterPluginBinding;
         this.mContext = flutterPluginBinding.getApplicationContext();
+        mAliPlayer = AliPlayerFactory.createAliPlayer(mFlutterPluginBinding.getApplicationContext());
         mAliListPlayer = AliPlayerFactory.createAliListPlayer(flutterPluginBinding.getApplicationContext());
-        initAliPlayer();
+//        initAliPlayer();
         mAliPlayerMethodChannel = new MethodChannel(mFlutterPluginBinding.getFlutterEngine().getDartExecutor(),"flutter_aliplayer");
         mAliPlayerMethodChannel.setMethodCallHandler(new MethodChannel.MethodCallHandler() {
             @Override
@@ -91,10 +92,6 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
 
         mEventChannel = new EventChannel(mFlutterPluginBinding.getFlutterEngine().getDartExecutor(), "flutter_aliplayer_event");
         mEventChannel.setStreamHandler(this);
-    }
-
-    private void initAliPlayer(){
-        mAliPlayer = AliPlayerFactory.createAliPlayer(mFlutterPluginBinding.getApplicationContext());
         initListener(mAliPlayer);
     }
 
@@ -246,6 +243,8 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
             public void onSubtitleExtAdded(int trackIndex, String url) {
                 Map<String,Object> map = new HashMap<>();
                 map.put("method","onSubtitleExtAdded");
+                map.put("trackIndex",trackIndex);
+                map.put("url",url);
                 mEventSink.success(map);
             }
 
@@ -253,6 +252,9 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
             public void onSubtitleShow(int trackIndex, long id, String data) {
                 Map<String,Object> map = new HashMap<>();
                 map.put("method","onSubtitleShow");
+                map.put("trackIndex",trackIndex);
+                map.put("subtitleID",id);
+                map.put("subtitle",data);
                 mEventSink.success(map);
             }
 
@@ -260,6 +262,8 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
             public void onSubtitleHide(int trackIndex, long id) {
                 Map<String,Object> map = new HashMap<>();
                 map.put("method","onSubtitleHide");
+                map.put("trackIndex",trackIndex);
+                map.put("subtitleID",id);
                 mEventSink.success(map);
             }
         });
@@ -321,7 +325,10 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
     public PlatformView create(Context context, int viewId, Object args) {
         FlutterAliPlayerView flutterAliPlayerView = new FlutterAliPlayerView(context, viewId, args, mFlutterPluginBinding);
         initRenderView(flutterAliPlayerView);
-        initAliPlayer();
+        if(mAliPlayer == null){
+            mAliPlayer = AliPlayerFactory.createAliPlayer(mContext);
+            initListener(mAliPlayer);
+        }
         return flutterAliPlayerView;
     }
 
@@ -602,6 +609,16 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
                 Integer accurate = (Integer) selectTrackMap.get("accurate");
                 selectTrack(trackIdx, accurate == 1);
                 break;
+            case "addExtSubtitle":
+                String extSubtitlUrl = (String) methodCall.arguments;
+                addExtSubtitle(extSubtitlUrl);
+                break;
+            case "selectExtSubtitle":
+                Map<String,Object> selectExtSubtitleMap = (Map<String, Object>) methodCall.arguments;
+                Integer trackIndex = (Integer) selectExtSubtitleMap.get("trackIndex");
+                Boolean selectExtSubtitlEnable = (Boolean) selectExtSubtitleMap.get("enable");
+                selectExtSubtitle(trackIndex,selectExtSubtitlEnable);
+                break;
             case "getSDKVersion":
                 result.success(getSDKVersion());
                 break;
@@ -753,8 +770,8 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
 
     private void release(){
         if(mIPlayer != null){
-            mIPlayer.release();
-            mIPlayer = null;
+//            mIPlayer.release();
+//            mIPlayer = null;
         }
     }
 
@@ -961,6 +978,18 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
     private void selectTrack(int trackId,boolean accurate){
         if(mIPlayer != null){
             mIPlayer.selectTrack(trackId,accurate);
+        }
+    }
+
+    private void addExtSubtitle(String url){
+        if(mIPlayer != null){
+            mIPlayer.addExtSubtitle(url);
+        }
+    }
+
+    private void selectExtSubtitle(int trackIndex,boolean enable){
+        if(mIPlayer != null){
+            mIPlayer.selectExtSubtitle(trackIndex,enable);
         }
     }
 

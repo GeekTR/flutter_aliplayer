@@ -22,7 +22,6 @@ class _MyAppState extends State<HomePage> {
     'STS播放',
     'AUTH播放',
     'MPS播放',
-    '本地视频播放',
     '播放列表演示(VID)',
     '播放列表演示(URL)',
     '断点下载',
