@@ -69,16 +69,14 @@ class _MyAppState extends State<HomePage> {
                   CommomUtils.pushPage(context, MpsPage());
                   break;
                 case 4:
-                  break;
-                case 5:
                   CommomUtils.pushPage(
                       context, VideoGridPage(playMode: ModeType.STS));
                   break;
-                case 6:
+                case 5:
                   CommomUtils.pushPage(
                       context, VideoGridPage(playMode: ModeType.URL));
                   break;
-                case 7:
+                case 6:
                   CommomUtils.pushPage(context, DownloadPage());
                   break;
                 default:
