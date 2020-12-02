@@ -207,19 +207,17 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
         },
         onThumbnailGetFail: () {});
 
-
     this.fAliplayer.setOnSubtitleHide((trackIndex, subtitleID) {
       setState(() {
         extSubTitleText = '';
       });
     });
-    
+
     this.fAliplayer.setOnSubtitleShow((trackIndex, subtitleID, subtitle) {
       setState(() {
         extSubTitleText = subtitle;
       });
     });
-
   }
 
   @override
@@ -264,7 +262,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     } else {
       height = MediaQuery.of(context).size.height;
     }
-    AliPlayerView aliPlayerView = new AliPlayerView(
+    AliPlayerView aliPlayerView = AliPlayerView(
         onCreated: onViewPlayerCreated,
         x: x,
         y: y,
@@ -292,7 +290,10 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                   _buildThumbnail(width, height),
                   Align(
                     alignment: Alignment.topCenter,
-                    child: Text(extSubTitleText,style: TextStyle(color:Colors.red),),
+                    child: Text(
+                      extSubTitleText,
+                      style: TextStyle(color: Colors.red),
+                    ),
                   )
                 ],
               ),
@@ -388,7 +389,9 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
 
   _buildFragmentPage(Orientation orientation) {
     if (orientation == Orientation.portrait) {
-      return mFramePage[bottomIndex];
+      return Expanded(
+          child: IndexedStack(
+              index: bottomIndex, children: mFramePage)); //mFramePage
     } else {
       return Container();
     }

@@ -29,9 +29,10 @@ typedef OnLoadingEnd = void Function();
 typedef OnStateChanged = void Function(int newState);
 
 // typedef OnSubtitleDisplayListener = void Function(); //TODO
-typedef OnSubtitleExtAdded = void Function(int trackIndex,String url);
-typedef OnSubtitleShow = void Function(int trackIndex,int subtitleID,String subtitle);
-typedef OnSubtitleHide = void Function(int trackIndex,int subtitleID);
+typedef OnSubtitleExtAdded = void Function(int trackIndex, String url);
+typedef OnSubtitleShow = void Function(
+    int trackIndex, int subtitleID, String subtitle);
+typedef OnSubtitleHide = void Function(int trackIndex, int subtitleID);
 typedef OnTrackReady = void Function();
 
 typedef OnInfo = void Function(int infoCode, int extraValue, String extraMsg);
@@ -149,15 +150,15 @@ class FlutterAliplayer {
     this.onThumbnailGetSuccess = onThumbnailGetSuccess;
   }
 
-  void setOnSubtitleShow(OnSubtitleShow onSubtitleShow){
+  void setOnSubtitleShow(OnSubtitleShow onSubtitleShow) {
     this.onSubtitleShow = onSubtitleShow;
   }
 
-  void setOnSubtitleHide(OnSubtitleHide onSubtitleHide){
+  void setOnSubtitleHide(OnSubtitleHide onSubtitleHide) {
     this.onSubtitleHide = onSubtitleHide;
   }
 
-  void setOnSubtitleExtAdded(OnSubtitleExtAdded onSubtitleExtAdded){
+  void setOnSubtitleExtAdded(OnSubtitleExtAdded onSubtitleExtAdded) {
     this.onSubtitleExtAdded = onSubtitleExtAdded;
   }
 
@@ -349,11 +350,8 @@ class FlutterAliplayer {
     return channel.invokeMethod("addExtSubtitle", url);
   }
 
-  Future<void> selectExtSubtitle(int trackIndex,bool enable) {
-    var map = {
-      'trackIndex':trackIndex,
-      'enable':enable
-    };
+  Future<void> selectExtSubtitle(int trackIndex, bool enable) {
+    var map = {'trackIndex': trackIndex, 'enable': enable};
     return channel.invokeMethod("selectExtSubtitle", map);
   }
 
@@ -364,6 +362,10 @@ class FlutterAliplayer {
       'accurate': accurate,
     };
     return channel.invokeMethod("selectTrack", map);
+  }
+
+  Future<void> setPrivateService(Int8List data) {
+    return channel.invokeMethod("setPrivateService", data);
   }
 
   void _onEvent(dynamic event) {
@@ -482,26 +484,26 @@ class FlutterAliplayer {
         }
         break;
       case "onSubtitleExtAdded":
-        if(onSubtitleExtAdded!=null){
+        if (onSubtitleExtAdded != null) {
           print('onSubtitleExtAdded=======');
           int trackIndex = event['trackIndex'];
           String url = event['url'];
-          onSubtitleExtAdded(trackIndex,url);
+          onSubtitleExtAdded(trackIndex, url);
         }
         break;
       case "onSubtitleShow":
-        if(onSubtitleShow!=null){
+        if (onSubtitleShow != null) {
           int trackIndex = event['trackIndex'];
           int subtitleID = event['subtitleID'];
           String subtitle = event['subtitle'];
-          onSubtitleShow(trackIndex,subtitleID,subtitle);
+          onSubtitleShow(trackIndex, subtitleID, subtitle);
         }
         break;
       case "onSubtitleHide":
-        if(onSubtitleHide!=null){
+        if (onSubtitleHide != null) {
           int trackIndex = event['trackIndex'];
           int subtitleID = event['subtitleID'];
-          onSubtitleHide(trackIndex,subtitleID);
+          onSubtitleHide(trackIndex, subtitleID);
         }
         break;
     }

@@ -72,23 +72,21 @@ class _OptionsFragmentState extends State<OptionsFragment> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Scrollbar(
-        child: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.all(5.0),
-            child: Column(
-              children: [
-                _buildSwitch(),
-                _buildVolume(),
-                _buildScale(),
-                _buildMirror(),
-                _buildRotate(),
-                _buildSpeed(),
-                _buildBgColor(),
-                _buildPlayBack(),
-              ],
-            ),
+    return Scrollbar(
+      child: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.all(5.0),
+          child: Column(
+            children: [
+              _buildSwitch(),
+              _buildVolume(),
+              _buildScale(),
+              _buildMirror(),
+              _buildRotate(),
+              _buildSpeed(),
+              _buildBgColor(),
+              _buildPlayBack(),
+            ],
           ),
         ),
       ),
@@ -318,11 +316,11 @@ class _OptionsFragmentState extends State<OptionsFragment> {
           width: 30.0,
         ),
         InkWell(
-          onTap: (){
+          onTap: () {
             int color = int.tryParse(_bgColorController.text);
-            if(color!=null){
+            if (color != null) {
               widget.fAliplayer.setVideoBackgroundColor(color);
-            }else{
+            } else {
               Fluttertoast.showToast(msg: '请输入int数字');
             }
           },
