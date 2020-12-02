@@ -50,7 +50,14 @@ class _OptionsFragmentState extends State<OptionsFragment> {
     mAutoPlay = await widget.fAliplayer.isAutoPlay();
     mMute = await widget.fAliplayer.isMuted();
     if (Platform.isIOS) {
-      mEnableHardwareDecoder = await widget.fAliplayer.enableHardwareDecoder();
+      widget.fAliplayer.setEnableHardwareDecoder(true).then((value){
+        widget.fAliplayer.enableHardwareDecoder().then((value){
+          print('object====$value');
+          setState(() {
+            mEnableHardwareDecoder = value;
+          });
+        });
+      });
     } else if (Platform.isAndroid) {
       mEnableHardwareDecoder = GlobalSettings.mEnableHardwareDecoder;
     }
@@ -144,7 +151,12 @@ class _OptionsFragmentState extends State<OptionsFragment> {
           children: [
             CupertinoSwitch(
               value: mEnableHardwareDecoder,
-              onChanged: (value) {},
+              onChanged: (value) {
+                setState(() {
+                  mEnableHardwareDecoder = !mEnableHardwareDecoder;
+                });
+                widget.fAliplayer.setEnableHardwareDecoder(mEnableHardwareDecoder);
+              },
             ),
             Text("硬解"),
           ],

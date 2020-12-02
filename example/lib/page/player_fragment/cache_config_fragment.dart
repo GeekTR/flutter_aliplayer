@@ -46,7 +46,9 @@ class _CacheConfigFragmentState extends State<CacheConfigFragment> {
         ));
       });
     } else if (Platform.isIOS) {
-      //TODO  IOS
+      _mDirController = TextEditingController.fromValue(TextEditingValue(
+          text: 'cache',
+        ));
     }
   }
 

@@ -67,7 +67,7 @@ class _TrackFragmentState extends State<TrackFragment> {
           children: []),
       TrackUIModel(
           isOpen: false,
-          title: '---- VIDEO ----',
+          title: '---- AUDIO ----',
           selValue: 1000,
           children: []),
       TrackUIModel(
@@ -104,10 +104,16 @@ class _TrackFragmentState extends State<TrackFragment> {
                   .map((SubTrackUIModel e) => InkWell(
                         onTap: () {
                           if (element.title == '---- 外挂字幕 ----') {
+                            widget.fAliplayer
+                                .selectExtSubtitle(element.selValue, false);
                             bool isSelected = element.selValue == e.value;
-                            element.selValue = e.value;
-                            widget.fAliplayer.selectExtSubtitle(
-                                element.selValue, !isSelected);
+                            if (isSelected) {
+                              element.selValue = -1;
+                            } else {
+                              element.selValue = e.value;
+                              widget.fAliplayer
+                                  .selectExtSubtitle(element.selValue, true);
+                            }
                           } else {
                             element.selValue = e.value;
                             widget.fAliplayer
