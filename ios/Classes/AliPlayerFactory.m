@@ -199,14 +199,47 @@
 - (void)getScalingMode:(NSArray*)arr {
     FlutterResult result = arr[1];
     AliPlayer *player = arr[2];
-    result(@(player.scalingMode));
+    int mode = 0;
+    switch (player.scalingMode) {
+        case AVP_SCALINGMODE_SCALEASPECTFIT:
+            mode = 0;
+            break;
+        case AVP_SCALINGMODE_SCALEASPECTFILL:
+            mode = 1;
+            break;
+        case AVP_SCALINGMODE_SCALETOFILL:
+            mode = 2;
+            break;
+            
+        default:
+            break;
+    }
+    result(@(mode));
 }
 
 - (void)setScalingMode:(NSArray*)arr {
     FlutterMethodCall* call = arr.firstObject;
+    FlutterResult result = arr[1];
     AliPlayer *player = arr[2];
     NSNumber* val = [call arguments];
-    [player setScalingMode:val.intValue];
+//    与android保持一致
+    int mode = AVP_SCALINGMODE_SCALEASPECTFIT;
+    switch (val.intValue) {
+        case 0:
+            mode = AVP_SCALINGMODE_SCALEASPECTFIT;
+            break;
+        case 1:
+            mode = AVP_SCALINGMODE_SCALEASPECTFILL;
+            break;
+        case 2:
+            mode = AVP_SCALINGMODE_SCALETOFILL;
+            break;
+            
+        default:
+            break;
+    }
+    [player setScalingMode:mode];
+    result(nil);
 }
 
 - (void)getMirrorMode:(NSArray*)arr {
