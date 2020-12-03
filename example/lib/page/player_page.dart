@@ -62,9 +62,9 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   ///seek中
   bool _inSeek = false;
 
-  bool _isTrackReady = false;
-
   String extSubTitleText = '';
+
+  GlobalKey<TrackFragmentState> trackFragmentKey = GlobalKey();
 
   @override
   void initState() {
@@ -92,7 +92,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
       mOptionsFragment,
       PlayConfigFragment(fAliplayer),
       CacheConfigFragment(fAliplayer),
-      TrackFragment(fAliplayer, isTrackReady: _isTrackReady),
+      TrackFragment(trackFragmentKey,fAliplayer),
     ];
 
     mOptionsFragment.setOnEnablePlayBackChanged((mEnablePlayBack) {
@@ -158,7 +158,6 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
       setState(() {});
     });
     fAliplayer.setOnTrackReady(() {
-      _isTrackReady = true;
       fAliplayer.getMediaInfo().then((value) {
         _videoDuration = value['duration'];
         setState(() {});
@@ -169,6 +168,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
           _thumbnailSuccess = false;
         }
       });
+      trackFragmentKey.currentState.loadData();
       setState(() {});
     });
 
