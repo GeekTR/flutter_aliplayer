@@ -13,7 +13,7 @@ class StsPage extends StatefulWidget {
 class _StsHomePageState extends State<StsPage> {
   TextEditingController _vidController =
       TextEditingController.fromValue(TextEditingValue(
-    text: '63566edb9f61417bb46b0bb2b26cb29e',//DataSourceRelated.DEFAULT_VID,
+    text: DataSourceRelated.DEFAULT_VID,
   ));
   TextEditingController _accessKeyIdController = TextEditingController();
   TextEditingController _accessKeySecretController = TextEditingController();

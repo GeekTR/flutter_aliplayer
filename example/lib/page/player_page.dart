@@ -276,7 +276,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
             children: [
               Stack(
                 children: [
-                  Container(child: aliPlayerView, width: width, height: height),
+                  Container(color: Colors.black,child: aliPlayerView, width: width, height: height),
                   Container(
                     width: width,
                     height: height,
