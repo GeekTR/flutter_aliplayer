@@ -2,15 +2,8 @@ package com.alibaba.fplayer.flutter_aliplayer;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.SurfaceTexture;
 import android.os.Build;
 import android.text.TextUtils;
-import android.view.Surface;
-import android.view.TextureView;
-
-import androidx.annotation.NonNull;
-
-import com.aliyun.player.AliListPlayer;
 import com.aliyun.player.AliPlayer;
 import com.aliyun.player.AliPlayerFactory;
 import com.aliyun.player.IPlayer;
@@ -22,7 +15,6 @@ import com.aliyun.player.nativeclass.MediaInfo;
 import com.aliyun.player.nativeclass.PlayerConfig;
 import com.aliyun.player.nativeclass.Thumbnail;
 import com.aliyun.player.nativeclass.TrackInfo;
-import com.aliyun.player.source.StsInfo;
 import com.aliyun.player.source.UrlSource;
 import com.aliyun.player.source.VidAuth;
 import com.aliyun.player.source.VidMps;
@@ -47,52 +39,35 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugin.common.StandardMessageCodec;
-import io.flutter.plugin.platform.PlatformView;
-import io.flutter.plugin.platform.PlatformViewFactory;
+import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 
-public class FluttreAliPlayerFactory extends PlatformViewFactory implements EventChannel.StreamHandler {
+public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallHandler {
 
     private FlutterPlugin.FlutterPluginBinding mFlutterPluginBinding;
 
     private final Gson mGson;
-    private IPlayer mIPlayer;
     private Context mContext;
     private EventChannel.EventSink mEventSink;
     private EventChannel mEventChannel;
     private AliPlayer mAliPlayer;
-    private AliListPlayer mAliListPlayer;
     private MethodChannel mAliPlayerMethodChannel;
     private String mSnapShotPath;
     private ThumbnailHelper mThumbnailHelper;
 
-    public FluttreAliPlayerFactory(FlutterPlugin.FlutterPluginBinding flutterPluginBinding) {
-        super(StandardMessageCodec.INSTANCE);
+    public FlutterAliPlayer(FlutterPlugin.FlutterPluginBinding flutterPluginBinding) {
         this.mFlutterPluginBinding = flutterPluginBinding;
         this.mContext = flutterPluginBinding.getApplicationContext();
-        mAliPlayer = AliPlayerFactory.createAliPlayer(mFlutterPluginBinding.getApplicationContext());
-        mAliListPlayer = AliPlayerFactory.createAliListPlayer(flutterPluginBinding.getApplicationContext());
-//        initAliPlayer();
-        mAliPlayerMethodChannel = new MethodChannel(mFlutterPluginBinding.getFlutterEngine().getDartExecutor(),"flutter_aliplayer");
-        mAliPlayerMethodChannel.setMethodCallHandler(new MethodChannel.MethodCallHandler() {
-            @Override
-            public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
-                FluttreAliPlayerFactory.this.onMethodCall(call,result, mAliPlayer);
-            }
-        });
-
-        MethodChannel mAliListPlayerMethodChannel = new MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(),"flutter_alilistplayer");
-        mAliListPlayerMethodChannel.setMethodCallHandler(new MethodChannel.MethodCallHandler() {
-            @Override
-            public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
-                FluttreAliPlayerFactory.this.onMethodCall(call,result, mAliListPlayer);
-            }
-        });
         mGson = new Gson();
-
+        mAliPlayer = AliPlayerFactory.createAliPlayer(mFlutterPluginBinding.getApplicationContext());
+        mAliPlayerMethodChannel = new MethodChannel(mFlutterPluginBinding.getFlutterEngine().getDartExecutor(),"flutter_aliplayer");
+        mAliPlayerMethodChannel.setMethodCallHandler(this);
         mEventChannel = new EventChannel(mFlutterPluginBinding.getFlutterEngine().getDartExecutor(), "flutter_aliplayer_event");
         mEventChannel.setStreamHandler(this);
         initListener(mAliPlayer);
+    }
+
+    public AliPlayer getAliPlayer(){
+        return mAliPlayer;
     }
 
     private void initListener(final IPlayer player){
@@ -322,56 +297,7 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
     }
 
     @Override
-    public PlatformView create(Context context, int viewId, Object args) {
-        FlutterAliPlayerView flutterAliPlayerView = new FlutterAliPlayerView(context, viewId, args, mFlutterPluginBinding);
-        initRenderView(flutterAliPlayerView);
-        if(mAliPlayer == null){
-            mAliPlayer = AliPlayerFactory.createAliPlayer(mContext);
-            initListener(mAliPlayer);
-        }
-        return flutterAliPlayerView;
-    }
-
-    private void initRenderView(FlutterAliPlayerView flutterAliPlayerView){
-        final TextureView mTextureView = (TextureView) flutterAliPlayerView.getView();
-        if(mTextureView != null){
-            mTextureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
-                @Override
-                public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-                    Surface mSurface = new Surface(surface);
-                    if(mIPlayer != null){
-                        if(mAliListPlayer != null){
-                            mAliListPlayer.setSurface(null);
-                        }
-                        mIPlayer.setSurface(mSurface);
-                    }
-                }
-
-                @Override
-                public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-                    if(mIPlayer != null){
-                        mIPlayer.surfaceChanged();
-                    }
-                }
-
-                @Override
-                public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-                    if(mAliPlayer != null){
-                        mAliPlayer.setSurface(null);
-                    }
-                    return false;
-                }
-
-                @Override
-                public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-
-                }
-            });
-        }
-    }
-
-    public void onMethodCall(MethodCall methodCall, MethodChannel.Result result,IPlayer player) {
-        mIPlayer = player;
+    public void onMethodCall(MethodCall methodCall, MethodChannel.Result result) {
         switch (methodCall.method) {
             case "createAliPlayer":
                 createAliPlayer();
@@ -448,7 +374,7 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
                 Integer seekMode = (Integer) seekToMap.get("seekMode");
                 seekTo(position,seekMode);
             }
-                break;
+            break;
             case "getMediaInfo":
             {
                 MediaInfo mediaInfo = getMediaInfo();
@@ -492,7 +418,7 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
                     result.success(getMediaInfoMap);
                 }
             }
-                break;
+            break;
             case "snapshot":
                 mSnapShotPath = methodCall.arguments.toString();
                 snapshot();
@@ -622,65 +548,6 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
             case "getSDKVersion":
                 result.success(getSDKVersion());
                 break;
-            case "addVidSource":
-                String addSourceVid = methodCall.argument("vid");
-                String vidUid = methodCall.argument("uid");
-                addVidSource(addSourceVid,vidUid);
-                break;
-            case "addUrlSource":
-                String addSourceUrl = methodCall.argument("url");
-                String urlUid = methodCall.argument("uid");
-                addUrlSource(addSourceUrl,urlUid);
-                break;
-            case "removeSource":
-                String removeUid = methodCall.arguments();
-                removeSource(removeUid);
-                break;
-            case "clear":
-                clear();
-                break;
-            case "moveToNext":
-                String moveToNextAccessKeyId = methodCall.argument("accId");
-                String moveToNextAccessKeySecret = methodCall.argument("accKey");
-                String moveToNextSecurityToken = methodCall.argument("token");
-                String moveToNextRegion = methodCall.argument("region");
-                StsInfo moveToNextStsInfo = new StsInfo();
-                moveToNextStsInfo.setAccessKeyId(moveToNextAccessKeyId);
-                moveToNextStsInfo.setAccessKeySecret(moveToNextAccessKeySecret);
-                moveToNextStsInfo.setSecurityToken(moveToNextSecurityToken);
-                moveToNextStsInfo.setRegion(moveToNextRegion);
-                moveToNext(moveToNextStsInfo);
-                break;
-            case "moveToPre":
-                String moveToPreAccessKeyId = methodCall.argument("accId");
-                String moveToPreAccessKeySecret = methodCall.argument("accKey");
-                String moveToPreSecurityToken = methodCall.argument("token");
-                String moveToPreRegion = methodCall.argument("region");
-                StsInfo moveToPreStsInfo = new StsInfo();
-                moveToPreStsInfo.setAccessKeyId(moveToPreAccessKeyId);
-                moveToPreStsInfo.setAccessKeySecret(moveToPreAccessKeySecret);
-                moveToPreStsInfo.setSecurityToken(moveToPreSecurityToken);
-                moveToPreStsInfo.setRegion(moveToPreRegion);
-                moveToPre(moveToPreStsInfo);
-                break;
-            case "moveTo":
-                String moveToAccessKeyId = methodCall.argument("accId");
-                String moveToAccessKeySecret = methodCall.argument("accKey");
-                String moveToSecurityToken = methodCall.argument("token");
-                String moveToRegion = methodCall.argument("region");
-                String moveToUid = methodCall.argument("uid");
-                if(!TextUtils.isEmpty(moveToAccessKeyId)){
-                    StsInfo moveToStsInfo = new StsInfo();
-                    moveToStsInfo.setAccessKeyId(moveToAccessKeyId);
-                    moveToStsInfo.setAccessKeySecret(moveToAccessKeySecret);
-                    moveToStsInfo.setSecurityToken(moveToSecurityToken);
-                    moveToStsInfo.setRegion(moveToRegion);
-                    moveTo(moveToUid,moveToStsInfo);
-                }else{
-                    moveTo(moveToUid);
-                }
-
-                break;
             case "enableConsoleLog":
                 Boolean enableLog = (Boolean) methodCall.arguments;
                 enableConsoleLog(enableLog);
@@ -715,140 +582,140 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
     }
 
     private String getSDKVersion(){
-        return com.aliyun.player.AliPlayerFactory.getSdkVersion();
+        return AliPlayerFactory.getSdkVersion();
     }
 
     private void createAliPlayer(){
-        mIPlayer = AliPlayerFactory.createAliPlayer(mContext);
-        initListener(mIPlayer);
+        mAliPlayer = AliPlayerFactory.createAliPlayer(mContext);
+        initListener(mAliPlayer);
     }
 
     private void setDataSource(String url){
-        if(mIPlayer != null){
+        if(mAliPlayer != null){
             UrlSource urlSource = new UrlSource();
             urlSource.setUri(url);
-            ((AliPlayer)mIPlayer).setDataSource(urlSource);
+            ((AliPlayer)mAliPlayer).setDataSource(urlSource);
         }
     }
 
     private void setDataSource(VidSts vidSts){
-        if(mIPlayer != null){
-            ((AliPlayer)mIPlayer).setDataSource(vidSts);
+        if(mAliPlayer != null){
+            ((AliPlayer)mAliPlayer).setDataSource(vidSts);
         }
     }
 
     private void setDataSource(VidAuth vidAuth){
-        if(mIPlayer != null){
-            ((AliPlayer)mIPlayer).setDataSource(vidAuth);
+        if(mAliPlayer != null){
+            ((AliPlayer)mAliPlayer).setDataSource(vidAuth);
         }
     }
 
     private void setDataSource(VidMps vidMps){
-        if(mIPlayer != null){
-            ((AliPlayer)mIPlayer).setDataSource(vidMps);
+        if(mAliPlayer != null){
+            ((AliPlayer)mAliPlayer).setDataSource(vidMps);
         }
     }
 
     private void prepare(){
-        if(mIPlayer != null){
-            mIPlayer.prepare();
+        if(mAliPlayer != null){
+            mAliPlayer.prepare();
         }
     }
 
     private void start(){
-        if(mIPlayer != null){
-            mIPlayer.start();
+        if(mAliPlayer != null){
+            mAliPlayer.start();
         }
     }
 
     private void pause(){
-        if(mIPlayer != null){
-            mIPlayer.pause();
+        if(mAliPlayer != null){
+            mAliPlayer.pause();
         }
     }
 
     private void stop(){
-        if(mIPlayer != null){
-            mIPlayer.stop();
+        if(mAliPlayer != null){
+            mAliPlayer.stop();
         }
     }
 
     private void release(){
-        if(mIPlayer != null){
-//            mIPlayer.release();
-//            mIPlayer = null;
+        if(mAliPlayer != null){
+            mAliPlayer.release();
+            mAliPlayer = null;
         }
     }
 
     private void seekTo(long position,int seekMode){
-        if(mIPlayer != null){
+        if(mAliPlayer != null){
             IPlayer.SeekMode mSeekMode;
             if(seekMode == IPlayer.SeekMode.Accurate.getValue()){
                 mSeekMode = IPlayer.SeekMode.Accurate;
             }else{
                 mSeekMode = IPlayer.SeekMode.Inaccurate;
             }
-            mIPlayer.seekTo(position,mSeekMode);
+            mAliPlayer.seekTo(position,mSeekMode);
         }
     }
 
     private MediaInfo getMediaInfo(){
-        if(mIPlayer != null){
-            return mIPlayer.getMediaInfo();
+        if(mAliPlayer != null){
+            return mAliPlayer.getMediaInfo();
         }
         return null;
     }
 
     private void snapshot(){
-        if(mIPlayer != null){
-            mIPlayer.snapshot();
+        if(mAliPlayer != null){
+            mAliPlayer.snapshot();
         }
     }
 
     private void setLoop(Boolean isLoop){
-        if(mIPlayer != null){
-            mIPlayer.setLoop(isLoop);
+        if(mAliPlayer != null){
+            mAliPlayer.setLoop(isLoop);
         }
     }
 
     private Boolean isLoop(){
-        return mIPlayer != null && mIPlayer.isLoop();
+        return mAliPlayer != null && mAliPlayer.isLoop();
     }
 
     private void setAutoPlay(Boolean isAutoPlay){
-        if(mIPlayer != null){
-            mIPlayer.setAutoPlay(isAutoPlay);
+        if(mAliPlayer != null){
+            mAliPlayer.setAutoPlay(isAutoPlay);
         }
     }
 
     private Boolean isAutoPlay(){
-        if (mIPlayer != null) {
-            mIPlayer.isAutoPlay();
+        if (mAliPlayer != null) {
+            mAliPlayer.isAutoPlay();
         }
         return false;
     }
 
     private void setMuted(Boolean muted){
-        if(mIPlayer != null){
-            mIPlayer.setMute(muted);
+        if(mAliPlayer != null){
+            mAliPlayer.setMute(muted);
         }
     }
 
     private Boolean isMuted(){
-        if (mIPlayer != null) {
-            mIPlayer.isMute();
+        if (mAliPlayer != null) {
+            mAliPlayer.isMute();
         }
         return false;
     }
 
     private void setEnableHardWareDecoder(Boolean mEnableHardwareDecoder){
-        if(mIPlayer != null){
-            mIPlayer.enableHardwareDecoder(mEnableHardwareDecoder);
+        if(mAliPlayer != null){
+            mAliPlayer.enableHardwareDecoder(mEnableHardwareDecoder);
         }
     }
 
     private void setScaleMode(int model){
-        if(mIPlayer != null){
+        if(mAliPlayer != null){
             IPlayer.ScaleMode mScaleMode = IPlayer.ScaleMode.SCALE_ASPECT_FIT;
             if(model == IPlayer.ScaleMode.SCALE_ASPECT_FIT.getValue()){
                 mScaleMode = IPlayer.ScaleMode.SCALE_ASPECT_FIT;
@@ -857,20 +724,20 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
             }else if(model == IPlayer.ScaleMode.SCALE_TO_FILL.getValue()){
                 mScaleMode = IPlayer.ScaleMode.SCALE_TO_FILL;
             }
-            mIPlayer.setScaleMode(mScaleMode);
+            mAliPlayer.setScaleMode(mScaleMode);
         }
     }
 
     private int getScaleMode(){
         int scaleMode = IPlayer.ScaleMode.SCALE_ASPECT_FIT.getValue();
-        if (mIPlayer != null) {
-            scaleMode =  mIPlayer.getScaleMode().getValue();
+        if (mAliPlayer != null) {
+            scaleMode =  mAliPlayer.getScaleMode().getValue();
         }
         return scaleMode;
     }
 
     private void setMirrorMode(int mirrorMode){
-        if(mIPlayer != null){
+        if(mAliPlayer != null){
             IPlayer.MirrorMode mMirrorMode;
             if(mirrorMode == IPlayer.MirrorMode.MIRROR_MODE_HORIZONTAL.getValue()){
                 mMirrorMode = IPlayer.MirrorMode.MIRROR_MODE_HORIZONTAL;
@@ -879,20 +746,20 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
             }else{
                 mMirrorMode = IPlayer.MirrorMode.MIRROR_MODE_NONE;
             }
-            mIPlayer.setMirrorMode(mMirrorMode);
+            mAliPlayer.setMirrorMode(mMirrorMode);
         }
     }
 
     private int getMirrorMode(){
         int mirrorMode = IPlayer.MirrorMode.MIRROR_MODE_NONE.getValue();
-        if (mIPlayer != null) {
-            mirrorMode = mIPlayer.getMirrorMode().getValue();
+        if (mAliPlayer != null) {
+            mirrorMode = mAliPlayer.getMirrorMode().getValue();
         }
         return mirrorMode;
     }
 
     private void setRotateMode(int rotateMode){
-        if(mIPlayer != null){
+        if(mAliPlayer != null){
             IPlayer.RotateMode mRotateMode;
             if(rotateMode == IPlayer.RotateMode.ROTATE_90.getValue()){
                 mRotateMode = IPlayer.RotateMode.ROTATE_90;
@@ -903,61 +770,61 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
             }else{
                 mRotateMode = IPlayer.RotateMode.ROTATE_0;
             }
-            mIPlayer.setRotateMode(mRotateMode);
+            mAliPlayer.setRotateMode(mRotateMode);
         }
     }
 
     private int getRotateMode(){
         int rotateMode = IPlayer.RotateMode.ROTATE_0.getValue();
-        if(mIPlayer != null){
-            rotateMode =  mIPlayer.getRotateMode().getValue();
+        if(mAliPlayer != null){
+            rotateMode =  mAliPlayer.getRotateMode().getValue();
         }
         return rotateMode;
     }
 
     private void setSpeed(double speed){
-        if(mIPlayer != null){
-            mIPlayer.setSpeed((float) speed);
+        if(mAliPlayer != null){
+            mAliPlayer.setSpeed((float) speed);
         }
     }
 
     private double getSpeed(){
         double speed = 0;
-        if(mIPlayer != null){
-            speed = mIPlayer.getSpeed();
+        if(mAliPlayer != null){
+            speed = mAliPlayer.getSpeed();
         }
         return speed;
     }
 
     private void setVideoBackgroundColor(int color){
-        if(mIPlayer != null){
-            mIPlayer.setVideoBackgroundColor(color);
+        if(mAliPlayer != null){
+            mAliPlayer.setVideoBackgroundColor(color);
         }
     }
 
     private void setVolume(double volume){
-        if(mIPlayer != null){
-            mIPlayer.setVolume((float)volume);
+        if(mAliPlayer != null){
+            mAliPlayer.setVolume((float)volume);
         }
     }
 
     private double getVolume(){
         double volume = 1.0;
-        if(mIPlayer != null){
-            volume = mIPlayer.getVolume();
+        if(mAliPlayer != null){
+            volume = mAliPlayer.getVolume();
         }
         return volume;
     }
 
     private void setConfig(PlayerConfig playerConfig){
-        if(mIPlayer != null){
-            mIPlayer.setConfig(playerConfig);
+        if(mAliPlayer != null){
+            mAliPlayer.setConfig(playerConfig);
         }
     }
 
     private PlayerConfig getConfig(){
-        if(mIPlayer != null){
-            return mIPlayer.getConfig();
+        if(mAliPlayer != null){
+            return mAliPlayer.getConfig();
         }
         return null;
     }
@@ -967,34 +834,34 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
     }
 
     private void setCacheConfig(CacheConfig cacheConfig){
-        if(mIPlayer != null){
-            mIPlayer.setCacheConfig(cacheConfig);
+        if(mAliPlayer != null){
+            mAliPlayer.setCacheConfig(cacheConfig);
         }
     }
 
     private TrackInfo getCurrentTrack(int currentTrackIndex){
-        if(mIPlayer != null){
-            return mIPlayer.currentTrack(currentTrackIndex);
+        if(mAliPlayer != null){
+            return mAliPlayer.currentTrack(currentTrackIndex);
         }else{
             return null;
         }
     }
 
     private void selectTrack(int trackId,boolean accurate){
-        if(mIPlayer != null){
-            mIPlayer.selectTrack(trackId,accurate);
+        if(mAliPlayer != null){
+            mAliPlayer.selectTrack(trackId,accurate);
         }
     }
 
     private void addExtSubtitle(String url){
-        if(mIPlayer != null){
-            mIPlayer.addExtSubtitle(url);
+        if(mAliPlayer != null){
+            mAliPlayer.addExtSubtitle(url);
         }
     }
 
     private void selectExtSubtitle(int trackIndex,boolean enable){
-        if(mIPlayer != null){
-            mIPlayer.selectExtSubtitle(trackIndex,enable);
+        if(mAliPlayer != null){
+            mAliPlayer.selectExtSubtitle(trackIndex,enable);
         }
     }
 
@@ -1096,56 +963,6 @@ public class FluttreAliPlayerFactory extends PlatformViewFactory implements Even
     private void requestBitmapAtPosition(int position){
         if(mThumbnailHelper != null){
             mThumbnailHelper.requestBitmapAtPosition(position);
-        }
-    }
-
-
-    /** ========================================================= */
-
-    private void addVidSource(String vid,String uid){
-        if(mIPlayer != null){
-            ((AliListPlayer)mIPlayer).addVid(vid,uid);
-        }
-    }
-    private void addUrlSource(String url,String uid){
-        if(mIPlayer != null){
-            ((AliListPlayer)mIPlayer).addUrl(url,uid);
-        }
-    }
-
-    private void removeSource(String uid){
-        if(mIPlayer != null){
-            ((AliListPlayer)mIPlayer).removeSource(uid);
-        }
-    }
-
-    private void clear(){
-        if(mIPlayer != null){
-            ((AliListPlayer)mIPlayer).clear();
-        }
-    }
-
-    private void moveToNext(StsInfo stsInfo) {
-        if(mIPlayer != null){
-            ((AliListPlayer)mIPlayer).moveToNext(stsInfo);
-        }
-    }
-
-    private void moveToPre(StsInfo stsInfo){
-        if(mIPlayer != null){
-            ((AliListPlayer)mIPlayer).moveToPrev(stsInfo);
-        }
-    }
-
-    private void moveTo(String uid,StsInfo stsInfo){
-        if(mIPlayer != null){
-            ((AliListPlayer)mIPlayer).moveTo(uid,stsInfo);
-        }
-    }
-
-    private void moveTo(String uid){
-        if(mIPlayer != null){
-            ((AliListPlayer)mIPlayer).moveTo(uid);
         }
     }
 }

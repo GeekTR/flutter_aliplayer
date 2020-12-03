@@ -475,7 +475,7 @@ class FlutterAliplayer {
         dynamic bitmap = event['thumbnailbitmap'];
         dynamic range = event['thumbnailRange'];
         if (onThumbnailGetSuccess != null) {
-          if(Platform.isIOS){
+          if (Platform.isIOS) {
             range = Int64List.fromList(range.cast<int>());
           }
           onThumbnailGetSuccess(bitmap, range);
@@ -550,7 +550,7 @@ class _VideoPlayerState extends State<AliPlayerView> {
   nativeView() {
     if (Platform.isAndroid) {
       return AndroidView(
-        viewType: 'plugins.flutter_aliplayer',
+        viewType: 'flutter_aliplayer_render_view',
         onPlatformViewCreated: _onPlatformViewCreated,
         creationParams: <String, dynamic>{
           "x": widget.x,
@@ -562,7 +562,8 @@ class _VideoPlayerState extends State<AliPlayerView> {
       );
     } else {
       return UiKitView(
-        viewType: 'plugins.flutter_aliplayer',
+        // viewType: 'plugins.flutter_aliplayer',
+        viewType: 'flutter_aliplayer_render_view',
         onPlatformViewCreated: _onPlatformViewCreated,
         creationParams: <String, dynamic>{
           "x": widget.x,

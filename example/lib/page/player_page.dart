@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_aliplayer/flutter_aliplayer.dart';
+import 'package:flutter_aliplayer/flutter_aliplayer_factory.dart';
 import 'package:flutter_aliplayer_example/config.dart';
 import 'package:flutter_aliplayer_example/page/player_fragment/cache_config_fragment.dart';
 import 'package:flutter_aliplayer_example/page/player_fragment/options_fragment.dart';
@@ -69,6 +70,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    fAliplayer = FlutterAliPlayerFactory().createAliPlayer();
     WidgetsBinding.instance.addObserver(this);
     bottomIndex = 0;
     _playMode = widget.playMode;
@@ -86,7 +88,6 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
       });
     }
 
-    fAliplayer = FlutterAliplayer.init(0);
     mOptionsFragment = OptionsFragment(fAliplayer);
     mFramePage = [
       mOptionsFragment,
@@ -276,7 +277,11 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
             children: [
               Stack(
                 children: [
-                  Container(color: Colors.black,child: aliPlayerView, width: width, height: height),
+                  Container(
+                      color: Colors.black,
+                      child: aliPlayerView,
+                      width: width,
+                      height: height),
                   Container(
                     width: width,
                     height: height,

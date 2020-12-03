@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_aliplayer/flutter_aliplayer_factory.dart';
 import 'package:flutter_aliplayer_example/config.dart';
 import 'package:flutter_aliplayer_example/model/video_model.dart';
 import 'package:flutter_aliplayer_example/util/network_utils.dart';
@@ -24,7 +25,7 @@ class _VideoGridPageState extends State<VideoGridPage> {
       RefreshController(initialRefresh: true);
   PageController _pageController;
 
-  FlutterAliListPlayer fAliListPlayer = FlutterAliListPlayer.init(1);
+  FlutterAliListPlayer fAliListPlayer;
 
   int _curIdx = 0;
 
@@ -33,6 +34,7 @@ class _VideoGridPageState extends State<VideoGridPage> {
   @override
   void initState() {
     super.initState();
+    fAliListPlayer = FlutterAliPlayerFactory().createAliListPlayer();
     fAliListPlayer.setAutoPlay(true);
     fAliListPlayer.setLoop(true);
   }
@@ -271,5 +273,4 @@ class _VideoGridPageState extends State<VideoGridPage> {
     });
     this.fAliListPlayer.stop();
   }
-  
 }
