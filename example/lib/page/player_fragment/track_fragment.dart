@@ -12,10 +12,9 @@ class TrackUIModel {
 
 class TrackFragment extends StatefulWidget {
   final FlutterAliplayer fAliplayer;
-  final bool isTrackReady;
-  TrackFragment(this.fAliplayer, {this.isTrackReady});
+  TrackFragment(Key key,this.fAliplayer):super(key:key);
   @override
-  _TrackFragmentState createState() => _TrackFragmentState();
+  TrackFragmentState createState() => TrackFragmentState();
 }
 
 class SubTrackUIModel {
@@ -24,7 +23,7 @@ class SubTrackUIModel {
   SubTrackUIModel({this.title, this.value});
 }
 
-class _TrackFragmentState extends State<TrackFragment> {
+class TrackFragmentState extends State<TrackFragment> {
   List<TrackUIModel> _list;
 
   Map extSubTitleMap = {
@@ -39,6 +38,8 @@ class _TrackFragmentState extends State<TrackFragment> {
   void initState() {
     super.initState();
 
+    _initData();
+
     widget.fAliplayer.setOnSubtitleExtAdded((trackIndex, url) {
       String curKey = '';
       extSubTitleMap.forEach((key, value) {
@@ -49,6 +50,7 @@ class _TrackFragmentState extends State<TrackFragment> {
       if (trackIndex < 0) {
         Fluttertoast.showToast(msg: '外挂字幕${curKey}添加失败');
       } else {
+        _list[4].children.removeWhere((element) => element.title==curKey);
         _list[4]
             .children
             .add(SubTrackUIModel(title: curKey, value: trackIndex));
@@ -56,30 +58,6 @@ class _TrackFragmentState extends State<TrackFragment> {
         setState(() {});
       }
     });
-
-    _loadData();
-
-    _list = [
-      TrackUIModel(
-          isOpen: false,
-          title: '---- VIDEO ----',
-          selValue: 1000,
-          children: []),
-      TrackUIModel(
-          isOpen: false,
-          title: '---- AUDIO ----',
-          selValue: 1000,
-          children: []),
-      TrackUIModel(
-          isOpen: false,
-          title: '---- SUBTITLE ----',
-          selValue: 1000,
-          children: []),
-      TrackUIModel(
-          isOpen: false, title: '---- VOD ----', selValue: 1000, children: []),
-      TrackUIModel(
-          isOpen: false, title: '---- 外挂字幕 ----', selValue: 1000, children: []),
-    ];
   }
 
   @override
@@ -147,13 +125,36 @@ class _TrackFragmentState extends State<TrackFragment> {
     );
   }
 
-  _loadData() {
+  _initData(){
+    _list = [
+        TrackUIModel(
+            isOpen: false,
+            title: '---- VIDEO ----',
+            selValue: -1,
+            children: []),
+        TrackUIModel(
+            isOpen: false,
+            title: '---- AUDIO ----',
+            selValue: -1,
+            children: []),
+        TrackUIModel(
+            isOpen: false,
+            title: '---- SUBTITLE ----',
+            selValue: -1,
+            children: []),
+        TrackUIModel(
+            isOpen: false, title: '---- VOD ----', selValue: -1, children: []),
+        TrackUIModel(
+            isOpen: false, title: '---- 外挂字幕 ----', selValue: -1, children: []),
+      ];
+  }
+
+  loadData() {
+   _initData();
     //添加外挂字幕
     extSubTitleMap.forEach((key, value) {
       widget.fAliplayer.addExtSubtitle(value);
     });
-
-    // if(widget.isTrackReady){
     widget.fAliplayer.getMediaInfo().then((value) {
       AVPMediaInfo info = AVPMediaInfo.fromJson(value);
       if (info.tracks.length > 0) {
@@ -175,6 +176,5 @@ class _TrackFragmentState extends State<TrackFragment> {
         }
       }
     });
-    // }
   }
 }
