@@ -54,6 +54,17 @@ class FlutterAvpdef {
   static const int RTSSERVERMAYBEDISCONNECT = 805371905;
   static const int RTSSERVERRECOVER = 805371906;
 
+  ///播放器状态
+  static const int unknow = -1;
+  static const int idle = 0;
+  static const int initalized = 1;
+  static const int prepared = 2;
+  static const int started = 3;
+  static const int paused = 4;
+  static const int stopped = 5;
+  static const int completion = 6;
+  static const int error = 7;
+
   ///精准seek
   static const int ACCURATE = 1;
   static const int INACCURATE = 16;
@@ -80,7 +91,6 @@ class EventChanneldef {
   static const String DOWNLOAD_PROCESS = "download_process";
   static const String DOWNLOAD_COMPLETION = "download_completion";
 }
-
 
 class AVPMediaInfo {
   String status;
@@ -140,7 +150,6 @@ class AVPMediaInfo {
     return data;
   }
 }
-
 
 class AVPTrackInfo {
   String vodFormat;
@@ -211,10 +220,10 @@ class AVPTrackInfo {
   }
 }
 
-class AVPThumbnailInfo{
-String url;
+class AVPThumbnailInfo {
+  String url;
 
-AVPThumbnailInfo.fromJson(Map<dynamic, dynamic> json) {
+  AVPThumbnailInfo.fromJson(Map<dynamic, dynamic> json) {
     url = json['url'];
   }
 

@@ -63,6 +63,9 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   ///seek中
   bool _inSeek = false;
 
+  //当前播放器状态
+  int _currentPlayerState = 0;
+
   String extSubTitleText = '';
 
   GlobalKey<TrackFragmentState> trackFragmentKey = GlobalKey();
@@ -93,7 +96,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
       mOptionsFragment,
       PlayConfigFragment(fAliplayer),
       CacheConfigFragment(fAliplayer),
-      TrackFragment(trackFragmentKey,fAliplayer),
+      TrackFragment(trackFragmentKey, fAliplayer),
     ];
 
     mOptionsFragment.setOnEnablePlayBackChanged((mEnablePlayBack) {
@@ -112,6 +115,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     });
     fAliplayer.setOnVideoSizeChanged((width, height) {});
     fAliplayer.setOnStateChanged((newState) {
+      _currentPlayerState = newState;
       print("aliyun : onStateChanged $newState");
     });
     fAliplayer.setOnLoadingStatusListener(loadingBegin: () {
@@ -179,6 +183,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     });
     fAliplayer.setOnError((errorCode, errorExtra, errorMsg) {
       _showTipsWidget = true;
+      _showLoading = false;
       _tipsContent = "$errorCode \n $errorMsg";
       setState(() {});
     });
@@ -314,7 +319,6 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   }
 
   void onViewPlayerCreated() async {
-    // fAliplayer.createAliPlayer();
     switch (_playMode) {
       case ModeType.URL:
         this.fAliplayer.setUrl(_dataSourceMap[DataSourceRelated.URL_KEY]);
@@ -534,6 +538,14 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                 },
                 onChangeEnd: (value) {
                   _inSeek = false;
+                  setState(() {
+                    if (_currentPlayerState == FlutterAvpdef.completion &&
+                        _showTipsWidget) {
+                      setState(() {
+                        _showTipsWidget = false;
+                      });
+                    }
+                  });
                   fAliplayer.seekTo(
                       value.ceil(),
                       GlobalSettings.mEnableAccurateSeek
