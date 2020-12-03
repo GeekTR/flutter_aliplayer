@@ -562,8 +562,8 @@ class _VideoPlayerState extends State<AliPlayerView> {
       );
     } else {
       return UiKitView(
-        // viewType: 'plugins.flutter_aliplayer',
-        viewType: 'flutter_aliplayer_render_view',
+        viewType: 'plugins.flutter_aliplayer',
+        // viewType: 'flutter_aliplayer_render_view',
         onPlatformViewCreated: _onPlatformViewCreated,
         creationParams: <String, dynamic>{
           "x": widget.x,
