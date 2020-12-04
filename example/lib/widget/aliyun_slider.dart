@@ -79,7 +79,8 @@ class _AliyunSliderState extends State<AliyunSlider>
   Widget build(BuildContext context) {
     return _AliyunSliderRenderObjectWidget(
       value: (widget.value - widget.min) / (widget.max - widget.min),
-      bufferValue: (widget.bufferValue - widget.min) / (widget.max - widget.min),
+      bufferValue:
+          (widget.bufferValue - widget.min) / (widget.max - widget.min),
       divisions: widget.divisions,
       activeColor: CupertinoDynamicColor.resolve(
         widget.activeColor ?? CupertinoTheme.of(context).primaryColor,
@@ -421,15 +422,6 @@ class _RenderAliyunSlider extends RenderConstrainedBox {
 
     final Canvas canvas = context.canvas;
 
-    ///播放进度
-    if (visualPosition > 0.0) {
-      final Paint paint = Paint()..color = rightColor;
-      canvas.drawRRect(
-          RRect.fromLTRBXY(
-              trackLeft, trackTop, trackActive, trackBottom, 1.0, 1.0),
-          paint);
-    }
-
     ///未播放进度
     if (visualPosition < 1.0) {
       final Paint paint = Paint()..color = leftColor;
@@ -443,18 +435,26 @@ class _RenderAliyunSlider extends RenderConstrainedBox {
     if (visualPosition > 0.0 && bufferValue >= 0) {
       final Paint paint = Paint()..color = _bufferColor;
       //buffre end draw
-      if(bufferValue >= 1.0){
+      if (bufferValue >= 1.0) {
         canvas.drawRRect(
             RRect.fromLTRBXY(
                 trackActive, trackTop, trackRight, trackBottom, 1.0, 1.0),
             paint);
-      }else{
+      } else {
         canvas.drawRRect(
             RRect.fromLTRBXY(
                 trackActive, trackTop, buffingRight, trackBottom, 1.0, 1.0),
             paint);
       }
 
+      ///播放进度
+      if (visualPosition > 0.0) {
+        final Paint paint = Paint()..color = rightColor;
+        canvas.drawRRect(
+            RRect.fromLTRBXY(
+                trackLeft, trackTop, trackActive, trackBottom, 1.0, 1.0),
+            paint);
+      }
     }
 
     final Offset thumbCenter = Offset(trackActive, trackCenter);
