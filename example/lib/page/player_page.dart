@@ -120,6 +120,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     });
     fAliplayer.setOnLoadingStatusListener(loadingBegin: () {
       setState(() {
+        _loadingPercent = 0;
         _showLoading = true;
       });
     }, loadingProgress: (percent, netSpeed) {
