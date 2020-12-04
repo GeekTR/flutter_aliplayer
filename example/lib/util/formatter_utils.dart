@@ -27,7 +27,7 @@ class FormatterUtils {
     }
     int seconds = (ms / 1000).round();
     int finalSec = seconds % 60;
-    int finalMin = (seconds / 60 % 60).round();
+    int finalMin = (seconds / 60 % 60).floor();
     int finalHour = (seconds / 3600).round();
 
     StringBuffer msBuilder = new StringBuffer("");
