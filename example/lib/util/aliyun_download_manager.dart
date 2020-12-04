@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/services.dart';
 import 'package:flutter_aliplayer/flutter_alidownloader.dart';
 import 'package:flutter_aliplayer/flutter_avpdef.dart';
 import 'package:flutter_aliplayer_example/config.dart';
 import 'package:flutter_aliplayer_example/model/custom_downloader_model.dart';
+import 'package:flutter_aliplayer_example/model/downloader_model.dart';
 import 'package:flutter_aliplayer_example/util/database_utils.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -47,7 +49,7 @@ class AliyunDownloadManager {
       });
     } else if (Platform.isIOS) {
       //TODO  IOS
-       _flutterAliDownloader.setSaveDir('download');
+      _flutterAliDownloader.setSaveDir('download');
     }
   }
 
@@ -123,40 +125,50 @@ class AliyunDownloadManager {
     _controller.addStream(_flutterAliDownloader.start(
         customDownloaderModel.videoId, customDownloaderModel.index));
     if (!_controller.hasListener) {
-      _controller.stream.listen((event) {
-        if (event[EventChanneldef.TYPE_KEY] ==
-                EventChanneldef.DOWNLOAD_PROGRESS &&
-            customDownloaderModel.videoId == event['vid'] &&
-            customDownloaderModel.index == event['index'] &&
-            customDownloaderModel.downloadState != DownloadState.STOP) {
-          //调用stop后,放置event时间消息继续发送,而导致其实已经停止了下载,但是界面还是在继续消费管道中的下载进度消息
-          customDownloaderModel.stateMsg =
-              event[EventChanneldef.DOWNLOAD_PROGRESS] + "%";
-          _sink.add(customDownloaderModel);
-        } else if (event[EventChanneldef.TYPE_KEY] ==
-                EventChanneldef.DOWNLOAD_PROCESS &&
-            customDownloaderModel.videoId == event['vid'] &&
-            customDownloaderModel.index == event['index']) {
-          customDownloaderModel.stateMsg = "ProcessingProgress \n" +
-              event[EventChanneldef.DOWNLOAD_PROGRESS] +
-              "%";
-          _sink.add(customDownloaderModel);
-        } else if (event[EventChanneldef.TYPE_KEY] ==
-                EventChanneldef.DOWNLOAD_COMPLETION &&
-            customDownloaderModel.videoId == event['vid'] &&
-            customDownloaderModel.index == event['index']) {
-          customDownloaderModel.downloadState = DownloadState.COMPLETE;
-          customDownloaderModel.stateMsg = "下载完成";
-          customDownloaderModel.savePath = event['savePath'];
+      _controller.stream.listen(
+          (event) {
+            if (event[EventChanneldef.TYPE_KEY] ==
+                    EventChanneldef.DOWNLOAD_PROGRESS &&
+                customDownloaderModel.videoId == event['vid'] &&
+                customDownloaderModel.index == event['index'] &&
+                customDownloaderModel.downloadState != DownloadState.STOP) {
+              //调用stop后,放置event时间消息继续发送,而导致其实已经停止了下载,但是界面还是在继续消费管道中的下载进度消息
+              customDownloaderModel.stateMsg =
+                  event[EventChanneldef.DOWNLOAD_PROGRESS] + "%";
+              _sink.add(customDownloaderModel);
+            } else if (event[EventChanneldef.TYPE_KEY] ==
+                    EventChanneldef.DOWNLOAD_PROCESS &&
+                customDownloaderModel.videoId == event['vid'] &&
+                customDownloaderModel.index == event['index']) {
+              customDownloaderModel.stateMsg = "ProcessingProgress \n" +
+                  event[EventChanneldef.DOWNLOAD_PROGRESS] +
+                  "%";
+              _sink.add(customDownloaderModel);
+            } else if (event[EventChanneldef.TYPE_KEY] ==
+                    EventChanneldef.DOWNLOAD_COMPLETION &&
+                customDownloaderModel.videoId == event['vid'] &&
+                customDownloaderModel.index == event['index']) {
+              customDownloaderModel.downloadState = DownloadState.COMPLETE;
+              customDownloaderModel.stateMsg = "下载完成";
+              customDownloaderModel.savePath = event['savePath'];
 
-          _dbUtils.update(customDownloaderModel.toJson());
-          _sink.add(customDownloaderModel);
-          String key = customDownloaderModel.videoId +
-              '_' +
-              customDownloaderModel.index.toString();
-          _controllerMap.remove(key);
-        }
-      });
+              _dbUtils.update(customDownloaderModel.toJson());
+              _sink.add(customDownloaderModel);
+              String key = customDownloaderModel.videoId +
+                  '_' +
+                  customDownloaderModel.index.toString();
+              _controllerMap.remove(key);
+            }
+          },
+          onDone: () {},
+          onError: (event) {
+            if (customDownloaderModel.videoId == event.details['vid'] &&
+                customDownloaderModel.index == event.details['index']) {
+              customDownloaderModel.downloadState = DownloadState.ERROR;
+              customDownloaderModel.stateMsg = event.message;
+              _sink.add(customDownloaderModel);
+            }
+          });
     }
 
     return _callbackController.stream;

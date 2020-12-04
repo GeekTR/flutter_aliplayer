@@ -95,9 +95,14 @@ class _DownloadPageState extends State<DownloadPage> {
                 height: 85.0,
                 fit: BoxFit.cover,
               ),
-              Text(
-                _dataList[index].stateMsg,
-                style: TextStyle(fontSize: 20, color: Colors.red),
+              Container(
+                width: 85.0,
+                height: 85.0,
+                alignment: Alignment.center,
+                child: Text(
+                  _dataList[index].stateMsg,
+                  style: TextStyle(fontSize: 16, color: Colors.red),
+                ),
               ),
             ],
           ),

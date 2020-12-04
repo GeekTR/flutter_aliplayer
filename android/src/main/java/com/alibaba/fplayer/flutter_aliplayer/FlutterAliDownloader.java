@@ -326,8 +326,7 @@ public class FlutterAliDownloader implements FlutterPlugin,MethodChannel.MethodC
         aliMediaDownloader.setOnErrorListener(new AliMediaDownloader.OnErrorListener() {
             @Override
             public void onError(ErrorInfo errorInfo) {
-//                result.error(errorInfo.getCode().name(),errorInfo.getMsg(),errorInfo.getExtra());
-//                mEventSink.error(errorInfo.getCode().name(),errorInfo.getMsg(),errorInfo.getExtra());
+                mEventSink.error(errorInfo.getCode()+"",errorInfo.getMsg(),startMap);
             }
         });
 
