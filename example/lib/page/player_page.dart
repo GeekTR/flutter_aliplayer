@@ -82,10 +82,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     if (Platform.isAndroid) {
       getExternalStorageDirectories().then((value) {
         if (value.length > 0) {
-          _snapShotPath = value[0].path +
-              "/snapshot_" +
-              new DateTime.now().millisecondsSinceEpoch.toString() +
-              ".png";
+          _snapShotPath = value[0].path;
           return _snapShotPath;
         }
       });
@@ -386,7 +383,10 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                         DateTime.now().millisecondsSinceEpoch.toString() +
                             ".png");
                   } else {
-                    fAliplayer.snapshot(_snapShotPath);
+                    fAliplayer.snapshot(_snapShotPath +
+                        "/snapshot_" +
+                        new DateTime.now().millisecondsSinceEpoch.toString() +
+                        ".png");
                   }
                 }),
           ],
