@@ -10,14 +10,11 @@ import com.aliyun.downloader.AliMediaDownloader;
 import com.aliyun.downloader.DownloaderConfig;
 import com.aliyun.player.bean.ErrorInfo;
 import com.aliyun.player.nativeclass.MediaInfo;
-import com.aliyun.player.source.Definition;
 import com.aliyun.player.source.VidAuth;
 import com.aliyun.player.source.VidSts;
 import com.google.gson.Gson;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;

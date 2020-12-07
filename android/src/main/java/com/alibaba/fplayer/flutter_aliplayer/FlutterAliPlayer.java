@@ -20,6 +20,7 @@ import com.aliyun.player.source.UrlSource;
 import com.aliyun.player.source.VidAuth;
 import com.aliyun.player.source.VidMps;
 import com.aliyun.player.source.VidSts;
+import com.aliyun.private_service.PrivateService;
 import com.aliyun.thumbnail.ThumbnailBitmapInfo;
 import com.aliyun.thumbnail.ThumbnailHelper;
 import com.aliyun.utils.ThreadManager;

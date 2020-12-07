@@ -2,6 +2,8 @@ package com.alibaba.fplayer.flutter_aliplayer;
 
 import androidx.annotation.NonNull;
 
+import com.aliyun.private_service.PrivateService;
+
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -58,6 +60,10 @@ public class FlutterAliplayerPlugin implements FlutterPlugin, MethodCallHandler 
                 mFlutterAliListPlayer = new FlutterAliListPlayer(flutterPluginBinding);
                 mFlutterAliPlayerView.setPlayer(mFlutterAliListPlayer.getAliListPlayer());
                 result.success(null);
+                break;
+            case "initService":
+                byte[] datas = (byte[]) call.arguments;
+                PrivateService.initService(flutterPluginBinding.getApplicationContext(),datas);
                 break;
         }
 
