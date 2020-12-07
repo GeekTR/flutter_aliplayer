@@ -63,6 +63,8 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   ///seek中
   bool _inSeek = false;
 
+  bool _isLock = false;
+
   //当前播放器状态
   int _currentPlayerState = 0;
 
@@ -289,7 +291,9 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                   Container(
                     width: width,
                     height: height,
-                    child: _buildContentWidget(orientation),
+                    child: Offstage(
+                    offstage: _isLock,
+                    child:_buildContentWidget(orientation)),
                   ),
                   Align(
                       child: _buildProgressBar(),
@@ -303,6 +307,31 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                       extSubTitleText,
                       style: TextStyle(color: Colors.red),
                     ),
+                  ),
+                  Positioned(
+                    left: 30,
+                    top: height / 2,
+                    child: Offstage(
+                        offstage: orientation == Orientation.portrait,
+                        child: InkWell(
+                          onTap: () {
+                            setState(() {
+                              _isLock = !_isLock;
+                            });
+                          },
+                          child: Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: Colors.black.withAlpha(150),
+                              borderRadius: BorderRadius.circular(20)
+                            ),
+                            child: Icon(
+                              _isLock ? Icons.lock : Icons.lock_open,
+                              color: Colors.white,
+                            ),
+                          ),
+                        )),
                   )
                 ],
               ),
