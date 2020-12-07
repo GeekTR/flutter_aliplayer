@@ -297,13 +297,16 @@ class _VideoGridPageState extends State<VideoGridPage> with WidgetsBindingObserv
           children: [
             Offstage(
               offstage: _curIdx == index && _isFirstRenderShow,
-              child: Image.network(
-                model.coverUrl,
-                // color:Colors.black,
-                fit: BoxFit.fitWidth,
-                alignment: Alignment.center,
-                width: double.infinity,
-                height: double.infinity,
+              child: Container(
+                color: Colors.black,
+                child: Image.network(
+                  model.coverUrl,
+                  // color:Colors.black,
+                  fit: BoxFit.fitWidth,
+                  alignment: Alignment.center,
+                  width: double.infinity,
+                  height: double.infinity,
+                ),
               ),
             ),
             Container(
@@ -312,7 +315,7 @@ class _VideoGridPageState extends State<VideoGridPage> with WidgetsBindingObserv
               child: Offstage(
                 offstage: _isPause == false,
                 child: Icon(
-                  Icons.pause_circle_filled,
+                  Icons.play_circle_filled,
                   size: 48,
                   color: Colors.black,
                 ),
