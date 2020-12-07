@@ -42,7 +42,6 @@ class _MpsPagePageState extends State<MpsPage> {
       DefinitionModel(FlutterAvpdef.K4),
       DefinitionModel(FlutterAvpdef.SQ),
       DefinitionModel(FlutterAvpdef.HQ),
-      DefinitionModel(FlutterAvpdef.AUTO),
     ];
   }
 

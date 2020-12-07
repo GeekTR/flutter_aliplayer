@@ -41,7 +41,6 @@ class _StsHomePageState extends State<StsPage> {
       DefinitionModel(FlutterAvpdef.K4),
       DefinitionModel(FlutterAvpdef.SQ),
       DefinitionModel(FlutterAvpdef.HQ),
-      DefinitionModel(FlutterAvpdef.AUTO),
     ];
   }
 
