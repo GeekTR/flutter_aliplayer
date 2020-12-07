@@ -102,6 +102,7 @@ class EventChanneldef {
   static const String DOWNLOAD_PROGRESS = "download_progress";
   static const String DOWNLOAD_PROCESS = "download_process";
   static const String DOWNLOAD_COMPLETION = "download_completion";
+  static const String DOWNLOAD_ERROR = "download_error";
 }
 
 class AVPMediaInfo {
