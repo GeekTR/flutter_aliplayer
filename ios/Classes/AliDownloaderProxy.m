@@ -37,6 +37,12 @@
 
 - (void)onError:(AliMediaDownloader*)downloader errorModel:(AVPErrorModel *)errorModel{
     NSLog(@"=========onErr==%@",errorModel.mj_JSONString);
+    if(self.eventSink){
+        [self.argMap setObject:@"download_error" forKey:@"method"];
+        [self.argMap setObject:[NSString stringWithFormat:@"%lu",(unsigned long)errorModel.code] forKey:@"errorCode"];
+        [self.argMap setObject:errorModel.message forKey:@"errorMsg"];
+        self.eventSink(self.argMap);
+    }
 }
 
 - (void)onDownloadingProgress:(AliMediaDownloader*)downloader percentage:(int)percent{

@@ -445,29 +445,35 @@
     result(config.mj_keyValues);
 }
 
+-(void)setSource:(AVPSource*)source withDefinitions:(NSDictionary*)dic{
+    NSArray *definitionList = [dic objectForKey:@"definitionList"];
+    if (definitionList && [definitionList isKindOfClass:NSArray.class] && definitionList.count>0) {
+        NSMutableString *mutStr = @"".mutableCopy;
+        for (NSString *str in definitionList) {
+            [mutStr appendString:str];
+            [mutStr appendString:@","];
+        }
+        [mutStr deleteCharactersInRange:NSMakeRange(mutStr.length-1, 1)];
+        [source setDefinitions:mutStr];
+    }
+}
+
 - (void)setVidSts:(NSArray*)arr {
     FlutterMethodCall* call = arr.firstObject;
     AliPlayer *player = arr[2];
-    AVPVidStsSource *source = [[AVPVidStsSource alloc] init];
     NSDictionary *dic = call.arguments;
-    [dic enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop){
-        if([obj length]>0){
-            [source setValue:obj forKey:(NSString *)key];
-        }
-    }];
+    
+    AVPVidStsSource *source = [AVPVidStsSource mj_objectWithKeyValues:dic];
+    [self setSource:source withDefinitions:dic];
     [player setStsSource:source];
 }
 
 - (void)setVidAuth:(NSArray*)arr {
     FlutterMethodCall* call = arr.firstObject;
     AliPlayer *player = arr[2];
-    AVPVidAuthSource *source = [[AVPVidAuthSource alloc] init];
     NSDictionary *dic = call.arguments;
-    [dic enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop){
-        if([obj length]>0){
-            [source setValue:obj forKey:(NSString *)key];
-        }
-    }];
+     AVPVidAuthSource *source = [AVPVidAuthSource mj_objectWithKeyValues:dic];
+    [self setSource:source withDefinitions:dic];
     [player setAuthSource:source];
 }
 
@@ -484,6 +490,7 @@
     [source setPlayDomain:dic[@"playDomain"]];
     [source setAuthInfo:dic[@"authInfo"]];
     [source setMtsHlsUriToken:dic[@"hlsUriToken"]];
+    [self setSource:source withDefinitions:dic];
     [player setMpsSource:source];
 }
 
