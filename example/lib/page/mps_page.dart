@@ -170,6 +170,14 @@ class _MpsPagePageState extends State<MpsPage> {
                 RaisedButton(
                   child: Text("MPS播放"),
                   onPressed: () {
+                    List<String> _definitionList = List();
+                    if (_selectDefinition == 2) {
+                      _definitionList.add(FlutterAvpdef.AUTO);
+                    } else if (_selectDefinition == 1) {
+                      _definitionList.addAll(_selectedDefinition);
+                    } else {
+                      _definitionList.clear();
+                    }
                     NetWorkUtils.instance.getHttp(HttpConstant.GET_MPS,
                         successCallback: (data) {
                       _region = data["RegionId"];

@@ -134,6 +134,14 @@ class _AuthPageState extends State<AuthPage> {
                 RaisedButton(
                   child: Text("AUTH播放"),
                   onPressed: () {
+                    List<String> _definitionList = List();
+                    if (_selectDefinition == 2) {
+                      _definitionList.add(FlutterAvpdef.AUTO);
+                    } else if (_selectDefinition == 1) {
+                      _definitionList.addAll(_selectedDefinition);
+                    } else {
+                      _definitionList.clear();
+                    }
                     var params = {"videoId": _vidController.text};
                     NetWorkUtils.instance.getHttp(HttpConstant.GET_AUTH,
                         params: params, successCallback: (data) {
