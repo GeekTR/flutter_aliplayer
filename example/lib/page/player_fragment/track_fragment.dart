@@ -12,7 +12,7 @@ class TrackUIModel {
 
 class TrackFragment extends StatefulWidget {
   final FlutterAliplayer fAliplayer;
-  TrackFragment(Key key,this.fAliplayer):super(key:key);
+  TrackFragment(Key key, this.fAliplayer) : super(key: key);
   @override
   TrackFragmentState createState() => TrackFragmentState();
 }
@@ -50,11 +50,10 @@ class TrackFragmentState extends State<TrackFragment> {
       if (trackIndex < 0) {
         Fluttertoast.showToast(msg: '外挂字幕${curKey}添加失败');
       } else {
-        _list[4].children.removeWhere((element) => element.title==curKey);
+        _list[4].children.removeWhere((element) => element.title == curKey);
         _list[4]
             .children
             .add(SubTrackUIModel(title: curKey, value: trackIndex));
-        Fluttertoast.showToast(msg: '外挂字幕${curKey}添加成功');
         setState(() {});
       }
     });
@@ -125,32 +124,34 @@ class TrackFragmentState extends State<TrackFragment> {
     );
   }
 
-  _initData(){
+  _initData() {
     _list = [
-        TrackUIModel(
-            isOpen: false,
-            title: '---- VIDEO ----',
-            selValue: -1,
-            children: []),
-        TrackUIModel(
-            isOpen: false,
-            title: '---- AUDIO ----',
-            selValue: -1,
-            children: []),
-        TrackUIModel(
-            isOpen: false,
-            title: '---- SUBTITLE ----',
-            selValue: -1,
-            children: []),
-        TrackUIModel(
-            isOpen: false, title: '---- VOD ----', selValue: -1, children: []),
-        TrackUIModel(
-            isOpen: false, title: '---- 外挂字幕 ----', selValue: -1, children: []),
-      ];
+      TrackUIModel(
+          isOpen: false, title: '---- VIDEO ----', selValue: -1, children: []),
+      TrackUIModel(
+          isOpen: false, title: '---- AUDIO ----', selValue: -1, children: []),
+      TrackUIModel(
+          isOpen: false,
+          title: '---- SUBTITLE ----',
+          selValue: -1,
+          children: []),
+      TrackUIModel(
+          isOpen: false, title: '---- VOD ----', selValue: -1, children: []),
+      TrackUIModel(
+          isOpen: false, title: '---- 外挂字幕 ----', selValue: -1, children: []),
+    ];
+  }
+
+  onTrackChanged(AVPTrackInfo info) {
+    //自动码率切换成功
+    if (info.trackType == 0 && _list[0].selValue == -1) {
+      _list[0].children[0].title = "自动码率(${info.trackDefinition})";
+      setState(() {});
+    }
   }
 
   loadData() {
-   _initData();
+    _initData();
     //添加外挂字幕
     extSubTitleMap.forEach((key, value) {
       widget.fAliplayer.addExtSubtitle(value);
@@ -158,10 +159,14 @@ class TrackFragmentState extends State<TrackFragment> {
     widget.fAliplayer.getMediaInfo().then((value) {
       AVPMediaInfo info = AVPMediaInfo.fromJson(value);
       if (info.tracks.length > 0) {
+        bool _hasVodDefinition = false;
         info.tracks.forEach((element) {
           SubTrackUIModel model = SubTrackUIModel();
           model.value = element.trackIndex;
           model.title = element.trackDefinition;
+          if (element.trackType == 0) {
+            _hasVodDefinition = true;
+          }
           _list[element.trackType].children.add(model);
         });
 
@@ -171,6 +176,14 @@ class TrackFragmentState extends State<TrackFragment> {
             if (value != null) {
               AVPTrackInfo track = AVPTrackInfo.fromJson(value);
               _list[i].selValue = track.trackIndex;
+              //码率
+              if (_hasVodDefinition && track.trackType == 0) {
+                _hasVodDefinition = false;
+                SubTrackUIModel model = SubTrackUIModel();
+                model.title = "自动码率(${track.trackDefinition})";
+                model.value = -1;
+                _list[0].children.insert(0, model);
+              }
             }
           });
         }

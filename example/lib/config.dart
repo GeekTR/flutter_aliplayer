@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_aliplayer/flutter_avpdef.dart';
+import 'package:flutter_aliplayer_example/model/definition_model.dart';
 import 'package:path_provider/path_provider.dart';
 
 class HttpConstant {
@@ -39,8 +40,8 @@ enum VideoShowMode { Grid, Srceen }
 ///播放源相关
 class DataSourceRelated {
   static const String DEFAULT_REGION = "cn-shanghai";
-  static const String DEFAULT_VID = "979559fa48d445e9b80c8eddff0c1509";
-  // static const String DEFAULT_VID = "2d11b05af209416bb850030958f0fa4e";
+  static const String DEFAULT_VID = "b4da45beb07b4d5b81b54b1ac50fb502"; //多码率
+  // static const String DEFAULT_VID = "7a27bd5a62d546cc9a36137133a3711c"; //进度条不完整
 
   static const String DEFAULT_URL =
       "https://alivc-demo-vod.aliyuncs.com/6b357371ef3c45f4a06e2536fd534380/eb3f139a4b437d1e9b623ee1b671115b-ld.mp4";
@@ -59,4 +60,5 @@ class DataSourceRelated {
   static const String AUTHINFO_KEY = "authInfo";
   static const String HLSURITOKEN_KEY = "hlsUriToken";
   static const String DOWNLOAD_SAVE_PATH = "savePath";
+  static const String DEFINITION_LIST = "definitionList";
 }

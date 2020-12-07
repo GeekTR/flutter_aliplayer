@@ -15,10 +15,6 @@ typedef OnRenderingStart = void Function();
 typedef OnVideoSizeChanged = void Function(int width, int height);
 typedef OnSnapShot = void Function(String path);
 
-// typedef OnTrackChangedListener = void Function(); //TODO
-typedef OnChangedSuccess = void Function();
-typedef OnChangedFail = void Function();
-
 typedef OnSeekComplete = void Function();
 typedef OnSeiData = void Function(); //TODO
 
@@ -28,7 +24,6 @@ typedef OnLoadingEnd = void Function();
 
 typedef OnStateChanged = void Function(int newState);
 
-// typedef OnSubtitleDisplayListener = void Function(); //TODO
 typedef OnSubtitleExtAdded = void Function(int trackIndex, String url);
 typedef OnSubtitleShow = void Function(
     int trackIndex, int subtitleID, String subtitle);
@@ -232,15 +227,15 @@ class FlutterAliplayer {
     return channel.invokeMethod('setEnableHardwareDecoder', isHardWare);
   }
 
-  Future<void> setVidSts(Map<String, String> stsInfo) async {
+  Future<void> setVidSts(Map<String, dynamic> stsInfo) async {
     return channel.invokeMethod("setVidSts", stsInfo);
   }
 
-  Future<void> setVidAuth(Map<String, String> authInfo) async {
+  Future<void> setVidAuth(Map<String, dynamic> authInfo) async {
     return channel.invokeMethod("setVidAuth", authInfo);
   }
 
-  Future<void> setVidMps(Map<String, String> mpsInfo) async {
+  Future<void> setVidMps(Map<String, dynamic> mpsInfo) async {
     return channel.invokeMethod("setVidMps", mpsInfo);
   }
 

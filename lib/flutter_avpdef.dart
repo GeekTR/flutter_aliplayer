@@ -54,6 +54,18 @@ class FlutterAvpdef {
   static const int RTSSERVERMAYBEDISCONNECT = 805371905;
   static const int RTSSERVERRECOVER = 805371906;
 
+  ///点播服务器返回的码率清晰度类型
+  static const String FD = "FD";
+  static const String LD = "LD";
+  static const String SD = "SD";
+  static const String HD = "HD";
+  static const String OD = "OD";
+  static const String K2 = "2K";
+  static const String K4 = "4K";
+  static const String SQ = "SQ";
+  static const String HQ = "HQ";
+  static const String AUTO = "AUTO";
+
   ///播放器状态
   static const int unknow = -1;
   static const int idle = 0;

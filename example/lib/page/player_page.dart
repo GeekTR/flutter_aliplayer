@@ -189,6 +189,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     fAliplayer.setOnTrackChanged((value) {
       AVPTrackInfo info = AVPTrackInfo.fromJson(value);
       if (info != null && info.trackDefinition.length > 0) {
+        trackFragmentKey.currentState.onTrackChanged(info);
         Fluttertoast.showToast(msg: "${info.trackDefinition}切换成功");
       }
     });
@@ -309,7 +310,6 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
               _buildFragmentPage(orientation),
             ],
           ),
-          // _buildBottomNavigationBar(orientation),
           bottomNavigationBar: _buildBottomNavigationBar(orientation),
         );
       },

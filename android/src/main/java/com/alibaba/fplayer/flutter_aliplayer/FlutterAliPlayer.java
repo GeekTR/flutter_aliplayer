@@ -15,6 +15,7 @@ import com.aliyun.player.nativeclass.MediaInfo;
 import com.aliyun.player.nativeclass.PlayerConfig;
 import com.aliyun.player.nativeclass.Thumbnail;
 import com.aliyun.player.nativeclass.TrackInfo;
+import com.aliyun.player.source.Definition;
 import com.aliyun.player.source.UrlSource;
 import com.aliyun.player.source.VidAuth;
 import com.aliyun.player.source.VidMps;
@@ -145,8 +146,23 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
             @Override
             public void onChangedSuccess(TrackInfo trackInfo) {
                 Map<String,Object> map = new HashMap<>();
-                map.put("method","onChangedSuccess");
-                //TODO
+                map.put("method","onTrackChanged");
+                Map<String,Object> infoMap = new HashMap<>();
+                infoMap.put("vodFormat",trackInfo.getVodFormat());
+                infoMap.put("videoHeight",trackInfo.getVideoHeight());
+                infoMap.put("videoWidth",trackInfo.getVideoHeight());
+                infoMap.put("subtitleLanguage",trackInfo.getSubtitleLang());
+                infoMap.put("trackBitrate",trackInfo.getVideoBitrate());
+                infoMap.put("vodFileSize",trackInfo.getVodFileSize());
+                infoMap.put("trackIndex",trackInfo.getIndex());
+                infoMap.put("trackDefinition",trackInfo.getVodDefinition());
+                infoMap.put("audioSampleFormat",trackInfo.getAudioSampleFormat());
+                infoMap.put("audioLanguage",trackInfo.getAudioLang());
+                infoMap.put("vodPlayUrl",trackInfo.getVodPlayUrl());
+                infoMap.put("trackType",trackInfo.getType().ordinal());
+                infoMap.put("audioSamplerate",trackInfo.getAudioSampleRate());
+                infoMap.put("audioChannels",trackInfo.getAudioChannels());
+                map.put("info",infoMap);
                 mEventSink.success(map);
             }
 
@@ -154,7 +170,6 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
             public void onChangedFail(TrackInfo trackInfo, ErrorInfo errorInfo) {
                 Map<String,Object> map = new HashMap<>();
                 map.put("method","onChangedFail");
-                //TODO
                 mEventSink.success(map);
             }
         });
@@ -307,49 +322,145 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
                 setDataSource(url);
                 break;
             case "setVidSts":
-                Map<String,String> stsMap = (Map<String,String>)methodCall.arguments;
+                Map<String,Object> stsMap = (Map<String,Object>)methodCall.arguments;
                 VidSts vidSts = new VidSts();
-                vidSts.setRegion(stsMap.get("region"));
-                vidSts.setVid(stsMap.get("vid"));
-                vidSts.setAccessKeyId(stsMap.get("accessKeyId"));
-                vidSts.setAccessKeySecret(stsMap.get("accessKeySecret"));
-                vidSts.setSecurityToken(stsMap.get("securityToken"));
+                vidSts.setRegion((String) stsMap.get("region"));
+                vidSts.setVid((String) stsMap.get("vid"));
+                vidSts.setAccessKeyId((String) stsMap.get("accessKeyId"));
+                vidSts.setAccessKeySecret((String) stsMap.get("accessKeySecret"));
+                vidSts.setSecurityToken((String) stsMap.get("securityToken"));
 
-                if(stsMap.containsKey("previewTime") && !TextUtils.isEmpty(stsMap.get("previewTime"))){
+                List<String> stsMaplist = (List<String>) stsMap.get("definitionList");
+                if(stsMaplist != null){
+                    List<Definition> definitionList = new ArrayList<>();
+                    for (String item : stsMaplist) {
+                        if(Definition.DEFINITION_AUTO.getName().equals(item)){
+                            definitionList.add(Definition.DEFINITION_AUTO);
+                        }else{
+                            if(Definition.DEFINITION_FD.getName().equals(item)){
+                                definitionList.add(Definition.DEFINITION_FD);
+                            }else if(Definition.DEFINITION_LD.getName().equals(item)){
+                                definitionList.add(Definition.DEFINITION_LD);
+                            }else if(Definition.DEFINITION_SD.getName().equals(item)){
+                                definitionList.add(Definition.DEFINITION_SD);
+                            }else if(Definition.DEFINITION_HD.getName().equals(item)){
+                                definitionList.add(Definition.DEFINITION_HD);
+                            }else if(Definition.DEFINITION_OD.getName().equals(item)){
+                                definitionList.add(Definition.DEFINITION_OD);
+                            }else if(Definition.DEFINITION_2K.getName().equals(item)){
+                                definitionList.add(Definition.DEFINITION_2K);
+                            }else if(Definition.DEFINITION_4K.getName().equals(item)){
+                                definitionList.add(Definition.DEFINITION_4K);
+                            }else if(Definition.DEFINITION_SQ.getName().equals(item)){
+                                definitionList.add(Definition.DEFINITION_SQ);
+                            }else if(Definition.DEFINITION_HQ.getName().equals(item)){
+                                definitionList.add(Definition.DEFINITION_HQ);
+                            }
+                        }
+                    }
+                    vidSts.setDefinition(definitionList);
+                }
+
+
+                if(stsMap.containsKey("previewTime") && !TextUtils.isEmpty((CharSequence) stsMap.get("previewTime"))){
                     VidPlayerConfigGen vidPlayerConfigGen = new VidPlayerConfigGen();
-                    int previewTime = Integer.valueOf(stsMap.get("previewTime"));
+                    int previewTime = Integer.valueOf((Integer) stsMap.get("previewTime"));
                     vidPlayerConfigGen.setPreviewTime(previewTime);
                     vidSts.setPlayConfig(vidPlayerConfigGen);
                 }
                 setDataSource(vidSts);
                 break;
             case "setVidAuth":
-                Map<String,String> authMap = (Map<String,String>)methodCall.arguments;
+                Map<String,Object> authMap = (Map<String,Object>)methodCall.arguments;
                 VidAuth vidAuth = new VidAuth();
-                vidAuth.setVid(authMap.get("vid"));
-                vidAuth.setRegion(authMap.get("region"));
-                vidAuth.setPlayAuth(authMap.get("playAuth"));
-                if(authMap.containsKey("previewTime") && !TextUtils.isEmpty(authMap.get("previewTime"))){
+                vidAuth.setVid((String) authMap.get("vid"));
+                vidAuth.setRegion((String) authMap.get("region"));
+                vidAuth.setPlayAuth((String) authMap.get("playAuth"));
+
+                List<String> authMaplist = (List<String>) authMap.get("definitionList");
+                if(authMaplist != null){
+                    List<Definition> definitionList = new ArrayList<>();
+                    for (String item : authMaplist) {
+                        if(Definition.DEFINITION_AUTO.getName().equals(item)){
+                            definitionList.add(Definition.DEFINITION_AUTO);
+                        }else{
+                            if(Definition.DEFINITION_FD.getName().equals(item)){
+                                definitionList.add(Definition.DEFINITION_FD);
+                            }else if(Definition.DEFINITION_LD.getName().equals(item)){
+                                definitionList.add(Definition.DEFINITION_LD);
+                            }else if(Definition.DEFINITION_SD.getName().equals(item)){
+                                definitionList.add(Definition.DEFINITION_SD);
+                            }else if(Definition.DEFINITION_HD.getName().equals(item)){
+                                definitionList.add(Definition.DEFINITION_HD);
+                            }else if(Definition.DEFINITION_OD.getName().equals(item)){
+                                definitionList.add(Definition.DEFINITION_OD);
+                            }else if(Definition.DEFINITION_2K.getName().equals(item)){
+                                definitionList.add(Definition.DEFINITION_2K);
+                            }else if(Definition.DEFINITION_4K.getName().equals(item)){
+                                definitionList.add(Definition.DEFINITION_4K);
+                            }else if(Definition.DEFINITION_SQ.getName().equals(item)){
+                                definitionList.add(Definition.DEFINITION_SQ);
+                            }else if(Definition.DEFINITION_HQ.getName().equals(item)){
+                                definitionList.add(Definition.DEFINITION_HQ);
+                            }
+                        }
+                    }
+                    vidAuth.setDefinition(definitionList);
+                }
+
+                if(authMap.containsKey("previewTime") && !TextUtils.isEmpty((String) authMap.get("previewTime"))){
                     VidPlayerConfigGen vidPlayerConfigGen = new VidPlayerConfigGen();
-                    int previewTime = Integer.valueOf(authMap.get("previewTime"));
+                    int previewTime = Integer.valueOf((Integer) authMap.get("previewTime"));
                     vidPlayerConfigGen.setPreviewTime(previewTime);
                     vidAuth.setPlayConfig(vidPlayerConfigGen);
                 }
                 setDataSource(vidAuth);
                 break;
             case "setVidMps":
-                Map<String,String> mpsMap = (Map<String,String>)methodCall.arguments;
+                Map<String,Object> mpsMap = (Map<String,Object>)methodCall.arguments;
                 VidMps vidMps = new VidMps();
-                vidMps.setMediaId(mpsMap.get("vid"));
-                vidMps.setRegion(mpsMap.get("region"));
-                vidMps.setAccessKeyId(mpsMap.get("accessKeyId"));
-                vidMps.setAccessKeySecret(mpsMap.get("accessKeySecret"));
-                if(mpsMap.containsKey("playDomain") && !TextUtils.isEmpty(mpsMap.get("playDomain"))){
-                    vidMps.setPlayDomain(mpsMap.get("playDomain"));
+                vidMps.setMediaId((String) mpsMap.get("vid"));
+                vidMps.setRegion((String) mpsMap.get("region"));
+                vidMps.setAccessKeyId((String) mpsMap.get("accessKeyId"));
+                vidMps.setAccessKeySecret((String) mpsMap.get("accessKeySecret"));
+
+                List<String> mpsMaplist = (List<String>) mpsMap.get("definitionList");
+                if(mpsMaplist != null){
+                    List<Definition> definitionList = new ArrayList<>();
+                    for (String item : mpsMaplist) {
+                        if(Definition.DEFINITION_AUTO.getName().equals(item)){
+                            definitionList.add(Definition.DEFINITION_AUTO);
+                        }else{
+                            if(Definition.DEFINITION_FD.getName().equals(item)){
+                                definitionList.add(Definition.DEFINITION_FD);
+                            }else if(Definition.DEFINITION_LD.getName().equals(item)){
+                                definitionList.add(Definition.DEFINITION_LD);
+                            }else if(Definition.DEFINITION_SD.getName().equals(item)){
+                                definitionList.add(Definition.DEFINITION_SD);
+                            }else if(Definition.DEFINITION_HD.getName().equals(item)){
+                                definitionList.add(Definition.DEFINITION_HD);
+                            }else if(Definition.DEFINITION_OD.getName().equals(item)){
+                                definitionList.add(Definition.DEFINITION_OD);
+                            }else if(Definition.DEFINITION_2K.getName().equals(item)){
+                                definitionList.add(Definition.DEFINITION_2K);
+                            }else if(Definition.DEFINITION_4K.getName().equals(item)){
+                                definitionList.add(Definition.DEFINITION_4K);
+                            }else if(Definition.DEFINITION_SQ.getName().equals(item)){
+                                definitionList.add(Definition.DEFINITION_SQ);
+                            }else if(Definition.DEFINITION_HQ.getName().equals(item)){
+                                definitionList.add(Definition.DEFINITION_HQ);
+                            }
+                        }
+                    }
+                    vidMps.setDefinition(definitionList);
                 }
-                vidMps.setAuthInfo(mpsMap.get("authInfo"));
-                vidMps.setHlsUriToken(mpsMap.get("hlsUriToken"));
-                vidMps.setSecurityToken(mpsMap.get("securityToken"));
+
+                if(mpsMap.containsKey("playDomain") && !TextUtils.isEmpty((String) mpsMap.get("playDomain"))){
+                    vidMps.setPlayDomain((String) mpsMap.get("playDomain"));
+                }
+                vidMps.setAuthInfo((String) mpsMap.get("authInfo"));
+                vidMps.setHlsUriToken((String) mpsMap.get("hlsUriToken"));
+                vidMps.setSecurityToken((String) mpsMap.get("securityToken"));
                 setDataSource(vidMps);
                 break;
             case "prepare":
