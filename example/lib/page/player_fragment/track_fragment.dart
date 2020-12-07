@@ -38,7 +38,7 @@ class TrackFragmentState extends State<TrackFragment> {
   void initState() {
     super.initState();
 
-    _initData();
+    loadData();
 
     widget.fAliplayer.setOnSubtitleExtAdded((trackIndex, url) {
       String curKey = '';
