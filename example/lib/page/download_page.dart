@@ -161,7 +161,9 @@ class _DownloadPageState extends State<DownloadPage> {
                                   _aliyunDownloadManager
                                       .start(customDownloaderModel)
                                       .listen((event) {
-                                    setState(() {});
+                                        if(mounted){
+                                          setState(() {});
+                                        }
                                   }, onDone: () {});
                                 });
                               });
