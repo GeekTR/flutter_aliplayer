@@ -574,11 +574,13 @@
 
 - (void)selectExtSubtitle:(NSArray*)arr {
     FlutterMethodCall* call = arr.firstObject;
+    FlutterResult result = arr[1];
     AliListPlayer *player = arr[2];
     NSDictionary *dic = [[call arguments] removeNull];
     NSNumber *trackIdxNum = dic[@"trackIndex"];
     NSNumber *enableNum = dic[@"enable"];
     [player selectExtSubtitle:trackIdxNum.intValue enable:enableNum.boolValue];
+    result(nil);
 }
 
 #pragma --mark getters

@@ -215,15 +215,19 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
         onThumbnailGetFail: () {});
 
     this.fAliplayer.setOnSubtitleHide((trackIndex, subtitleID) {
-      setState(() {
-        extSubTitleText = '';
-      });
+      if (mounted) {
+        setState(() {
+          extSubTitleText = '';
+        });
+      }
     });
 
     this.fAliplayer.setOnSubtitleShow((trackIndex, subtitleID, subtitle) {
-      setState(() {
-        extSubTitleText = subtitle;
-      });
+      if (mounted) {
+        setState(() {
+          extSubTitleText = subtitle;
+        });
+      }
     });
   }
 
@@ -292,8 +296,8 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                     width: width,
                     height: height,
                     child: Offstage(
-                    offstage: _isLock,
-                    child:_buildContentWidget(orientation)),
+                        offstage: _isLock,
+                        child: _buildContentWidget(orientation)),
                   ),
                   Align(
                       child: _buildProgressBar(),
@@ -323,9 +327,8 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                             width: 40,
                             height: 40,
                             decoration: BoxDecoration(
-                              color: Colors.black.withAlpha(150),
-                              borderRadius: BorderRadius.circular(20)
-                            ),
+                                color: Colors.black.withAlpha(150),
+                                borderRadius: BorderRadius.circular(20)),
                             child: Icon(
                               _isLock ? Icons.lock : Icons.lock_open,
                               color: Colors.white,
@@ -385,6 +388,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                 onTap: () {
                   _showTipsWidget = false;
                   _showLoading = false;
+                  trackFragmentKey.currentState.prepared();
                   setState(() {});
                   fAliplayer.prepare();
                 }),
