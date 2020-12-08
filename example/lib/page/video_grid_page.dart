@@ -49,6 +49,23 @@ class _VideoGridPageState extends State<VideoGridPage> with WidgetsBindingObserv
       setState(() {});
     });
 
+    fAliListPlayer.setOnStateChanged((newState) {
+      print("aliyun : onStateChanged $newState");
+      switch (newState) {
+        case FlutterAvpdef.AVPStatus_AVPStatusStarted:
+          setState(() {
+            _isPause = false;
+          });
+          break;
+        case FlutterAvpdef.AVPStatus_AVPStatusPaused:
+          setState(() {
+            _isPause = true;
+          });
+          break;
+        default:
+      }
+    });
+
     _onRefresh();
   }
 

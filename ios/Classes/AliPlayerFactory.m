@@ -472,7 +472,8 @@
     FlutterMethodCall* call = arr.firstObject;
     AliPlayer *player = arr[2];
     NSDictionary *dic = call.arguments;
-     AVPVidAuthSource *source = [AVPVidAuthSource mj_objectWithKeyValues:dic];
+    AVPVidAuthSource *source = [AVPVidAuthSource mj_objectWithKeyValues:dic];
+    
     [self setSource:source withDefinitions:dic];
     [player setAuthSource:source];
 }

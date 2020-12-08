@@ -93,6 +93,23 @@ class FlutterAvpdef {
   static const int AVPTRACK_TYPE_AUDIO = 1;
   static const int AVPTRACK_TYPE_SUBTITLE = 2;
   static const int AVPTRACK_TYPE_SAAS_VOD = 3;
+
+  //  空转，闲时，静态
+  static const int AVPStatus_AVPStatusIdle = 0;
+  // /** @brief 初始化完成 */
+  static const int AVPStatus_AVPStatusInitialzed = 1;
+  // /** @brief 准备完成 */
+  static const int AVPStatus_AVPStatusPrepared = 2;
+  // /** @brief 正在播放 */
+  static const int AVPStatus_AVPStatusStarted = 3;
+  // /** @brief 播放暂停 */
+  static const int AVPStatus_AVPStatusPaused = 4;
+  // /** @brief 播放停止 */
+  static const int AVPStatus_AVPStatusStopped = 5;
+  // /** @brief 播放完成 */
+  static const int AVPStatus_AVPStatusCompletion = 6;
+  // /** @brief 播放错误
+  static const int AVPStatus_AVPStatusError = 7;
 }
 
 class EventChanneldef {
