@@ -219,15 +219,19 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
         onThumbnailGetFail: () {});
 
     this.fAliplayer.setOnSubtitleHide((trackIndex, subtitleID) {
-      setState(() {
-        extSubTitleText = '';
-      });
+      if (mounted) {
+        setState(() {
+          extSubTitleText = '';
+        });
+      }
     });
 
     this.fAliplayer.setOnSubtitleShow((trackIndex, subtitleID, subtitle) {
-      setState(() {
-        extSubTitleText = subtitle;
-      });
+      if (mounted) {
+        setState(() {
+          extSubTitleText = subtitle;
+        });
+      }
     });
   }
 
@@ -388,6 +392,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                 onTap: () {
                   _showTipsWidget = false;
                   _showLoading = false;
+                  trackFragmentKey.currentState.prepared();
                   setState(() {});
                   fAliplayer.prepare();
                 }),

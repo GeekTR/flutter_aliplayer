@@ -16,7 +16,7 @@ class VideoGridPage extends StatefulWidget {
   _VideoGridPageState createState() => _VideoGridPageState();
 }
 
-class _VideoGridPageState extends State<VideoGridPage> {
+class _VideoGridPageState extends State<VideoGridPage> with WidgetsBindingObserver{
   List _dataList = [];
   int _page = 1;
   VideoShowMode _showMode = VideoShowMode.Grid;
@@ -38,6 +38,7 @@ class _VideoGridPageState extends State<VideoGridPage> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     fAliListPlayer = FlutterAliPlayerFactory().createAliListPlayer();
     fAliListPlayer.setAutoPlay(true);
     fAliListPlayer.setLoop(true);
@@ -48,6 +49,23 @@ class _VideoGridPageState extends State<VideoGridPage> {
       setState(() {});
     });
 
+    fAliListPlayer.setOnStateChanged((newState) {
+      print("aliyun : onStateChanged $newState");
+      switch (newState) {
+        case FlutterAvpdef.AVPStatus_AVPStatusStarted:
+          setState(() {
+            _isPause = false;
+          });
+          break;
+        case FlutterAvpdef.AVPStatus_AVPStatusPaused:
+          setState(() {
+            _isPause = true;
+          });
+          break;
+        default:
+      }
+    });
+
     _onRefresh();
   }
 
@@ -56,6 +74,27 @@ class _VideoGridPageState extends State<VideoGridPage> {
     super.dispose();
     this.fAliListPlayer.stop();
     this.fAliListPlayer.destroy();
+    WidgetsBinding.instance.removeObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if(_showMode==VideoShowMode.Grid){
+      return;
+    }
+    switch (state) {
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.resumed:
+        fAliListPlayer.play();
+        break;
+      case AppLifecycleState.paused:
+        fAliListPlayer.pause();
+        break;
+      case AppLifecycleState.detached:
+        break;
+    }
   }
 
   _onRefresh() async {
@@ -275,13 +314,16 @@ class _VideoGridPageState extends State<VideoGridPage> {
           children: [
             Offstage(
               offstage: _curIdx == index && _isFirstRenderShow,
-              child: Image.network(
-                model.coverUrl,
-                // color:Colors.black,
-                fit: BoxFit.fitWidth,
-                alignment: Alignment.center,
-                width: double.infinity,
-                height: double.infinity,
+              child: Container(
+                color: Colors.black,
+                child: Image.network(
+                  model.coverUrl,
+                  // color:Colors.black,
+                  fit: BoxFit.fitWidth,
+                  alignment: Alignment.center,
+                  width: double.infinity,
+                  height: double.infinity,
+                ),
               ),
             ),
             Container(
@@ -290,7 +332,7 @@ class _VideoGridPageState extends State<VideoGridPage> {
               child: Offstage(
                 offstage: _isPause == false,
                 child: Icon(
-                  Icons.pause_circle_filled,
+                  Icons.play_circle_filled,
                   size: 48,
                   color: Colors.black,
                 ),

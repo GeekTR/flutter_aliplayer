@@ -472,7 +472,8 @@
     FlutterMethodCall* call = arr.firstObject;
     AliPlayer *player = arr[2];
     NSDictionary *dic = call.arguments;
-     AVPVidAuthSource *source = [AVPVidAuthSource mj_objectWithKeyValues:dic];
+    AVPVidAuthSource *source = [AVPVidAuthSource mj_objectWithKeyValues:dic];
+    
     [self setSource:source withDefinitions:dic];
     [player setAuthSource:source];
 }
@@ -574,11 +575,13 @@
 
 - (void)selectExtSubtitle:(NSArray*)arr {
     FlutterMethodCall* call = arr.firstObject;
+    FlutterResult result = arr[1];
     AliListPlayer *player = arr[2];
     NSDictionary *dic = [[call arguments] removeNull];
     NSNumber *trackIdxNum = dic[@"trackIndex"];
     NSNumber *enableNum = dic[@"enable"];
     [player selectExtSubtitle:trackIdxNum.intValue enable:enableNum.boolValue];
+    result(nil);
 }
 
 #pragma --mark getters

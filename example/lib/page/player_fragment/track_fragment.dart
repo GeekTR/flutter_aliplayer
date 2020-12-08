@@ -27,10 +27,9 @@ class TrackFragmentState extends State<TrackFragment> {
   List<TrackUIModel> _list;
 
   Map extSubTitleMap = {
-    "cn": "https://alivc-player.oss-cn-shanghai.aliyuncs.com/cnjap.vtt",
-    "en":
+    "cn":
         "https://alivc-player.oss-cn-shanghai.aliyuncs.com/6137c3dedd00a00547a1e8e5e3355369.vtt",
-    "ja":
+    "en":
         "https://alivc-player.oss-cn-shanghai.aliyuncs.com/6b4949a8c3950f8aa76f1fed6730e525.vtt"
   };
 
@@ -82,15 +81,17 @@ class TrackFragmentState extends State<TrackFragment> {
                         onTap: () {
                           if (element.title == '---- 外挂字幕 ----') {
                             widget.fAliplayer
-                                .selectExtSubtitle(element.selValue, false);
-                            bool isSelected = element.selValue == e.value;
-                            if (isSelected) {
-                              element.selValue = -1;
-                            } else {
-                              element.selValue = e.value;
-                              widget.fAliplayer
-                                  .selectExtSubtitle(element.selValue, true);
-                            }
+                                .selectExtSubtitle(element.selValue, false)
+                                .then((value) {
+                              bool isSelected = element.selValue == e.value;
+                              if (isSelected) {
+                                element.selValue = -1;
+                              } else {
+                                element.selValue = e.value;
+                                widget.fAliplayer
+                                    .selectExtSubtitle(element.selValue, true);
+                              }
+                            });
                           } else {
                             element.selValue = e.value;
                             widget.fAliplayer
@@ -122,6 +123,13 @@ class TrackFragmentState extends State<TrackFragment> {
         }).toList(),
       )),
     );
+  }
+
+  prepared() {
+    if(_list!=null && _list.length>0){
+      widget.fAliplayer.selectExtSubtitle(_list[4].selValue, false);
+    _list[4].selValue = -1;
+    }
   }
 
   _initData() {
