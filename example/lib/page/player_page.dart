@@ -164,7 +164,9 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     fAliplayer.setOnCompletion(() {
       _showTipsWidget = true;
       _tipsContent = "播放完成";
-      setState(() {});
+      setState(() {
+        _currentPosition = _videoDuration;
+      });
     });
     fAliplayer.setOnTrackReady(() {
       fAliplayer.getMediaInfo().then((value) {

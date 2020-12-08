@@ -457,11 +457,19 @@ class _RenderAliyunSlider extends RenderConstrainedBox {
       }
     }
 
-    final Offset thumbCenter = Offset(trackActive, trackCenter);
-    CupertinoThumbPainter(color: thumbColor).paint(
-        canvas,
-        Rect.fromCircle(
-            center: thumbCenter, radius: CupertinoThumbPainter.radius));
+    if (visualPosition >= 1.0) {
+      final Offset thumbCenter = Offset(trackRight, trackCenter);
+      CupertinoThumbPainter(color: thumbColor).paint(
+          canvas,
+          Rect.fromCircle(
+              center: thumbCenter, radius: CupertinoThumbPainter.radius));
+    } else {
+      final Offset thumbCenter = Offset(trackActive, trackCenter);
+      CupertinoThumbPainter(color: thumbColor).paint(
+          canvas,
+          Rect.fromCircle(
+              center: thumbCenter, radius: CupertinoThumbPainter.radius));
+    }
   }
 
   @override
