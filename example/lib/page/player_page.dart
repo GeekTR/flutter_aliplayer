@@ -40,6 +40,8 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   bool _mEnablePlayBack = false;
   //当前播放进度
   int _currentPosition = 0;
+  //当前播放时间，用于Text展示
+  int _currentPositionText = 0;
   //当前buffer进度
   int _bufferPosition = 0;
   //是否展示loading
@@ -139,7 +141,9 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
           _currentPosition = extraValue;
         }
         if (!_inSeek) {
-          setState(() {});
+          setState(() {
+            _currentPositionText = extraValue;
+          });
         }
       } else if (infoCode == FlutterAvpdef.BUFFEREDPOSITION) {
         _bufferPosition = extraValue;
@@ -292,8 +296,8 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                     width: width,
                     height: height,
                     child: Offstage(
-                    offstage: _isLock,
-                    child:_buildContentWidget(orientation)),
+                        offstage: _isLock,
+                        child: _buildContentWidget(orientation)),
                   ),
                   Align(
                       child: _buildProgressBar(),
@@ -323,9 +327,8 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                             width: 40,
                             height: 40,
                             decoration: BoxDecoration(
-                              color: Colors.black.withAlpha(150),
-                              borderRadius: BorderRadius.circular(20)
-                            ),
+                                color: Colors.black.withAlpha(150),
+                                borderRadius: BorderRadius.circular(20)),
                             child: Icon(
                               _isLock ? Icons.lock : Icons.lock_open,
                               color: Colors.white,
@@ -553,7 +556,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
               width: 5.0,
             ),
             Text(
-              "${FormatterUtils.getTimeformatByMs(_currentPosition)} / ${FormatterUtils.getTimeformatByMs(_videoDuration)}",
+              "${FormatterUtils.getTimeformatByMs(_currentPositionText)} / ${FormatterUtils.getTimeformatByMs(_videoDuration)}",
               style: TextStyle(color: Colors.white, fontSize: 11),
             ),
             Expanded(
