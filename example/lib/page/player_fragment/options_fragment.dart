@@ -374,6 +374,13 @@ class _OptionsFragmentState extends State<OptionsFragment> {
             "媒体信息",
             style: TextStyle(color: Colors.blue),
           ),
+          onTap: () {
+            if (widget.fAliplayer != null) {
+              widget.fAliplayer.getMediaInfo().then((value) {
+                Fluttertoast.showToast(msg: value.toString());
+              });
+            }
+          },
         ),
       ],
     );
