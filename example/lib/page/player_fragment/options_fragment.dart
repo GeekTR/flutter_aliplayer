@@ -216,6 +216,7 @@ class _OptionsFragmentState extends State<OptionsFragment> {
               onSelectAtIdx: (value) {
                 mScaleGroupValue = value;
                 widget.fAliplayer.setScalingMode(mScaleGroupValue);
+                setState(() {});
               },
             ),
           ),
@@ -239,6 +240,7 @@ class _OptionsFragmentState extends State<OptionsFragment> {
               onSelectAtIdx: (value) {
                 mMirrorGroupValue = value;
                 widget.fAliplayer.setMirrorMode(mMirrorGroupValue);
+                setState(() {});
               },
             ),
           ),
@@ -260,8 +262,9 @@ class _OptionsFragmentState extends State<OptionsFragment> {
               titles: ['0°', '90°', '180°', "270°"],
               selIdx: mRotateGroupValue,
               onSelectAtIdx: (value) {
-                mRotateGroupValue = value * 90;
-                widget.fAliplayer.setRotateMode(mRotateGroupValue);
+                mRotateGroupValue = value;
+                widget.fAliplayer.setRotateMode(mRotateGroupValue* 90);
+                setState(() {});
               },
             ),
           ),
@@ -298,6 +301,7 @@ class _OptionsFragmentState extends State<OptionsFragment> {
                 default:
               }
               widget.fAliplayer.setRate(mSpeedGroupValue);
+              setState(() {});
             },
           ),
         ),
