@@ -803,7 +803,7 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
 
     private Boolean isAutoPlay(){
         if (mAliPlayer != null) {
-            mAliPlayer.isAutoPlay();
+            return mAliPlayer.isAutoPlay();
         }
         return false;
     }
@@ -816,7 +816,7 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
 
     private Boolean isMuted(){
         if (mAliPlayer != null) {
-            mAliPlayer.isMute();
+            return mAliPlayer.isMute();
         }
         return false;
     }

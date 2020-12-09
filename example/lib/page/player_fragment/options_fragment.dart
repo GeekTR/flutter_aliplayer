@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -38,9 +36,10 @@ class _OptionsFragmentState extends State<OptionsFragment> {
   bool mLoop = false;
   bool mEnableHardwareDecoder = false;
   bool mEnablePlayBack = false;
-  int mScaleGroupValue = 1;
-  int mMirrorGroupValue = 1;
+  int mScaleGroupValue = 0;
+  int mMirrorGroupValue = 0;
   int mRotateGroupValue = FlutterAvpdef.AVP_ROTATE_0;
+  int mSpeedGroupValueIndex = 0;
   double mSpeedGroupValue = 1;
   double _volume = 100;
   TextEditingController _bgColorController = TextEditingController();
@@ -50,6 +49,20 @@ class _OptionsFragmentState extends State<OptionsFragment> {
     mAutoPlay = await widget.fAliplayer.isAutoPlay();
     mMute = await widget.fAliplayer.isMuted();
     mEnableHardwareDecoder = GlobalSettings.mEnableHardwareDecoder;
+    mScaleGroupValue = await widget.fAliplayer.getScalingMode();
+    mMirrorGroupValue = await widget.fAliplayer.getMirrorMode();
+    int rotateMode = await widget.fAliplayer.getRotateMode();
+    mRotateGroupValue = (rotateMode / 90).round();
+    double speedMode = await widget.fAliplayer.getRate();
+    if (speedMode == 0) {
+      mSpeedGroupValueIndex = 0;
+    } else if (speedMode == 0.5) {
+      mSpeedGroupValueIndex = 1;
+    } else if (speedMode == 1.5) {
+      mSpeedGroupValueIndex = 2;
+    } else if (speedMode == 2.0) {
+      mSpeedGroupValueIndex = 3;
+    }
     setState(() {});
   }
 
@@ -62,7 +75,7 @@ class _OptionsFragmentState extends State<OptionsFragment> {
   @override
   void initState() {
     super.initState();
-    print('object-----');
+    print('abc : object----- options_fragment');
     _loadInitData();
   }
 
@@ -140,8 +153,7 @@ class _OptionsFragmentState extends State<OptionsFragment> {
           children: [
             CupertinoSwitch(
               value: mEnableHardwareDecoder,
-              onChanged: (value) {
-              },
+              onChanged: (value) {},
             ),
             Text("硬解"),
           ],
@@ -198,7 +210,7 @@ class _OptionsFragmentState extends State<OptionsFragment> {
             padding: EdgeInsets.symmetric(horizontal: 8),
             child: AliyunSegment(
               titles: ['比例填充', '比例全屏', '拉伸全屏'],
-              selIdx: 0,
+              selIdx: mScaleGroupValue,
               onSelectAtIdx: (value) {
                 mScaleGroupValue = value;
                 widget.fAliplayer.setScalingMode(mScaleGroupValue);
@@ -221,7 +233,7 @@ class _OptionsFragmentState extends State<OptionsFragment> {
             padding: EdgeInsets.symmetric(horizontal: 8),
             child: AliyunSegment(
               titles: ['无镜像', '水平镜像', '垂直镜像'],
-              selIdx: 0,
+              selIdx: mMirrorGroupValue,
               onSelectAtIdx: (value) {
                 mMirrorGroupValue = value;
                 widget.fAliplayer.setMirrorMode(mMirrorGroupValue);
@@ -244,7 +256,7 @@ class _OptionsFragmentState extends State<OptionsFragment> {
             padding: EdgeInsets.symmetric(horizontal: 8),
             child: AliyunSegment(
               titles: ['0°', '90°', '180°', "270°"],
-              selIdx: 0,
+              selIdx: mRotateGroupValue,
               onSelectAtIdx: (value) {
                 mRotateGroupValue = value * 90;
                 widget.fAliplayer.setRotateMode(mRotateGroupValue);
@@ -265,8 +277,9 @@ class _OptionsFragmentState extends State<OptionsFragment> {
           padding: EdgeInsets.symmetric(horizontal: 8),
           child: AliyunSegment(
             titles: ['正常', '0.5倍速', '1.5倍速', "2.0倍速"],
-            selIdx: 0,
+            selIdx: mSpeedGroupValueIndex,
             onSelectAtIdx: (value) {
+              mSpeedGroupValueIndex = value;
               switch (value) {
                 case 0:
                   mSpeedGroupValue = 1.0;
