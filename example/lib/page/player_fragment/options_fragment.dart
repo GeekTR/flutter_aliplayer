@@ -63,6 +63,8 @@ class _OptionsFragmentState extends State<OptionsFragment> {
     } else if (speedMode == 2.0) {
       mSpeedGroupValueIndex = 3;
     }
+    double volume = await widget.fAliplayer.getVolume();
+    _volume = volume * 100;
     setState(() {});
   }
 
