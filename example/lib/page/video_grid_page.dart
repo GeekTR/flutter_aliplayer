@@ -72,6 +72,7 @@ class _VideoGridPageState extends State<VideoGridPage> with WidgetsBindingObserv
   @override
   void dispose() {
     super.dispose();
+    this.fAliListPlayer.clear();
     this.fAliListPlayer.stop();
     this.fAliListPlayer.destroy();
     WidgetsBinding.instance.removeObserver(this);
