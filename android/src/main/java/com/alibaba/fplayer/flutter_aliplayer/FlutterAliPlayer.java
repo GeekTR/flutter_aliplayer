@@ -656,6 +656,7 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
                 Integer trackIndex = (Integer) selectExtSubtitleMap.get("trackIndex");
                 Boolean selectExtSubtitlEnable = (Boolean) selectExtSubtitleMap.get("enable");
                 selectExtSubtitle(trackIndex,selectExtSubtitlEnable);
+                result.success(null);
                 break;
             case "getSDKVersion":
                 result.success(getSDKVersion());
