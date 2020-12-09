@@ -279,6 +279,10 @@ class FlutterAliplayer {
     return channel.invokeMethod('setVolume', volume);
   }
 
+  Future<double> getVolume() async {
+    return channel.invokeMethod('getVolume');
+  }
+
   Future<dynamic> getConfig() async {
     return channel.invokeMethod("getConfig");
   }
