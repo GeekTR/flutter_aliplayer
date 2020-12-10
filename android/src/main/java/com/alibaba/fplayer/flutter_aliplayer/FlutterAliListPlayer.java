@@ -695,8 +695,8 @@ public class FlutterAliListPlayer implements EventChannel.StreamHandler, MethodC
 
     private void release(){
         if(mAliListPlayer != null){
-//            mAliListPlayer.release();
-//            mAliListPlayer = null;
+            mAliListPlayer.release();
+            mAliListPlayer = null;
         }
     }
 

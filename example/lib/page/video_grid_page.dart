@@ -43,11 +43,18 @@ class _VideoGridPageState extends State<VideoGridPage>
     fAliListPlayer = FlutterAliPlayerFactory().createAliListPlayer();
     fAliListPlayer.setAutoPlay(true);
     fAliListPlayer.setLoop(true);
+    var configMap = {
+      'mClearFrameWhenStop': true,
+    };
+    fAliListPlayer.setConfig(configMap);
 
     fAliListPlayer.setOnRenderingStart(() {
-      _isFirstRenderShow = true;
       print('_isFirstRenderShow==$_curIdx');
-      setState(() {});
+      Future.delayed(Duration(milliseconds: 50), () {
+        setState(() {
+          _isFirstRenderShow = true;
+        });
+      });
     });
 
     fAliListPlayer.setOnStateChanged((newState) {
