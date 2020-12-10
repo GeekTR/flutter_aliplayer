@@ -40,7 +40,7 @@ enum VideoShowMode { Grid, Srceen }
 ///播放源相关
 class DataSourceRelated {
   static const String DEFAULT_REGION = "cn-shanghai";
-  static const String DEFAULT_VID = "b4da45beb07b4d5b81b54b1ac50fb502"; //多码率
+  static const String DEFAULT_VID = "e4959b9f36cd49f48b4061643b984f1c"; //多码率
   // static const String DEFAULT_VID = "7a27bd5a62d546cc9a36137133a3711c"; //进度条不完整
 
   static const String DEFAULT_URL =

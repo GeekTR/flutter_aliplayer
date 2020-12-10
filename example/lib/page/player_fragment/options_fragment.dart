@@ -334,6 +334,7 @@ class _OptionsFragmentState extends State<OptionsFragment> {
         ),
         InkWell(
           onTap: () {
+<<<<<<< HEAD
             String bgColorStr = _bgColorController.text;
             int bgColor;
             if (bgColorStr.startsWith("#")) {
@@ -346,6 +347,17 @@ class _OptionsFragmentState extends State<OptionsFragment> {
               widget.fAliplayer.setVideoBackgroundColor(bgColor);
             } else {
               Fluttertoast.showToast(msg: '请输入正确的格式');
+=======
+            String colorStr = _bgColorController.text;
+            if(colorStr.startsWith('#')) {
+                colorStr = colorStr.replaceRange(0, 1, '0xff');
+              }
+            int color = int.tryParse(colorStr);
+            if (color != null) {
+              widget.fAliplayer.setVideoBackgroundColor(color);
+            } else {
+              Fluttertoast.showToast(msg: '请输入正确的色值');
+>>>>>>> 3b5ca45fa7a7f206c624e960a4c1004c309f21bd
             }
           },
           child: Text(

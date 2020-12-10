@@ -15,6 +15,7 @@
     NSObject<FlutterBinaryMessenger>* _messenger;
     FlutterMethodChannel* _channel;
     FlutterMethodChannel* _listPlayerchannel;
+    FlutterMethodChannel* _commonChannel;
     UIView *playerView;
     NSString *mSnapshotPath;
 }
@@ -29,8 +30,14 @@
     self = [super init];
     if (self) {
         _messenger = messenger;
-        _channel = [FlutterMethodChannel methodChannelWithName:@"flutter_aliplayer" binaryMessenger:messenger];
         __weak __typeof__(self) weakSelf = self;
+        
+        _commonChannel = [FlutterMethodChannel methodChannelWithName:@"plugins.flutter_aliplayer_factory" binaryMessenger:messenger];
+        [_commonChannel setMethodCallHandler:^(FlutterMethodCall* call, FlutterResult result) {
+            [weakSelf onMethodCall:call result:result atObj:@""];
+        }];
+        
+        _channel = [FlutterMethodChannel methodChannelWithName:@"flutter_aliplayer" binaryMessenger:messenger];
         [_channel setMethodCallHandler:^(FlutterMethodCall* call, FlutterResult result) {
             [weakSelf onMethodCall:call result:result atObj:weakSelf.aliPlayer];
         }];
@@ -91,6 +98,15 @@
     }else{
         result(FlutterMethodNotImplemented);
     }
+}
+
+
+- (void)initService:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    FlutterResult result = arr[1];
+    FlutterStandardTypedData* fdata = [call arguments];
+    [AliPrivateService initKeyWithData:fdata.data];
+    result(nil);
 }
 
 - (void)setUrl:(NSArray*)arr {
