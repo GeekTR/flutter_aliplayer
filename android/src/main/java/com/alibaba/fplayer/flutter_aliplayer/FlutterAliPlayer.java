@@ -582,7 +582,7 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
                 result.success(getSpeed());
                 break;
             case "setVideoBackgroundColor":
-                setVideoBackgroundColor((Integer) methodCall.arguments);
+                setVideoBackgroundColor((Long) methodCall.arguments);
                 break;
             case "setVolume":
                 setVolume((Double) methodCall.arguments);
@@ -909,9 +909,9 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
         return speed;
     }
 
-    private void setVideoBackgroundColor(int color){
+    private void setVideoBackgroundColor(long color){
         if(mAliPlayer != null){
-            mAliPlayer.setVideoBackgroundColor(color);
+            mAliPlayer.setVideoBackgroundColor((int) color);
         }
     }
 
