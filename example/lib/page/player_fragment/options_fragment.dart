@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_aliplayer/flutter_aliplayer.dart';
 import 'package:flutter_aliplayer_example/config.dart';
+import 'package:flutter_aliplayer_example/util/formatter_utils.dart';
 import 'package:flutter_aliplayer_example/widget/aliyun_segment.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -263,7 +264,7 @@ class _OptionsFragmentState extends State<OptionsFragment> {
               selIdx: mRotateGroupValue,
               onSelectAtIdx: (value) {
                 mRotateGroupValue = value;
-                widget.fAliplayer.setRotateMode(mRotateGroupValue* 90);
+                widget.fAliplayer.setRotateMode(mRotateGroupValue * 90);
                 setState(() {});
               },
             ),
@@ -333,11 +334,18 @@ class _OptionsFragmentState extends State<OptionsFragment> {
         ),
         InkWell(
           onTap: () {
-            int color = int.tryParse(_bgColorController.text);
-            if (color != null) {
-              widget.fAliplayer.setVideoBackgroundColor(color);
+            String bgColorStr = _bgColorController.text;
+            int bgColor;
+            if (bgColorStr.startsWith("#")) {
+              bgColor = FormatterUtils.colorFromHex(bgColorStr);
             } else {
-              Fluttertoast.showToast(msg: '请输入int数字');
+              bgColor = int.tryParse(_bgColorController.text);
+            }
+
+            if (bgColor != null) {
+              widget.fAliplayer.setVideoBackgroundColor(bgColor);
+            } else {
+              Fluttertoast.showToast(msg: '请输入正确的格式');
             }
           },
           child: Text(

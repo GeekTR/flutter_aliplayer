@@ -57,4 +57,10 @@ class FormatterUtils {
 
     return msBuilder.toString();
   }
+
+  static int colorFromHex(String colorStr) {
+    final buffer = StringBuffer();
+    buffer.write(colorStr.replaceAll('#', '0x'));
+    return int.parse(buffer.toString());
+  }
 }
