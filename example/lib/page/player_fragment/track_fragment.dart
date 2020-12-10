@@ -126,9 +126,9 @@ class TrackFragmentState extends State<TrackFragment> {
   }
 
   prepared() {
-    if(_list!=null && _list.length>0){
+    if (_list != null && _list.length > 0) {
       widget.fAliplayer.selectExtSubtitle(_list[4].selValue, false);
-    _list[4].selValue = -1;
+      _list[4].selValue = -1;
     }
   }
 
@@ -152,7 +152,7 @@ class TrackFragmentState extends State<TrackFragment> {
 
   onTrackChanged(AVPTrackInfo info) {
     //自动码率切换成功
-    if (info.trackType == 0 && _list[0].selValue == -1) {
+    if (info.trackType == 0) {
       _list[0].children[0].title = "自动码率(${info.trackDefinition})";
       setState(() {});
     }
