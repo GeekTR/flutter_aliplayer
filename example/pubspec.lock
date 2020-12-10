@@ -90,6 +90,20 @@ packages:
       relative: true
     source: path
     version: "0.0.1"
+  flutter_aliplayer_artc:
+    dependency: "direct main"
+    description:
+      path: "../extra/flutter_aliplayer_artc"
+      relative: true
+    source: path
+    version: "0.0.1"
+  flutter_aliplayer_rts:
+    dependency: "direct main"
+    description:
+      path: "../extra/flutter_aliplayer_rts"
+      relative: true
+    source: path
+    version: "0.0.1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
