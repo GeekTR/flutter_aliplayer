@@ -333,11 +333,15 @@ class _OptionsFragmentState extends State<OptionsFragment> {
         ),
         InkWell(
           onTap: () {
-            int color = int.tryParse(_bgColorController.text);
+            String colorStr = _bgColorController.text;
+            if(colorStr.startsWith('#')) {
+                colorStr = colorStr.replaceRange(0, 1, '0xff');
+              }
+            int color = int.tryParse(colorStr);
             if (color != null) {
               widget.fAliplayer.setVideoBackgroundColor(color);
             } else {
-              Fluttertoast.showToast(msg: '请输入int数字');
+              Fluttertoast.showToast(msg: '请输入正确的色值');
             }
           },
           child: Text(
