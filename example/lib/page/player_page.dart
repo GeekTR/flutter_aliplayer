@@ -126,6 +126,9 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
       });
     }, loadingProgress: (percent, netSpeed) {
       _loadingPercent = percent;
+      if (percent == 100) {
+        _showLoading = false;
+      }
       setState(() {});
     }, loadingEnd: () {
       setState(() {
@@ -163,6 +166,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     });
     fAliplayer.setOnCompletion(() {
       _showTipsWidget = true;
+      _showLoading = false;
       _tipsContent = "播放完成";
       setState(() {
         _currentPosition = _videoDuration;
@@ -575,6 +579,8 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                 value: _currentPosition.toDouble(),
                 onChangeStart: (value) {
                   _inSeek = true;
+                  _showLoading = false;
+                  setState(() {});
                 },
                 onChangeEnd: (value) {
                   _inSeek = false;
