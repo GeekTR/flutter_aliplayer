@@ -16,7 +16,8 @@ class VideoGridPage extends StatefulWidget {
   _VideoGridPageState createState() => _VideoGridPageState();
 }
 
-class _VideoGridPageState extends State<VideoGridPage> with WidgetsBindingObserver{
+class _VideoGridPageState extends State<VideoGridPage>
+    with WidgetsBindingObserver {
   List _dataList = [];
   int _page = 1;
   VideoShowMode _showMode = VideoShowMode.Grid;
@@ -81,7 +82,7 @@ class _VideoGridPageState extends State<VideoGridPage> with WidgetsBindingObserv
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    if(_showMode==VideoShowMode.Grid){
+    if (_showMode == VideoShowMode.Grid) {
       return;
     }
     switch (state) {
@@ -217,10 +218,13 @@ class _VideoGridPageState extends State<VideoGridPage> with WidgetsBindingObserv
                 notification is ScrollUpdateNotification) {
               final PageMetrics metrics = notification.metrics as PageMetrics;
               final int currentPage = metrics.page.floor();
-              setState(() {
-                // print('object====${metrics.pixels}');
-                _playerY = metrics.pixels % MediaQuery.of(context).size.height;
-              });
+              if (metrics.pixels > 0) {
+                setState(() {
+                  // print('object====${metrics.pixels}');
+                  _playerY =
+                      metrics.pixels % MediaQuery.of(context).size.height;
+                });
+              }
               if (currentPage != _curIdx) {
                 _curIdx = currentPage;
                 // this will callback onPageChange()
