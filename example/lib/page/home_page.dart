@@ -47,6 +47,11 @@ class _MyAppState extends State<HomePage> {
       FlutterAliPlayerFactory flutterAliPlayerFactory =
           FlutterAliPlayerFactory();
       flutterAliPlayerFactory.initService(bytes.buffer.asUint8List());
+    }else if(Platform.isIOS){
+      var bytes = await rootBundle.load("assets/encryptedApp_ios.dat");
+      FlutterAliPlayerFactory flutterAliPlayerFactory =
+          FlutterAliPlayerFactory();
+      flutterAliPlayerFactory.initService(bytes.buffer.asUint8List());
     }
   }
 
