@@ -311,7 +311,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                   ),
                   Align(
                       child: _buildProgressBar(),
-                      heightFactor: 2.0,
+                      heightFactor: orientation == Orientation.portrait?2.0:4.0,
                       alignment: FractionalOffset.bottomCenter),
                   _buildTipsWidget(width, height),
                   _buildThumbnail(width, height),
