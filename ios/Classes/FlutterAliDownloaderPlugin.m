@@ -109,6 +109,7 @@
     
     //TODO 后续移走
     if (idx>=0) {
+        downloader = [[AliMediaDownloader alloc] init];
         [downloader selectTrack:idx];
         [self.mAliMediaDownloadMap setObject:downloader forKey:[NSString stringWithFormat:@"%@_%i",vidSts.vid,idx]];
     }
@@ -121,6 +122,7 @@
     
     //TODO 后续移走
     if (idx>=0) {
+        proxy = [[AliDownloaderProxy alloc] init];
         [self.mProxyMap setObject:proxy forKey:[NSString stringWithFormat:@"%@_%i",vidSts.vid,idx]];
     }
     
@@ -139,6 +141,7 @@
     
     //TODO 后续移走
     if (idx>=0) {
+        downloader = [[AliMediaDownloader alloc] init];
         [downloader selectTrack:idx];
         [self.mAliMediaDownloadMap setObject:downloader forKey:[NSString stringWithFormat:@"%@_%i",vidAuth.vid,idx]];
     }
@@ -151,6 +154,7 @@
     
     //TODO 后续移走
     if (idx>=0) {
+        proxy = [[AliDownloaderProxy alloc] init];
         [self.mProxyMap setObject:proxy forKey:[NSString stringWithFormat:@"%@_%i",vidAuth.vid,idx]];
     }
     
