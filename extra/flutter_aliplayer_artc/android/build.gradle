@@ -28,3 +28,7 @@ android {
         minSdkVersion 16
     }
 }
+
+dependencies {
+    implementation 'com.aliyun.sdk.android:AlivcArtc:5.2.2p'
+}

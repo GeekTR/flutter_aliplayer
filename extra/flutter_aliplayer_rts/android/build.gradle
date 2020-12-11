@@ -28,3 +28,8 @@ android {
         minSdkVersion 16
     }
 }
+
+
+dependencies {
+    implementation 'com.aliyun.rts.android:RtsSDK:1.4.1'
+}
