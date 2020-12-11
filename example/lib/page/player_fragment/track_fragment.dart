@@ -88,9 +88,9 @@ class TrackFragmentState extends State<TrackFragment> {
                                 element.selValue = -1;
                               } else {
                                 element.selValue = e.value;
-                                widget.fAliplayer
-                                    .selectExtSubtitle(element.selValue, true);
                               }
+                              widget.fAliplayer.selectExtSubtitle(
+                                  element.selValue, !isSelected);
                             });
                           } else {
                             element.selValue = e.value;
