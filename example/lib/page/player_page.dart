@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 
@@ -16,6 +17,7 @@ import 'package:flutter_aliplayer_example/util/formatter_utils.dart';
 import 'package:flutter_aliplayer_example/widget/aliyun_slider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:connectivity/connectivity.dart';
 
 class PlayerPage extends StatefulWidget {
   final ModeType playMode;
@@ -61,16 +63,22 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   //缩略图
   // Uint8List _thumbnailBitmap;
   ImageProvider _imageProvider;
+  //当前网络状态
+  ConnectivityResult _currentConnectivityResult;
 
   ///seek中
   bool _inSeek = false;
 
   bool _isLock = false;
+  //网络状态
+  bool _isShowMobileNetWork = false;
 
   //当前播放器状态
   int _currentPlayerState = 0;
 
   String extSubTitleText = '';
+  //网络状态监听
+  StreamSubscription _networkSubscriptiion;
 
   GlobalKey<TrackFragmentState> trackFragmentKey = GlobalKey();
 
@@ -239,6 +247,32 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
         });
       }
     });
+
+    print("abc : setNnetWorkListener");
+    _setNetworkChangedListener();
+  }
+
+  _setNetworkChangedListener() {
+    _networkSubscriptiion = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      if (result == ConnectivityResult.mobile) {
+        fAliplayer.pause();
+        setState(() {
+          _isShowMobileNetWork = true;
+        });
+      } else if (result == ConnectivityResult.wifi) {
+        //从4G网络或者无网络切换到wifi
+        if (_currentConnectivityResult == ConnectivityResult.mobile ||
+            _currentConnectivityResult == ConnectivityResult.none) {
+          fAliplayer.play();
+        }
+        setState(() {
+          _isShowMobileNetWork = false;
+        });
+      }
+      _currentConnectivityResult = result;
+    });
   }
 
   @override
@@ -248,11 +282,15 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
       case AppLifecycleState.inactive:
         break;
       case AppLifecycleState.resumed:
+        _setNetworkChangedListener();
         fAliplayer.play();
         break;
       case AppLifecycleState.paused:
         if (!_mEnablePlayBack) {
           fAliplayer.pause();
+        }
+        if (_networkSubscriptiion != null) {
+          _networkSubscriptiion.cancel();
         }
         break;
       case AppLifecycleState.detached:
@@ -268,6 +306,9 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     fAliplayer.destroy();
     super.dispose();
     WidgetsBinding.instance.removeObserver(this);
+    if (_networkSubscriptiion != null) {
+      _networkSubscriptiion.cancel();
+    }
   }
 
   @override
@@ -316,6 +357,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                       alignment: FractionalOffset.bottomCenter),
                   _buildTipsWidget(width, height),
                   _buildThumbnail(width, height),
+                  _buildNetWorkTipsWidget(width, height),
                   Align(
                     alignment: Alignment.topCenter,
                     child: Text(
@@ -518,6 +560,73 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     } else {
       return Container();
     }
+  }
+
+  //网络提示Widget
+  _buildNetWorkTipsWidget(double widgetWidth, double widgetHeight) {
+    return Offstage(
+      offstage: !_isShowMobileNetWork,
+      child: Container(
+        alignment: Alignment.center,
+        width: widgetWidth,
+        height: widgetHeight,
+        child: Wrap(
+          direction: Axis.vertical,
+          alignment: WrapAlignment.center,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            Text("当前为移动网络",
+                style: TextStyle(color: Colors.white),
+                textAlign: TextAlign.center),
+            SizedBox(
+              height: 30.0,
+            ),
+            Wrap(
+              direction: Axis.horizontal,
+              children: [
+                OutlineButton(
+                  shape: BeveledRectangleBorder(
+                    side: BorderSide(
+                      style: BorderStyle.solid,
+                      color: Colors.blue,
+                      width: 5,
+                    ),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Text("继续播放", style: TextStyle(color: Colors.white)),
+                  onPressed: () {
+                    setState(() {
+                      _isShowMobileNetWork = false;
+                    });
+                    fAliplayer.play();
+                  },
+                ),
+                SizedBox(
+                  width: 10.0,
+                ),
+                OutlineButton(
+                  shape: BeveledRectangleBorder(
+                    side: BorderSide(
+                      style: BorderStyle.solid,
+                      color: Colors.blue,
+                      width: 5,
+                    ),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Text("退出播放", style: TextStyle(color: Colors.white)),
+                  onPressed: () {
+                    setState(() {
+                      _isShowMobileNetWork = false;
+                      Navigator.pop(context);
+                    });
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   ///Loading

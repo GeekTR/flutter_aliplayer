@@ -18,6 +18,7 @@ dependencies:
   path_provider: ^1.6.24
   pull_to_refresh: ^1.6.3
   fluttertoast: ^7.1.4
+  connectivity: ^2.0.2
   qrcode_reader:
     git:
       url: "https://github.com/bcko/flutter_qrcode_reader.git"
