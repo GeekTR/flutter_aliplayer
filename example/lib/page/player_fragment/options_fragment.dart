@@ -77,8 +77,13 @@ class _OptionsFragmentState extends State<OptionsFragment> {
   @override
   void initState() {
     super.initState();
-    print('abc : object----- options_fragment');
     _loadInitData();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    GlobalSettings.mEnableAccurateSeek = false;
   }
 
   @override

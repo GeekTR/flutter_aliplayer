@@ -311,7 +311,8 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                   ),
                   Align(
                       child: _buildProgressBar(),
-                      heightFactor: orientation == Orientation.portrait?2.0:4.0,
+                      heightFactor:
+                          orientation == Orientation.portrait ? 2.0 : 4.0,
                       alignment: FractionalOffset.bottomCenter),
                   _buildTipsWidget(width, height),
                   _buildThumbnail(width, height),
@@ -386,8 +387,9 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
 
   /// MARK: 私有方法
   _buildControlBtns(Orientation orientation) {
-    if (orientation == Orientation.portrait) {
-      return Padding(
+    return Offstage(
+      offstage: orientation == Orientation.landscape,
+      child: Padding(
         padding: const EdgeInsets.only(top: 16),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -434,20 +436,16 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                 }),
           ],
         ),
-      );
-    } else {
-      return Container();
-    }
+      ),
+    );
   }
 
   _buildFragmentPage(Orientation orientation) {
-    if (orientation == Orientation.portrait) {
-      return Expanded(
-          child: IndexedStack(
-              index: bottomIndex, children: mFramePage)); //mFramePage
-    } else {
-      return Container();
-    }
+    return Expanded(
+        child: Offstage(
+      offstage: orientation == Orientation.landscape,
+      child: IndexedStack(index: bottomIndex, children: mFramePage),
+    )); //mFramePage
   }
 
   ///缩略图
