@@ -29,6 +29,12 @@ dependencies:
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
     path: ../
+  
+  flutter_aliplayer_artc:
+    path: ../extra/flutter_aliplayer_artc
+
+  flutter_aliplayer_rts:
+    path: ../extra/flutter_aliplayer_rts
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
