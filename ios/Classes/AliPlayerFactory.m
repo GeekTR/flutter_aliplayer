@@ -478,8 +478,15 @@
     FlutterMethodCall* call = arr.firstObject;
     AliPlayer *player = arr[2];
     NSDictionary *dic = call.arguments;
-    
     AVPVidStsSource *source = [AVPVidStsSource mj_objectWithKeyValues:dic];
+    
+    NSString *previewTime = [dic getStrByKey:@"previewTime"];
+    if(previewTime && previewTime.length>0){
+        VidPlayerConfigGenerator* vp = [[VidPlayerConfigGenerator alloc] init];
+        [vp setPreviewTime:previewTime.intValue];
+        source.playConfig = [vp generatePlayerConfig];
+    }
+    
     [self setSource:source withDefinitions:dic];
     [player setStsSource:source];
 }
@@ -489,6 +496,13 @@
     AliPlayer *player = arr[2];
     NSDictionary *dic = call.arguments;
     AVPVidAuthSource *source = [AVPVidAuthSource mj_objectWithKeyValues:dic];
+    
+    NSString *previewTime = [dic getStrByKey:@"previewTime"];
+    if(previewTime && previewTime.length>0){
+        VidPlayerConfigGenerator* vp = [[VidPlayerConfigGenerator alloc] init];
+        [vp setPreviewTime:previewTime.intValue];
+        source.playConfig = [vp generatePlayerConfig];
+    }
     
     [self setSource:source withDefinitions:dic];
     [player setAuthSource:source];
