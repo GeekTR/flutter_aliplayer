@@ -20,7 +20,6 @@ import com.aliyun.player.source.UrlSource;
 import com.aliyun.player.source.VidAuth;
 import com.aliyun.player.source.VidMps;
 import com.aliyun.player.source.VidSts;
-import com.aliyun.private_service.PrivateService;
 import com.aliyun.thumbnail.ThumbnailBitmapInfo;
 import com.aliyun.thumbnail.ThumbnailHelper;
 import com.aliyun.utils.ThreadManager;
@@ -362,10 +361,9 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
                     vidSts.setDefinition(definitionList);
                 }
 
-
                 if(stsMap.containsKey("previewTime") && !TextUtils.isEmpty((CharSequence) stsMap.get("previewTime"))){
                     VidPlayerConfigGen vidPlayerConfigGen = new VidPlayerConfigGen();
-                    int previewTime = Integer.valueOf((Integer) stsMap.get("previewTime"));
+                    int previewTime = Integer.valueOf((String)stsMap.get("previewTime"));
                     vidPlayerConfigGen.setPreviewTime(previewTime);
                     vidSts.setPlayConfig(vidPlayerConfigGen);
                 }
@@ -411,7 +409,7 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
 
                 if(authMap.containsKey("previewTime") && !TextUtils.isEmpty((String) authMap.get("previewTime"))){
                     VidPlayerConfigGen vidPlayerConfigGen = new VidPlayerConfigGen();
-                    int previewTime = Integer.valueOf((Integer) authMap.get("previewTime"));
+                    int previewTime = Integer.valueOf((String) authMap.get("previewTime"));
                     vidPlayerConfigGen.setPreviewTime(previewTime);
                     vidAuth.setPlayConfig(vidPlayerConfigGen);
                 }
