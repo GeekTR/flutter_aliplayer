@@ -15,7 +15,7 @@ PODS:
     - Flutter
   - flutter_aliplayer_rts (0.0.1):
     - Flutter
-    - RtsSDK (= 1.4.0)
+    - RtsSDK (= 1.4.1)
   - fluttertoast (0.0.2):
     - Flutter
     - Toast
@@ -27,7 +27,7 @@ PODS:
     - Flutter
   - qrcode_reader (0.0.1):
     - Flutter
-  - RtsSDK (1.4.0)
+  - RtsSDK (1.4.1)
   - sqflite (0.0.1):
     - Flutter
     - FMDB (~> 2.7.2)
@@ -76,13 +76,13 @@ SPEC CHECKSUMS:
   Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
   flutter_aliplayer: 9b5eac6dab2465029469104b8a34d149a0f13cf8
   flutter_aliplayer_artc: 8e1d8bdfdc6fb13cf87ed9f4d2022c02dfb8ac6b
-  flutter_aliplayer_rts: 41ee6c21ca33307194b74a1b1bc86eb9d98fa1fa
+  flutter_aliplayer_rts: 0e8910a538f6aaf78365bc3773fb93cfa58827cf
   fluttertoast: 6122fa75143e992b1d3470f61000f591a798cc58
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   MJExtension: d9b9c74cbdeb724c1e9ecbb157b318276e62e876
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
   qrcode_reader: 09b34d43b4c08fe5b63a6e56c96789bcea7b9148
-  RtsSDK: 87bc68243e1858ef06daf8f0b4aafed607c404d3
+  RtsSDK: 2b5a87dcccad735a8cf14d64ba7bb37c05ec8b54
   sqflite: 4001a31ff81d210346b500c55b17f4d6c7589dd0
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
 
