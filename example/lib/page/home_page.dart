@@ -15,6 +15,8 @@ import 'package:flutter_aliplayer_example/util/common_utils.dart';
 import 'package:flutter_aliplayer_example/util/database_utils.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'local_page.dart';
+
 class HomePage extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
@@ -29,6 +31,7 @@ class _MyAppState extends State<HomePage> {
     '播放列表演示(VID)',
     '播放列表演示(URL)',
     '断点下载',
+    '本地文件'
   ];
 
   @override
@@ -47,7 +50,7 @@ class _MyAppState extends State<HomePage> {
       FlutterAliPlayerFactory flutterAliPlayerFactory =
           FlutterAliPlayerFactory();
       flutterAliPlayerFactory.initService(bytes.buffer.asUint8List());
-    }else if(Platform.isIOS){
+    } else if (Platform.isIOS) {
       var bytes = await rootBundle.load("assets/encryptedApp_ios.dat");
       FlutterAliPlayerFactory flutterAliPlayerFactory =
           FlutterAliPlayerFactory();
@@ -98,6 +101,11 @@ class _MyAppState extends State<HomePage> {
                   break;
                 case 6:
                   CommomUtils.pushPage(context, DownloadPage());
+                  break;
+                case 7:
+                  if (Platform.isAndroid) {
+                    CommomUtils.pushPage(context, LocalPage());
+                  }
                   break;
                 default:
               }

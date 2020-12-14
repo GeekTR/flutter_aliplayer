@@ -248,7 +248,6 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
       }
     });
 
-    print("abc : setNnetWorkListener");
     _setNetworkChangedListener();
   }
 
