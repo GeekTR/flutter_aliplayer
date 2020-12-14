@@ -25,6 +25,7 @@ class SubTrackUIModel {
 
 class TrackFragmentState extends State<TrackFragment> {
   List<TrackUIModel> _list;
+  var _previewLastSubtitleIndex = -1;
 
   Map extSubTitleMap = {
     "cn":
@@ -80,18 +81,22 @@ class TrackFragmentState extends State<TrackFragment> {
                   .map((SubTrackUIModel e) => InkWell(
                         onTap: () {
                           if (element.title == '---- 外挂字幕 ----') {
-                            widget.fAliplayer
-                                .selectExtSubtitle(element.selValue, false)
-                                .then((value) {
-                              bool isSelected = element.selValue == e.value;
-                              if (isSelected) {
-                                element.selValue = -1;
-                              } else {
-                                element.selValue = e.value;
-                              }
+                            //取消选中
+                            if (_previewLastSubtitleIndex != e.value) {
                               widget.fAliplayer.selectExtSubtitle(
-                                  element.selValue, !isSelected);
-                            });
+                                  _previewLastSubtitleIndex, false);
+                            }
+
+                            //判断是否是选中状态
+                            bool isSelected = element.selValue == e.value;
+                            if (isSelected) {
+                              element.selValue = -1;
+                            } else {
+                              element.selValue = e.value;
+                            }
+                            widget.fAliplayer
+                                .selectExtSubtitle(e.value, !isSelected);
+                            _previewLastSubtitleIndex = e.value;
                           } else {
                             element.selValue = e.value;
                             widget.fAliplayer
