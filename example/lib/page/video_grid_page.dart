@@ -53,6 +53,7 @@ class _VideoGridPageState extends State<VideoGridPage>
       Future.delayed(Duration(milliseconds: 50), () {
         setState(() {
           _isFirstRenderShow = true;
+          _playerY = 0.0;
         });
       });
     });
