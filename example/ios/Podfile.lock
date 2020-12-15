@@ -5,6 +5,9 @@ PODS:
   - AliPlayerSDK_iOS_ARTC (5.2.2):
     - AliPlayerSDK_iOS_ARTC/AliPlayerSDK (= 5.2.2)
   - AliPlayerSDK_iOS_ARTC/AliPlayerSDK (5.2.2)
+  - connectivity (0.0.1):
+    - Flutter
+    - Reachability
   - Flutter (1.0.0)
   - flutter_aliplayer (0.0.1):
     - AliPlayerSDK_iOS (= 5.2.2)
@@ -27,6 +30,7 @@ PODS:
     - Flutter
   - qrcode_reader (0.0.1):
     - Flutter
+  - Reachability (3.2)
   - RtsSDK (1.4.1)
   - sqflite (0.0.1):
     - Flutter
@@ -34,6 +38,7 @@ PODS:
   - Toast (4.0.0)
 
 DEPENDENCIES:
+  - connectivity (from `.symlinks/plugins/connectivity/ios`)
   - Flutter (from `Flutter`)
   - flutter_aliplayer (from `.symlinks/plugins/flutter_aliplayer/ios`)
   - flutter_aliplayer_artc (from `.symlinks/plugins/flutter_aliplayer_artc/ios`)
@@ -49,10 +54,13 @@ SPEC REPOS:
     - AliPlayerSDK_iOS_ARTC
     - FMDB
     - MJExtension
+    - Reachability
     - RtsSDK
     - Toast
 
 EXTERNAL SOURCES:
+  connectivity:
+    :path: ".symlinks/plugins/connectivity/ios"
   Flutter:
     :path: Flutter
   flutter_aliplayer:
@@ -73,6 +81,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   AliPlayerSDK_iOS: 8a8f4b021e2354b869739c55d23fab6a8a642dd9
   AliPlayerSDK_iOS_ARTC: dbd3422f2b4d1abf7c16fb610fc17b649e6a2b87
+  connectivity: c4130b2985d4ef6fd26f9702e886bd5260681467
   Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
   flutter_aliplayer: 9b5eac6dab2465029469104b8a34d149a0f13cf8
   flutter_aliplayer_artc: 8e1d8bdfdc6fb13cf87ed9f4d2022c02dfb8ac6b
@@ -82,6 +91,7 @@ SPEC CHECKSUMS:
   MJExtension: d9b9c74cbdeb724c1e9ecbb157b318276e62e876
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
   qrcode_reader: 09b34d43b4c08fe5b63a6e56c96789bcea7b9148
+  Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
   RtsSDK: 2b5a87dcccad735a8cf14d64ba7bb37c05ec8b54
   sqflite: 4001a31ff81d210346b500c55b17f4d6c7589dd0
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196

@@ -126,6 +126,17 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     fAliplayer.setOnStateChanged((newState) {
       _currentPlayerState = newState;
       print("aliyun : onStateChanged $newState");
+      switch (newState) {
+        case FlutterAvpdef.AVPStatus_AVPStatusStarted:
+          setState(() {
+            _showTipsWidget = false;
+            _showLoading = false;
+          });
+          break;
+        case FlutterAvpdef.AVPStatus_AVPStatusPaused:
+          break;
+        default:
+      }
     });
     fAliplayer.setOnLoadingStatusListener(loadingBegin: () {
       setState(() {
