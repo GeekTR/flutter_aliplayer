@@ -28,6 +28,8 @@ class _StsHomePageState extends State<StsPage> {
   int _selectDefinition = -1;
   List<String> _selectedDefinition = List();
 
+  bool _inPushing = false;
+
   @override
   void initState() {
     super.initState();
@@ -153,6 +155,10 @@ class _StsHomePageState extends State<StsPage> {
                 RaisedButton(
                   child: Text("STS播放"),
                   onPressed: () {
+                    if (_inPushing == true) {
+                      return;
+                    }
+                    _inPushing = true;
                     List<String> _definitionList = List();
                     if (_selectDefinition == 2) {
                       _definitionList.add(FlutterAvpdef.AUTO);
@@ -185,8 +191,10 @@ class _StsHomePageState extends State<StsPage> {
                             playMode: ModeType.STS,
                             dataSourceMap: map,
                           ));
+                      _inPushing = false;
                     }, errorCallback: (error) {
                       print("error");
+                      _inPushing = false;
                     });
                   },
                 ),

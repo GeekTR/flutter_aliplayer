@@ -24,6 +24,8 @@ class _AuthPageState extends State<AuthPage> {
   int _selectDefinition = -1;
   List<String> _selectedDefinition = List();
 
+  bool _inPushing;
+
   @override
   void initState() {
     super.initState();
@@ -133,6 +135,10 @@ class _AuthPageState extends State<AuthPage> {
                 RaisedButton(
                   child: Text("AUTH播放"),
                   onPressed: () {
+                    if (_inPushing == true) {
+                      return;
+                    }
+                    _inPushing = true;
                     List<String> _definitionList = List();
                     if (_selectDefinition == 2) {
                       _definitionList.add(FlutterAvpdef.AUTO);
@@ -160,7 +166,10 @@ class _AuthPageState extends State<AuthPage> {
                             playMode: ModeType.AUTH,
                             dataSourceMap: map,
                           ));
-                    }, errorCallback: (error) {});
+                      _inPushing = false;
+                    }, errorCallback: (error) {
+                      _inPushing = false;
+                    });
                   },
                 ),
                 Expanded(

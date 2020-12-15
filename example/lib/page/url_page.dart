@@ -11,10 +11,13 @@ class UrlPage extends StatefulWidget {
 }
 
 class _UrlPageState extends State<UrlPage> {
-  TextEditingController urlSourceController = new TextEditingController.fromValue(TextEditingValue(
+  TextEditingController urlSourceController =
+      new TextEditingController.fromValue(TextEditingValue(
     text: DataSourceRelated.DEFAULT_URL,
   ));
   String _qrcode_result = DataSourceRelated.DEFAULT_URL;
+
+  bool _inPushing = false;
 
   Future<void> getQrcodeState() async {
     _qrcode_result = await QRCodeReader()
@@ -26,7 +29,9 @@ class _UrlPageState extends State<UrlPage> {
         .setFrontCamera(false) // default false
         .scan();
 
-    setState(() {urlSourceController.text = _qrcode_result;});
+    setState(() {
+      urlSourceController.text = _qrcode_result;
+    });
   }
 
   @override
@@ -53,9 +58,14 @@ class _UrlPageState extends State<UrlPage> {
           RaisedButton(
             child: Text("开始播放"),
             onPressed: () {
+              if (_inPushing == true) {
+                return;
+              }
+              _inPushing = true;
               var map = {DataSourceRelated.URL_KEY: urlSourceController.text};
               CommomUtils.pushPage(context,
                   PlayerPage(playMode: ModeType.URL, dataSourceMap: map));
+              _inPushing = false;
             },
           )
         ],
