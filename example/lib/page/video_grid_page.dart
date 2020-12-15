@@ -36,6 +36,9 @@ class _VideoGridPageState extends State<VideoGridPage>
 
   bool _isFirstRenderShow = false;
 
+  //开始滑动位置
+  double _startScrollpixels = 0;
+
   @override
   void initState() {
     super.initState();
@@ -53,13 +56,11 @@ class _VideoGridPageState extends State<VideoGridPage>
       Future.delayed(Duration(milliseconds: 50), () {
         setState(() {
           _isFirstRenderShow = true;
-          _playerY = 0.0;
         });
       });
     });
 
     fAliListPlayer.setOnStateChanged((newState) {
-      print("aliyun : onStateChanged $newState");
       switch (newState) {
         case FlutterAvpdef.AVPStatus_AVPStatusStarted:
           setState(() {
@@ -222,23 +223,28 @@ class _VideoGridPageState extends State<VideoGridPage>
       child: Scaffold(
         body: NotificationListener(
           onNotification: (ScrollNotification notification) {
+            if (notification is ScrollStartNotification) {
+              final PageMetrics metrics = notification.metrics as PageMetrics;
+              _startScrollpixels = metrics.pixels;
+            }
             if (notification.depth == 0 &&
                 notification is ScrollUpdateNotification) {
               final PageMetrics metrics = notification.metrics as PageMetrics;
-              final int currentPage = metrics.page.floor();
               if (metrics.pixels > 0) {
-                setState(() {
-                  // print('object====${metrics.pixels}');
+                if (metrics.pixels - _startScrollpixels > 0) {
                   _playerY =
                       metrics.pixels % MediaQuery.of(context).size.height;
-                });
+                } else {
+                  _playerY = -(MediaQuery.of(context).size.height -
+                      (metrics.pixels % MediaQuery.of(context).size.height));
+                }
+                setState(() {});
               }
-              if (currentPage != _curIdx) {
-                _curIdx = currentPage;
-                // this will callback onPageChange()
-                print("onPageChange + $currentPage");
-                start();
-              }
+            } else if (notification is ScrollEndNotification) {
+              _playerY = 0.0;
+              PageMetrics metrics = notification.metrics as PageMetrics;
+              _curIdx = metrics.page.round();
+              start();
             }
             return false;
           },
