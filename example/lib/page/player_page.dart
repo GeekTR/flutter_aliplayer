@@ -360,11 +360,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                         offstage: _isLock,
                         child: _buildContentWidget(orientation)),
                   ),
-                  Align(
-                      child: _buildProgressBar(),
-                      heightFactor:
-                          orientation == Orientation.portrait ? 2.0 : 4.0,
-                      alignment: FractionalOffset.bottomCenter),
+                  _buildProgressBar(width, height),
                   _buildTipsWidget(width, height),
                   _buildThumbnail(width, height),
                   _buildNetWorkTipsWidget(width, height),
@@ -640,10 +636,11 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   }
 
   ///Loading
-  _buildProgressBar() {
+  _buildProgressBar(double width, double height) {
     if (_showLoading) {
-      return Align(
-        alignment: Alignment.center,
+      return Positioned(
+        left: width / 2,
+        top: height / 2,
         child: Column(
           children: [
             CircularProgressIndicator(
