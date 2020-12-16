@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface AliPlayerFactory : NSObject<FlutterPlatformViewFactory,AVPDelegate,FlutterStreamHandler>
+@interface AliPlayerFactory : NSObject<FlutterPlatformViewFactory,AVPDelegate,CicadaAudioSessionDelegate,FlutterStreamHandler>
 
 @property(nonatomic,strong,nullable)AliPlayer *aliPlayer;
 @property(nonatomic,strong,nullable)AliListPlayer *aliListPlayer;
