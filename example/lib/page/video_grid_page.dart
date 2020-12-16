@@ -36,6 +36,8 @@ class _VideoGridPageState extends State<VideoGridPage>
 
   bool _isFirstRenderShow = false;
 
+  bool _isBackgroundMode;
+
   //开始滑动位置
   double _startScrollpixels = 0;
 
@@ -64,6 +66,7 @@ class _VideoGridPageState extends State<VideoGridPage>
       switch (newState) {
         case FlutterAvpdef.AVPStatus_AVPStatusStarted:
           setState(() {
+            _isBackgroundMode = false;
             _isPause = false;
           });
           break;
@@ -101,6 +104,7 @@ class _VideoGridPageState extends State<VideoGridPage>
         fAliListPlayer.play();
         break;
       case AppLifecycleState.paused:
+        _isBackgroundMode = true;
         fAliListPlayer.pause();
         break;
       case AppLifecycleState.detached:
@@ -349,7 +353,7 @@ class _VideoGridPageState extends State<VideoGridPage>
               color: Colors.black.withAlpha(0),
               alignment: Alignment.center,
               child: Offstage(
-                offstage: _isPause == false,
+                offstage: _isPause == false || _isBackgroundMode == true,
                 child: Icon(
                   Icons.play_circle_filled,
                   size: 48,
