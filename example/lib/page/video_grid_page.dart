@@ -338,7 +338,7 @@ class _VideoGridPageState extends State<VideoGridPage>
                 child: Image.network(
                   model.coverUrl,
                   // color:Colors.black,
-                  fit: BoxFit.fitWidth,
+                  fit: BoxFit.contain,
                   alignment: Alignment.center,
                   width: double.infinity,
                   height: double.infinity,
