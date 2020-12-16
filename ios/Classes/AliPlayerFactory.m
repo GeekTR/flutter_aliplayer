@@ -577,10 +577,27 @@
     FlutterResult result = arr[1];
     AliPlayer *player = arr[2];
     AVPMediaInfo * info = [player getMediaInfo];
+    
+    //TODO 后面需要统一键值转换规则
+    [AVPMediaInfo mj_setupReplacedKeyFromPropertyName:^NSDictionary *{
+        return @{
+            @"mTitle":@"title",
+            @"mCoverUrl":@"coverURL",
+            @"mTrackInfos":@"tracks",
+        };
+    }];
+    
+    [AVPTrackInfo mj_setupReplacedKeyFromPropertyName:^NSDictionary *{
+        return @{
+            @"vodDefinition":@"trackDefinition",
+            @"index":@"trackIndex",
+        };
+    }];
+    
     [AVPThumbnailInfo mj_setupReplacedKeyFromPropertyName:^NSDictionary *{
         return @{
-                 @"URL" : @"url",
-                 };
+            @"URL" : @"url",
+        };
     }];
     NSLog(@"getMediaInfo==%@",info.mj_JSONString);
     result(info.mj_keyValues);
