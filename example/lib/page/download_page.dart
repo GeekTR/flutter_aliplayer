@@ -99,6 +99,13 @@ class _DownloadPageState extends State<DownloadPage> {
                 width: 85.0,
                 height: 85.0,
                 fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Image.asset(
+                    "images/default_cover.png",
+                    width: 85.0,
+                    height: 85.0,
+                  );
+                },
               ),
               Container(
                 width: 85.0,
