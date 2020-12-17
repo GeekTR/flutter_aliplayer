@@ -236,7 +236,7 @@ class _VideoGridPageState extends State<VideoGridPage>
             if (notification.depth == 0 &&
                 notification is ScrollUpdateNotification) {
               final PageMetrics metrics = notification.metrics as PageMetrics;
-              if (metrics.pixels > 0) {
+              if (metrics.pixels > 0 && _curIdx < _dataList.length-1) {
                 if (metrics.pixels - _startScrollpixels > 0) {
                   _playerY =
                       metrics.pixels % MediaQuery.of(context).size.height;
