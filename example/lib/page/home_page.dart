@@ -12,8 +12,6 @@ import 'package:flutter_aliplayer_example/page/sts_page.dart';
 import 'package:flutter_aliplayer_example/page/url_page.dart';
 import 'package:flutter_aliplayer_example/page/video_grid_page.dart';
 import 'package:flutter_aliplayer_example/util/common_utils.dart';
-import 'package:flutter_aliplayer_example/util/database_utils.dart';
-import 'package:path_provider/path_provider.dart';
 
 import 'local_page.dart';
 
@@ -23,6 +21,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _MyAppState extends State<HomePage> {
+  bool _showDownload = false;
+  DownloadPage _downloadPage;
+
   List titleArr = [
     'URL播放',
     'STS播放',
@@ -37,10 +38,10 @@ class _MyAppState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    _loadEncrypted();
+    _downloadPage = DownloadPage();
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-    DBUtils.openDB();
-    _loadEncrypted();
   }
 
   _loadEncrypted() async {
@@ -61,57 +62,87 @@ class _MyAppState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Plugin for aliplayer'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.settings),
-            onPressed: () => CommomUtils.pushPage(context, SettingPage()),
+      appBar: _showDownload
+          ? AppBar(
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back),
+                onPressed: () {
+                  setState(() {
+                    _showDownload = false;
+                  });
+                },
+              ),
+              title: Text("Download"),
+              centerTitle: true,
+              actions: [
+                IconButton(
+                  icon: Icon(Icons.add),
+                  onPressed: () {
+                    _downloadPage.showDownloadDialog();
+                  },
+                ),
+              ],
+            )
+          : AppBar(
+              title: const Text('Plugin for aliplayer'),
+              actions: [
+                IconButton(
+                  icon: Icon(Icons.settings),
+                  onPressed: () => CommomUtils.pushPage(context, SettingPage()),
+                ),
+              ],
+            ),
+      body: Stack(
+        children: [
+          ListView.builder(
+            padding: EdgeInsets.all(8.0),
+            itemExtent: 50.0,
+            itemCount: titleArr.length,
+            itemBuilder: (BuildContext context, int index) {
+              return FlatButton(
+                child: Text(titleArr[index]),
+                onPressed: () {
+                  switch (index) {
+                    case 0:
+                      CommomUtils.pushPage(context, UrlPage());
+                      break;
+                    case 1:
+                      CommomUtils.pushPage(context, StsPage());
+                      break;
+                    case 2:
+                      CommomUtils.pushPage(context, AuthPage());
+                      break;
+                    case 3:
+                      CommomUtils.pushPage(context, MpsPage());
+                      break;
+                    case 4:
+                      CommomUtils.pushPage(
+                          context, VideoGridPage(playMode: ModeType.STS));
+                      break;
+                    case 5:
+                      CommomUtils.pushPage(
+                          context, VideoGridPage(playMode: ModeType.URL));
+                      break;
+                    case 6:
+                      _showDownload = true;
+                      setState(() {});
+                      break;
+                    case 7:
+                      if (Platform.isAndroid) {
+                        CommomUtils.pushPage(context, LocalPage());
+                      }
+                      break;
+                    default:
+                  }
+                },
+              );
+            },
+          ),
+          Offstage(
+            offstage: !_showDownload,
+            child: _downloadPage,
           ),
         ],
-      ),
-      body: ListView.builder(
-        padding: EdgeInsets.all(8.0),
-        itemExtent: 50.0,
-        itemCount: titleArr.length,
-        itemBuilder: (BuildContext context, int index) {
-          return FlatButton(
-            child: Text(titleArr[index]),
-            onPressed: () {
-              switch (index) {
-                case 0:
-                  CommomUtils.pushPage(context, UrlPage());
-                  break;
-                case 1:
-                  CommomUtils.pushPage(context, StsPage());
-                  break;
-                case 2:
-                  CommomUtils.pushPage(context, AuthPage());
-                  break;
-                case 3:
-                  CommomUtils.pushPage(context, MpsPage());
-                  break;
-                case 4:
-                  CommomUtils.pushPage(
-                      context, VideoGridPage(playMode: ModeType.STS));
-                  break;
-                case 5:
-                  CommomUtils.pushPage(
-                      context, VideoGridPage(playMode: ModeType.URL));
-                  break;
-                case 6:
-                  CommomUtils.pushPage(context, DownloadPage());
-                  break;
-                case 7:
-                  if (Platform.isAndroid) {
-                    CommomUtils.pushPage(context, LocalPage());
-                  }
-                  break;
-                default:
-              }
-            },
-          );
-        },
       ),
     );
   }

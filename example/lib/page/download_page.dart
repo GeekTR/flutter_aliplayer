@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_aliplayer_example/page/player_page.dart';
 import 'package:flutter_aliplayer_example/util/aliyun_download_manager.dart';
 import 'package:flutter_aliplayer_example/util/common_utils.dart';
+import 'package:flutter_aliplayer_example/util/database_utils.dart';
 import 'package:flutter_aliplayer_example/util/formatter_utils.dart';
 import 'package:flutter_aliplayer_example/util/network_utils.dart';
 import 'package:flutter_aliplayer_example/widget/aliyun_download_dialog.dart';
@@ -13,11 +14,21 @@ typedef void AliDownloadManagerCreatedCallback();
 
 class DownloadPage extends StatefulWidget {
   final AliDownloadManagerCreatedCallback onCreated;
+  _DownloadPageState _downloadPageState;
 
   DownloadPage({this.onCreated});
 
   @override
-  _DownloadPageState createState() => _DownloadPageState();
+  _DownloadPageState createState() {
+    _downloadPageState = _DownloadPageState();
+    return _downloadPageState;
+  }
+
+  void showDownloadDialog() {
+    if (_downloadPageState != null) {
+      _downloadPageState._showDownloadDialog();
+    }
+  }
 }
 
 class _DownloadPageState extends State<DownloadPage> {
@@ -29,45 +40,39 @@ class _DownloadPageState extends State<DownloadPage> {
   void initState() {
     super.initState();
     _aliyunDownloadManager = AliyunDownloadManager.instance;
-    _aliyunDownloadManager.findAllDownload().then((value) {
-      setState(() {
-        _dataList.addAll(value);
+    DBUtils.openDB().then((value) {
+      _aliyunDownloadManager.findAllDownload().then((value) {
+        setState(() {
+          _dataList.addAll(value);
+        });
       });
     });
+  }
+
+  _showDownloadDialog() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AliyunDownloadDialog(
+            onItemAdd: (data) {
+              _aliyunDownloadManager.add(data).then((value) {
+                setState(() {
+                  _dataList.add(value);
+                });
+              }).catchError((e) {
+                print("aliyun download error : $e");
+              });
+            },
+            onClose: () {
+              Navigator.of(context).pop();
+            },
+          );
+        });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Download"),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () {
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AliyunDownloadDialog(
-                      onItemAdd: (data) {
-                        _aliyunDownloadManager.add(data).then((value) {
-                          setState(() {
-                            _dataList.add(value);
-                          });
-                        }).catchError((e) {
-                          print("aliyun download error : $e");
-                        });
-                      },
-                      onClose: () {
-                        Navigator.of(context).pop();
-                      },
-                    );
-                  });
-            },
-          ),
-        ],
-      ),
       body: Stack(
         children: [
           ListView.builder(
@@ -161,9 +166,9 @@ class _DownloadPageState extends State<DownloadPage> {
                                   _aliyunDownloadManager
                                       .start(customDownloaderModel)
                                       .listen((event) {
-                                        if(mounted){
-                                          setState(() {});
-                                        }
+                                    if (mounted) {
+                                      setState(() {});
+                                    }
                                   }, onDone: () {});
                                 });
                               });
