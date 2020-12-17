@@ -27,4 +27,8 @@ class FlutterAliPlayerFactory {
   Future<void> initService(Uint8List byteData) {
     return _methodChannel.invokeMethod("initService", byteData);
   }
+
+  Future<String> getSDKVersion() {
+    return _methodChannel.invokeMethod("getSDKVersion");
+  }
 }

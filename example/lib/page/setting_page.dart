@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_aliplayer/flutter_aliplayer.dart';
+import 'package:flutter_aliplayer/flutter_aliplayer_factory.dart';
 import 'package:flutter_aliplayer_example/config.dart';
 
 class SettingPage extends StatefulWidget {
@@ -14,16 +15,28 @@ class SettingPage extends StatefulWidget {
 class _SettingHomePageState extends State<SettingPage> {
   TextEditingController _dnsTextEditingController = TextEditingController();
   String _sdkVersion;
+  FlutterAliPlayerFactory _flutterAliPlayerFactory;
 
   @override
   void initState() {
     super.initState();
     widget._flutterAliPlayre = FlutterAliplayer.init(0);
-    widget._flutterAliPlayre.getSDKVersion().then((value) {
-      setState(() {
-        _sdkVersion = value;
+    if (Platform.isAndroid) {
+      _flutterAliPlayerFactory = FlutterAliPlayerFactory();
+      widget._flutterAliPlayre = _flutterAliPlayerFactory.createAliPlayer();
+      _flutterAliPlayerFactory.getSDKVersion().then((value) {
+        setState(() {
+          _sdkVersion = value;
+        });
       });
-    });
+    } else {
+      widget._flutterAliPlayre.getSDKVersion().then((value) {
+        setState(() {
+          _sdkVersion = value;
+        });
+      });
+    }
+
     widget._flutterAliPlayre.getLogLevel().then((value) {
       setState(() {
         GlobalSettings.mLogLevel = value;
@@ -178,6 +191,7 @@ class _SettingHomePageState extends State<SettingPage> {
                 groupValue: GlobalSettings.mLogLevel,
                 onChanged: (value) {
                   widget._flutterAliPlayre.setLogLevel(value);
+
                   setState(() {
                     GlobalSettings.mLogLevel = value;
                   });

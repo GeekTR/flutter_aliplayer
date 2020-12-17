@@ -656,9 +656,6 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
                 selectExtSubtitle(trackIndex,selectExtSubtitlEnable);
                 result.success(null);
                 break;
-            case "getSDKVersion":
-                result.success(getSDKVersion());
-                break;
             case "enableConsoleLog":
                 Boolean enableLog = (Boolean) methodCall.arguments;
                 enableConsoleLog(enableLog);
@@ -690,10 +687,6 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
             default:
                 result.notImplemented();
         }
-    }
-
-    private String getSDKVersion(){
-        return AliPlayerFactory.getSdkVersion();
     }
 
     private void createAliPlayer(){

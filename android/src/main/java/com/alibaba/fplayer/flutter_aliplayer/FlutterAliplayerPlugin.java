@@ -2,6 +2,7 @@ package com.alibaba.fplayer.flutter_aliplayer;
 
 import androidx.annotation.NonNull;
 
+import com.aliyun.player.AliPlayerFactory;
 import com.aliyun.private_service.PrivateService;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -64,6 +65,9 @@ public class FlutterAliplayerPlugin implements FlutterPlugin, MethodCallHandler 
             case "initService":
                 byte[] datas = (byte[]) call.arguments;
                 PrivateService.initService(flutterPluginBinding.getApplicationContext(),datas);
+                break;
+            case "getSDKVersion":
+                result.success(AliPlayerFactory.getSdkVersion());
                 break;
         }
 

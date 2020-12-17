@@ -544,9 +544,6 @@ public class FlutterAliListPlayer implements EventChannel.StreamHandler, MethodC
                 Boolean selectExtSubtitlEnable = (Boolean) selectExtSubtitleMap.get("enable");
                 selectExtSubtitle(trackIndex,selectExtSubtitlEnable);
                 break;
-            case "getSDKVersion":
-                result.success(getSDKVersion());
-                break;
             case "addVidSource":
                 String addSourceVid = methodCall.argument("vid");
                 String vidUid = methodCall.argument("uid");
@@ -637,10 +634,6 @@ public class FlutterAliListPlayer implements EventChannel.StreamHandler, MethodC
             default:
                 result.notImplemented();
         }
-    }
-
-    private String getSDKVersion(){
-        return AliPlayerFactory.getSdkVersion();
     }
 
     private void setDataSource(String url){
