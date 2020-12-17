@@ -66,9 +66,6 @@ public class FlutterAliplayerPlugin implements FlutterPlugin, MethodCallHandler 
                 byte[] datas = (byte[]) call.arguments;
                 PrivateService.initService(flutterPluginBinding.getApplicationContext(),datas);
                 break;
-            case "getSDKVersion":
-                result.success(AliPlayerFactory.getSdkVersion());
-                break;
         }
 
     }

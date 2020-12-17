@@ -24,18 +24,12 @@ class _SettingHomePageState extends State<SettingPage> {
     if (Platform.isAndroid) {
       _flutterAliPlayerFactory = FlutterAliPlayerFactory();
       widget._flutterAliPlayre = _flutterAliPlayerFactory.createAliPlayer();
-      _flutterAliPlayerFactory.getSDKVersion().then((value) {
-        setState(() {
-          _sdkVersion = value;
-        });
-      });
-    } else {
-      widget._flutterAliPlayre.getSDKVersion().then((value) {
-        setState(() {
-          _sdkVersion = value;
-        });
-      });
     }
+    widget._flutterAliPlayre.getSDKVersion().then((value) {
+      setState(() {
+        _sdkVersion = value;
+      });
+    });
 
     widget._flutterAliPlayre.getLogLevel().then((value) {
       setState(() {

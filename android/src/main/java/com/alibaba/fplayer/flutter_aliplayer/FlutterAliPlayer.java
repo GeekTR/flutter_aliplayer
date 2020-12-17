@@ -684,6 +684,9 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
                 Integer requestBitmapProgress = (Integer) methodCall.arguments;
                 requestBitmapAtPosition(requestBitmapProgress);
                 break;
+            case "getSDKVersion":
+                result.success(AliPlayerFactory.getSdkVersion());
+                break;
             default:
                 result.notImplemented();
         }
