@@ -21,6 +21,7 @@
 }
 
 @property (nonatomic, strong) FlutterEventSink eventSink;
+@property (nonatomic, assign) BOOL enableMix;
 
 @end
 
@@ -145,6 +146,19 @@
     }else{
         self.aliPlayer = nil;
     }
+}
+
+-(void)enableMix:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    FlutterResult result = arr[1];
+    NSNumber* val = [call arguments];
+    self.enableMix = val.boolValue;
+    if (val.boolValue) {
+        [AliPlayer setAudioSessionDelegate:self];
+    }else{
+        [AliPlayer setAudioSessionDelegate:nil];
+    }
+    result(nil);
 }
 
 - (void)isLoop:(NSArray*)arr {
@@ -563,10 +577,27 @@
     FlutterResult result = arr[1];
     AliPlayer *player = arr[2];
     AVPMediaInfo * info = [player getMediaInfo];
+    
+    //TODO 后面需要统一键值转换规则
+    [AVPMediaInfo mj_setupReplacedKeyFromPropertyName:^NSDictionary *{
+        return @{
+            @"mTitle":@"title",
+            @"mCoverUrl":@"coverURL",
+            @"mTrackInfos":@"tracks",
+        };
+    }];
+    
+    [AVPTrackInfo mj_setupReplacedKeyFromPropertyName:^NSDictionary *{
+        return @{
+            @"vodDefinition":@"trackDefinition",
+            @"index":@"trackIndex",
+        };
+    }];
+    
     [AVPThumbnailInfo mj_setupReplacedKeyFromPropertyName:^NSDictionary *{
         return @{
-                 @"URL" : @"url",
-                 };
+            @"URL" : @"url",
+        };
     }];
     NSLog(@"getMediaInfo==%@",info.mj_JSONString);
     result(info.mj_keyValues);
@@ -814,6 +845,33 @@
  */
 - (void)onLoadingProgress:(AliPlayer*)player progress:(float)progress {
     self.eventSink(@{kAliPlayerMethod:@"onLoadingProgress",@"percent":@((int)progress)});
+}
+
+
+#pragma --mark CicadaAudioSessionDelegate
+- (BOOL)setActive:(BOOL)active error:(NSError **)outError
+{
+    return [[AVAudioSession sharedInstance] setActive:active error:outError];
+}
+
+- (BOOL)setCategory:(NSString *)category withOptions:(AVAudioSessionCategoryOptions)options error:(NSError **)outError
+{
+    if (self.enableMix) {
+        options = AVAudioSessionCategoryOptionMixWithOthers | AVAudioSessionCategoryOptionDuckOthers;
+    }
+    return [[AVAudioSession sharedInstance] setCategory:category withOptions:options error:outError];
+}
+
+- (BOOL)setCategory:(AVAudioSessionCategory)category mode:(AVAudioSessionMode)mode routeSharingPolicy:(AVAudioSessionRouteSharingPolicy)policy options:(AVAudioSessionCategoryOptions)options error:(NSError **)outError
+{
+    if (self.enableMix) {
+        return YES;
+    }
+
+    if (@available(iOS 11.0, tvOS 11.0, *)) {
+        return [[AVAudioSession sharedInstance] setCategory:category mode:mode routeSharingPolicy:policy options:options error:outError];
+    }
+    return NO;
 }
 
 @end

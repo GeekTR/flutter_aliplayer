@@ -317,6 +317,10 @@ class FlutterAliplayer {
     return channel.invokeMethod("getSDKVersion");
   }
 
+  Future<void> enableMix(bool enable) {
+    return channel.invokeMethod("enableMix", enable);
+  }
+
   Future<void> enableConsoleLog(bool enable) {
     return channel.invokeMethod("enableConsoleLog", enable);
   }
