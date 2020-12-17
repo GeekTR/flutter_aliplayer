@@ -92,7 +92,10 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     _dataSourceMap = widget.dataSourceMap;
 
     //开启混音模式
-    fAliplayer.enableMix(true);
+    if (Platform.isIOS) {
+      fAliplayer.enableMix(true);
+    }
+
     if (Platform.isAndroid) {
       getExternalStorageDirectories().then((value) {
         if (value.length > 0) {
@@ -314,7 +317,10 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   void dispose() {
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-    fAliplayer.enableMix(false);
+    if (Platform.isIOS) {
+      fAliplayer.enableMix(false);
+    }
+
     fAliplayer.stop();
     fAliplayer.destroy();
     super.dispose();
