@@ -29,6 +29,7 @@ class _VideoGridPageState extends State<VideoGridPage>
   FlutterAliListPlayer fAliListPlayer;
 
   int _curIdx = 0;
+  int _lastCurIndex = -1;
 
   bool _isPause = false;
 
@@ -196,6 +197,7 @@ class _VideoGridPageState extends State<VideoGridPage>
               onTap: () {
                 setState(() {
                   _curIdx = index;
+                  _lastCurIndex = index;
                   _showMode = VideoShowMode.Srceen;
                   _pageController = PageController(initialPage: _curIdx);
                 });
@@ -248,7 +250,10 @@ class _VideoGridPageState extends State<VideoGridPage>
               _playerY = 0.0;
               PageMetrics metrics = notification.metrics as PageMetrics;
               _curIdx = metrics.page.round();
-              start();
+              if (_lastCurIndex != _curIdx) {
+                start();
+              }
+              _lastCurIndex = _curIdx;
             }
             return false;
           },
