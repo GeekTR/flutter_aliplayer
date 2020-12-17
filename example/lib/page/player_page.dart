@@ -535,11 +535,11 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
         alignment: Alignment.center,
         width: width,
         height: height,
-        child: Wrap(
-          direction: Axis.vertical,
-          crossAxisAlignment: WrapCrossAlignment.center,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(_tipsContent,
+                maxLines: 3,
                 style: TextStyle(color: Colors.red),
                 textAlign: TextAlign.center),
             SizedBox(
@@ -642,8 +642,8 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   _buildProgressBar(double width, double height) {
     if (_showLoading) {
       return Positioned(
-        left: width / 2,
-        top: height / 2,
+        left: width / 2 - 20,
+        top: height / 2 - 20,
         child: Column(
           children: [
             CircularProgressIndicator(
