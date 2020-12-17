@@ -145,41 +145,35 @@ class _DownloadPageState extends State<DownloadPage> {
                               customDownloaderModel.downloadState ==
                                   DownloadState.START) {
                           } else {
-                            if (customDownloaderModel.downloadState ==
-                                DownloadState.STOP) {
+                            NetWorkUtils.instance
+                                .getHttpFuture(HttpConstant.GET_STS)
+                                .then((value) {
+                              var map = {
+                                DataSourceRelated.VID_KEY:
+                                    customDownloaderModel.videoId,
+                                DataSourceRelated.TYPE_KEY:
+                                    FlutterAvpdef.DOWNLOADTYPE_STS,
+                                DataSourceRelated.INDEX_KEY:
+                                    customDownloaderModel.index,
+                                DataSourceRelated.ACCESSKEYID_KEY:
+                                    value["accessKeyId"],
+                                DataSourceRelated.ACCESSKEYSECRET_KEY:
+                                    value["accessKeySecret"],
+                                DataSourceRelated.SECURITYTOKEN_KEY:
+                                    value["securityToken"],
+                              };
                               _aliyunDownloadManager
-                                  .start(customDownloaderModel);
-                            } else {
-                              NetWorkUtils.instance
-                                  .getHttpFuture(HttpConstant.GET_STS)
-                                  .then((value) {
-                                var map = {
-                                  DataSourceRelated.VID_KEY:
-                                      customDownloaderModel.videoId,
-                                  DataSourceRelated.TYPE_KEY:
-                                      FlutterAvpdef.DOWNLOADTYPE_STS,
-                                  DataSourceRelated.INDEX_KEY:
-                                      customDownloaderModel.index,
-                                  DataSourceRelated.ACCESSKEYID_KEY:
-                                      value["accessKeyId"],
-                                  DataSourceRelated.ACCESSKEYSECRET_KEY:
-                                      value["accessKeySecret"],
-                                  DataSourceRelated.SECURITYTOKEN_KEY:
-                                      value["securityToken"],
-                                };
+                                  .prepare(map)
+                                  .whenComplete(() {
                                 _aliyunDownloadManager
-                                    .prepare(map)
-                                    .whenComplete(() {
-                                  _aliyunDownloadManager
-                                      .start(customDownloaderModel)
-                                      .listen((event) {
-                                    if (mounted) {
-                                      setState(() {});
-                                    }
-                                  }, onDone: () {});
-                                });
+                                    .start(customDownloaderModel)
+                                    .listen((event) {
+                                  if (mounted) {
+                                    setState(() {});
+                                  }
+                                }, onDone: () {});
                               });
-                            }
+                            });
                           }
                         },
                       ),
