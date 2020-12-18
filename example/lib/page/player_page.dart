@@ -298,7 +298,9 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
         break;
       case AppLifecycleState.resumed:
         _setNetworkChangedListener();
-        fAliplayer.play();
+        if(_currentConnectivityResult == ConnectivityResult.wifi){
+          fAliplayer.play();
+        }
         break;
       case AppLifecycleState.paused:
         if (!_mEnablePlayBack) {

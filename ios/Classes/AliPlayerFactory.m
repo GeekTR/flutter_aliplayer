@@ -124,21 +124,28 @@
 }
 
 - (void)play:(NSArray*)arr {
+    FlutterResult result = arr[1];
     AliPlayer *player = arr[2];
     [player start];
+    result(nil);
 }
 
 - (void)pause:(NSArray*)arr {
+    FlutterResult result = arr[1];
     AliPlayer *player = arr[2];
     [player pause];
+    result(nil);
 }
 
 - (void)stop:(NSArray*)arr {
+    FlutterResult result = arr[1];
     AliPlayer *player = arr[2];
     [player stop];
+    result(nil);
 }
 
 - (void)destroy:(NSArray*)arr {
+    FlutterResult result = arr[1];
     AliPlayer *player = arr[2];
     [player destroy];
     if([player isKindOfClass:AliListPlayer.class]){
@@ -146,6 +153,7 @@
     }else{
         self.aliPlayer = nil;
     }
+    result(nil);
 }
 
 -(void)enableMix:(NSArray*)arr {
