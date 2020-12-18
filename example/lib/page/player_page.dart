@@ -298,7 +298,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
         break;
       case AppLifecycleState.resumed:
         _setNetworkChangedListener();
-        if(_currentConnectivityResult == ConnectivityResult.wifi){
+        if (_currentConnectivityResult == ConnectivityResult.wifi) {
           fAliplayer.play();
         }
         break;
@@ -424,10 +424,23 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
         this.fAliplayer.setUrl(_dataSourceMap[DataSourceRelated.URL_KEY]);
         break;
       case ModeType.STS:
-        this.fAliplayer.setVidSts(_dataSourceMap);
+        this.fAliplayer.setVidSts(
+            vid: _dataSourceMap[DataSourceRelated.VID_KEY],
+            region: _dataSourceMap[DataSourceRelated.REGION_KEY],
+            accessKeyId: _dataSourceMap[DataSourceRelated.ACCESSKEYID_KEY],
+            accessKeySecret:
+                _dataSourceMap[DataSourceRelated.ACCESSKEYSECRET_KEY],
+            securityToken: _dataSourceMap[DataSourceRelated.SECURITYTOKEN_KEY],
+            definitionList: _dataSourceMap[DataSourceRelated.DEFINITION_LIST],
+            previewTime: _dataSourceMap[DataSourceRelated.PREVIEWTIME_KEY]);
         break;
       case ModeType.AUTH:
-        this.fAliplayer.setVidAuth(_dataSourceMap);
+        this.fAliplayer.setVidAuth(
+            vid: _dataSourceMap[DataSourceRelated.VID_KEY],
+            region: _dataSourceMap[DataSourceRelated.REGION_KEY],
+            playAuth: _dataSourceMap[DataSourceRelated.PLAYAUTH_KEY],
+            definitionList: _dataSourceMap[DataSourceRelated.DEFINITION_LIST],
+            previewTime: _dataSourceMap[DataSourceRelated.PREVIEWTIME_KEY]);
         break;
       case ModeType.MPS:
         this.fAliplayer.setVidMps(_dataSourceMap);

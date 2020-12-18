@@ -227,11 +227,40 @@ class FlutterAliplayer {
     return channel.invokeMethod('setEnableHardwareDecoder', isHardWare);
   }
 
-  Future<void> setVidSts(Map<String, dynamic> stsInfo) async {
+  Future<void> setVidSts(
+      {String vid,
+      String region,
+      String accessKeyId,
+      String accessKeySecret,
+      String securityToken,
+      String previewTime,
+      List<String> definitionList}) async {
+    Map<String, dynamic> stsInfo = {
+      "vid": vid,
+      "region": region,
+      "accessKeyId": accessKeyId,
+      "accessKeySecret": accessKeySecret,
+      "securityToken": securityToken,
+      "definitionList": definitionList,
+      "previewTime": previewTime
+    };
     return channel.invokeMethod("setVidSts", stsInfo);
   }
 
-  Future<void> setVidAuth(Map<String, dynamic> authInfo) async {
+  Future<void> setVidAuth({
+    String vid,
+    String region,
+    String playAuth,
+    String previewTime,
+    List<String> definitionList,
+  }) async {
+    Map<String, dynamic> authInfo = {
+      "vid": vid,
+      "region": region,
+      "playAuth": playAuth,
+      "definitionList": definitionList,
+      "previewTime": previewTime
+    };
     return channel.invokeMethod("setVidAuth", authInfo);
   }
 
