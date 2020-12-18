@@ -4,6 +4,7 @@ import 'package:flutter_aliplayer/flutter_aliplayer_factory.dart';
 import 'package:flutter_aliplayer_example/config.dart';
 import 'package:flutter_aliplayer_example/model/video_model.dart';
 import 'package:flutter_aliplayer_example/util/network_utils.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_aliplayer/flutter_alilistplayer.dart';
 
@@ -78,6 +79,10 @@ class _VideoGridPageState extends State<VideoGridPage>
           break;
         default:
       }
+    });
+
+    fAliListPlayer.setOnError((errorCode, errorExtra, errorMsg) {
+      Fluttertoast.showToast(msg: errorMsg);
     });
 
     _onRefresh();
@@ -236,7 +241,7 @@ class _VideoGridPageState extends State<VideoGridPage>
             if (notification.depth == 0 &&
                 notification is ScrollUpdateNotification) {
               final PageMetrics metrics = notification.metrics as PageMetrics;
-              if (metrics.pixels > 0 && _curIdx < _dataList.length-1) {
+              if (metrics.pixels > 0 && _curIdx < _dataList.length - 1) {
                 if (metrics.pixels - _startScrollpixels > 0) {
                   _playerY =
                       metrics.pixels % MediaQuery.of(context).size.height;
