@@ -40,9 +40,6 @@ class _VideoGridPageState extends State<VideoGridPage>
 
   bool _isBackgroundMode;
 
-  //开始滑动位置
-  double _startScrollpixels = 0;
-
   @override
   void initState() {
     super.initState();
@@ -232,25 +229,14 @@ class _VideoGridPageState extends State<VideoGridPage>
         return true;
       },
       child: Scaffold(
+        backgroundColor: Colors.black,
         body: NotificationListener(
           onNotification: (ScrollNotification notification) {
-            if (notification is ScrollStartNotification) {
-              final PageMetrics metrics = notification.metrics as PageMetrics;
-              _startScrollpixels = metrics.pixels;
-            }
             if (notification.depth == 0 &&
                 notification is ScrollUpdateNotification) {
               final PageMetrics metrics = notification.metrics as PageMetrics;
-              if (metrics.pixels > 0 && _curIdx < _dataList.length - 1) {
-                if (metrics.pixels - _startScrollpixels > 0) {
-                  _playerY =
-                      metrics.pixels % MediaQuery.of(context).size.height;
-                } else {
-                  _playerY = -(MediaQuery.of(context).size.height -
-                      (metrics.pixels % MediaQuery.of(context).size.height));
-                }
+              _playerY = metrics.pixels - _curIdx * MediaQuery.of(context).size.height;
                 setState(() {});
-              }
             } else if (notification is ScrollEndNotification) {
               _playerY = 0.0;
               PageMetrics metrics = notification.metrics as PageMetrics;
