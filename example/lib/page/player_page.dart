@@ -367,6 +367,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                   Container(
                     width: width,
                     height: height,
+                    // padding: EdgeInsets.only(bottom: 25.0),
                     child: Offstage(
                         offstage: _isLock,
                         child: _buildContentWidget(orientation)),
@@ -688,88 +689,90 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
 
   ///播放进度和buffer
   _buildContentWidget(Orientation orientation) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.end,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.only(left: 5.0),
-          child: Text(
-            "buffer : ${FormatterUtils.getTimeformatByMs(_bufferPosition)}",
-            style: TextStyle(color: Colors.white, fontSize: 11),
-          ),
-        ),
-        Row(
-          children: [
-            SizedBox(
-              width: 5.0,
-            ),
-            Text(
-              "${FormatterUtils.getTimeformatByMs(_currentPositionText)} / ${FormatterUtils.getTimeformatByMs(_videoDuration)}",
+    return SafeArea(
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(left: 5.0),
+            child: Text(
+              "buffer : ${FormatterUtils.getTimeformatByMs(_bufferPosition)}",
               style: TextStyle(color: Colors.white, fontSize: 11),
             ),
-            Expanded(
-              child: AliyunSlider(
-                max: _videoDuration == 0 ? 1 : _videoDuration.toDouble(),
-                min: 0,
-                bufferColor: Colors.white,
-                bufferValue: _bufferPosition.toDouble(),
-                value: _currentPosition.toDouble(),
-                onChangeStart: (value) {
-                  _inSeek = true;
-                  _showLoading = false;
-                  setState(() {});
-                },
-                onChangeEnd: (value) {
-                  _inSeek = false;
-                  setState(() {
-                    if (_currentPlayerState == FlutterAvpdef.completion &&
-                        _showTipsWidget) {
-                      setState(() {
-                        _showTipsWidget = false;
-                      });
+          ),
+          Row(
+            children: [
+              SizedBox(
+                width: 5.0,
+              ),
+              Text(
+                "${FormatterUtils.getTimeformatByMs(_currentPositionText)} / ${FormatterUtils.getTimeformatByMs(_videoDuration)}",
+                style: TextStyle(color: Colors.white, fontSize: 11),
+              ),
+              Expanded(
+                child: AliyunSlider(
+                  max: _videoDuration == 0 ? 1 : _videoDuration.toDouble(),
+                  min: 0,
+                  bufferColor: Colors.white,
+                  bufferValue: _bufferPosition.toDouble(),
+                  value: _currentPosition.toDouble(),
+                  onChangeStart: (value) {
+                    _inSeek = true;
+                    _showLoading = false;
+                    setState(() {});
+                  },
+                  onChangeEnd: (value) {
+                    _inSeek = false;
+                    setState(() {
+                      if (_currentPlayerState == FlutterAvpdef.completion &&
+                          _showTipsWidget) {
+                        setState(() {
+                          _showTipsWidget = false;
+                        });
+                      }
+                    });
+                    fAliplayer.seekTo(
+                        value.ceil(),
+                        GlobalSettings.mEnableAccurateSeek
+                            ? FlutterAvpdef.ACCURATE
+                            : FlutterAvpdef.INACCURATE);
+                  },
+                  onChanged: (value) {
+                    if (_thumbnailSuccess) {
+                      fAliplayer.requestBitmapAtPosition(value.ceil());
                     }
-                  });
-                  fAliplayer.seekTo(
-                      value.ceil(),
-                      GlobalSettings.mEnableAccurateSeek
-                          ? FlutterAvpdef.ACCURATE
-                          : FlutterAvpdef.INACCURATE);
-                },
-                onChanged: (value) {
-                  if (_thumbnailSuccess) {
-                    fAliplayer.requestBitmapAtPosition(value.ceil());
+                    setState(() {
+                      _currentPosition = value.ceil();
+                    });
+                  },
+                ),
+              ),
+              IconButton(
+                icon: Icon(
+                  orientation == Orientation.portrait
+                      ? Icons.fullscreen
+                      : Icons.fullscreen_exit,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  if (orientation == Orientation.portrait) {
+                    SystemChrome.setPreferredOrientations([
+                      DeviceOrientation.landscapeLeft,
+                      DeviceOrientation.landscapeRight
+                    ]);
+                  } else {
+                    SystemChrome.setPreferredOrientations([
+                      DeviceOrientation.portraitUp,
+                      DeviceOrientation.portraitDown
+                    ]);
                   }
-                  setState(() {
-                    _currentPosition = value.ceil();
-                  });
                 },
               ),
-            ),
-            IconButton(
-              icon: Icon(
-                orientation == Orientation.portrait
-                    ? Icons.fullscreen
-                    : Icons.fullscreen_exit,
-                color: Colors.white,
-              ),
-              onPressed: () {
-                if (orientation == Orientation.portrait) {
-                  SystemChrome.setPreferredOrientations([
-                    DeviceOrientation.landscapeLeft,
-                    DeviceOrientation.landscapeRight
-                  ]);
-                } else {
-                  SystemChrome.setPreferredOrientations([
-                    DeviceOrientation.portraitUp,
-                    DeviceOrientation.portraitDown
-                  ]);
-                }
-              },
-            ),
-          ],
-        ),
-      ],
+            ],
+          ),
+        ],
+      ),
     );
   }
 
