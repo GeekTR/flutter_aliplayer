@@ -298,9 +298,6 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
         break;
       case AppLifecycleState.resumed:
         _setNetworkChangedListener();
-        if (_currentConnectivityResult == ConnectivityResult.wifi) {
-          fAliplayer.play();
-        }
         break;
       case AppLifecycleState.paused:
         if (!_mEnablePlayBack) {
@@ -690,7 +687,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   ///播放进度和buffer
   _buildContentWidget(Orientation orientation) {
     return SafeArea(
-          child: Column(
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
