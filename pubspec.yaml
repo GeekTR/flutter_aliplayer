@@ -1,8 +1,8 @@
 name: flutter_aliplayer
-description: A new flutter plugin project.
-version: 0.0.1
-author:
-homepage:
+description: Aliyun Player With Flutter
+version: 5.2.2
+# author: 
+homepage: https://www.aliyun.com/?spm=a2c4g.11186623.J_8058803260.1.5bf377a98Mc6oC
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
