@@ -8,6 +8,7 @@ local.properties
 .gradle/buildOutputCleanup/cache.properties
 .gradle/checksums/checksums.lock
 .gradle/vcs-1/gc.properties
+.idea
 .idea/$CACHE_FILE$
 .idea/gradle.xml
 .idea/misc.xml
