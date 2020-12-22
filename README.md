@@ -5,6 +5,10 @@ A new flutter plugin project , The project supports Android and iOS base on Aliy
 [iOS SDK URL](https://help.aliyun.com/document_detail/94428.html?spm=a2c4g.11186623.6.980.7fc22a88xOI4gc)
 
 ## Installation
+```yaml
+dependencies:
+  flutter_aliplayer: ^{{latest version}}
+```
 
 
 ## Example
@@ -132,4 +136,4 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     }
   }
 }
-
+```
