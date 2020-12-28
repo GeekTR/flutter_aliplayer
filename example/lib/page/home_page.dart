@@ -6,7 +6,6 @@ import 'package:flutter_aliplayer_example/config.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_aliplayer_example/page/auth_page.dart';
 import 'package:flutter_aliplayer_example/page/download_page.dart';
-import 'package:flutter_aliplayer_example/page/mps_page.dart';
 import 'package:flutter_aliplayer_example/page/setting_page.dart';
 import 'package:flutter_aliplayer_example/page/sts_page.dart';
 import 'package:flutter_aliplayer_example/page/url_page.dart';
@@ -28,7 +27,6 @@ class _MyAppState extends State<HomePage> {
     'URL播放',
     'STS播放',
     'AUTH播放',
-    'MPS播放',
     '播放列表演示(VID)',
     '播放列表演示(URL)',
     '断点下载',
@@ -113,21 +111,18 @@ class _MyAppState extends State<HomePage> {
                       CommomUtils.pushPage(context, AuthPage());
                       break;
                     case 3:
-                      CommomUtils.pushPage(context, MpsPage());
-                      break;
-                    case 4:
                       CommomUtils.pushPage(
                           context, VideoGridPage(playMode: ModeType.STS));
                       break;
-                    case 5:
+                    case 4:
                       CommomUtils.pushPage(
                           context, VideoGridPage(playMode: ModeType.URL));
                       break;
-                    case 6:
+                    case 5:
                       _showDownload = true;
                       setState(() {});
                       break;
-                    case 7:
+                    case 6:
                       if (Platform.isAndroid) {
                         CommomUtils.pushPage(context, LocalPage());
                       }
