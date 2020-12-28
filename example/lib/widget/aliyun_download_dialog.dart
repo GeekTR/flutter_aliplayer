@@ -14,9 +14,7 @@ import 'package:flutter_aliplayer_example/util/network_utils.dart';
 class AliyunDownloadDialog extends Dialog {
   final NetWorkUtils _netWorkUtils = NetWorkUtils.instance;
   final TextEditingController _vidController = TextEditingController.fromValue(
-      TextEditingValue(text: DataSourceRelated.DEFAULT_VID
-          //text: "6609a2f737cb43e1a79ec2bc6aee781b"
-          ));
+      TextEditingValue(text: DataSourceRelated.DEFAULT_VID));
   final TextEditingController _accessKeyIdController = TextEditingController();
   final TextEditingController _accessKeySecretController =
       TextEditingController();

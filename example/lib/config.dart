@@ -40,11 +40,10 @@ enum VideoShowMode { Grid, Srceen }
 ///播放源相关
 class DataSourceRelated {
   static const String DEFAULT_REGION = "cn-shanghai";
-  static const String DEFAULT_VID = "e4959b9f36cd49f48b4061643b984f1c"; //多码率
-  // static const String DEFAULT_VID = "7a27bd5a62d546cc9a36137133a3711c"; //进度条不完整
+  static const String DEFAULT_VID = "6b357371ef3c45f4a06e2536fd534380";
 
   static const String DEFAULT_URL =
-      "https://alivc-demo-vod.aliyuncs.com/6b357371ef3c45f4a06e2536fd534380/eb3f139a4b437d1e9b623ee1b671115b-ld.mp4";
+      "https://alivc-demo-vod.aliyuncs.com/6b357371ef3c45f4a06e2536fd534380/53733986bce75cfc367d7554a47638c0-fd.mp4";
 
   static const String TYPE_KEY = "type";
   static const String REGION_KEY = "region";
