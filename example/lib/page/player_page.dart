@@ -121,7 +121,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   }
 
   _initListener() {
-    fAliplayer.setOnPrepard(() {
+    fAliplayer.setOnPrepared(() {
       Fluttertoast.showToast(msg: "OnPrepared ");
     });
     fAliplayer.setOnRenderingStart(() {

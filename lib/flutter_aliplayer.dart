@@ -78,7 +78,7 @@ class FlutterAliplayer {
     eventChannel.receiveBroadcastStream().listen(_onEvent, onError: _onError);
   }
 
-  void setOnPrepard(OnPrepared prepared) {
+  void setOnPrepared(OnPrepared prepared) {
     this.onPrepared = prepared;
   }
 
