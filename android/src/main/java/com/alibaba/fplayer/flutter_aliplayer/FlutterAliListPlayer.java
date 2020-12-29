@@ -299,6 +299,10 @@ public class FlutterAliListPlayer implements EventChannel.StreamHandler, MethodC
     @Override
     public void onMethodCall(MethodCall methodCall, MethodChannel.Result result) {
         switch (methodCall.method) {
+            case "setPreloadCount":
+                Integer count = (Integer) methodCall.arguments;
+                setPreloadCount(count);
+                break;
             case "createAliPlayer":
                 break;
             case "setUrl":
@@ -633,6 +637,12 @@ public class FlutterAliListPlayer implements EventChannel.StreamHandler, MethodC
                 break;
             default:
                 result.notImplemented();
+        }
+    }
+
+    private void setPreloadCount(int count){
+        if(mAliListPlayer != null){
+            mAliListPlayer.setPreloadCount(count);
         }
     }
 

@@ -9,6 +9,10 @@ class FlutterAliListPlayer extends FlutterAliplayer {
     channel = new MethodChannel('flutter_alilistplayer');
   }
 
+  Future<void> setPreloadCount(int count) {
+    return channel.invokeMethod("setPreloadCount", count);
+  }
+
   Future<void> addVidSource({@required vid, @required uid}) async {
     Map<String, dynamic> info = {'vid': vid, 'uid': uid};
     return channel.invokeMethod("addVidSource", info);
