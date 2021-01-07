@@ -9,7 +9,7 @@ class FlutterAliListPlayer extends FlutterAliplayer {
     channel = new MethodChannel('flutter_alilistplayer');
   }
 
-  Future<void> setPreloadCount(int count) {
+  Future<void> setPreloadCount(int count) async {
     return channel.invokeMethod("setPreloadCount", count);
   }
 
