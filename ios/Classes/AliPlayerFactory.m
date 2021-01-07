@@ -581,6 +581,13 @@
     [player moveToNext:dic[@"accId"] accKey:dic[@"accKey"] token:dic[@"token"] region:dic[@"region"]];
 }
 
+- (void)setPreloadCount:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    AliListPlayer *player = arr[2];
+    NSNumber* val = [call arguments];
+    [player setPreloadCount:val.intValue];
+}
+
 - (void)getMediaInfo:(NSArray*)arr {
     FlutterResult result = arr[1];
     AliPlayer *player = arr[2];
