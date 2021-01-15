@@ -94,7 +94,7 @@
     NSArray *arr = @[call,result,player];
     if([self respondsToSelector:methodSel]){
         IMP imp = [self methodForSelector:methodSel];
-        CGRect (*func)(id, SEL, NSArray*) = (void *)imp;
+        void (*func)(id, SEL, NSArray*) = (void *)imp;
         func(self, methodSel, arr);
     }else{
         result(FlutterMethodNotImplemented);
