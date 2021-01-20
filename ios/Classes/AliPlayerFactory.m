@@ -2,7 +2,7 @@
 //  VideoViewFactory.m
 //  flutter_aliplayer
 //
-//  Created by lileilei on 2020/10/9.
+//  Created by aliyun on 2020/10/9.
 //
 #import "AliPlayerFactory.h"
 #import "FlutterAliPlayerView.h"
@@ -411,6 +411,8 @@
             @"networkRetryCount" :@"mNetworkRetryCount",
             @"liveStartIndex" :@"mLiveStartIndex",
             @"customHeaders" :@"mCustomHeaders",
+            @"disableAudio":@"mDisableAudio",
+            @"disableVideo":@"mDisableVideo",
         };
     }];
     
