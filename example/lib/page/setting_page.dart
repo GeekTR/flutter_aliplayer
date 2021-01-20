@@ -31,7 +31,9 @@ class _SettingHomePageState extends State<SettingPage> {
       _playerName.add("ExoPlayer");
       _playerName.add("MediaPlayer");
     }
-    if (Platform.isIOS) {}
+    if (Platform.isIOS) {
+      _playerName..add("SuperMediaPlayer")..add("AppleAVPlayer");
+    }
     widget._flutterAliPlayre = FlutterAliplayer.init(0);
     if (Platform.isAndroid) {
       _flutterAliPlayerFactory = FlutterAliPlayerFactory();

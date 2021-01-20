@@ -126,6 +126,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   _initListener() {
     fAliplayer.setOnPrepared(() {
       Fluttertoast.showToast(msg: "OnPrepared ");
+      fAliplayer.getPlayerName().then((value) => print("getPlayerName==${value}"));
     });
     fAliplayer.setOnRenderingStart(() {
       Fluttertoast.showToast(msg: " OnFirstFrameShow ");

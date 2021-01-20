@@ -673,6 +673,21 @@
     result(nil);
 }
 
+- (void)setPreferPlayerName:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    FlutterResult result = arr[1];
+    AliListPlayer *player = arr[2];
+    NSString *playerName = [call arguments];
+    [player setPreferPlayerName:playerName];
+    result(nil);
+}
+
+- (void)getPlayerName:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliListPlayer *player = arr[2];
+    result([player getPlayerName]);
+}
+
 #pragma --mark getters
 - (AliPlayer *)aliPlayer{
     if (!_aliPlayer) {
