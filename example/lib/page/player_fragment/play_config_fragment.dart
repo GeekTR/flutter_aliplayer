@@ -25,6 +25,8 @@ class _PlayConfigFragmentState extends State<PlayConfigFragment> {
   TextEditingController _mReferrerController;
   TextEditingController _mHttpProxyController;
 
+  bool mDisableVideo = false;
+  bool mDisableAudio = false;
   bool mShowFrameWhenStop = true;
   bool mEnableSEI = true;
   dynamic _configMap;
@@ -162,6 +164,37 @@ class _PlayConfigFragmentState extends State<PlayConfigFragment> {
                   Column(
                     children: [
                       CupertinoSwitch(
+                        value: mDisableVideo,
+                        onChanged: (value) {
+                          setState(() {
+                            mDisableVideo = value;
+                          });
+                        },
+                      ),
+                      Text("禁用视频"),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      CupertinoSwitch(
+                        value: mDisableAudio,
+                        onChanged: (value) {
+                          setState(() {
+                            mDisableAudio = value;
+                          });
+                        },
+                      ),
+                      Text("禁用音频"),
+                    ],
+                  )
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Column(
+                    children: [
+                      CupertinoSwitch(
                         value: mShowFrameWhenStop,
                         onChanged: (value) {
                           setState(() {
@@ -207,6 +240,8 @@ class _PlayConfigFragmentState extends State<PlayConfigFragment> {
                         'mHttpProxy': _mHttpProxyController.text,
                         'mEnableSEI': mEnableSEI,
                         'mClearFrameWhenStop': !mShowFrameWhenStop,
+                        'mDisableVideo': mDisableVideo,
+                        'mDisableAudio': mDisableAudio
                       };
                       widget.fAliplayer.setConfig(configMap);
                       Fluttertoast.showToast(msg: "应用配置成功");
