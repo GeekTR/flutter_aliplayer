@@ -31,13 +31,8 @@ dependencies:
     # the parent directory to use the current plugin's version.
     path: ../
   
-  flutter_aliplayer_artc:
-    git:
-      url: git@gitlab.alibaba-inc.com:wb-lll664388/flutter_aliplayer_artc.git
-
-  flutter_aliplayer_rts:
-    git:
-      url: git@gitlab.alibaba-inc.com:wb-lll664388/flutter_aliplayer_rts.git
+  flutter_aliplayer_artc: ^5.2.3
+  flutter_aliplayer_rts: ^1.5.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
