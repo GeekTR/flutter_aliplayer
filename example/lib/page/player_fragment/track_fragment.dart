@@ -26,6 +26,9 @@ class SubTrackUIModel {
 class TrackFragmentState extends State<TrackFragment> {
   List<TrackUIModel> _list;
   var _previewLastSubtitleIndex = -1;
+  bool _isDelayTimeTfShow = false;
+
+  TextEditingController _durationController = TextEditingController();
 
   Map extSubTitleMap = {
     "cn":
@@ -67,8 +70,13 @@ class TrackFragmentState extends State<TrackFragment> {
           child: ExpansionPanelList(
         expandedHeaderPadding: EdgeInsets.symmetric(vertical: 1),
         expansionCallback: (index, bool) {
-          TrackUIModel model = _list[index];
-          model.isOpen = !model.isOpen;
+          if(index==_list.length){//最后一项 单独处理逻辑
+            _isDelayTimeTfShow = !_isDelayTimeTfShow;
+            FocusScope.of(context).requestFocus(FocusNode());
+          }else{
+            TrackUIModel model = _list[index];
+            model.isOpen = !model.isOpen;
+          }
           setState(() {});
         },
         children: _list.map((TrackUIModel element) {
@@ -126,7 +134,52 @@ class TrackFragmentState extends State<TrackFragment> {
             ),
             isExpanded: element.isOpen,
           );
-        }).toList(),
+        }).toList()
+          ..add(ExpansionPanel(
+            canTapOnHeader: true,
+            isExpanded: _isDelayTimeTfShow,
+            headerBuilder: (context, isExpanded) {
+              return Center(child: Text('---字幕时间调整----'));
+            },
+            body: Container(
+              height: 60,
+              padding: EdgeInsets.only(left: 8, right: 8, bottom: 20),
+              child: Row(children: [
+                Expanded(
+                  child: TextField(
+                    controller: _durationController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      hintText: "外挂字幕延迟时间，单位毫秒",
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(2),
+                        ),
+                        borderSide: BorderSide(
+                          color: Colors.black12,
+                          width: 1,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                        color: Colors.black12,
+                        width: 1,
+                      )),
+                    ),
+                  ),
+                ),
+                FlatButton(
+                  onPressed: () {
+                    FocusScope.of(context).requestFocus(FocusNode());
+                    int duration = int.tryParse(_durationController.text);
+                    print('-------$duration');
+                    widget.fAliplayer.setStreamDelayTime(_previewLastSubtitleIndex, duration);
+                  },
+                  child: const Text('确定'),
+                ),
+              ]),
+            ),
+          )),
       )),
     );
   }

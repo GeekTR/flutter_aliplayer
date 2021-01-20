@@ -400,6 +400,11 @@ class FlutterAliplayer {
     return channel.invokeMethod("setPrivateService", data);
   }
 
+  Future<void> setStreamDelayTime(int trackIdx,int time){
+    var map = {'index': trackIdx, 'time': time};
+    return channel.invokeMethod("setStreamDelayTime", map);
+  }
+
   void _onEvent(dynamic event) {
     String method = event[EventChanneldef.TYPE_KEY];
     switch (method) {

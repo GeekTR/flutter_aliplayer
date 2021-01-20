@@ -660,6 +660,17 @@
     result(nil);
 }
 
+- (void)setStreamDelayTime:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    FlutterResult result = arr[1];
+    AliListPlayer *player = arr[2];
+    NSDictionary *dic = [[call arguments] removeNull];
+    NSNumber *trackIdxNum = dic[@"index"];
+    NSNumber *timeNum = dic[@"time"];
+    [player setStreamDelayTime:trackIdxNum.intValue time:timeNum.intValue];
+    result(nil);
+}
+
 #pragma --mark getters
 - (AliPlayer *)aliPlayer{
     if (!_aliPlayer) {
