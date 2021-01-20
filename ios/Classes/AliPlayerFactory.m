@@ -2,7 +2,7 @@
 //  VideoViewFactory.m
 //  flutter_aliplayer
 //
-//  Created by lileilei on 2020/10/9.
+//  Created by aliyun on 2020/10/9.
 //
 #import "AliPlayerFactory.h"
 #import "FlutterAliPlayerView.h"
@@ -411,6 +411,8 @@
             @"networkRetryCount" :@"mNetworkRetryCount",
             @"liveStartIndex" :@"mLiveStartIndex",
             @"customHeaders" :@"mCustomHeaders",
+            @"disableAudio":@"mDisableAudio",
+            @"disableVideo":@"mDisableVideo",
         };
     }];
     
@@ -657,6 +659,17 @@
     NSNumber *trackIdxNum = dic[@"trackIndex"];
     NSNumber *enableNum = dic[@"enable"];
     [player selectExtSubtitle:trackIdxNum.intValue enable:enableNum.boolValue];
+    result(nil);
+}
+
+- (void)setStreamDelayTime:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    FlutterResult result = arr[1];
+    AliListPlayer *player = arr[2];
+    NSDictionary *dic = [[call arguments] removeNull];
+    NSNumber *trackIdxNum = dic[@"index"];
+    NSNumber *timeNum = dic[@"time"];
+    [player setStreamDelayTime:trackIdxNum.intValue time:timeNum.intValue];
     result(nil);
 }
 
