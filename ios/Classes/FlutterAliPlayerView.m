@@ -2,7 +2,7 @@
 //  FlutterAliPlayer.m
 //  flutter_aliplayer
 //
-//  Created by lileilei on 2020/9/24.
+//  Created by aliyun on 2020/9/24.
 //
 #import "FlutterAliPlayerView.h"
 

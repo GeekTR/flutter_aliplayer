@@ -2,7 +2,7 @@
 //  VideoViewFactory.h
 //  flutter_aliplayer
 //
-//  Created by lileilei on 2020/10/9.
+//  Created by aliyun on 2020/10/9.
 //
 #import <Flutter/Flutter.h>
 #import <Foundation/Foundation.h>
