@@ -694,6 +694,12 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
             case "getPlayerName":
                 result.success(getPlayerName());
                 break;
+            case "setStreamDelayTime":
+                Map<String,Object> streamDelayTimeMap = (Map<String, Object>) methodCall.arguments;
+                Integer index = (Integer) streamDelayTimeMap.get("index");
+                Integer time = (Integer) streamDelayTimeMap.get("time");
+                setStreamDelayTime(index,time);
+                break;
             default:
                 result.notImplemented();
         }
@@ -1088,5 +1094,11 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
 
     private String getPlayerName(){
         return mAliPlayer == null ? "" : mAliPlayer.getPlayerName();
+    }
+
+    private void setStreamDelayTime(int index,int time){
+        if(mAliPlayer != null){
+            mAliPlayer.setStreamDelayTime(index,time);
+        }
     }
 }

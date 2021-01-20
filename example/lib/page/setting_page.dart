@@ -22,6 +22,9 @@ class _SettingHomePageState extends State<SettingPage> {
   @override
   void initState() {
     super.initState();
+    if (GlobalSettings.mPlayerName.isNotEmpty) {
+      _currentPlayerName = GlobalSettings.mPlayerName;
+    }
     _playerName.add("Default");
     if (Platform.isAndroid) {
       _playerName.add("SuperMediaPlayer");
