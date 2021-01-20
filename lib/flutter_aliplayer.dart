@@ -400,6 +400,14 @@ class FlutterAliplayer {
     return channel.invokeMethod("setPrivateService", data);
   }
 
+  Future<void> setPreferPlayerName(String playerName) {
+    return channel.invokeMethod("setPreferPlayerName", playerName);
+  }
+
+  Future<String> getPlayerName() {
+    return channel.invokeMethod("getPlayerName");
+  }
+
   void _onEvent(dynamic event) {
     String method = event[EventChanneldef.TYPE_KEY];
     switch (method) {

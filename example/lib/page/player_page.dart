@@ -96,6 +96,9 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
       fAliplayer.enableMix(true);
     }
 
+    //设置播放器
+    fAliplayer.setPreferPlayerName(GlobalSettings.mPlayerName);
+
     if (Platform.isAndroid) {
       getExternalStorageDirectories().then((value) {
         if (value.length > 0) {

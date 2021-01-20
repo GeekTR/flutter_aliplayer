@@ -16,10 +16,19 @@ class _SettingHomePageState extends State<SettingPage> {
   TextEditingController _dnsTextEditingController = TextEditingController();
   String _sdkVersion;
   FlutterAliPlayerFactory _flutterAliPlayerFactory;
+  List<String> _playerName = List();
+  String _currentPlayerName = "Default";
 
   @override
   void initState() {
     super.initState();
+    _playerName.add("Default");
+    if (Platform.isAndroid) {
+      _playerName.add("SuperMediaPlayer");
+      _playerName.add("ExoPlayer");
+      _playerName.add("MediaPlayer");
+    }
+    if (Platform.isIOS) {}
     widget._flutterAliPlayre = FlutterAliplayer.init(0);
     if (Platform.isAndroid) {
       _flutterAliPlayerFactory = FlutterAliPlayerFactory();
@@ -75,6 +84,16 @@ class _SettingHomePageState extends State<SettingPage> {
               ],
             ),
 
+            //播放器切换
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [Text("播放器切换"), _buildChangePlayer()],
+            ),
+
+            SizedBox(
+              height: 5.0,
+            ),
+
             //黑名单,Android显示，iOS不显示
             Text(Platform.operatingSystemVersion),
             _blackListForAndroid(),
@@ -105,6 +124,32 @@ class _SettingHomePageState extends State<SettingPage> {
           ],
         ),
       ),
+    );
+  }
+
+  //播放器切换
+  Widget _buildChangePlayer() {
+    return Column(
+      children: _playerName.map((e) {
+        return Container(
+          height: 35.0,
+          child: RadioListTile(
+              dense: true,
+              title: Text("$e"),
+              value: e,
+              groupValue: _currentPlayerName,
+              onChanged: (value) {
+                setState(() {
+                  if (value == "Default") {
+                    GlobalSettings.mPlayerName = "";
+                  } else {
+                    GlobalSettings.mPlayerName = value;
+                  }
+                  _currentPlayerName = value;
+                });
+              }),
+        );
+      }).toList(),
     );
   }
 

@@ -30,6 +30,9 @@ class GlobalSettings {
 
   ///是否是精准seek
   static bool mEnableAccurateSeek = false;
+
+  ///播放器名称
+  static String mPlayerName = "";
 }
 
 /// 播放方式

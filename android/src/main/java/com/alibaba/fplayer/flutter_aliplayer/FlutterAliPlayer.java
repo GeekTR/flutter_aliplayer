@@ -687,6 +687,13 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
             case "getSDKVersion":
                 result.success(AliPlayerFactory.getSdkVersion());
                 break;
+            case "setPreferPlayerName":
+                String playerName = methodCall.arguments();
+                setPlayerName(playerName);
+                break;
+            case "getPlayerName":
+                result.success(getPlayerName());
+                break;
             default:
                 result.notImplemented();
         }
@@ -1071,5 +1078,15 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
         if(mThumbnailHelper != null){
             mThumbnailHelper.requestBitmapAtPosition(position);
         }
+    }
+
+    private void setPlayerName(String playerName) {
+        if(mAliPlayer != null){
+            mAliPlayer.setPreferPlayerName(playerName);
+        }
+    }
+
+    private String getPlayerName(){
+        return mAliPlayer == null ? "" : mAliPlayer.getPlayerName();
     }
 }
