@@ -55,7 +55,7 @@ class _SettingHomePageState extends State<SettingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text("Settings"),
         centerTitle: true,

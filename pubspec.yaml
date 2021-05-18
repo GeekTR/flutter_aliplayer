@@ -5,8 +5,8 @@ author: Alibaba
 homepage: https://www.aliyun.com/?spm=a2c4g.11186623.J_8058803260.1.5bf377a98Mc6oC
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
-  flutter: ">=1.20.0 <2.0.0"
+  sdk: ">=2.12.0 <3.0.0"
+  # flutter: ">=1.20.0 <2.0.0"
 
 dependencies:
   flutter:

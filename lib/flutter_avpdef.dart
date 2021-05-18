@@ -123,14 +123,14 @@ class EventChanneldef {
 }
 
 class AVPMediaInfo {
-  String status;
-  String mediaType;
-  List<AVPThumbnailInfo> thumbnails;
-  List<AVPTrackInfo> tracks;
-  String title;
-  int duration;
-  String transcodeMode;
-  String coverURL;
+  String? status;
+  String? mediaType;
+  List<AVPThumbnailInfo>? thumbnails;
+  List<AVPTrackInfo>? tracks;
+  String? title;
+  int? duration;
+  String? transcodeMode;
+  String? coverURL;
 
   AVPMediaInfo(
       {this.status,
@@ -146,15 +146,17 @@ class AVPMediaInfo {
     status = json['status'];
     mediaType = json['mediaType'];
     if (json['thumbnails'] != null) {
-      thumbnails = new List<AVPThumbnailInfo>();
+      // thumbnails = new List<AVPThumbnailInfo>();
+      thumbnails = List.empty();
       json['thumbnails'].forEach((v) {
-        thumbnails.add(new AVPThumbnailInfo.fromJson(v));
+        thumbnails!.add(new AVPThumbnailInfo.fromJson(v));
       });
     }
     if (json['tracks'] != null) {
-      tracks = new List<AVPTrackInfo>();
+      // tracks = new List<AVPTrackInfo>();
+      tracks = List.empty();
       json['tracks'].forEach((v) {
-        tracks.add(new AVPTrackInfo.fromJson(v));
+        tracks!.add(new AVPTrackInfo.fromJson(v));
       });
     }
     title = json['title'];
@@ -164,14 +166,14 @@ class AVPMediaInfo {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<dynamic, dynamic> data = new Map<dynamic, dynamic>();
+    final Map<String, dynamic> data = new Map<String, dynamic>();
     data['status'] = this.status;
     data['mediaType'] = this.mediaType;
     if (this.thumbnails != null) {
-      data['thumbnails'] = this.thumbnails.map((v) => v.toJson()).toList();
+      data['thumbnails'] = this.thumbnails!.map((v) => v.toJson()).toList();
     }
     if (this.tracks != null) {
-      data['tracks'] = this.tracks.map((v) => v.toJson()).toList();
+      data['tracks'] = this.tracks!.map((v) => v.toJson()).toList();
     }
     data['title'] = this.title;
     data['duration'] = this.duration;
@@ -182,20 +184,20 @@ class AVPMediaInfo {
 }
 
 class AVPTrackInfo {
-  String vodFormat;
-  int videoHeight;
-  String subtitleLanguage;
-  int videoWidth;
-  int trackBitrate;
-  int vodFileSize;
-  int trackIndex;
-  String trackDefinition;
-  int audioSampleFormat;
-  String audioLanguage;
-  String vodPlayUrl;
-  int trackType;
-  int audioSamplerate;
-  int audioChannels;
+  String? vodFormat;
+  int? videoHeight;
+  String? subtitleLanguage;
+  int? videoWidth;
+  int? trackBitrate;
+  int? vodFileSize;
+  int? trackIndex;
+  String? trackDefinition;
+  int? audioSampleFormat;
+  String? audioLanguage;
+  String? vodPlayUrl;
+  int? trackType;
+  int? audioSamplerate;
+  int? audioChannels;
 
   AVPTrackInfo(
       {this.vodFormat,
@@ -231,7 +233,7 @@ class AVPTrackInfo {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<dynamic, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = new Map<String, dynamic>();
     data['vodFormat'] = this.vodFormat;
     data['videoHeight'] = this.videoHeight;
     data['subtitleLanguage'] = this.subtitleLanguage;
@@ -251,14 +253,14 @@ class AVPTrackInfo {
 }
 
 class AVPThumbnailInfo {
-  String url;
+  String? url;
 
   AVPThumbnailInfo.fromJson(Map<dynamic, dynamic> json) {
     url = json['url'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<dynamic, dynamic>();
+    final Map<String, dynamic> data = new Map<String, dynamic>();
     data['url'] = this.url;
     return data;
   }

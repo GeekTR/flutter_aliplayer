@@ -5,7 +5,7 @@ class FlutterAliDownloader {
   EventChannel _eventChannel =
       EventChannel("plugins.flutter_alidownload_event");
 
-  Stream<dynamic> _receiveStream;
+  Stream<dynamic>? _receiveStream;
 
   FlutterAliDownloader.init() {
     _receiveStream = _eventChannel.receiveBroadcastStream();
@@ -17,11 +17,11 @@ class FlutterAliDownloader {
   ///STS {vid,accessKeyId,accessKeySecret,securityToken}
   ///AUTH {vid,playAuth}
   Future<dynamic> prepare(String type, String vid,
-      {int index,
-      String accessKeyId,
-      String accessKeySecret,
-      String securityToken,
-      String playAuth}) async {
+      {int? index,
+      String? accessKeyId,
+      String? accessKeySecret,
+      String? securityToken,
+      String? playAuth}) async {
     var map = {
       'type': type,
       'vid': vid,
@@ -34,7 +34,7 @@ class FlutterAliDownloader {
     return _methodChannel.invokeMethod("prepare", map);
   }
 
-  Stream<dynamic> start(String vid, int index) {
+  Stream<dynamic>? start(String vid, int index) {
     var map = {'vid': vid, 'index': index};
     _methodChannel.invokeMethod("start", map);
     return _receiveStream;
@@ -70,10 +70,10 @@ class FlutterAliDownloader {
   }
 
   Future<dynamic> updateSource(String type, String vid, String index,
-      {String accessKeyId,
-      String accessKeySecret,
-      String securityToken,
-      String playAuth}) {
+      {String? accessKeyId,
+      String? accessKeySecret,
+      String? securityToken,
+      String? playAuth}) {
     var map = {
       'type': type,
       'vid': vid,
@@ -87,11 +87,11 @@ class FlutterAliDownloader {
   }
 
   Future<dynamic> setDownloaderConfig(String vid, String index,
-      {String userAgent,
-      String referrer,
-      String httpProxy,
-      int connectTimeoutS,
-      int networkTimeoutMs}) {
+      {String? userAgent,
+      String? referrer,
+      String? httpProxy,
+      int? connectTimeoutS,
+      int? networkTimeoutMs}) {
     var map = {
       'vid': vid,
       'index': index,
@@ -106,6 +106,5 @@ class FlutterAliDownloader {
 
   void _onEvent(dynamic event) {}
 
-  void _onError(dynamic error) {
-  }
+  void _onError(dynamic error) {}
 }

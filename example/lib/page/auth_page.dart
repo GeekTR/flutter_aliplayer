@@ -49,7 +49,7 @@ class _AuthPageState extends State<AuthPage> {
         title: Text("AUTH 播放"),
         centerTitle: true,
       ),
-      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
       body: Padding(
         padding:
             const EdgeInsets.only(left: 15.0, top: 5.0, right: 15.0, bottom: 0),

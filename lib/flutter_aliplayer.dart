@@ -45,31 +45,31 @@ typedef OnThumbnailGetSuccess = void Function(
 typedef OnThumbnailGetFail = void Function();
 
 class FlutterAliplayer {
-  OnLoadingBegin onLoadingBegin;
-  OnLoadingProgress onLoadingProgress;
-  OnLoadingEnd onLoadingEnd;
-  OnPrepared onPrepared;
-  OnRenderingStart onRenderingStart;
-  OnVideoSizeChanged onVideoSizeChanged;
-  OnSeekComplete onSeekComplete;
-  OnStateChanged onStateChanged;
-  OnInfo onInfo;
-  OnCompletion onCompletion;
-  OnTrackReady onTrackReady;
-  OnError onError;
-  OnSnapShot onSnapShot;
+  late OnLoadingBegin onLoadingBegin;
+  late OnLoadingProgress onLoadingProgress;
+  late OnLoadingEnd onLoadingEnd;
+  late OnPrepared onPrepared;
+  late OnRenderingStart onRenderingStart;
+  late OnVideoSizeChanged onVideoSizeChanged;
+  late OnSeekComplete onSeekComplete;
+  late OnStateChanged onStateChanged;
+  late OnInfo onInfo;
+  late OnCompletion onCompletion;
+  late OnTrackReady onTrackReady;
+  late OnError onError;
+  late OnSnapShot onSnapShot;
 
-  OnTrackChanged onTrackChanged;
-  OnThumbnailPreparedSuccess onThumbnailPreparedSuccess;
-  OnThumbnailPreparedFail onThumbnailPreparedFail;
+  late OnTrackChanged onTrackChanged;
+  late OnThumbnailPreparedSuccess onThumbnailPreparedSuccess;
+  late OnThumbnailPreparedFail onThumbnailPreparedFail;
 
-  OnThumbnailGetSuccess onThumbnailGetSuccess;
-  OnThumbnailGetFail onThumbnailGetFail;
+  late OnThumbnailGetSuccess onThumbnailGetSuccess;
+  late OnThumbnailGetFail onThumbnailGetFail;
 
   //外挂字幕
-  OnSubtitleExtAdded onSubtitleExtAdded;
-  OnSubtitleHide onSubtitleHide;
-  OnSubtitleShow onSubtitleShow;
+  late OnSubtitleExtAdded onSubtitleExtAdded;
+  late OnSubtitleHide onSubtitleHide;
+  late OnSubtitleShow onSubtitleShow;
 
   MethodChannel channel = new MethodChannel('flutter_aliplayer');
   EventChannel eventChannel = EventChannel("flutter_aliplayer_event");
@@ -103,9 +103,9 @@ class FlutterAliplayer {
   }
 
   void setOnLoadingStatusListener(
-      {OnLoadingBegin loadingBegin,
-      OnLoadingProgress loadingProgress,
-      OnLoadingEnd loadingEnd}) {
+      {required OnLoadingBegin loadingBegin,
+      required OnLoadingProgress loadingProgress,
+      required OnLoadingEnd loadingEnd}) {
     this.onLoadingBegin = loadingBegin;
     this.onLoadingProgress = loadingProgress;
     this.onLoadingEnd = loadingEnd;
@@ -132,15 +132,15 @@ class FlutterAliplayer {
   }
 
   void setOnThumbnailPreparedListener(
-      {OnThumbnailPreparedSuccess preparedSuccess,
-      OnThumbnailPreparedFail preparedFail}) {
+      {required OnThumbnailPreparedSuccess preparedSuccess,
+      required OnThumbnailPreparedFail preparedFail}) {
     this.onThumbnailPreparedSuccess = preparedSuccess;
     this.onThumbnailPreparedFail = preparedFail;
   }
 
   void setOnThumbnailGetListener(
-      {OnThumbnailGetSuccess onThumbnailGetSuccess,
-      OnThumbnailGetFail onThumbnailGetFail}) {
+      {required OnThumbnailGetSuccess onThumbnailGetSuccess,
+      required OnThumbnailGetFail onThumbnailGetFail}) {
     this.onThumbnailGetSuccess = onThumbnailGetSuccess;
     this.onThumbnailGetSuccess = onThumbnailGetSuccess;
   }
@@ -195,7 +195,7 @@ class FlutterAliplayer {
     return channel.invokeMethod("seekTo", map);
   }
 
-  Future<bool> isLoop() async {
+  Future<dynamic> isLoop() async {
     return channel.invokeMethod('isLoop');
   }
 
@@ -203,7 +203,7 @@ class FlutterAliplayer {
     return channel.invokeMethod('setLoop', isloop);
   }
 
-  Future<bool> isAutoPlay() async {
+  Future<dynamic> isAutoPlay() async {
     return channel.invokeMethod('isAutoPlay');
   }
 
@@ -211,7 +211,7 @@ class FlutterAliplayer {
     return channel.invokeMethod('setAutoPlay', isAutoPlay);
   }
 
-  Future<bool> isMuted() async {
+  Future<dynamic> isMuted() async {
     return channel.invokeMethod('isMuted');
   }
 
@@ -219,7 +219,7 @@ class FlutterAliplayer {
     return channel.invokeMethod('setMuted', isMuted);
   }
 
-  Future<bool> enableHardwareDecoder() async {
+  Future<dynamic> enableHardwareDecoder() async {
     return channel.invokeMethod('enableHardwareDecoder');
   }
 
@@ -228,13 +228,13 @@ class FlutterAliplayer {
   }
 
   Future<void> setVidSts(
-      {String vid,
-      String region,
-      String accessKeyId,
-      String accessKeySecret,
-      String securityToken,
-      String previewTime,
-      List<String> definitionList}) async {
+      {String? vid,
+      String? region,
+      String? accessKeyId,
+      String? accessKeySecret,
+      String? securityToken,
+      String? previewTime,
+      List<String>? definitionList}) async {
     Map<String, dynamic> stsInfo = {
       "vid": vid,
       "region": region,
@@ -248,11 +248,11 @@ class FlutterAliplayer {
   }
 
   Future<void> setVidAuth({
-    String vid,
-    String region,
-    String playAuth,
-    String previewTime,
-    List<String> definitionList,
+    String? vid,
+    String? region,
+    String? playAuth,
+    String? previewTime,
+    List<String>? definitionList,
   }) async {
     Map<String, dynamic> authInfo = {
       "vid": vid,
@@ -268,7 +268,7 @@ class FlutterAliplayer {
     return channel.invokeMethod("setVidMps", mpsInfo);
   }
 
-  Future<int> getRotateMode() async {
+  Future<dynamic> getRotateMode() async {
     return channel.invokeMethod('getRotateMode');
   }
 
@@ -276,7 +276,7 @@ class FlutterAliplayer {
     return channel.invokeMethod('setRotateMode', mode);
   }
 
-  Future<int> getScalingMode() async {
+  Future<dynamic> getScalingMode() async {
     return channel.invokeMethod('getScalingMode');
   }
 
@@ -284,7 +284,7 @@ class FlutterAliplayer {
     return channel.invokeMethod('setScalingMode', mode);
   }
 
-  Future<int> getMirrorMode() async {
+  Future<dynamic> getMirrorMode() async {
     return channel.invokeMethod('getMirrorMode');
   }
 
@@ -292,7 +292,7 @@ class FlutterAliplayer {
     return channel.invokeMethod('setMirrorMode', mode);
   }
 
-  Future<double> getRate() async {
+  Future<dynamic> getRate() async {
     return channel.invokeMethod('getRate');
   }
 
@@ -308,7 +308,7 @@ class FlutterAliplayer {
     return channel.invokeMethod('setVolume', volume);
   }
 
-  Future<double> getVolume() async {
+  Future<dynamic> getVolume() async {
     return channel.invokeMethod('getVolume');
   }
 
@@ -329,7 +329,7 @@ class FlutterAliplayer {
   }
 
   ///return deviceInfo
-  Future<String> createDeviceInfo() async {
+  Future<dynamic> createDeviceInfo() async {
     return channel.invokeMethod("createDeviceInfo");
   }
 
@@ -342,7 +342,7 @@ class FlutterAliplayer {
     return channel.invokeMethod("addBlackDevice", map);
   }
 
-  Future<String> getSDKVersion() async {
+  Future<dynamic> getSDKVersion() async {
     return channel.invokeMethod("getSDKVersion");
   }
 
@@ -358,7 +358,7 @@ class FlutterAliplayer {
     return channel.invokeMethod("setLogLevel", level);
   }
 
-  Future<int> getLogLevel() {
+  Future<dynamic> getLogLevel() {
     return channel.invokeMethod("getLogLevel");
   }
 
@@ -404,7 +404,7 @@ class FlutterAliplayer {
     return channel.invokeMethod("setPreferPlayerName", playerName);
   }
 
-  Future<String> getPlayerName() {
+  Future<dynamic> getPlayerName() {
     return channel.invokeMethod("getPlayerName");
   }
 
@@ -569,8 +569,8 @@ class AliPlayerView extends StatefulWidget {
   final height;
 
   AliPlayerView({
-    Key key,
-    @required this.onCreated,
+    Key? key,
+    @required required this.onCreated,
     @required this.x,
     @required this.y,
     @required this.width,
@@ -585,10 +585,12 @@ class _VideoPlayerState extends State<AliPlayerView> {
   @override
   void initState() {
     super.initState();
+    print("abc : create PlatFormView initState");
   }
 
   @override
   Widget build(BuildContext context) {
+    print("abc : create PlatFormView build");
     return nativeView();
   }
 
