@@ -370,7 +370,7 @@ class _VideoGridPageState extends State<VideoGridPage>
         : _buildGridView();
   }
 
-  void onViewPlayerCreated() async {
+  void onViewPlayerCreated(viewId) async {
     print('onViewPlayerCreated===');
   }
 

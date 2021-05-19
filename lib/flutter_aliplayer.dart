@@ -157,33 +157,45 @@ class FlutterAliplayer {
     this.onSubtitleExtAdded = onSubtitleExtAdded;
   }
 
-  Future<void> createAliPlayer() async {
-    return channel.invokeMethod('createAliPlayer');
+  Future<void> createAliPlayer({playerId}) async {
+    return channel.invokeMethod('createAliPlayer',wrapWithPlayerId(playerId:playerId));
   }
 
-  Future<void> setUrl(String url) async {
+  Future<void> setPlayerView(int viewId,{playerId}) async {
+    return channel.invokeMethod('setPlayerView',wrapWithPlayerId(playerId:playerId,arg: viewId));
+  }
+
+  wrapWithPlayerId({playerId,arg=''}) {
+    if(playerId==null){
+      playerId='default';
+    }
+    var map = {"arg": arg, "playerId": playerId.toString()};
+    return map;
+  }
+
+  Future<void> setUrl(String url,{playerId}) async {
     assert(url != null);
-    return channel.invokeMethod('setUrl', url);
+    return channel.invokeMethod('setUrl', wrapWithPlayerId(playerId:playerId,arg:url));
   }
 
-  Future<void> prepare() async {
-    return channel.invokeMethod('prepare');
+  Future<void> prepare({playerId}) async {
+    return channel.invokeMethod('prepare',wrapWithPlayerId(playerId:playerId));
   }
 
-  Future<void> play() async {
-    return channel.invokeMethod('play');
+  Future<void> play({playerId}) async {
+    return channel.invokeMethod('play',wrapWithPlayerId(playerId:playerId));
   }
 
-  Future<void> pause() async {
-    return channel.invokeMethod('pause');
+  Future<void> pause({playerId}) async {
+    return channel.invokeMethod('pause',wrapWithPlayerId(playerId:playerId));
   }
 
   Future<dynamic> snapshot(String path) async {
     return channel.invokeMethod('snapshot', path);
   }
 
-  Future<void> stop() async {
-    return channel.invokeMethod('stop');
+  Future<void> stop({playerId}) async {
+    return channel.invokeMethod('stop',wrapWithPlayerId(playerId:playerId));
   }
 
   Future<void> destroy() async {
@@ -414,152 +426,152 @@ class FlutterAliplayer {
   }
 
   void _onEvent(dynamic event) {
-    String method = event[EventChanneldef.TYPE_KEY];
-    switch (method) {
-      case "onPrepared":
-        if (onPrepared != null) {
-          onPrepared();
-        }
-        break;
-      case "onRenderingStart":
-        if (onRenderingStart != null) {
-          onRenderingStart();
-        }
-        break;
-      case "onVideoSizeChanged":
-        if (onVideoSizeChanged != null) {
-          int width = event['width'];
-          int height = event['height'];
-          onVideoSizeChanged(width, height);
-        }
-        break;
-      case "onSnapShot":
-        if (onSnapShot != null) {
-          String snapShotPath = event['snapShotPath'];
-          onSnapShot(snapShotPath);
-        }
-        break;
-      case "onChangedSuccess":
-        break;
-      case "onChangedFail":
-        break;
-      case "onSeekComplete":
-        if (onSeekComplete != null) {
-          onSeekComplete();
-        }
-        break;
-      case "onSeiData":
-        break;
-      case "onLoadingBegin":
-        if (onLoadingBegin != null) {
-          onLoadingBegin();
-        }
-        break;
-      case "onLoadingProgress":
-        int percent = event['percent'];
-        double netSpeed = event['netSpeed'];
-        if (onLoadingProgress != null) {
-          onLoadingProgress(percent, netSpeed);
-        }
-        break;
-      case "onLoadingEnd":
-        if (onLoadingEnd != null) {
-          print("onLoadingEnd");
-          onLoadingEnd();
-        }
-        break;
-      case "onStateChanged":
-        if (onStateChanged != null) {
-          int newState = event['newState'];
-          onStateChanged(newState);
-        }
-        break;
-      case "onInfo":
-        if (onInfo != null) {
-          int infoCode = event['infoCode'];
-          int extraValue = event['extraValue'];
-          String extraMsg = event['extraMsg'];
-          onInfo(infoCode, extraValue, extraMsg);
-        }
-        break;
-      case "onError":
-        if (onError != null) {
-          int errorCode = event['errorCode'];
-          String errorExtra = event['errorExtra'];
-          String errorMsg = event['errorMsg'];
-          onError(errorCode, errorExtra, errorMsg);
-        }
-        break;
-      case "onCompletion":
-        if (onCompletion != null) {
-          onCompletion();
-        }
-        break;
-      case "onTrackReady":
-        if (onTrackReady != null) {
-          this.onTrackReady();
-        }
-        break;
-      case "onTrackChanged":
-        if (onTrackChanged != null) {
-          dynamic info = event['info'];
-          this.onTrackChanged(info);
-        }
-        break;
-      case "thumbnail_onPrepared_Success":
-        if (onThumbnailPreparedSuccess != null) {
-          onThumbnailPreparedSuccess();
-        }
-        break;
-      case "thumbnail_onPrepared_Fail":
-        if (onThumbnailPreparedFail != null) {
-          onThumbnailPreparedFail();
-        }
-        break;
-      case "onThumbnailGetSuccess":
-        dynamic bitmap = event['thumbnailbitmap'];
-        dynamic range = event['thumbnailRange'];
-        if (onThumbnailGetSuccess != null) {
-          if (Platform.isIOS) {
-            range = Int64List.fromList(range.cast<int>());
-          }
-          onThumbnailGetSuccess(bitmap, range);
-        }
-        break;
-      case "onThumbnailGetFail":
-        if (onThumbnailGetFail != null) {
-          onThumbnailGetFail();
-        }
-        break;
-      case "onSubtitleExtAdded":
-        if (onSubtitleExtAdded != null) {
-          int trackIndex = event['trackIndex'];
-          String url = event['url'];
-          onSubtitleExtAdded(trackIndex, url);
-        }
-        break;
-      case "onSubtitleShow":
-        if (onSubtitleShow != null) {
-          int trackIndex = event['trackIndex'];
-          int subtitleID = event['subtitleID'];
-          String subtitle = event['subtitle'];
-          onSubtitleShow(trackIndex, subtitleID, subtitle);
-        }
-        break;
-      case "onSubtitleHide":
-        if (onSubtitleHide != null) {
-          int trackIndex = event['trackIndex'];
-          int subtitleID = event['subtitleID'];
-          onSubtitleHide(trackIndex, subtitleID);
-        }
-        break;
-    }
+    // String method = event[EventChanneldef.TYPE_KEY];
+    // switch (method) {
+    //   case "onPrepared":
+    //     if (onPrepared != null) {
+    //       onPrepared();
+    //     }
+    //     break;
+    //   case "onRenderingStart":
+    //     if (onRenderingStart != null) {
+    //       onRenderingStart();
+    //     }
+    //     break;
+    //   case "onVideoSizeChanged":
+    //     if (onVideoSizeChanged != null) {
+    //       int width = event['width'];
+    //       int height = event['height'];
+    //       onVideoSizeChanged(width, height);
+    //     }
+    //     break;
+    //   case "onSnapShot":
+    //     if (onSnapShot != null) {
+    //       String snapShotPath = event['snapShotPath'];
+    //       onSnapShot(snapShotPath);
+    //     }
+    //     break;
+    //   case "onChangedSuccess":
+    //     break;
+    //   case "onChangedFail":
+    //     break;
+    //   case "onSeekComplete":
+    //     if (onSeekComplete != null) {
+    //       onSeekComplete();
+    //     }
+    //     break;
+    //   case "onSeiData":
+    //     break;
+    //   case "onLoadingBegin":
+    //     if (onLoadingBegin != null) {
+    //       onLoadingBegin();
+    //     }
+    //     break;
+    //   case "onLoadingProgress":
+    //     int percent = event['percent'];
+    //     double netSpeed = event['netSpeed'];
+    //     if (onLoadingProgress != null) {
+    //       onLoadingProgress(percent, netSpeed);
+    //     }
+    //     break;
+    //   case "onLoadingEnd":
+    //     if (onLoadingEnd != null) {
+    //       print("onLoadingEnd");
+    //       onLoadingEnd();
+    //     }
+    //     break;
+    //   case "onStateChanged":
+    //     if (onStateChanged != null) {
+    //       int newState = event['newState'];
+    //       onStateChanged(newState);
+    //     }
+    //     break;
+    //   case "onInfo":
+    //     if (onInfo != null) {
+    //       int infoCode = event['infoCode'];
+    //       int extraValue = event['extraValue'];
+    //       String extraMsg = event['extraMsg'];
+    //       onInfo(infoCode, extraValue, extraMsg);
+    //     }
+    //     break;
+    //   case "onError":
+    //     if (onError != null) {
+    //       int errorCode = event['errorCode'];
+    //       String errorExtra = event['errorExtra'];
+    //       String errorMsg = event['errorMsg'];
+    //       onError(errorCode, errorExtra, errorMsg);
+    //     }
+    //     break;
+    //   case "onCompletion":
+    //     if (onCompletion != null) {
+    //       onCompletion();
+    //     }
+    //     break;
+    //   case "onTrackReady":
+    //     if (onTrackReady != null) {
+    //       this.onTrackReady();
+    //     }
+    //     break;
+    //   case "onTrackChanged":
+    //     if (onTrackChanged != null) {
+    //       dynamic info = event['info'];
+    //       this.onTrackChanged(info);
+    //     }
+    //     break;
+    //   case "thumbnail_onPrepared_Success":
+    //     if (onThumbnailPreparedSuccess != null) {
+    //       onThumbnailPreparedSuccess();
+    //     }
+    //     break;
+    //   case "thumbnail_onPrepared_Fail":
+    //     if (onThumbnailPreparedFail != null) {
+    //       onThumbnailPreparedFail();
+    //     }
+    //     break;
+    //   case "onThumbnailGetSuccess":
+    //     dynamic bitmap = event['thumbnailbitmap'];
+    //     dynamic range = event['thumbnailRange'];
+    //     if (onThumbnailGetSuccess != null) {
+    //       if (Platform.isIOS) {
+    //         range = Int64List.fromList(range.cast<int>());
+    //       }
+    //       onThumbnailGetSuccess(bitmap, range);
+    //     }
+    //     break;
+    //   case "onThumbnailGetFail":
+    //     if (onThumbnailGetFail != null) {
+    //       onThumbnailGetFail();
+    //     }
+    //     break;
+    //   case "onSubtitleExtAdded":
+    //     if (onSubtitleExtAdded != null) {
+    //       int trackIndex = event['trackIndex'];
+    //       String url = event['url'];
+    //       onSubtitleExtAdded(trackIndex, url);
+    //     }
+    //     break;
+    //   case "onSubtitleShow":
+    //     if (onSubtitleShow != null) {
+    //       int trackIndex = event['trackIndex'];
+    //       int subtitleID = event['subtitleID'];
+    //       String subtitle = event['subtitle'];
+    //       onSubtitleShow(trackIndex, subtitleID, subtitle);
+    //     }
+    //     break;
+    //   case "onSubtitleHide":
+    //     if (onSubtitleHide != null) {
+    //       int trackIndex = event['trackIndex'];
+    //       int subtitleID = event['subtitleID'];
+    //       onSubtitleHide(trackIndex, subtitleID);
+    //     }
+    //     break;
+    // }
   }
 
   void _onError(dynamic error) {}
 }
 
-typedef void AliPlayerViewCreatedCallback();
+typedef void AliPlayerViewCreatedCallback(int viewId);
 
 class AliPlayerView extends StatefulWidget {
   final AliPlayerViewCreatedCallback onCreated;
@@ -625,7 +637,7 @@ class _VideoPlayerState extends State<AliPlayerView> {
 
   Future<void> _onPlatformViewCreated(id) async {
     if (widget.onCreated != null) {
-      widget.onCreated();
+      widget.onCreated(id);
     }
   }
 }

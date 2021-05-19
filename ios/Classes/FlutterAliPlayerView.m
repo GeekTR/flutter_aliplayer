@@ -24,14 +24,19 @@
     if ([super init]) {
         _viewId = viewId;
         _videoView = [UIView new];
-        NSDictionary *dic = args;
-        CGFloat x = [dic[@"x"] floatValue];
-        CGFloat y = [dic[@"y"] floatValue];
-        CGFloat width = [dic[@"width"] floatValue];
-        CGFloat height = [dic[@"height"] floatValue];
-        _videoView.frame = CGRectMake(x, y, width, height);        
+        [self updateWithWithFrame:frame arguments:args];
     }
     return self;
+}
+
+-(void)updateWithWithFrame:(CGRect)frame
+                 arguments:(id _Nullable)args{
+    NSDictionary *dic = args;
+    CGFloat x = [dic[@"x"] floatValue];
+    CGFloat y = [dic[@"y"] floatValue];
+    CGFloat width = [dic[@"width"] floatValue];
+    CGFloat height = [dic[@"height"] floatValue];
+    _videoView.frame = CGRectMake(x, y, width, height);
 }
 
 - (nonnull UIView *)view {

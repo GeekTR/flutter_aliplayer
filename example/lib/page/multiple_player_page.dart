@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_aliplayer/flutter_aliplayer.dart';
+import 'package:flutter_aliplayer/flutter_aliplayer_factory.dart';
+import 'package:flutter_aliplayer_example/config.dart';
 import 'package:flutter_aliplayer_example/widget/aliyun_slider.dart';
 
 class MultiplePlayerPage extends StatefulWidget {
@@ -8,6 +10,27 @@ class MultiplePlayerPage extends StatefulWidget {
 }
 
 class _MultiplePlayerPageState extends State<MultiplePlayerPage> {
+
+  FlutterAliplayer fAliplayer;
+
+  List playIdList = ['0','1','2'];
+  List viewList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fAliplayer = FlutterAliPlayerFactory().createAliPlayer();
+
+    playIdList.forEach((element) {
+      initData(element);
+    });
+  }
+
+  Future<void> initData(playerId) async {
+    await fAliplayer.createAliPlayer(playerId: playerId);
+    await fAliplayer.setUrl(DataSourceRelated.DEFAULT_URL,playerId: playerId);
+  }
+
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
@@ -15,29 +38,19 @@ class _MultiplePlayerPageState extends State<MultiplePlayerPage> {
     var height = width * 9 / 16;
     print(
         "width = $width ,,,, height = $height ,,, screenHeight = $screenHeight");
-    AliPlayerView aliPlayerView = AliPlayerView(
-        onCreated: onViewPlayerCreated,
+        viewList.clear();
+        playIdList.forEach((element) {
+        AliPlayerView aliPlayerView = AliPlayerView(
+        onCreated: (int viewId){
+          fAliplayer.setPlayerView(viewId,playerId: element);
+        },
         x: 0,
         y: 0,
         width: width,
         height: height);
-
-    AliPlayerView aliPlayerView2 = AliPlayerView(
-        onCreated: onViewPlayerCreated2,
-        x: 0,
-        y: 0,
-        width: width,
-        height: height);
-
-    AliPlayerView aliPlayerView3 = AliPlayerView(
-        onCreated: onViewPlayerCreated2,
-        x: 0,
-        y: 0,
-        width: width,
-        height: height);
-
-    print(
-        "abc : ${aliPlayerView.hashCode} ,,, ${aliPlayerView2.hashCode} ,,, ${aliPlayerView3.hashCode}");
+        viewList.add(aliPlayerView);
+    });
+  
 
     return Scaffold(
       appBar: AppBar(
@@ -47,31 +60,16 @@ class _MultiplePlayerPageState extends State<MultiplePlayerPage> {
       body: Scrollbar(
           child: SingleChildScrollView(
         child: Column(
-          children: [
-            //Player 1
-            _buildRenderView(width, height, aliPlayerView),
+          children: playIdList.asMap().keys.map((idx) => Column(
+            children: [
+              _buildRenderView(width, height, viewList[idx]),
             SizedBox(
               width: 0,
               height: 10,
             ),
-            _buildControllerBtn(),
-
-            //Player 2
-            _buildRenderView(width, height, aliPlayerView2),
-            SizedBox(
-              width: 0,
-              height: 10,
-            ),
-            _buildControllerBtn(),
-
-            //Player 3
-            _buildRenderView(width, height, aliPlayerView3),
-            SizedBox(
-              width: 0,
-              height: 10,
-            ),
-            _buildControllerBtn(),
-          ],
+            _buildControllerBtn(playIdList[idx]),
+            ],
+          )).toList(),
         ),
       )),
     );
@@ -126,7 +124,7 @@ class _MultiplePlayerPageState extends State<MultiplePlayerPage> {
     );
   }
 
-  Widget _buildControllerBtn() {
+  Widget _buildControllerBtn(playerId) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
@@ -136,6 +134,7 @@ class _MultiplePlayerPageState extends State<MultiplePlayerPage> {
             style: TextStyle(color: Colors.blue, fontSize: 16),
           ),
           onTap: () {
+            fAliplayer.prepare(playerId: playerId);
             print("准备");
           },
         ),
@@ -146,6 +145,7 @@ class _MultiplePlayerPageState extends State<MultiplePlayerPage> {
           ),
           onTap: () {
             print("播放");
+            fAliplayer.play(playerId: playerId);
           },
         ),
         InkWell(
@@ -169,8 +169,5 @@ class _MultiplePlayerPageState extends State<MultiplePlayerPage> {
       ],
     );
   }
-}
 
-void onViewPlayerCreated() async {}
-void onViewPlayerCreated2() async {}
-void onViewPlayerCreated3() async {}
+}

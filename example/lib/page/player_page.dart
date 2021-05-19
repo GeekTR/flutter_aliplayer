@@ -420,7 +420,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     );
   }
 
-  void onViewPlayerCreated() async {
+  void onViewPlayerCreated(viewId) async {
     switch (_playMode) {
       case ModeType.URL:
         this.fAliplayer.setUrl(_dataSourceMap[DataSourceRelated.URL_KEY]);
