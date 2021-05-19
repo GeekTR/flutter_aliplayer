@@ -198,8 +198,8 @@ class FlutterAliplayer {
     return channel.invokeMethod('stop',wrapWithPlayerId(playerId:playerId));
   }
 
-  Future<void> destroy() async {
-    return channel.invokeMethod('destroy');
+  Future<void> destroy({playerId}) async {
+    return channel.invokeMethod('destroy',wrapWithPlayerId(playerId:playerId));
   }
 
   Future<void> seekTo(int position, int seekMode) async {
@@ -207,36 +207,36 @@ class FlutterAliplayer {
     return channel.invokeMethod("seekTo", map);
   }
 
-  Future<dynamic> isLoop() async {
-    return channel.invokeMethod('isLoop');
+  Future<dynamic> isLoop({playerId}) async {
+    return channel.invokeMethod('isLoop',wrapWithPlayerId(playerId:playerId));
   }
 
-  Future<void> setLoop(bool isloop) async {
-    return channel.invokeMethod('setLoop', isloop);
+  Future<void> setLoop(bool isloop,{playerId}) async {
+    return channel.invokeMethod('setLoop', wrapWithPlayerId(playerId:playerId,arg: isloop));
   }
 
-  Future<dynamic> isAutoPlay() async {
-    return channel.invokeMethod('isAutoPlay');
+  Future<dynamic> isAutoPlay({playerId}) async {
+    return channel.invokeMethod('isAutoPlay',wrapWithPlayerId(playerId:playerId));
   }
 
-  Future<void> setAutoPlay(bool isAutoPlay) async {
-    return channel.invokeMethod('setAutoPlay', isAutoPlay);
+  Future<void> setAutoPlay(bool isAutoPlay,{playerId}) async {
+    return channel.invokeMethod('setAutoPlay', wrapWithPlayerId(playerId:playerId,arg: isAutoPlay));
   }
 
-  Future<dynamic> isMuted() async {
-    return channel.invokeMethod('isMuted');
+  Future<dynamic> isMuted({playerId}) async {
+    return channel.invokeMethod('isMuted',wrapWithPlayerId(playerId:playerId));
   }
 
-  Future<void> setMuted(bool isMuted) async {
-    return channel.invokeMethod('setMuted', isMuted);
+  Future<void> setMuted(bool isMuted,{playerId}) async {
+    return channel.invokeMethod('setMuted', wrapWithPlayerId(playerId:playerId,arg: isMuted));
   }
 
-  Future<dynamic> enableHardwareDecoder() async {
-    return channel.invokeMethod('enableHardwareDecoder');
+  Future<dynamic> enableHardwareDecoder({playerId}) async {
+    return channel.invokeMethod('enableHardwareDecoder',wrapWithPlayerId(playerId:playerId));
   }
 
-  Future<void> setEnableHardwareDecoder(bool isHardWare) async {
-    return channel.invokeMethod('setEnableHardwareDecoder', isHardWare);
+  Future<void> setEnableHardwareDecoder(bool isHardWare,{playerId}) async {
+    return channel.invokeMethod('setEnableHardwareDecoder',wrapWithPlayerId(playerId:playerId,arg: isHardWare));
   }
 
   Future<void> setVidSts(
@@ -280,64 +280,64 @@ class FlutterAliplayer {
     return channel.invokeMethod("setVidMps", mpsInfo);
   }
 
-  Future<dynamic> getRotateMode() async {
-    return channel.invokeMethod('getRotateMode');
+  Future<dynamic> getRotateMode({playerId}) async {
+    return channel.invokeMethod('getRotateMode',wrapWithPlayerId(playerId:playerId));
   }
 
-  Future<void> setRotateMode(int mode) async {
-    return channel.invokeMethod('setRotateMode', mode);
+  Future<void> setRotateMode(int mode,{playerId}) async {
+    return channel.invokeMethod('setRotateMode', wrapWithPlayerId(playerId:playerId,arg: mode));
   }
 
-  Future<dynamic> getScalingMode() async {
-    return channel.invokeMethod('getScalingMode');
+  Future<dynamic> getScalingMode({playerId}) async {
+    return channel.invokeMethod('getScalingMode',wrapWithPlayerId(playerId:playerId));
   }
 
-  Future<void> setScalingMode(int mode) async {
-    return channel.invokeMethod('setScalingMode', mode);
+  Future<void> setScalingMode(int mode,{playerId}) async {
+    return channel.invokeMethod('setScalingMode', wrapWithPlayerId(playerId:playerId,arg: mode));
   }
 
-  Future<dynamic> getMirrorMode() async {
-    return channel.invokeMethod('getMirrorMode');
+  Future<dynamic> getMirrorMode({playerId}) async {
+    return channel.invokeMethod('getMirrorMode',wrapWithPlayerId(playerId:playerId));
   }
 
-  Future<void> setMirrorMode(int mode) async {
-    return channel.invokeMethod('setMirrorMode', mode);
+  Future<void> setMirrorMode(int mode,{playerId}) async {
+    return channel.invokeMethod('setMirrorMode', wrapWithPlayerId(playerId:playerId,arg: mode));
   }
 
-  Future<dynamic> getRate() async {
-    return channel.invokeMethod('getRate');
+  Future<dynamic> getRate({playerId}) async {
+    return channel.invokeMethod('getRate',wrapWithPlayerId(playerId:playerId));
   }
 
-  Future<void> setRate(double mode) async {
-    return channel.invokeMethod('setRate', mode);
+  Future<void> setRate(double mode,{playerId}) async {
+    return channel.invokeMethod('setRate', wrapWithPlayerId(playerId:playerId,arg: mode));
   }
 
-  Future<void> setVideoBackgroundColor(var color) async {
-    return channel.invokeMethod('setVideoBackgroundColor', color);
+  Future<void> setVideoBackgroundColor(var color,{playerId}) async {
+    return channel.invokeMethod('setVideoBackgroundColor', wrapWithPlayerId(playerId:playerId,arg: color));
   }
 
-  Future<void> setVolume(double volume) async {
-    return channel.invokeMethod('setVolume', volume);
+  Future<void> setVolume(double volume,{playerId}) async {
+    return channel.invokeMethod('setVolume', wrapWithPlayerId(playerId:playerId,arg: volume));
   }
 
-  Future<dynamic> getVolume() async {
-    return channel.invokeMethod('getVolume');
+  Future<dynamic> getVolume({playerId}) async {
+    return channel.invokeMethod('getVolume',wrapWithPlayerId(playerId:playerId));
   }
 
-  Future<dynamic> getConfig() async {
-    return channel.invokeMethod("getConfig");
+  Future<dynamic> getConfig({playerId}) async {
+    return channel.invokeMethod("getConfig",wrapWithPlayerId(playerId:playerId));
   }
 
-  Future<void> setConfig(Map map) async {
-    return channel.invokeMethod("setConfig", map);
+  Future<void> setConfig(Map map,{playerId}) async {
+    return channel.invokeMethod("setConfig", wrapWithPlayerId(playerId:playerId,arg: map));
   }
 
-  Future<dynamic> getCacheConfig() async {
-    return channel.invokeMethod("getCacheConfig");
+  Future<dynamic> getCacheConfig({playerId}) async {
+    return channel.invokeMethod("getCacheConfig",wrapWithPlayerId(playerId:playerId));
   }
 
-  Future<void> setCacheConfig(Map map) async {
-    return channel.invokeMethod("setCacheConfig", map);
+  Future<void> setCacheConfig(Map map,{playerId}) async {
+    return channel.invokeMethod("setCacheConfig", wrapWithPlayerId(playerId:playerId,arg: map));
   }
 
   ///return deviceInfo

@@ -26,6 +26,15 @@ class _MultiplePlayerPageState extends State<MultiplePlayerPage> {
     });
   }
 
+   @override
+  void dispose() {
+    super.dispose();
+    playIdList.forEach((element) {
+      fAliplayer.stop(playerId: element);
+      fAliplayer.destroy(playerId: element);
+    });
+  }
+
   Future<void> initData(playerId) async {
     await fAliplayer.createAliPlayer(playerId: playerId);
     await fAliplayer.setUrl(DataSourceRelated.DEFAULT_URL,playerId: playerId);
@@ -155,6 +164,7 @@ class _MultiplePlayerPageState extends State<MultiplePlayerPage> {
           ),
           onTap: () {
             print("暂停");
+            fAliplayer.pause(playerId: playerId);
           },
         ),
         InkWell(
@@ -164,6 +174,7 @@ class _MultiplePlayerPageState extends State<MultiplePlayerPage> {
           ),
           onTap: () {
             print("停止");
+            fAliplayer.stop(playerId: playerId);
           },
         ),
       ],

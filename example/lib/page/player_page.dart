@@ -86,6 +86,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     fAliplayer = FlutterAliPlayerFactory().createAliPlayer();
+    fAliplayer.createAliPlayer();
     WidgetsBinding.instance.addObserver(this);
     bottomIndex = 0;
     _playMode = widget.playMode;

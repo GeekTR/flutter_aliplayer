@@ -99,13 +99,6 @@
         [_viewDic setObject:fapv forKey:viewIdKey];
     }
     
-//    playerView = fapv.view;
-//    if (_aliPlayer) {
-//        _aliPlayer.playerView = playerView;
-//    }
-//    if (_aliListPlayer) {
-//        _aliListPlayer.playerView = playerView;
-//    }
     return fapv;
 }
 
@@ -123,13 +116,13 @@
 }
 
 
-//- (void)initService:(NSArray*)arr {
-//    FlutterMethodCall* call = arr.firstObject;
-//    FlutterResult result = arr[1];
-//    FlutterStandardTypedData* fdata = [call arguments];
-//    [AliPrivateService initKeyWithData:fdata.data];
-//    result(nil);
-//}
+- (void)initService:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    FlutterResult result = arr[1];
+    FlutterStandardTypedData* fdata = [call arguments];
+    [AliPrivateService initKeyWithData:fdata.data];
+    result(nil);
+}
 
 -(void)createAliPlayer:(NSArray*)arr {
     FlutterMethodCall* call = arr.firstObject;
@@ -146,7 +139,6 @@
 }
 
 - (void)setPlayerView:(NSArray*)arr {
-//    FlutterMethodCall* call = arr.firstObject;
     AliPlayerProxy *proxy = arr[2];
     NSNumber* viewId = arr[3];
     FlutterAliPlayerView *fapv = [_viewDic objectForKey:[NSString stringWithFormat:@"%@",viewId]];
@@ -154,7 +146,6 @@
 }
 
 - (void)setUrl:(NSArray*)arr {
-//    FlutterMethodCall* call = arr.firstObject;
     AliPlayerProxy *proxy = arr[2];
     NSString* url = arr[3];
     AVPUrlSource *source = [[AVPUrlSource alloc] urlWithString:url];
@@ -187,17 +178,17 @@
     result(nil);
 }
 
-//- (void)destroy:(NSArray*)arr {
-//    FlutterResult result = arr[1];
-//    AliPlayer *player = arr[2];
-//    [player destroy];
+- (void)destroy:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    [proxy.player destroy];
 //    if([player isKindOfClass:AliListPlayer.class]){
 //        self.aliListPlayer = nil;
 //    }else{
 //        self.aliPlayer = nil;
 //    }
-//    result(nil);
-//}
+    result(nil);
+}
 
 //-(void)enableMix:(NSArray*)arr {
 //    FlutterMethodCall* call = arr.firstObject;
@@ -212,143 +203,143 @@
 //    result(nil);
 //}
 
-//- (void)isLoop:(NSArray*)arr {
-//    FlutterResult result = arr[1];
-//    AliPlayer *player = arr[2];
-//    result(@([player isLoop]));
-//}
-//
-//- (void)setLoop:(NSArray*)arr {
-//    FlutterMethodCall* call = arr.firstObject;
-//    AliPlayer *player = arr[2];
-//    NSNumber* isLoop = [call arguments];
-//    [player setLoop:isLoop.boolValue];
-//}
-//
-//- (void)isAutoPlay:(NSArray*)arr {
-//    FlutterResult result = arr[1];
-//    AliPlayer *player = arr[2];
-//    result(@([player isAutoPlay]));
-//}
-//
-//- (void)setAutoPlay:(NSArray*)arr {
-//    FlutterMethodCall* call = arr.firstObject;
-//    AliPlayer *player = arr[2];
-//    NSNumber* val = [call arguments];
-//    [player setAutoPlay:val.boolValue];
-//}
-//
-//- (void)isMuted:(NSArray*)arr {
-//    FlutterResult result = arr[1];
-//    AliPlayer *player = arr[2];
-//    result(@([player isMuted]));
-//}
-//
-//- (void)setMuted:(NSArray*)arr {
-//    FlutterMethodCall* call = arr.firstObject;
-//    NSNumber* val = [call arguments];
-//    AliPlayer *player = arr[2];
-//    [player setMuted:val.boolValue];
-//}
-//
-//- (void)enableHardwareDecoder:(NSArray*)arr {
-//    FlutterResult result = arr[1];
-//    AliPlayer *player = arr[2];
-//    result(@([player enableHardwareDecoder]));
-//}
+- (void)isLoop:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    result(@([proxy.player isLoop]));
+}
 
-//- (void)setEnableHardwareDecoder:(NSArray*)arr {
-//    FlutterMethodCall* call = arr.firstObject;
-//    AliPlayer *player = arr[2];
-//    NSNumber* val = [call arguments];
-//    [player setEnableHardwareDecoder:val.boolValue];
-//}
-//
-//- (void)getRotateMode:(NSArray*)arr {
-//    AliPlayer *player = arr[2];
-//    FlutterResult result = arr[1];
-//    result(@(player.rotateMode));
-//}
-//
-//- (void)setRotateMode:(NSArray*)arr {
-//    FlutterMethodCall* call = arr.firstObject;
-//    AliPlayer *player = arr[2];
-//    NSNumber* val = [call arguments];
-//    [player setRotateMode:val.intValue];
-//}
-//
-//- (void)getScalingMode:(NSArray*)arr {
-//    FlutterResult result = arr[1];
-//    AliPlayer *player = arr[2];
-//    int mode = 0;
-//    switch (player.scalingMode) {
-//        case AVP_SCALINGMODE_SCALEASPECTFIT:
-//            mode = 0;
-//            break;
-//        case AVP_SCALINGMODE_SCALEASPECTFILL:
-//            mode = 1;
-//            break;
-//        case AVP_SCALINGMODE_SCALETOFILL:
-//            mode = 2;
-//            break;
-//
-//        default:
-//            break;
-//    }
-//    result(@(mode));
-//}
+- (void)setLoop:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    AliPlayerProxy *proxy = arr[2];
+    NSNumber* isLoop = [call arguments];
+    [proxy.player setLoop:isLoop.boolValue];
+}
 
-//- (void)setScalingMode:(NSArray*)arr {
-//    FlutterMethodCall* call = arr.firstObject;
-//    FlutterResult result = arr[1];
-//    AliPlayer *player = arr[2];
-//    NSNumber* val = [call arguments];
-////    与android保持一致
-//    int mode = AVP_SCALINGMODE_SCALEASPECTFIT;
-//    switch (val.intValue) {
-//        case 0:
-//            mode = AVP_SCALINGMODE_SCALEASPECTFIT;
-//            break;
-//        case 1:
-//            mode = AVP_SCALINGMODE_SCALEASPECTFILL;
-//            break;
-//        case 2:
-//            mode = AVP_SCALINGMODE_SCALETOFILL;
-//            break;
-//
-//        default:
-//            break;
-//    }
-//    [player setScalingMode:mode];
-//    result(nil);
-//}
-//
-//- (void)getMirrorMode:(NSArray*)arr {
-//    FlutterResult result = arr[1];
-//    AliPlayer *player = arr[2];
-//    result(@(player.mirrorMode));
-//}
-//
-//- (void)setMirrorMode:(NSArray*)arr {
-//    FlutterMethodCall* call = arr.firstObject;
-//    AliPlayer *player = arr[2];
-//    NSNumber* val = [call arguments];
-//    [player setMirrorMode:val.intValue];
-//}
-//
-//- (void)getRate:(NSArray*)arr {
-//    FlutterResult result = arr[1];
-//    AliPlayer *player = arr[2];
-//    result(@(player.rate));
-//}
-//
-//- (void)setRate:(NSArray*)arr {
-//    FlutterMethodCall* call = arr.firstObject;
-//    AliPlayer *player = arr[2];
-//    NSNumber* val = [call arguments];
-//    [player setRate:val.floatValue];
-//}
-//
+- (void)isAutoPlay:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    result(@([proxy.player isAutoPlay]));
+}
+
+- (void)setAutoPlay:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    AliPlayerProxy *proxy = arr[2];
+    NSNumber* val = [call arguments];
+    [proxy.player setAutoPlay:val.boolValue];
+}
+
+- (void)isMuted:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    result(@([proxy.player isMuted]));
+}
+
+- (void)setMuted:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    NSNumber* val = [call arguments];
+    AliPlayerProxy *proxy = arr[2];
+    [proxy.player setMuted:val.boolValue];
+}
+
+- (void)enableHardwareDecoder:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    result(@([proxy.player enableHardwareDecoder]));
+}
+
+- (void)setEnableHardwareDecoder:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    AliPlayerProxy *proxy = arr[2];
+    NSNumber* val = [call arguments];
+    [proxy.player setEnableHardwareDecoder:val.boolValue];
+}
+
+- (void)getRotateMode:(NSArray*)arr {
+    AliPlayerProxy *proxy = arr[2];
+    FlutterResult result = arr[1];
+    result(@(proxy.player.rotateMode));
+}
+
+- (void)setRotateMode:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    AliPlayerProxy *proxy = arr[2];
+    NSNumber* val = [call arguments];
+    [proxy.player setRotateMode:val.intValue];
+}
+
+- (void)getScalingMode:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    int mode = 0;
+    switch (proxy.player.scalingMode) {
+        case AVP_SCALINGMODE_SCALEASPECTFIT:
+            mode = 0;
+            break;
+        case AVP_SCALINGMODE_SCALEASPECTFILL:
+            mode = 1;
+            break;
+        case AVP_SCALINGMODE_SCALETOFILL:
+            mode = 2;
+            break;
+
+        default:
+            break;
+    }
+    result(@(mode));
+}
+
+- (void)setScalingMode:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSNumber* val = [call arguments];
+//    与android保持一致
+    int mode = AVP_SCALINGMODE_SCALEASPECTFIT;
+    switch (val.intValue) {
+        case 0:
+            mode = AVP_SCALINGMODE_SCALEASPECTFIT;
+            break;
+        case 1:
+            mode = AVP_SCALINGMODE_SCALEASPECTFILL;
+            break;
+        case 2:
+            mode = AVP_SCALINGMODE_SCALETOFILL;
+            break;
+
+        default:
+            break;
+    }
+    [proxy.player setScalingMode:mode];
+    result(nil);
+}
+
+- (void)getMirrorMode:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    result(@(proxy.player.mirrorMode));
+}
+
+- (void)setMirrorMode:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    AliPlayerProxy *proxy = arr[2];
+    NSNumber* val = [call arguments];
+    [proxy.player setMirrorMode:val.intValue];
+}
+
+- (void)getRate:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    result(@(proxy.player.rate));
+}
+
+- (void)setRate:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    AliPlayerProxy *proxy = arr[2];
+    NSNumber* val = [call arguments];
+    [proxy.player setRate:val.floatValue];
+}
+
 //- (void)snapshot:(NSArray*)arr {
 //    FlutterMethodCall* call = arr.firstObject;
 //    AliPlayer *player = arr[2];
@@ -374,52 +365,52 @@
 //    NSNumber* val = [call arguments];
 //    [player getThumbnail:val.integerValue];
 //}
-//
-//- (void)getVolume:(NSArray*)arr {
-//    FlutterResult result = arr[1];
-//    AliPlayer *player = arr[2];
-//    result(@(player.volume));
-//}
-//
-//- (void)setVolume:(NSArray*)arr {
-//    FlutterMethodCall* call = arr.firstObject;
-//    AliPlayer *player = arr[2];
-//    NSNumber* val = [call arguments];
-//    [player setVolume:val.floatValue];
-//}
-//
-//- (void)setVideoBackgroundColor:(NSArray*)arr {
-//    FlutterMethodCall* call = arr.firstObject;
-//    AliPlayer *player = arr[2];
-//    NSNumber* val = [call arguments];
-//    int c = val.intValue;
-//    UIColor *color = [UIColor colorWithRed:((c>>16)&0xFF)/255.0 green:((c>>8)&0xFF)/255.0 blue:((c)&0xFF)/255.0  alpha:((c>>24)&0xFF)/255.0];
-//    [player setVideoBackgroundColor:color];
-//}
-//
-//-(void)getSDKVersion:(NSArray*)arr{
-//    FlutterResult result = arr[1];
-//    result([AliPlayer getSDKVersion]);
-//}
-//
-//- (void)enableConsoleLog:(NSArray*)arr {
-//    FlutterMethodCall* call = arr.firstObject;
-//    NSNumber* val = [call arguments];
-//    [AliPlayer setEnableLog:val.boolValue];
-//}
-//
-//- (void)getLogLevel:(NSArray*)arr {
-//    FlutterResult result = arr[1];
-//    //TODO 拿不到
-//    result(@(-1));
-//}
-//
-//- (void)setLogLevel:(NSArray*)arr {
-//    FlutterMethodCall* call = arr.firstObject;
-//    NSNumber* val = [call arguments];
-//    [AliPlayer setLogCallbackInfo:val.intValue callbackBlock:nil];
-//}
-//
+
+- (void)getVolume:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    result(@(proxy.player.volume));
+}
+
+- (void)setVolume:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    AliPlayerProxy *proxy = arr[2];
+    NSNumber* val = [call arguments];
+    [proxy.player setVolume:val.floatValue];
+}
+
+- (void)setVideoBackgroundColor:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    AliPlayerProxy *proxy = arr[2];
+    NSNumber* val = [call arguments];
+    int c = val.intValue;
+    UIColor *color = [UIColor colorWithRed:((c>>16)&0xFF)/255.0 green:((c>>8)&0xFF)/255.0 blue:((c)&0xFF)/255.0  alpha:((c>>24)&0xFF)/255.0];
+    [proxy.player setVideoBackgroundColor:color];
+}
+
+-(void)getSDKVersion:(NSArray*)arr{
+    FlutterResult result = arr[1];
+    result([AliPlayer getSDKVersion]);
+}
+
+- (void)enableConsoleLog:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    NSNumber* val = [call arguments];
+    [AliPlayer setEnableLog:val.boolValue];
+}
+
+- (void)getLogLevel:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    //TODO 拿不到
+    result(@(-1));
+}
+
+- (void)setLogLevel:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    NSNumber* val = [call arguments];
+    [AliPlayer setLogCallbackInfo:val.intValue callbackBlock:nil];
+}
+
 //- (void)seekTo:(NSArray*)arr {
 //    FlutterMethodCall* call = arr.firstObject;
 //    AliPlayer *player = arr[2];
@@ -429,105 +420,105 @@
 //    [player seekToTime:position.integerValue seekMode:seekMode.intValue];
 //}
 //
-////TODO 应该是根据已经有的key 替换比较合理
-//- (void)setConfig:(NSArray*)arr {
-//    FlutterMethodCall* call = arr.firstObject;
-//    AliPlayer *player = arr[2];
-//    NSDictionary* val = [call arguments];
-//    AVPConfig *config = [player getConfig];
-//
-//    [AVPConfig mj_setupReplacedKeyFromPropertyName:^NSDictionary *{
-//        return @{
-//            @"httpProxy" : @"mHttpProxy",
-//            @"referer" :@"mReferrer",
-//            @"networkTimeout" :@"mNetworkTimeout",
-//            @"highBufferDuration":@"mHighBufferDuration",
-//            @"maxDelayTime" :@"mMaxDelayTime",
-//            @"maxBufferDuration" :@"mMaxBufferDuration",
-//            @"startBufferDuration" :@"mStartBufferDuration",
-//            @"maxProbeSize" :@"mMaxProbeSize",
-//            @"maxProbeSize" :@"mMaxProbeSize",
-//            @"clearShowWhenStop" :@"mClearFrameWhenStop",
-//            @"enableVideoTunnelRender" :@"mEnableVideoTunnelRender",
-//            @"enableSEI" :@"mEnableSEI",
-//            @"userAgent" :@"mUserAgent",
-//            @"networkRetryCount" :@"mNetworkRetryCount",
-//            @"liveStartIndex" :@"mLiveStartIndex",
-//            @"customHeaders" :@"mCustomHeaders",
-//            @"disableAudio":@"mDisableAudio",
-//            @"disableVideo":@"mDisableVideo",
-//        };
-//    }];
-//
-//    config = [AVPConfig mj_objectWithKeyValues:val];
-//
-//    [player setConfig:config];
-//
-//}
-//
-////- (void)getCacheConfig:(NSArray*)arr {
-////    FlutterResult result = arr[1];
-////    AliPlayer *player = arr[2];
-////    [AVPCacheConfig mj_setupReplacedKeyFromPropertyName:^NSDictionary *{
-////        return @{
-////                 @"enable" : @"mEnable",
-////                 @"path" :@"mDir",
-////                 @"maxSizeMB" :@"mMaxSizeMB",
-////                 @"maxDuration" :@"mMaxDurationS",
-////                 };
-////    }];
-////    result(config.mj_keyValues);
-////}
-//
-//- (void)setCacheConfig:(NSArray*)arr {
-//    FlutterMethodCall* call = arr.firstObject;
-//    AliPlayer *player = arr[2];
-//    NSDictionary* val = [call arguments];
-//
-//    [AVPCacheConfig mj_setupReplacedKeyFromPropertyName:^NSDictionary *{
-//        return @{
-//            @"enable" : @"mEnable",
-//            @"path" :@"mDir",
-//            @"maxSizeMB" :@"mMaxSizeMB",
-//            @"maxDuration" :@"mMaxDurationS",
-//        };
-//    }];
-//    AVPCacheConfig *config = [AVPCacheConfig mj_objectWithKeyValues:val];
-//    NSString *path = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
-//    [config setPath:[path stringByAppendingPathComponent:config.path]];
-//
-//    [player setCacheConfig:config];
-//
-//}
-//
-//- (void)getConfig:(NSArray*)arr {
+//TODO 应该是根据已经有的key 替换比较合理
+- (void)setConfig:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    AliPlayerProxy *proxy = arr[2];
+    NSDictionary* val = [call arguments];
+    AVPConfig *config = [proxy.player getConfig];
+
+    [AVPConfig mj_setupReplacedKeyFromPropertyName:^NSDictionary *{
+        return @{
+            @"httpProxy" : @"mHttpProxy",
+            @"referer" :@"mReferrer",
+            @"networkTimeout" :@"mNetworkTimeout",
+            @"highBufferDuration":@"mHighBufferDuration",
+            @"maxDelayTime" :@"mMaxDelayTime",
+            @"maxBufferDuration" :@"mMaxBufferDuration",
+            @"startBufferDuration" :@"mStartBufferDuration",
+            @"maxProbeSize" :@"mMaxProbeSize",
+            @"maxProbeSize" :@"mMaxProbeSize",
+            @"clearShowWhenStop" :@"mClearFrameWhenStop",
+            @"enableVideoTunnelRender" :@"mEnableVideoTunnelRender",
+            @"enableSEI" :@"mEnableSEI",
+            @"userAgent" :@"mUserAgent",
+            @"networkRetryCount" :@"mNetworkRetryCount",
+            @"liveStartIndex" :@"mLiveStartIndex",
+            @"customHeaders" :@"mCustomHeaders",
+            @"disableAudio":@"mDisableAudio",
+            @"disableVideo":@"mDisableVideo",
+        };
+    }];
+
+    config = [AVPConfig mj_objectWithKeyValues:val];
+
+    [proxy.player setConfig:config];
+
+}
+
+//- (void)getCacheConfig:(NSArray*)arr {
 //    FlutterResult result = arr[1];
 //    AliPlayer *player = arr[2];
-//    AVPConfig *config = [player getConfig];
-//
-//    [AVPConfig mj_setupReplacedKeyFromPropertyName:^NSDictionary *{
+//    [AVPCacheConfig mj_setupReplacedKeyFromPropertyName:^NSDictionary *{
 //        return @{
-//            @"httpProxy" : @"mHttpProxy",
-//            @"referer" :@"mReferrer",
-//            @"networkTimeout" :@"mNetworkTimeout",
-//            @"highBufferDuration":@"mHighBufferDuration",
-//            @"maxDelayTime" :@"mMaxDelayTime",
-//            @"maxBufferDuration" :@"mMaxBufferDuration",
-//            @"startBufferDuration" :@"mStartBufferDuration",
-//            @"maxProbeSize" :@"mMaxProbeSize",
-//            @"maxProbeSize" :@"mMaxProbeSize",
-//            @"clearShowWhenStop" :@"mClearFrameWhenStop",
-//            @"enableVideoTunnelRender" :@"mEnableVideoTunnelRender",
-//            @"enableSEI" :@"mEnableSEI",
-//            @"userAgent" :@"mUserAgent",
-//            @"networkRetryCount" :@"mNetworkRetryCount",
-//            @"liveStartIndex" :@"mLiveStartIndex",
-//            @"customHeaders" :@"mCustomHeaders",
-//        };
+//                 @"enable" : @"mEnable",
+//                 @"path" :@"mDir",
+//                 @"maxSizeMB" :@"mMaxSizeMB",
+//                 @"maxDuration" :@"mMaxDurationS",
+//                 };
 //    }];
 //    result(config.mj_keyValues);
 //}
-//
+
+- (void)setCacheConfig:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    AliPlayerProxy *proxy = arr[2];
+    NSDictionary* val = [call arguments];
+
+    [AVPCacheConfig mj_setupReplacedKeyFromPropertyName:^NSDictionary *{
+        return @{
+            @"enable" : @"mEnable",
+            @"path" :@"mDir",
+            @"maxSizeMB" :@"mMaxSizeMB",
+            @"maxDuration" :@"mMaxDurationS",
+        };
+    }];
+    AVPCacheConfig *config = [AVPCacheConfig mj_objectWithKeyValues:val];
+    NSString *path = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
+    [config setPath:[path stringByAppendingPathComponent:config.path]];
+
+    [proxy.player setCacheConfig:config];
+
+}
+
+- (void)getConfig:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    AVPConfig *config = [proxy.player getConfig];
+
+    [AVPConfig mj_setupReplacedKeyFromPropertyName:^NSDictionary *{
+        return @{
+            @"httpProxy" : @"mHttpProxy",
+            @"referer" :@"mReferrer",
+            @"networkTimeout" :@"mNetworkTimeout",
+            @"highBufferDuration":@"mHighBufferDuration",
+            @"maxDelayTime" :@"mMaxDelayTime",
+            @"maxBufferDuration" :@"mMaxBufferDuration",
+            @"startBufferDuration" :@"mStartBufferDuration",
+            @"maxProbeSize" :@"mMaxProbeSize",
+            @"maxProbeSize" :@"mMaxProbeSize",
+            @"clearShowWhenStop" :@"mClearFrameWhenStop",
+            @"enableVideoTunnelRender" :@"mEnableVideoTunnelRender",
+            @"enableSEI" :@"mEnableSEI",
+            @"userAgent" :@"mUserAgent",
+            @"networkRetryCount" :@"mNetworkRetryCount",
+            @"liveStartIndex" :@"mLiveStartIndex",
+            @"customHeaders" :@"mCustomHeaders",
+        };
+    }];
+    result(config.mj_keyValues);
+}
+
 //-(void)setSource:(AVPSource*)source withDefinitions:(NSDictionary*)dic{
 //    NSArray *definitionList = [dic objectForKey:@"definitionList"];
 //    if (definitionList && [definitionList isKindOfClass:NSArray.class] && definitionList.count>0) {
