@@ -195,7 +195,12 @@
 #pragma --mark getters
 - (AliPlayer *)player{
     if (!_player) {
-        _player = [[AliPlayer alloc] init];
+        if (_playerType==1) {
+            _player = [[AliListPlayer alloc] init];
+            ((AliListPlayer*)_player).stsPreloadDefinition = @"FD";
+        }else{
+            _player = [[AliPlayer alloc] init];
+        }
         _player.scalingMode =  AVP_SCALINGMODE_SCALEASPECTFIT;
         _player.rate = 1;
         _player.delegate = self;

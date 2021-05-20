@@ -45,44 +45,46 @@ class _VideoGridPageState extends State<VideoGridPage>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     fAliListPlayer = FlutterAliPlayerFactory().createAliListPlayer();
-    fAliListPlayer.setAutoPlay(true);
-    fAliListPlayer.setLoop(true);
-    var configMap = {
-      'mClearFrameWhenStop': true,
-    };
-    fAliListPlayer.setConfig(configMap);
+    fAliListPlayer.createAliPlayer().then((value) {
+      fAliListPlayer.setAutoPlay(true);
+      fAliListPlayer.setLoop(true);
+      var configMap = {
+        'mClearFrameWhenStop': true,
+      };
+      fAliListPlayer.setConfig(configMap);
 
-    fAliListPlayer.setOnRenderingStart((playerId) {
-      print('_isFirstRenderShow==$_curIdx');
-      Future.delayed(Duration(milliseconds: 50), () {
-        setState(() {
-          _isFirstRenderShow = true;
+      fAliListPlayer.setOnRenderingStart((playerId) {
+        print('_isFirstRenderShow==$_curIdx');
+        Future.delayed(Duration(milliseconds: 50), () {
+          setState(() {
+            _isFirstRenderShow = true;
+          });
         });
       });
-    });
 
-    fAliListPlayer.setOnStateChanged((newState,playerId) {
-      switch (newState) {
-        case FlutterAvpdef.AVPStatus_AVPStatusStarted:
-          setState(() {
-            _isBackgroundMode = false;
-            _isPause = false;
-          });
-          break;
-        case FlutterAvpdef.AVPStatus_AVPStatusPaused:
-          setState(() {
-            _isPause = true;
-          });
-          break;
-        default:
-      }
-    });
+      fAliListPlayer.setOnStateChanged((newState, playerId) {
+        switch (newState) {
+          case FlutterAvpdef.AVPStatus_AVPStatusStarted:
+            setState(() {
+              _isBackgroundMode = false;
+              _isPause = false;
+            });
+            break;
+          case FlutterAvpdef.AVPStatus_AVPStatusPaused:
+            setState(() {
+              _isPause = true;
+            });
+            break;
+          default:
+        }
+      });
 
-    fAliListPlayer.setOnError((errorCode, errorExtra, errorMsg,playerId) {
-      Fluttertoast.showToast(msg: errorMsg);
-    });
+      fAliListPlayer.setOnError((errorCode, errorExtra, errorMsg, playerId) {
+        Fluttertoast.showToast(msg: errorMsg);
+      });
 
-    _onRefresh();
+      _onRefresh();
+    });
   }
 
   @override
@@ -235,8 +237,9 @@ class _VideoGridPageState extends State<VideoGridPage>
             if (notification.depth == 0 &&
                 notification is ScrollUpdateNotification) {
               final PageMetrics metrics = notification.metrics as PageMetrics;
-              _playerY = metrics.pixels - _curIdx * MediaQuery.of(context).size.height;
-                setState(() {});
+              _playerY =
+                  metrics.pixels - _curIdx * MediaQuery.of(context).size.height;
+              setState(() {});
             } else if (notification is ScrollEndNotification) {
               _playerY = 0.0;
               PageMetrics metrics = notification.metrics as PageMetrics;
@@ -372,6 +375,7 @@ class _VideoGridPageState extends State<VideoGridPage>
 
   void onViewPlayerCreated(viewId) async {
     print('onViewPlayerCreated===');
+    fAliListPlayer.setPlayerView(viewId);
   }
 
   void start() async {

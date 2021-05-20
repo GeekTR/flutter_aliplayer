@@ -56,10 +56,10 @@
             }
         }];
         
-        _listPlayerchannel = [FlutterMethodChannel methodChannelWithName:@"flutter_alilistplayer" binaryMessenger:messenger];
-        [_listPlayerchannel setMethodCallHandler:^(FlutterMethodCall* call, FlutterResult result) {
-            [weakSelf onMethodCall:call result:result atObj:weakSelf.aliListPlayer arg:@""];
-        }];
+//        _listPlayerchannel = [FlutterMethodChannel methodChannelWithName:@"flutter_alilistplayer" binaryMessenger:messenger];
+//        [_listPlayerchannel setMethodCallHandler:^(FlutterMethodCall* call, FlutterResult result) {
+//            [weakSelf onMethodCall:call result:result atObj:weakSelf.aliListPlayer arg:@""];
+//        }];
         
         FlutterEventChannel *eventChannel = [FlutterEventChannel eventChannelWithName:@"flutter_aliplayer_event" binaryMessenger:messenger];
         [eventChannel setStreamHandler:self];
@@ -130,7 +130,9 @@
     FlutterResult result = arr[1];
     NSDictionary *dic = [call arguments];
     NSString *playerId = [dic objectForKey:@"playerId"];
+    NSNumber *type= [dic objectForKey:@"arg"];
     AliPlayerProxy *proxy = [AliPlayerProxy new];
+    proxy.playerType = type.intValue;
     proxy.playerId = playerId;
     proxy.eventSink = self.eventSink;
     
@@ -520,111 +522,103 @@
     result(config.mj_keyValues);
 }
 
-//-(void)setSource:(AVPSource*)source withDefinitions:(NSDictionary*)dic{
-//    NSArray *definitionList = [dic objectForKey:@"definitionList"];
-//    if (definitionList && [definitionList isKindOfClass:NSArray.class] && definitionList.count>0) {
-//        NSMutableString *mutStr = @"".mutableCopy;
-//        for (NSString *str in definitionList) {
-//            [mutStr appendString:str];
-//            [mutStr appendString:@","];
-//        }
-//        [mutStr deleteCharactersInRange:NSMakeRange(mutStr.length-1, 1)];
-//        [source setDefinitions:mutStr];
-//    }
-//}
-//
-//- (void)setVidSts:(NSArray*)arr {
-//    FlutterMethodCall* call = arr.firstObject;
-//    AliPlayer *player = arr[2];
-//    NSDictionary *dic = call.arguments;
-//    AVPVidStsSource *source = [AVPVidStsSource mj_objectWithKeyValues:dic];
-//
-//    NSString *previewTime = [dic getStrByKey:@"previewTime"];
-//    if(previewTime && previewTime.length>0){
-//        VidPlayerConfigGenerator* vp = [[VidPlayerConfigGenerator alloc] init];
-//        [vp setPreviewTime:previewTime.intValue];
-//        source.playConfig = [vp generatePlayerConfig];
-//    }
-//
-//    [self setSource:source withDefinitions:dic];
-//    [player setStsSource:source];
-//}
-//
-//- (void)setVidAuth:(NSArray*)arr {
-//    FlutterMethodCall* call = arr.firstObject;
-//    AliPlayer *player = arr[2];
-//    NSDictionary *dic = call.arguments;
-//    AVPVidAuthSource *source = [AVPVidAuthSource mj_objectWithKeyValues:dic];
-//
-//    NSString *previewTime = [dic getStrByKey:@"previewTime"];
-//    if(previewTime && previewTime.length>0){
-//        VidPlayerConfigGenerator* vp = [[VidPlayerConfigGenerator alloc] init];
-//        [vp setPreviewTime:previewTime.intValue];
-//        source.playConfig = [vp generatePlayerConfig];
-//    }
-//
-//    [self setSource:source withDefinitions:dic];
-//    [player setAuthSource:source];
-//}
-//
-//- (void)setVidMps:(NSArray*)arr {
-//    FlutterMethodCall* call = arr.firstObject;
-//    AliPlayer *player = arr[2];
-//    AVPVidMpsSource *source = [[AVPVidMpsSource alloc] init];
-//    NSDictionary *dic = [call.arguments removeNull];
-//    [source setVid:dic[@"vid"]];
-//    [source setAccId:dic[@"accessKeyId"]];
-//    [source setRegion:dic[@"region"]];
-//    [source setStsToken:dic[@"securityToken"]];
-//    [source setAccSecret:dic[@"accessKeySecret"]];
-//    [source setPlayDomain:dic[@"playDomain"]];
-//    [source setAuthInfo:dic[@"authInfo"]];
-//    [source setMtsHlsUriToken:dic[@"hlsUriToken"]];
-//    [self setSource:source withDefinitions:dic];
-//    [player setMpsSource:source];
-//}
-//
-//- (void)addVidSource:(NSArray*)arr {
-//    FlutterMethodCall* call = arr.firstObject;
-//    AliListPlayer *player = arr[2];
-//    NSDictionary *dic = [call arguments];
-//    [player addVidSource:dic[@"vid"] uid:dic[@"uid"]];
-//}
-//
-//- (void)addUrlSource:(NSArray*)arr {
-//    FlutterMethodCall* call = arr.firstObject;
-//    AliListPlayer *player = arr[2];
-//    NSDictionary *dic = [call arguments];
-//    [player addUrlSource:dic[@"url"] uid:dic[@"uid"]];
-//}
-//
-//- (void)moveTo:(NSArray*)arr {
-//    FlutterMethodCall* call = arr.firstObject;
-//    AliListPlayer *player = arr[2];
-//    NSDictionary *dic = [[call arguments] removeNull];
-//
-//    NSString *aacId = [dic getStrByKey:@"accId"];
-//    if (aacId.length>0) {
-//        [player moveTo:dic[@"uid"] accId:dic[@"accId"] accKey:dic[@"accKey"] token:dic[@"token"] region:dic[@"region"]];
-//    }else{
-//        [player moveTo:dic[@"uid"]];
-//    }
-//}
-//
-//- (void)moveToNext:(NSArray*)arr {
-//    FlutterMethodCall* call = arr.firstObject;
-//    AliListPlayer *player = arr[2];
-//    NSDictionary *dic = [[call arguments] removeNull];
-//    [player moveToNext:dic[@"accId"] accKey:dic[@"accKey"] token:dic[@"token"] region:dic[@"region"]];
-//}
-//
-//- (void)setPreloadCount:(NSArray*)arr {
-//    FlutterMethodCall* call = arr.firstObject;
-//    AliListPlayer *player = arr[2];
-//    NSNumber* val = [call arguments];
-//    [player setPreloadCount:val.intValue];
-//}
-//
+-(void)setSource:(AVPSource*)source withDefinitions:(NSDictionary*)dic{
+    NSArray *definitionList = [dic objectForKey:@"definitionList"];
+    if (definitionList && [definitionList isKindOfClass:NSArray.class] && definitionList.count>0) {
+        NSMutableString *mutStr = @"".mutableCopy;
+        for (NSString *str in definitionList) {
+            [mutStr appendString:str];
+            [mutStr appendString:@","];
+        }
+        [mutStr deleteCharactersInRange:NSMakeRange(mutStr.length-1, 1)];
+        [source setDefinitions:mutStr];
+    }
+}
+
+- (void)setVidSts:(NSArray*)arr {
+    AliPlayerProxy *proxy = arr[2];
+    NSDictionary *dic = arr[3];
+    AVPVidStsSource *source = [AVPVidStsSource mj_objectWithKeyValues:dic];
+
+    NSString *previewTime = [dic getStrByKey:@"previewTime"];
+    if(previewTime && previewTime.length>0){
+        VidPlayerConfigGenerator* vp = [[VidPlayerConfigGenerator alloc] init];
+        [vp setPreviewTime:previewTime.intValue];
+        source.playConfig = [vp generatePlayerConfig];
+    }
+
+    [self setSource:source withDefinitions:dic];
+    [proxy.player setStsSource:source];
+}
+
+- (void)setVidAuth:(NSArray*)arr {
+    AliPlayerProxy *proxy = arr[2];
+    NSDictionary *dic = arr[3];
+    AVPVidAuthSource *source = [AVPVidAuthSource mj_objectWithKeyValues:dic];
+
+    NSString *previewTime = [dic getStrByKey:@"previewTime"];
+    if(previewTime && previewTime.length>0){
+        VidPlayerConfigGenerator* vp = [[VidPlayerConfigGenerator alloc] init];
+        [vp setPreviewTime:previewTime.intValue];
+        source.playConfig = [vp generatePlayerConfig];
+    }
+
+    [self setSource:source withDefinitions:dic];
+    [proxy.player setAuthSource:source];
+}
+
+- (void)setVidMps:(NSArray*)arr {
+    AliPlayerProxy *proxy = arr[2];
+    AVPVidMpsSource *source = [[AVPVidMpsSource alloc] init];
+    NSDictionary *dic = [arr[3] removeNull];
+    [source setVid:dic[@"vid"]];
+    [source setAccId:dic[@"accessKeyId"]];
+    [source setRegion:dic[@"region"]];
+    [source setStsToken:dic[@"securityToken"]];
+    [source setAccSecret:dic[@"accessKeySecret"]];
+    [source setPlayDomain:dic[@"playDomain"]];
+    [source setAuthInfo:dic[@"authInfo"]];
+    [source setMtsHlsUriToken:dic[@"hlsUriToken"]];
+    [self setSource:source withDefinitions:dic];
+    [proxy.player setMpsSource:source];
+}
+
+- (void)addVidSource:(NSArray*)arr {
+    AliPlayerProxy *proxy = arr[2];
+    NSDictionary *dic = arr[3];
+    [(AliListPlayer*)proxy.player addVidSource:dic[@"vid"] uid:dic[@"uid"]];
+}
+
+- (void)addUrlSource:(NSArray*)arr {
+    AliPlayerProxy *proxy = arr[2];
+    NSDictionary *dic = arr[3];
+    [(AliListPlayer*)proxy.player addUrlSource:dic[@"url"] uid:dic[@"uid"]];
+}
+
+- (void)moveTo:(NSArray*)arr {
+    AliPlayerProxy *proxy = arr[2];
+    NSDictionary *dic = [arr[3] removeNull];
+
+    NSString *aacId = [dic getStrByKey:@"accId"];
+    if (aacId.length>0) {
+        [(AliListPlayer*)proxy.player moveTo:dic[@"uid"] accId:dic[@"accId"] accKey:dic[@"accKey"] token:dic[@"token"] region:dic[@"region"]];
+    }else{
+        [(AliListPlayer*)proxy.player moveTo:dic[@"uid"]];
+    }
+}
+
+- (void)moveToNext:(NSArray*)arr {
+    AliPlayerProxy *proxy = arr[2];
+    NSDictionary *dic = [arr[3] removeNull];
+    [(AliListPlayer*)proxy.player moveToNext:dic[@"accId"] accKey:dic[@"accKey"] token:dic[@"token"] region:dic[@"region"]];
+}
+
+- (void)setPreloadCount:(NSArray*)arr {
+    AliPlayerProxy *proxy = arr[2];
+    NSNumber* val = arr[3];
+    [(AliListPlayer*)proxy.player setPreloadCount:val.intValue];
+}
+
 - (void)getMediaInfo:(NSArray*)arr {
     FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
@@ -741,20 +735,6 @@
         return [[AVAudioSession sharedInstance] setCategory:category mode:mode routeSharingPolicy:policy options:options error:outError];
     }
     return NO;
-}
-
-#pragma --mark getters
-
-- (AliListPlayer*) aliListPlayer{
-    if(!_aliListPlayer){
-        _aliListPlayer = [[AliListPlayer alloc] init];
-        _aliListPlayer.scalingMode =  AVP_SCALINGMODE_SCALEASPECTFIT;
-        _aliListPlayer.rate = 1;
-        _aliListPlayer.delegate = self;
-        _aliListPlayer.playerView = playerView;
-        _aliListPlayer.stsPreloadDefinition = @"FD";
-    }
-    return _aliListPlayer;
 }
 
 @end

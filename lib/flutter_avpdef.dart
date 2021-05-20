@@ -122,6 +122,11 @@ class EventChanneldef {
   static const String DOWNLOAD_ERROR = "download_error";
 }
 
+class PlayerType {
+  static const int PlayerType_Single = 0;
+  static const int PlayerType_List = 1;
+}
+
 class AVPMediaInfo {
   String? status;
   String? mediaType;

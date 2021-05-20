@@ -26,6 +26,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property(nonatomic,strong) NSString *playerId;
 
+@property(nonatomic,assign) int playerType;
+
 @property(nonatomic,strong) FlutterAliPlayerView *fapv;
 
 -(void)bindPlayerView:(FlutterAliPlayerView*)fapv;

@@ -45,31 +45,31 @@ typedef OnThumbnailGetSuccess = void Function(
 typedef OnThumbnailGetFail = void Function(String playerId);
 
 class FlutterAliplayer {
-  late OnLoadingBegin onLoadingBegin;
-  late OnLoadingProgress onLoadingProgress;
-  late OnLoadingEnd onLoadingEnd;
-  late OnPrepared onPrepared;
-  late OnRenderingStart onRenderingStart;
-  late OnVideoSizeChanged onVideoSizeChanged;
-  late OnSeekComplete onSeekComplete;
-  late OnStateChanged onStateChanged;
-  late OnInfo onInfo;
-  late OnCompletion onCompletion;
-  late OnTrackReady onTrackReady;
-  late OnError onError;
-  late OnSnapShot onSnapShot;
+   OnLoadingBegin? onLoadingBegin;
+   OnLoadingProgress? onLoadingProgress;
+   OnLoadingEnd? onLoadingEnd;
+   OnPrepared? onPrepared;
+   OnRenderingStart? onRenderingStart;
+   OnVideoSizeChanged? onVideoSizeChanged;
+   OnSeekComplete? onSeekComplete;
+   OnStateChanged? onStateChanged;
+   OnInfo? onInfo;
+   OnCompletion? onCompletion;
+   OnTrackReady? onTrackReady;
+   OnError? onError;
+   OnSnapShot? onSnapShot;
 
-  late OnTrackChanged onTrackChanged;
-  late OnThumbnailPreparedSuccess onThumbnailPreparedSuccess;
-  late OnThumbnailPreparedFail onThumbnailPreparedFail;
+   OnTrackChanged? onTrackChanged;
+   OnThumbnailPreparedSuccess? onThumbnailPreparedSuccess;
+   OnThumbnailPreparedFail? onThumbnailPreparedFail;
 
-  late OnThumbnailGetSuccess onThumbnailGetSuccess;
-  late OnThumbnailGetFail onThumbnailGetFail;
+   OnThumbnailGetSuccess? onThumbnailGetSuccess;
+   OnThumbnailGetFail? onThumbnailGetFail;
 
   //外挂字幕
-  late OnSubtitleExtAdded onSubtitleExtAdded;
-  late OnSubtitleHide onSubtitleHide;
-  late OnSubtitleShow onSubtitleShow;
+   OnSubtitleExtAdded? onSubtitleExtAdded;
+   OnSubtitleHide? onSubtitleHide;
+   OnSubtitleShow? onSubtitleShow;
 
   MethodChannel channel = new MethodChannel('flutter_aliplayer');
   EventChannel eventChannel = EventChannel("flutter_aliplayer_event");
@@ -157,14 +157,7 @@ class FlutterAliplayer {
     this.onSubtitleExtAdded = onSubtitleExtAdded;
   }
 
-  Future<void> createAliPlayer({playerId}) async {
-    return channel.invokeMethod('createAliPlayer',wrapWithPlayerId(playerId:playerId));
-  }
-
-  Future<void> setPlayerView(int viewId,{playerId}) async {
-    return channel.invokeMethod('setPlayerView',wrapWithPlayerId(playerId:playerId,arg: viewId));
-  }
-
+  ///接口部分
   wrapWithPlayerId({playerId,arg=''}) {
     if(playerId==null){
       playerId='default';
@@ -173,8 +166,15 @@ class FlutterAliplayer {
     return map;
   }
 
+  Future<void> createAliPlayer({playerId}) async {
+    return channel.invokeMethod('createAliPlayer',wrapWithPlayerId(playerId:playerId,arg: PlayerType.PlayerType_Single));
+  }
+
+  Future<void> setPlayerView(int viewId,{playerId}) async {
+    return channel.invokeMethod('setPlayerView',wrapWithPlayerId(playerId:playerId,arg: viewId));
+  }
+
   Future<void> setUrl(String url,{playerId}) async {
-    assert(url != null);
     return channel.invokeMethod('setUrl', wrapWithPlayerId(playerId:playerId,arg:url));
   }
 
@@ -246,7 +246,8 @@ class FlutterAliplayer {
       String? accessKeySecret,
       String? securityToken,
       String? previewTime,
-      List<String>? definitionList}) async {
+      List<String>? definitionList,
+      playerId}) async {
     Map<String, dynamic> stsInfo = {
       "vid": vid,
       "region": region,
@@ -256,7 +257,7 @@ class FlutterAliplayer {
       "definitionList": definitionList,
       "previewTime": previewTime
     };
-    return channel.invokeMethod("setVidSts", stsInfo);
+    return channel.invokeMethod("setVidSts", wrapWithPlayerId(playerId:playerId,arg: stsInfo));
   }
 
   Future<void> setVidAuth({
@@ -265,6 +266,7 @@ class FlutterAliplayer {
     String? playAuth,
     String? previewTime,
     List<String>? definitionList,
+    playerId
   }) async {
     Map<String, dynamic> authInfo = {
       "vid": vid,
@@ -273,11 +275,11 @@ class FlutterAliplayer {
       "definitionList": definitionList,
       "previewTime": previewTime
     };
-    return channel.invokeMethod("setVidAuth", authInfo);
+    return channel.invokeMethod("setVidAuth", wrapWithPlayerId(playerId:playerId,arg: authInfo));
   }
 
-  Future<void> setVidMps(Map<String, dynamic> mpsInfo) async {
-    return channel.invokeMethod("setVidMps", mpsInfo);
+  Future<void> setVidMps(Map<String, dynamic> mpsInfo,{playerId}) async {
+    return channel.invokeMethod("setVidMps", wrapWithPlayerId(playerId:playerId,arg: mpsInfo));
   }
 
   Future<dynamic> getRotateMode({playerId}) async {
@@ -431,25 +433,25 @@ class FlutterAliplayer {
     switch (method) {
       case "onPrepared":
         if (onPrepared != null) {
-          onPrepared(playerId);
+          onPrepared!(playerId);
         }
         break;
       case "onRenderingStart":
         if (onRenderingStart != null) {
-          onRenderingStart(playerId);
+          onRenderingStart!(playerId);
         }
         break;
       case "onVideoSizeChanged":
         if (onVideoSizeChanged != null) {
           int width = event['width'];
           int height = event['height'];
-          onVideoSizeChanged(width, height,playerId);
+          onVideoSizeChanged!(width, height,playerId);
         }
         break;
       case "onSnapShot":
         if (onSnapShot != null) {
           String snapShotPath = event['snapShotPath'];
-          onSnapShot(snapShotPath,playerId);
+          onSnapShot!(snapShotPath,playerId);
         }
         break;
       case "onChangedSuccess":
@@ -458,33 +460,33 @@ class FlutterAliplayer {
         break;
       case "onSeekComplete":
         if (onSeekComplete != null) {
-          onSeekComplete(playerId);
+          onSeekComplete!(playerId);
         }
         break;
       case "onSeiData":
         break;
       case "onLoadingBegin":
         if (onLoadingBegin != null) {
-          onLoadingBegin(playerId);
+          onLoadingBegin!(playerId);
         }
         break;
       case "onLoadingProgress":
         int percent = event['percent'];
         double netSpeed = event['netSpeed'];
         if (onLoadingProgress != null) {
-          onLoadingProgress(percent, netSpeed,playerId);
+          onLoadingProgress!(percent, netSpeed,playerId);
         }
         break;
       case "onLoadingEnd":
         if (onLoadingEnd != null) {
           print("onLoadingEnd");
-          onLoadingEnd(playerId);
+          onLoadingEnd!(playerId);
         }
         break;
       case "onStateChanged":
         if (onStateChanged != null) {
           int newState = event['newState'];
-          onStateChanged(newState,playerId);
+          onStateChanged!(newState,playerId);
         }
         break;
       case "onInfo":
@@ -492,7 +494,7 @@ class FlutterAliplayer {
           int infoCode = event['infoCode'];
           int extraValue = event['extraValue'];
           String extraMsg = event['extraMsg'];
-          onInfo(infoCode, extraValue, extraMsg,playerId);
+          onInfo!(infoCode, extraValue, extraMsg,playerId);
         }
         break;
       case "onError":
@@ -500,33 +502,33 @@ class FlutterAliplayer {
           int errorCode = event['errorCode'];
           String errorExtra = event['errorExtra'];
           String errorMsg = event['errorMsg'];
-          onError(errorCode, errorExtra, errorMsg,playerId);
+          onError!(errorCode, errorExtra, errorMsg,playerId);
         }
         break;
       case "onCompletion":
         if (onCompletion != null) {
-          onCompletion(playerId);
+          onCompletion!(playerId);
         }
         break;
       case "onTrackReady":
         if (onTrackReady != null) {
-          this.onTrackReady(playerId);
+          this.onTrackReady!(playerId);
         }
         break;
       case "onTrackChanged":
         if (onTrackChanged != null) {
           dynamic info = event['info'];
-          this.onTrackChanged(info,playerId);
+          this.onTrackChanged!(info,playerId);
         }
         break;
       case "thumbnail_onPrepared_Success":
         if (onThumbnailPreparedSuccess != null) {
-          onThumbnailPreparedSuccess(playerId);
+          onThumbnailPreparedSuccess!(playerId);
         }
         break;
       case "thumbnail_onPrepared_Fail":
         if (onThumbnailPreparedFail != null) {
-          onThumbnailPreparedFail(playerId);
+          onThumbnailPreparedFail!(playerId);
         }
         break;
       case "onThumbnailGetSuccess":
@@ -536,19 +538,19 @@ class FlutterAliplayer {
           if (Platform.isIOS) {
             range = Int64List.fromList(range.cast<int>());
           }
-          onThumbnailGetSuccess(bitmap, range,playerId);
+          onThumbnailGetSuccess!(bitmap, range,playerId);
         }
         break;
       case "onThumbnailGetFail":
         if (onThumbnailGetFail != null) {
-          onThumbnailGetFail(playerId);
+          onThumbnailGetFail!(playerId);
         }
         break;
       case "onSubtitleExtAdded":
         if (onSubtitleExtAdded != null) {
           int trackIndex = event['trackIndex'];
           String url = event['url'];
-          onSubtitleExtAdded(trackIndex, url,playerId);
+          onSubtitleExtAdded!(trackIndex, url,playerId);
         }
         break;
       case "onSubtitleShow":
@@ -556,14 +558,14 @@ class FlutterAliplayer {
           int trackIndex = event['trackIndex'];
           int subtitleID = event['subtitleID'];
           String subtitle = event['subtitle'];
-          onSubtitleShow(trackIndex, subtitleID, subtitle,playerId);
+          onSubtitleShow!(trackIndex, subtitleID, subtitle,playerId);
         }
         break;
       case "onSubtitleHide":
         if (onSubtitleHide != null) {
           int trackIndex = event['trackIndex'];
           int subtitleID = event['subtitleID'];
-          onSubtitleHide(trackIndex, subtitleID,playerId);
+          onSubtitleHide!(trackIndex, subtitleID,playerId);
         }
         break;
     }

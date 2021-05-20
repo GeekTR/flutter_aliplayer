@@ -12,8 +12,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface AliPlayerFactory : NSObject<FlutterPlatformViewFactory,FlutterStreamHandler,CicadaAudioSessionDelegate>
 
-@property(nonatomic,strong,nullable)AliListPlayer *aliListPlayer;
-
 - (instancetype)initWithMessenger:(NSObject<FlutterBinaryMessenger>*)messenger;
 
 @end
