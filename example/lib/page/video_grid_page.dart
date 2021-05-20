@@ -52,7 +52,7 @@ class _VideoGridPageState extends State<VideoGridPage>
     };
     fAliListPlayer.setConfig(configMap);
 
-    fAliListPlayer.setOnRenderingStart(() {
+    fAliListPlayer.setOnRenderingStart((playerId) {
       print('_isFirstRenderShow==$_curIdx');
       Future.delayed(Duration(milliseconds: 50), () {
         setState(() {
@@ -61,7 +61,7 @@ class _VideoGridPageState extends State<VideoGridPage>
       });
     });
 
-    fAliListPlayer.setOnStateChanged((newState) {
+    fAliListPlayer.setOnStateChanged((newState,playerId) {
       switch (newState) {
         case FlutterAvpdef.AVPStatus_AVPStatusStarted:
           setState(() {
@@ -78,7 +78,7 @@ class _VideoGridPageState extends State<VideoGridPage>
       }
     });
 
-    fAliListPlayer.setOnError((errorCode, errorExtra, errorMsg) {
+    fAliListPlayer.setOnError((errorCode, errorExtra, errorMsg,playerId) {
       Fluttertoast.showToast(msg: errorMsg);
     });
 

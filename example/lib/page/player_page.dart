@@ -129,11 +129,11 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
       Fluttertoast.showToast(msg: "OnPrepared ");
       fAliplayer.getPlayerName().then((value) => print("getPlayerName==${value}"));
     });
-    fAliplayer.setOnRenderingStart(() {
+    fAliplayer.setOnRenderingStart((playerId) {
       Fluttertoast.showToast(msg: " OnFirstFrameShow ");
     });
-    fAliplayer.setOnVideoSizeChanged((width, height) {});
-    fAliplayer.setOnStateChanged((newState) {
+    fAliplayer.setOnVideoSizeChanged((width, height,playerId) {});
+    fAliplayer.setOnStateChanged((newState,playerId) {
       _currentPlayerState = newState;
       print("aliyun : onStateChanged $newState");
       switch (newState) {
@@ -148,26 +148,26 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
         default:
       }
     });
-    fAliplayer.setOnLoadingStatusListener(loadingBegin: () {
+    fAliplayer.setOnLoadingStatusListener(loadingBegin: (playerId) {
       setState(() {
         _loadingPercent = 0;
         _showLoading = true;
       });
-    }, loadingProgress: (percent, netSpeed) {
+    }, loadingProgress: (percent, netSpeed,playerId) {
       _loadingPercent = percent;
       if (percent == 100) {
         _showLoading = false;
       }
       setState(() {});
-    }, loadingEnd: () {
+    }, loadingEnd: (playerId) {
       setState(() {
         _showLoading = false;
       });
     });
-    fAliplayer.setOnSeekComplete(() {
+    fAliplayer.setOnSeekComplete((playerId) {
       _inSeek = false;
     });
-    fAliplayer.setOnInfo((infoCode, extraValue, extraMsg) {
+    fAliplayer.setOnInfo((infoCode, extraValue, extraMsg,playerId) {
       if (infoCode == FlutterAvpdef.CURRENTPOSITION) {
         if (_videoDuration != 0 && extraValue <= _videoDuration) {
           _currentPosition = extraValue;
@@ -193,7 +193,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
         mOptionsFragment.switchHardwareDecoder();
       }
     });
-    fAliplayer.setOnCompletion(() {
+    fAliplayer.setOnCompletion((playerId) {
       _showTipsWidget = true;
       _showLoading = false;
       _tipsContent = "播放完成";
@@ -201,7 +201,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
         _currentPosition = _videoDuration;
       });
     });
-    fAliplayer.setOnTrackReady(() {
+    fAliplayer.setOnTrackReady((playerId) {
       fAliplayer.getMediaInfo().then((value) {
         _videoDuration = value['duration'];
         setState(() {});
@@ -216,18 +216,18 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
       setState(() {});
     });
 
-    fAliplayer.setOnSnapShot((path) {
+    fAliplayer.setOnSnapShot((path,playerId) {
       print("aliyun : snapShotPath = $path");
       Fluttertoast.showToast(msg: "SnapShot Save : $path");
     });
-    fAliplayer.setOnError((errorCode, errorExtra, errorMsg) {
+    fAliplayer.setOnError((errorCode, errorExtra, errorMsg,playerId) {
       _showTipsWidget = true;
       _showLoading = false;
       _tipsContent = "$errorCode \n $errorMsg";
       setState(() {});
     });
 
-    fAliplayer.setOnTrackChanged((value) {
+    fAliplayer.setOnTrackChanged((value,playerId) {
       AVPTrackInfo info = AVPTrackInfo.fromJson(value);
       if (info != null && info.trackDefinition.length > 0) {
         trackFragmentKey.currentState.onTrackChanged(info);
@@ -235,14 +235,14 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
       }
     });
 
-    fAliplayer.setOnThumbnailPreparedListener(preparedSuccess: () {
+    fAliplayer.setOnThumbnailPreparedListener(preparedSuccess: (playerId) {
       _thumbnailSuccess = true;
-    }, preparedFail: () {
+    }, preparedFail: (playerId) {
       _thumbnailSuccess = false;
     });
 
     fAliplayer.setOnThumbnailGetListener(
-        onThumbnailGetSuccess: (bitmap, range) {
+        onThumbnailGetSuccess: (bitmap, range,playerId) {
           // _thumbnailBitmap = bitmap;
           var provider = MemoryImage(bitmap);
           precacheImage(provider, context).then((_) {
@@ -251,9 +251,9 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
             });
           });
         },
-        onThumbnailGetFail: () {});
+        onThumbnailGetFail: (playerId) {});
 
-    this.fAliplayer.setOnSubtitleHide((trackIndex, subtitleID) {
+    this.fAliplayer.setOnSubtitleHide((trackIndex, subtitleID,playerId) {
       if (mounted) {
         setState(() {
           extSubTitleText = '';
@@ -261,7 +261,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
       }
     });
 
-    this.fAliplayer.setOnSubtitleShow((trackIndex, subtitleID, subtitle) {
+    this.fAliplayer.setOnSubtitleShow((trackIndex, subtitleID, subtitle,playerId) {
       if (mounted) {
         setState(() {
           extSubTitleText = subtitle;

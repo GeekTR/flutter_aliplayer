@@ -44,7 +44,7 @@ class TrackFragmentState extends State<TrackFragment> {
     // loadData();
     _initData();
 
-    widget.fAliplayer.setOnSubtitleExtAdded((trackIndex, url) {
+    widget.fAliplayer.setOnSubtitleExtAdded((trackIndex, url,playerId) {
       String curKey = '';
       extSubTitleMap.forEach((key, value) {
         if (url == value) {
