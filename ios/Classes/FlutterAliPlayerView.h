@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface FlutterAliPlayerView : NSObject<FlutterPlatformView>
 
+@property(nonatomic,assign) NSInteger viewId;
+
 - (instancetype)initWithWithFrame:(CGRect)frame
  viewIdentifier:(int64_t)viewId
       arguments:(id _Nullable)args

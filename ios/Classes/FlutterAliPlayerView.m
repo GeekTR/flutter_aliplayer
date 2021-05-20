@@ -12,7 +12,6 @@
 
 @implementation FlutterAliPlayerView{
     UIView * _videoView;
-    int64_t _viewId;
 }
 
 #pragma mark - life cycle

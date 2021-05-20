@@ -52,7 +52,7 @@
                 NSObject *arguments= [dic objectForKey:@"arg"];
                 [weakSelf onMethodCall:call result:result atObj:proxy?:@"" arg:arguments?:@""];
             }else{
-                [weakSelf onMethodCall:call result:result atObj:weakSelf.aliPlayer arg:@""];
+                [weakSelf onMethodCall:call result:result atObj:@"" arg:@""];
             }
         }];
         
@@ -131,7 +131,7 @@
     NSDictionary *dic = [call arguments];
     NSString *playerId = [dic objectForKey:@"playerId"];
     AliPlayerProxy *proxy = [AliPlayerProxy new];
-    proxy.playId = playerId;
+    proxy.playerId = playerId;
     proxy.eventSink = self.eventSink;
     
     [_playerProxyDic setObject:proxy forKey:playerId];
@@ -143,7 +143,8 @@
     AliPlayerProxy *proxy = arr[2];
     NSNumber* viewId = arr[3];
     FlutterAliPlayerView *fapv = [_viewDic objectForKey:[NSString stringWithFormat:@"%@",viewId]];
-    [proxy.player setPlayerView:fapv.view];
+//    [proxy.player setPlayerView:fapv.view];
+    [proxy bindPlayerView:fapv];
 }
 
 - (void)setUrl:(NSArray*)arr {
@@ -183,6 +184,17 @@
     FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     [proxy.player destroy];
+    
+    if ([_playerProxyDic objectForKey:proxy.playerId]) {
+        [_playerProxyDic removeObjectForKey:proxy.playerId];
+    }
+    
+    if (proxy.fapv) {
+        NSString *viewId = [NSString stringWithFormat:@"%li",(long)proxy.fapv.viewId];
+        if ([_viewDic objectForKey:viewId]) {
+            [_viewDic removeObjectForKey:viewId];
+        }
+    }
     //TODO 销毁注意移除对应的字典
 //    if([player isKindOfClass:AliListPlayer.class]){
 //        self.aliListPlayer = nil;
@@ -212,7 +224,6 @@
 }
 
 - (void)setLoop:(NSArray*)arr {
-    FlutterMethodCall* call = arr.firstObject;
     AliPlayerProxy *proxy = arr[2];
     NSNumber* isLoop = arr[3];
     [proxy.player setLoop:isLoop.boolValue];
@@ -225,7 +236,6 @@
 }
 
 - (void)setAutoPlay:(NSArray*)arr {
-    FlutterMethodCall* call = arr.firstObject;
     AliPlayerProxy *proxy = arr[2];
     NSNumber* val = arr[3];
     [proxy.player setAutoPlay:val.boolValue];
@@ -238,7 +248,6 @@
 }
 
 - (void)setMuted:(NSArray*)arr {
-    FlutterMethodCall* call = arr.firstObject;
     NSNumber* val = arr[3];
     AliPlayerProxy *proxy = arr[2];
     [proxy.player setMuted:val.boolValue];
@@ -251,7 +260,6 @@
 }
 
 - (void)setEnableHardwareDecoder:(NSArray*)arr {
-    FlutterMethodCall* call = arr.firstObject;
     AliPlayerProxy *proxy = arr[2];
     NSNumber* val = arr[3];
     [proxy.player setEnableHardwareDecoder:val.boolValue];
@@ -264,7 +272,6 @@
 }
 
 - (void)setRotateMode:(NSArray*)arr {
-    FlutterMethodCall* call = arr.firstObject;
     AliPlayerProxy *proxy = arr[2];
     NSNumber* val = arr[3];
     [proxy.player setRotateMode:val.intValue];
@@ -292,7 +299,6 @@
 }
 
 - (void)setScalingMode:(NSArray*)arr {
-    FlutterMethodCall* call = arr.firstObject;
     FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     NSNumber* val = arr[3];
@@ -323,7 +329,6 @@
 }
 
 - (void)setMirrorMode:(NSArray*)arr {
-    FlutterMethodCall* call = arr.firstObject;
     AliPlayerProxy *proxy = arr[2];
     NSNumber* val = arr[3];
     [proxy.player setMirrorMode:val.intValue];
@@ -336,7 +341,6 @@
 }
 
 - (void)setRate:(NSArray*)arr {
-    FlutterMethodCall* call = arr.firstObject;
     AliPlayerProxy *proxy = arr[2];
     NSNumber* val = arr[3];
     [proxy.player setRate:val.floatValue];
@@ -375,14 +379,12 @@
 }
 
 - (void)setVolume:(NSArray*)arr {
-    FlutterMethodCall* call = arr.firstObject;
     AliPlayerProxy *proxy = arr[2];
     NSNumber* val = arr[3];
     [proxy.player setVolume:val.floatValue];
 }
 
 - (void)setVideoBackgroundColor:(NSArray*)arr {
-    FlutterMethodCall* call = arr.firstObject;
     AliPlayerProxy *proxy = arr[2];
     NSNumber* val = arr[3];
     int c = val.intValue;
@@ -414,7 +416,6 @@
 }
 
 - (void)seekTo:(NSArray*)arr {
-    FlutterMethodCall* call = arr.firstObject;
     AliPlayerProxy *proxy = arr[2];
     NSDictionary* dic = arr[3];
     NSNumber *position = dic[@"position"];
@@ -424,7 +425,6 @@
 
 //TODO 应该是根据已经有的key 替换比较合理
 - (void)setConfig:(NSArray*)arr {
-    FlutterMethodCall* call = arr.firstObject;
     AliPlayerProxy *proxy = arr[2];
     NSDictionary* val = arr[3];
     AVPConfig *config = [proxy.player getConfig];
@@ -473,7 +473,6 @@
 //}
 
 - (void)setCacheConfig:(NSArray*)arr {
-    FlutterMethodCall* call = arr.firstObject;
     AliPlayerProxy *proxy = arr[2];
     NSDictionary* val = arr[3];
 
@@ -657,17 +656,15 @@
 }
 
 - (void)getCurrentTrack:(NSArray*)arr {
-    FlutterMethodCall* call = arr.firstObject;
     FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
-    NSNumber *idxNum = call.arguments;
+    NSNumber *idxNum = arr[3];
     AVPTrackInfo * info = [proxy.player getCurrentTrack:idxNum.intValue];
 //    NSLog(@"getCurrentTrack==%@",info.mj_JSONString);
     result(info.mj_keyValues);
 }
 
 - (void)selectTrack:(NSArray*)arr {
-    FlutterMethodCall* call = arr.firstObject;
     AliPlayerProxy *proxy = arr[2];
     NSDictionary *dic = [arr[3] removeNull];
     NSNumber *trackIdxNum = dic[@"trackIdx"];
@@ -681,14 +678,12 @@
 }
 
 - (void)addExtSubtitle:(NSArray*)arr {
-    FlutterMethodCall* call = arr.firstObject;
     AliPlayerProxy *proxy = arr[2];
     NSString *url = arr[3];
     [proxy.player addExtSubtitle:url];
 }
 
 - (void)selectExtSubtitle:(NSArray*)arr {
-    FlutterMethodCall* call = arr.firstObject;
     FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     NSDictionary *dic = [arr[3] removeNull];
@@ -699,7 +694,6 @@
 }
 
 - (void)setStreamDelayTime:(NSArray*)arr {
-    FlutterMethodCall* call = arr.firstObject;
     FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     NSDictionary *dic = [arr[3] removeNull];
@@ -710,7 +704,6 @@
 }
 
 - (void)setPreferPlayerName:(NSArray*)arr {
-    FlutterMethodCall* call = arr.firstObject;
     FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     NSString *playerName = arr[3];
@@ -751,16 +744,6 @@
 }
 
 #pragma --mark getters
-- (AliPlayer *)aliPlayer{
-    if (!_aliPlayer) {
-        _aliPlayer = [[AliPlayer alloc] init];
-        _aliPlayer.scalingMode =  AVP_SCALINGMODE_SCALEASPECTFIT;
-        _aliPlayer.rate = 1;
-        _aliPlayer.delegate = self;
-        _aliPlayer.playerView = playerView;
-    }
-    return _aliPlayer;
-}
 
 - (AliListPlayer*) aliListPlayer{
     if(!_aliListPlayer){

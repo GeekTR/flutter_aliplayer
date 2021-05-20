@@ -8,6 +8,7 @@
 #import <Foundation/Foundation.h>
 #import <AliyunPlayer/AliyunPlayer.h>
 #import <Flutter/Flutter.h>
+#import "FlutterAliPlayerView.h"
 
 #define kAliPlayerMethod    @"method"
 #define kAliPlayerId        @"playerId"
@@ -23,7 +24,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property(nonatomic,strong,nullable)AliPlayer *player;
 
-@property(nonatomic,strong) NSString *playId;
+@property(nonatomic,strong) NSString *playerId;
+
+@property(nonatomic,strong) FlutterAliPlayerView *fapv;
+
+-(void)bindPlayerView:(FlutterAliPlayerView*)fapv;
 
 @end
 
