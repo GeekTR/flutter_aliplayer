@@ -10,7 +10,7 @@ import 'flutter_avpdef.dart';
 
 export 'flutter_avpdef.dart';
 
-typedef OnPrepared = void Function();
+typedef OnPrepared = void Function(String playerId);
 typedef OnRenderingStart = void Function();
 typedef OnVideoSizeChanged = void Function(int width, int height);
 typedef OnSnapShot = void Function(String path);
@@ -202,9 +202,9 @@ class FlutterAliplayer {
     return channel.invokeMethod('destroy',wrapWithPlayerId(playerId:playerId));
   }
 
-  Future<void> seekTo(int position, int seekMode) async {
+  Future<void> seekTo(int position, int seekMode,{playerId}) async {
     var map = {"position": position, "seekMode": seekMode};
-    return channel.invokeMethod("seekTo", map);
+    return channel.invokeMethod("seekTo", wrapWithPlayerId(playerId:playerId,arg: map));
   }
 
   Future<dynamic> isLoop({playerId}) async {
@@ -371,201 +371,202 @@ class FlutterAliplayer {
   }
 
   Future<dynamic> getLogLevel() {
-    return channel.invokeMethod("getLogLevel");
+    return channel.invokeMethod("getLogLevel",);
   }
 
-  Future<dynamic> getMediaInfo() {
-    return channel.invokeMethod("getMediaInfo");
+  Future<dynamic> getMediaInfo({playerId}) {
+    return channel.invokeMethod("getMediaInfo",wrapWithPlayerId(playerId:playerId));
   }
 
-  Future<dynamic> getCurrentTrack(int trackIdx) {
-    return channel.invokeMethod("getCurrentTrack", trackIdx);
+  Future<dynamic> getCurrentTrack(int trackIdx,{playerId}) {
+    return channel.invokeMethod("getCurrentTrack", wrapWithPlayerId(playerId:playerId,arg: trackIdx));
   }
 
-  Future<dynamic> createThumbnailHelper(String thumbnail) {
-    return channel.invokeMethod("createThumbnailHelper", thumbnail);
+  Future<dynamic> createThumbnailHelper(String thumbnail,{playerId}) {
+    return channel.invokeMethod("createThumbnailHelper", wrapWithPlayerId(playerId:playerId,arg: thumbnail));
   }
 
-  Future<dynamic> requestBitmapAtPosition(int position) {
-    return channel.invokeMethod("requestBitmapAtPosition", position);
+  Future<dynamic> requestBitmapAtPosition(int position,{playerId}) {
+    return channel.invokeMethod("requestBitmapAtPosition", wrapWithPlayerId(playerId:playerId,arg: position));
   }
 
-  Future<void> addExtSubtitle(String url) {
-    return channel.invokeMethod("addExtSubtitle", url);
+  Future<void> addExtSubtitle(String url,{playerId}) {
+    return channel.invokeMethod("addExtSubtitle", wrapWithPlayerId(playerId:playerId,arg: url));
   }
 
-  Future<void> selectExtSubtitle(int trackIndex, bool enable) {
+  Future<void> selectExtSubtitle(int trackIndex, bool enable,{playerId}) {
     var map = {'trackIndex': trackIndex, 'enable': enable};
-    return channel.invokeMethod("selectExtSubtitle", map);
+    return channel.invokeMethod("selectExtSubtitle", wrapWithPlayerId(playerId:playerId,arg: map));
   }
 
   // accurate 0 为不精确  1 为精确  不填为忽略
-  Future<void> selectTrack(int trackIdx, {int accurate = -1}) {
+  Future<void> selectTrack(int trackIdx, {int accurate = -1,playerId,}) {
     var map = {
       'trackIdx': trackIdx,
       'accurate': accurate,
     };
-    return channel.invokeMethod("selectTrack", map);
+    return channel.invokeMethod("selectTrack", wrapWithPlayerId(playerId:playerId,arg: map));
   }
 
   Future<void> setPrivateService(Int8List data) {
     return channel.invokeMethod("setPrivateService", data);
   }
 
-  Future<void> setPreferPlayerName(String playerName) {
-    return channel.invokeMethod("setPreferPlayerName", playerName);
+  Future<void> setPreferPlayerName(String playerName,{playerId}) {
+    return channel.invokeMethod("setPreferPlayerName", wrapWithPlayerId(playerId:playerId,arg: playerName));
   }
 
-  Future<dynamic> getPlayerName() {
-    return channel.invokeMethod("getPlayerName");
+  Future<dynamic> getPlayerName({playerId}) {
+    return channel.invokeMethod("getPlayerName",wrapWithPlayerId(playerId:playerId));
   }
 
-  Future<void> setStreamDelayTime(int trackIdx, int time) {
+  Future<void> setStreamDelayTime(int trackIdx, int time,{playerId}) {
     var map = {'index': trackIdx, 'time': time};
     return channel.invokeMethod("setStreamDelayTime", map);
   }
 
   void _onEvent(dynamic event) {
-    // String method = event[EventChanneldef.TYPE_KEY];
-    // switch (method) {
-    //   case "onPrepared":
-    //     if (onPrepared != null) {
-    //       onPrepared();
-    //     }
-    //     break;
-    //   case "onRenderingStart":
-    //     if (onRenderingStart != null) {
-    //       onRenderingStart();
-    //     }
-    //     break;
-    //   case "onVideoSizeChanged":
-    //     if (onVideoSizeChanged != null) {
-    //       int width = event['width'];
-    //       int height = event['height'];
-    //       onVideoSizeChanged(width, height);
-    //     }
-    //     break;
-    //   case "onSnapShot":
-    //     if (onSnapShot != null) {
-    //       String snapShotPath = event['snapShotPath'];
-    //       onSnapShot(snapShotPath);
-    //     }
-    //     break;
-    //   case "onChangedSuccess":
-    //     break;
-    //   case "onChangedFail":
-    //     break;
-    //   case "onSeekComplete":
-    //     if (onSeekComplete != null) {
-    //       onSeekComplete();
-    //     }
-    //     break;
-    //   case "onSeiData":
-    //     break;
-    //   case "onLoadingBegin":
-    //     if (onLoadingBegin != null) {
-    //       onLoadingBegin();
-    //     }
-    //     break;
-    //   case "onLoadingProgress":
-    //     int percent = event['percent'];
-    //     double netSpeed = event['netSpeed'];
-    //     if (onLoadingProgress != null) {
-    //       onLoadingProgress(percent, netSpeed);
-    //     }
-    //     break;
-    //   case "onLoadingEnd":
-    //     if (onLoadingEnd != null) {
-    //       print("onLoadingEnd");
-    //       onLoadingEnd();
-    //     }
-    //     break;
-    //   case "onStateChanged":
-    //     if (onStateChanged != null) {
-    //       int newState = event['newState'];
-    //       onStateChanged(newState);
-    //     }
-    //     break;
-    //   case "onInfo":
-    //     if (onInfo != null) {
-    //       int infoCode = event['infoCode'];
-    //       int extraValue = event['extraValue'];
-    //       String extraMsg = event['extraMsg'];
-    //       onInfo(infoCode, extraValue, extraMsg);
-    //     }
-    //     break;
-    //   case "onError":
-    //     if (onError != null) {
-    //       int errorCode = event['errorCode'];
-    //       String errorExtra = event['errorExtra'];
-    //       String errorMsg = event['errorMsg'];
-    //       onError(errorCode, errorExtra, errorMsg);
-    //     }
-    //     break;
-    //   case "onCompletion":
-    //     if (onCompletion != null) {
-    //       onCompletion();
-    //     }
-    //     break;
-    //   case "onTrackReady":
-    //     if (onTrackReady != null) {
-    //       this.onTrackReady();
-    //     }
-    //     break;
-    //   case "onTrackChanged":
-    //     if (onTrackChanged != null) {
-    //       dynamic info = event['info'];
-    //       this.onTrackChanged(info);
-    //     }
-    //     break;
-    //   case "thumbnail_onPrepared_Success":
-    //     if (onThumbnailPreparedSuccess != null) {
-    //       onThumbnailPreparedSuccess();
-    //     }
-    //     break;
-    //   case "thumbnail_onPrepared_Fail":
-    //     if (onThumbnailPreparedFail != null) {
-    //       onThumbnailPreparedFail();
-    //     }
-    //     break;
-    //   case "onThumbnailGetSuccess":
-    //     dynamic bitmap = event['thumbnailbitmap'];
-    //     dynamic range = event['thumbnailRange'];
-    //     if (onThumbnailGetSuccess != null) {
-    //       if (Platform.isIOS) {
-    //         range = Int64List.fromList(range.cast<int>());
-    //       }
-    //       onThumbnailGetSuccess(bitmap, range);
-    //     }
-    //     break;
-    //   case "onThumbnailGetFail":
-    //     if (onThumbnailGetFail != null) {
-    //       onThumbnailGetFail();
-    //     }
-    //     break;
-    //   case "onSubtitleExtAdded":
-    //     if (onSubtitleExtAdded != null) {
-    //       int trackIndex = event['trackIndex'];
-    //       String url = event['url'];
-    //       onSubtitleExtAdded(trackIndex, url);
-    //     }
-    //     break;
-    //   case "onSubtitleShow":
-    //     if (onSubtitleShow != null) {
-    //       int trackIndex = event['trackIndex'];
-    //       int subtitleID = event['subtitleID'];
-    //       String subtitle = event['subtitle'];
-    //       onSubtitleShow(trackIndex, subtitleID, subtitle);
-    //     }
-    //     break;
-    //   case "onSubtitleHide":
-    //     if (onSubtitleHide != null) {
-    //       int trackIndex = event['trackIndex'];
-    //       int subtitleID = event['subtitleID'];
-    //       onSubtitleHide(trackIndex, subtitleID);
-    //     }
-    //     break;
-    // }
+    String method = event[EventChanneldef.TYPE_KEY];
+    String playerId = event['playerId']??'';
+    switch (method) {
+      case "onPrepared":
+        if (onPrepared != null) {
+          onPrepared(playerId);
+        }
+        break;
+      // case "onRenderingStart":
+      //   if (onRenderingStart != null) {
+      //     onRenderingStart();
+      //   }
+      //   break;
+      // case "onVideoSizeChanged":
+      //   if (onVideoSizeChanged != null) {
+      //     int width = event['width'];
+      //     int height = event['height'];
+      //     onVideoSizeChanged(width, height);
+      //   }
+      //   break;
+      // case "onSnapShot":
+      //   if (onSnapShot != null) {
+      //     String snapShotPath = event['snapShotPath'];
+      //     onSnapShot(snapShotPath);
+      //   }
+      //   break;
+      // case "onChangedSuccess":
+      //   break;
+      // case "onChangedFail":
+      //   break;
+      // case "onSeekComplete":
+      //   if (onSeekComplete != null) {
+      //     onSeekComplete();
+      //   }
+      //   break;
+      // case "onSeiData":
+      //   break;
+      // case "onLoadingBegin":
+      //   if (onLoadingBegin != null) {
+      //     onLoadingBegin();
+      //   }
+      //   break;
+      // case "onLoadingProgress":
+      //   int percent = event['percent'];
+      //   double netSpeed = event['netSpeed'];
+      //   if (onLoadingProgress != null) {
+      //     onLoadingProgress(percent, netSpeed);
+      //   }
+      //   break;
+      // case "onLoadingEnd":
+      //   if (onLoadingEnd != null) {
+      //     print("onLoadingEnd");
+      //     onLoadingEnd();
+      //   }
+      //   break;
+      // case "onStateChanged":
+      //   if (onStateChanged != null) {
+      //     int newState = event['newState'];
+      //     onStateChanged(newState);
+      //   }
+      //   break;
+      // case "onInfo":
+      //   if (onInfo != null) {
+      //     int infoCode = event['infoCode'];
+      //     int extraValue = event['extraValue'];
+      //     String extraMsg = event['extraMsg'];
+      //     onInfo(infoCode, extraValue, extraMsg);
+      //   }
+      //   break;
+      // case "onError":
+      //   if (onError != null) {
+      //     int errorCode = event['errorCode'];
+      //     String errorExtra = event['errorExtra'];
+      //     String errorMsg = event['errorMsg'];
+      //     onError(errorCode, errorExtra, errorMsg);
+      //   }
+      //   break;
+      // case "onCompletion":
+      //   if (onCompletion != null) {
+      //     onCompletion();
+      //   }
+      //   break;
+      // case "onTrackReady":
+      //   if (onTrackReady != null) {
+      //     this.onTrackReady();
+      //   }
+      //   break;
+      // case "onTrackChanged":
+      //   if (onTrackChanged != null) {
+      //     dynamic info = event['info'];
+      //     this.onTrackChanged(info);
+      //   }
+      //   break;
+      // case "thumbnail_onPrepared_Success":
+      //   if (onThumbnailPreparedSuccess != null) {
+      //     onThumbnailPreparedSuccess();
+      //   }
+      //   break;
+      // case "thumbnail_onPrepared_Fail":
+      //   if (onThumbnailPreparedFail != null) {
+      //     onThumbnailPreparedFail();
+      //   }
+      //   break;
+      // case "onThumbnailGetSuccess":
+      //   dynamic bitmap = event['thumbnailbitmap'];
+      //   dynamic range = event['thumbnailRange'];
+      //   if (onThumbnailGetSuccess != null) {
+      //     if (Platform.isIOS) {
+      //       range = Int64List.fromList(range.cast<int>());
+      //     }
+      //     onThumbnailGetSuccess(bitmap, range);
+      //   }
+      //   break;
+      // case "onThumbnailGetFail":
+      //   if (onThumbnailGetFail != null) {
+      //     onThumbnailGetFail();
+      //   }
+      //   break;
+      // case "onSubtitleExtAdded":
+      //   if (onSubtitleExtAdded != null) {
+      //     int trackIndex = event['trackIndex'];
+      //     String url = event['url'];
+      //     onSubtitleExtAdded(trackIndex, url);
+      //   }
+      //   break;
+      // case "onSubtitleShow":
+      //   if (onSubtitleShow != null) {
+      //     int trackIndex = event['trackIndex'];
+      //     int subtitleID = event['subtitleID'];
+      //     String subtitle = event['subtitle'];
+      //     onSubtitleShow(trackIndex, subtitleID, subtitle);
+      //   }
+      //   break;
+      // case "onSubtitleHide":
+      //   if (onSubtitleHide != null) {
+      //     int trackIndex = event['trackIndex'];
+      //     int subtitleID = event['subtitleID'];
+      //     onSubtitleHide(trackIndex, subtitleID);
+      //   }
+      //   break;
+    }
   }
 
   void _onError(dynamic error) {}

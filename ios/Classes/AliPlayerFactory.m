@@ -17,6 +17,7 @@
     FlutterMethodChannel* _commonChannel;
     UIView *playerView;
 }
+@property (nonatomic, assign) BOOL enableMix;
 
 @property (nonatomic, strong) FlutterEventSink eventSink;
 @property(nonatomic,strong) NSMutableDictionary *viewDic;
@@ -182,6 +183,7 @@
     FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     [proxy.player destroy];
+    //TODO 销毁注意移除对应的字典
 //    if([player isKindOfClass:AliListPlayer.class]){
 //        self.aliListPlayer = nil;
 //    }else{
@@ -190,18 +192,18 @@
     result(nil);
 }
 
-//-(void)enableMix:(NSArray*)arr {
-//    FlutterMethodCall* call = arr.firstObject;
-//    FlutterResult result = arr[1];
-//    NSNumber* val = [call arguments];
-//    self.enableMix = val.boolValue;
-//    if (val.boolValue) {
-//        [AliPlayer setAudioSessionDelegate:self];
-//    }else{
-//        [AliPlayer setAudioSessionDelegate:nil];
-//    }
-//    result(nil);
-//}
+-(void)enableMix:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    FlutterResult result = arr[1];
+    NSNumber* val = [call arguments];
+    self.enableMix = val.boolValue;
+    if (val.boolValue) {
+        [AliPlayer setAudioSessionDelegate:self];
+    }else{
+        [AliPlayer setAudioSessionDelegate:nil];
+    }
+    result(nil);
+}
 
 - (void)isLoop:(NSArray*)arr {
     FlutterResult result = arr[1];
@@ -212,7 +214,7 @@
 - (void)setLoop:(NSArray*)arr {
     FlutterMethodCall* call = arr.firstObject;
     AliPlayerProxy *proxy = arr[2];
-    NSNumber* isLoop = [call arguments];
+    NSNumber* isLoop = arr[3];
     [proxy.player setLoop:isLoop.boolValue];
 }
 
@@ -225,7 +227,7 @@
 - (void)setAutoPlay:(NSArray*)arr {
     FlutterMethodCall* call = arr.firstObject;
     AliPlayerProxy *proxy = arr[2];
-    NSNumber* val = [call arguments];
+    NSNumber* val = arr[3];
     [proxy.player setAutoPlay:val.boolValue];
 }
 
@@ -237,7 +239,7 @@
 
 - (void)setMuted:(NSArray*)arr {
     FlutterMethodCall* call = arr.firstObject;
-    NSNumber* val = [call arguments];
+    NSNumber* val = arr[3];
     AliPlayerProxy *proxy = arr[2];
     [proxy.player setMuted:val.boolValue];
 }
@@ -251,7 +253,7 @@
 - (void)setEnableHardwareDecoder:(NSArray*)arr {
     FlutterMethodCall* call = arr.firstObject;
     AliPlayerProxy *proxy = arr[2];
-    NSNumber* val = [call arguments];
+    NSNumber* val = arr[3];
     [proxy.player setEnableHardwareDecoder:val.boolValue];
 }
 
@@ -264,7 +266,7 @@
 - (void)setRotateMode:(NSArray*)arr {
     FlutterMethodCall* call = arr.firstObject;
     AliPlayerProxy *proxy = arr[2];
-    NSNumber* val = [call arguments];
+    NSNumber* val = arr[3];
     [proxy.player setRotateMode:val.intValue];
 }
 
@@ -293,7 +295,7 @@
     FlutterMethodCall* call = arr.firstObject;
     FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
-    NSNumber* val = [call arguments];
+    NSNumber* val = arr[3];
 //    与android保持一致
     int mode = AVP_SCALINGMODE_SCALEASPECTFIT;
     switch (val.intValue) {
@@ -323,7 +325,7 @@
 - (void)setMirrorMode:(NSArray*)arr {
     FlutterMethodCall* call = arr.firstObject;
     AliPlayerProxy *proxy = arr[2];
-    NSNumber* val = [call arguments];
+    NSNumber* val = arr[3];
     [proxy.player setMirrorMode:val.intValue];
 }
 
@@ -336,7 +338,7 @@
 - (void)setRate:(NSArray*)arr {
     FlutterMethodCall* call = arr.firstObject;
     AliPlayerProxy *proxy = arr[2];
-    NSNumber* val = [call arguments];
+    NSNumber* val = arr[3];
     [proxy.player setRate:val.floatValue];
 }
 
@@ -375,14 +377,14 @@
 - (void)setVolume:(NSArray*)arr {
     FlutterMethodCall* call = arr.firstObject;
     AliPlayerProxy *proxy = arr[2];
-    NSNumber* val = [call arguments];
+    NSNumber* val = arr[3];
     [proxy.player setVolume:val.floatValue];
 }
 
 - (void)setVideoBackgroundColor:(NSArray*)arr {
     FlutterMethodCall* call = arr.firstObject;
     AliPlayerProxy *proxy = arr[2];
-    NSNumber* val = [call arguments];
+    NSNumber* val = arr[3];
     int c = val.intValue;
     UIColor *color = [UIColor colorWithRed:((c>>16)&0xFF)/255.0 green:((c>>8)&0xFF)/255.0 blue:((c)&0xFF)/255.0  alpha:((c>>24)&0xFF)/255.0];
     [proxy.player setVideoBackgroundColor:color];
@@ -411,20 +413,20 @@
     [AliPlayer setLogCallbackInfo:val.intValue callbackBlock:nil];
 }
 
-//- (void)seekTo:(NSArray*)arr {
-//    FlutterMethodCall* call = arr.firstObject;
-//    AliPlayer *player = arr[2];
-//    NSDictionary* dic = [call arguments];
-//    NSNumber *position = dic[@"position"];
-//    NSNumber *seekMode = dic[@"seekMode"];
-//    [player seekToTime:position.integerValue seekMode:seekMode.intValue];
-//}
-//
+- (void)seekTo:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    AliPlayerProxy *proxy = arr[2];
+    NSDictionary* dic = arr[3];
+    NSNumber *position = dic[@"position"];
+    NSNumber *seekMode = dic[@"seekMode"];
+    [proxy.player seekToTime:position.integerValue seekMode:seekMode.intValue];
+}
+
 //TODO 应该是根据已经有的key 替换比较合理
 - (void)setConfig:(NSArray*)arr {
     FlutterMethodCall* call = arr.firstObject;
     AliPlayerProxy *proxy = arr[2];
-    NSDictionary* val = [call arguments];
+    NSDictionary* val = arr[3];
     AVPConfig *config = [proxy.player getConfig];
 
     [AVPConfig mj_setupReplacedKeyFromPropertyName:^NSDictionary *{
@@ -473,7 +475,7 @@
 - (void)setCacheConfig:(NSArray*)arr {
     FlutterMethodCall* call = arr.firstObject;
     AliPlayerProxy *proxy = arr[2];
-    NSDictionary* val = [call arguments];
+    NSDictionary* val = arr[3];
 
     [AVPCacheConfig mj_setupReplacedKeyFromPropertyName:^NSDictionary *{
         return @{
@@ -624,103 +626,129 @@
 //    [player setPreloadCount:val.intValue];
 //}
 //
-//- (void)getMediaInfo:(NSArray*)arr {
-//    FlutterResult result = arr[1];
-//    AliPlayer *player = arr[2];
-//    AVPMediaInfo * info = [player getMediaInfo];
-//
-//    //TODO 后面需要统一键值转换规则
-//    [AVPMediaInfo mj_setupReplacedKeyFromPropertyName:^NSDictionary *{
-//        return @{
-//            @"mTitle":@"title",
-//            @"mCoverUrl":@"coverURL",
-//            @"mTrackInfos":@"tracks",
-//        };
-//    }];
-//
-//    [AVPTrackInfo mj_setupReplacedKeyFromPropertyName:^NSDictionary *{
-//        return @{
-//            @"vodDefinition":@"trackDefinition",
-//            @"index":@"trackIndex",
-//        };
-//    }];
-//
-//    [AVPThumbnailInfo mj_setupReplacedKeyFromPropertyName:^NSDictionary *{
-//        return @{
-//            @"URL" : @"url",
-//        };
-//    }];
-//    NSLog(@"getMediaInfo==%@",info.mj_JSONString);
-//    result(info.mj_keyValues);
-//}
-//
-//- (void)getCurrentTrack:(NSArray*)arr {
-//    FlutterMethodCall* call = arr.firstObject;
-//    FlutterResult result = arr[1];
-//    AliPlayer *player = arr[2];
-//    NSNumber *idxNum = call.arguments;
-//    AVPTrackInfo * info = [player getCurrentTrack:idxNum.intValue];
+- (void)getMediaInfo:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    AVPMediaInfo * info = [proxy.player getMediaInfo];
+
+    //TODO 后面需要统一键值转换规则
+    [AVPMediaInfo mj_setupReplacedKeyFromPropertyName:^NSDictionary *{
+        return @{
+            @"mTitle":@"title",
+            @"mCoverUrl":@"coverURL",
+            @"mTrackInfos":@"tracks",
+        };
+    }];
+
+    [AVPTrackInfo mj_setupReplacedKeyFromPropertyName:^NSDictionary *{
+        return @{
+            @"vodDefinition":@"trackDefinition",
+            @"index":@"trackIndex",
+        };
+    }];
+
+    [AVPThumbnailInfo mj_setupReplacedKeyFromPropertyName:^NSDictionary *{
+        return @{
+            @"URL" : @"url",
+        };
+    }];
+    NSLog(@"getMediaInfo==%@",info.mj_JSONString);
+    result(info.mj_keyValues);
+}
+
+- (void)getCurrentTrack:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSNumber *idxNum = call.arguments;
+    AVPTrackInfo * info = [proxy.player getCurrentTrack:idxNum.intValue];
 //    NSLog(@"getCurrentTrack==%@",info.mj_JSONString);
-//    result(info.mj_keyValues);
-//}
-//
-//- (void)selectTrack:(NSArray*)arr {
-//    FlutterMethodCall* call = arr.firstObject;
-//    AliListPlayer *player = arr[2];
-//    NSDictionary *dic = [[call arguments] removeNull];
-//    NSNumber *trackIdxNum = dic[@"trackIdx"];
-//    NSNumber *accurateNum = dic[@"accurate"];
-//    if (accurateNum.intValue==-1) {
-//        [player selectTrack:trackIdxNum.intValue];
-//    }else{
-//        [player selectTrack:trackIdxNum.intValue accurate:accurateNum.boolValue];
-//    }
-//
-//}
-//
-//- (void)addExtSubtitle:(NSArray*)arr {
-//    FlutterMethodCall* call = arr.firstObject;
-//    AliListPlayer *player = arr[2];
-//    NSString *url = [call arguments];
-//    [player addExtSubtitle:url];
-//}
-//
-//- (void)selectExtSubtitle:(NSArray*)arr {
-//    FlutterMethodCall* call = arr.firstObject;
-//    FlutterResult result = arr[1];
-//    AliListPlayer *player = arr[2];
-//    NSDictionary *dic = [[call arguments] removeNull];
-//    NSNumber *trackIdxNum = dic[@"trackIndex"];
-//    NSNumber *enableNum = dic[@"enable"];
-//    [player selectExtSubtitle:trackIdxNum.intValue enable:enableNum.boolValue];
-//    result(nil);
-//}
-//
-//- (void)setStreamDelayTime:(NSArray*)arr {
-//    FlutterMethodCall* call = arr.firstObject;
-//    FlutterResult result = arr[1];
-//    AliListPlayer *player = arr[2];
-//    NSDictionary *dic = [[call arguments] removeNull];
-//    NSNumber *trackIdxNum = dic[@"index"];
-//    NSNumber *timeNum = dic[@"time"];
-//    [player setStreamDelayTime:trackIdxNum.intValue time:timeNum.intValue];
-//    result(nil);
-//}
-//
-//- (void)setPreferPlayerName:(NSArray*)arr {
-//    FlutterMethodCall* call = arr.firstObject;
-//    FlutterResult result = arr[1];
-//    AliListPlayer *player = arr[2];
-//    NSString *playerName = [call arguments];
-//    [player setPreferPlayerName:playerName];
-//    result(nil);
-//}
-//
-//- (void)getPlayerName:(NSArray*)arr {
-//    FlutterResult result = arr[1];
-//    AliListPlayer *player = arr[2];
-//    result([player getPlayerName]);
-//}
+    result(info.mj_keyValues);
+}
+
+- (void)selectTrack:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    AliPlayerProxy *proxy = arr[2];
+    NSDictionary *dic = [arr[3] removeNull];
+    NSNumber *trackIdxNum = dic[@"trackIdx"];
+    NSNumber *accurateNum = dic[@"accurate"];
+    if (accurateNum.intValue==-1) {
+        [proxy.player selectTrack:trackIdxNum.intValue];
+    }else{
+        [proxy.player selectTrack:trackIdxNum.intValue accurate:accurateNum.boolValue];
+    }
+
+}
+
+- (void)addExtSubtitle:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    AliPlayerProxy *proxy = arr[2];
+    NSString *url = arr[3];
+    [proxy.player addExtSubtitle:url];
+}
+
+- (void)selectExtSubtitle:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSDictionary *dic = [arr[3] removeNull];
+    NSNumber *trackIdxNum = dic[@"trackIndex"];
+    NSNumber *enableNum = dic[@"enable"];
+    [proxy.player selectExtSubtitle:trackIdxNum.intValue enable:enableNum.boolValue];
+    result(nil);
+}
+
+- (void)setStreamDelayTime:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSDictionary *dic = [arr[3] removeNull];
+    NSNumber *trackIdxNum = dic[@"index"];
+    NSNumber *timeNum = dic[@"time"];
+    [proxy.player setStreamDelayTime:trackIdxNum.intValue time:timeNum.intValue];
+    result(nil);
+}
+
+- (void)setPreferPlayerName:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSString *playerName = arr[3];
+    [proxy.player setPreferPlayerName:playerName];
+    result(nil);
+}
+
+- (void)getPlayerName:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    result([proxy.player getPlayerName]);
+}
+
+#pragma --mark CicadaAudioSessionDelegate
+- (BOOL)setActive:(BOOL)active error:(NSError **)outError
+{
+    return [[AVAudioSession sharedInstance] setActive:active error:outError];
+}
+
+- (BOOL)setCategory:(NSString *)category withOptions:(AVAudioSessionCategoryOptions)options error:(NSError **)outError
+{
+    if (self.enableMix) {
+        options = AVAudioSessionCategoryOptionMixWithOthers | AVAudioSessionCategoryOptionDuckOthers;
+    }
+    return [[AVAudioSession sharedInstance] setCategory:category withOptions:options error:outError];
+}
+
+- (BOOL)setCategory:(AVAudioSessionCategory)category mode:(AVAudioSessionMode)mode routeSharingPolicy:(AVAudioSessionRouteSharingPolicy)policy options:(AVAudioSessionCategoryOptions)options error:(NSError **)outError
+{
+    if (self.enableMix) {
+        return YES;
+    }
+
+    if (@available(iOS 11.0, tvOS 11.0, *)) {
+        return [[AVAudioSession sharedInstance] setCategory:category mode:mode routeSharingPolicy:policy options:options error:outError];
+    }
+    return NO;
+}
 
 #pragma --mark getters
 - (AliPlayer *)aliPlayer{

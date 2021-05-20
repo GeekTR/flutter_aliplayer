@@ -125,7 +125,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   }
 
   _initListener() {
-    fAliplayer.setOnPrepared(() {
+    fAliplayer.setOnPrepared((playerId) {
       Fluttertoast.showToast(msg: "OnPrepared ");
       fAliplayer.getPlayerName().then((value) => print("getPlayerName==${value}"));
     });
@@ -422,6 +422,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   }
 
   void onViewPlayerCreated(viewId) async {
+    this.fAliplayer.setPlayerView(viewId);
     switch (_playMode) {
       case ModeType.URL:
         this.fAliplayer.setUrl(_dataSourceMap[DataSourceRelated.URL_KEY]);

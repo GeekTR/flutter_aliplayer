@@ -19,7 +19,7 @@
  @param newStatus 新的播放器状态 参考AVPStatus
  */
 - (void)onPlayerStatusChanged:(AliPlayer*)player oldStatus:(AVPStatus)oldStatus newStatus:(AVPStatus)newStatus {
-    self.eventSink(@{kAliPlayerMethod:@"onStateChanged",@"newState":@(newStatus)});
+    self.eventSink(@{kAliPlayerMethod:@"onStateChanged",@"newState":@(newStatus),kAliPlayerId:_playId});
 }
 
 /**
@@ -28,7 +28,7 @@
  @param errorModel 播放器错误描述，参考AliVcPlayerErrorModel
  */
 - (void)onError:(AliPlayer*)player errorModel:(AVPErrorModel *)errorModel {
-    self.eventSink(@{kAliPlayerMethod:@"onError",@"errorCode":@(errorModel.code),@"errorMsg":errorModel.message});
+    self.eventSink(@{kAliPlayerMethod:@"onError",@"errorCode":@(errorModel.code),@"errorMsg":errorModel.message,kAliPlayerId:_playId});
 }
 
 - (void)onSEIData:(AliPlayer*)player type:(int)type data:(NSData *)data {
@@ -44,22 +44,22 @@
 -(void)onPlayerEvent:(AliPlayer*)player eventType:(AVPEventType)eventType {
     switch (eventType) {
         case AVPEventPrepareDone:
-            self.eventSink(@{kAliPlayerMethod:@"onPrepared"});
+            self.eventSink(@{kAliPlayerMethod:@"onPrepared",kAliPlayerId:_playId});
             break;
         case AVPEventFirstRenderedStart:
-            self.eventSink(@{kAliPlayerMethod:@"onRenderingStart"});
+            self.eventSink(@{kAliPlayerMethod:@"onRenderingStart",kAliPlayerId:_playId});
             break;
         case AVPEventLoadingStart:
-            self.eventSink(@{kAliPlayerMethod:@"onLoadingBegin"});
+            self.eventSink(@{kAliPlayerMethod:@"onLoadingBegin",kAliPlayerId:_playId});
             break;
         case AVPEventLoadingEnd:
-            self.eventSink(@{kAliPlayerMethod:@"onLoadingEnd"});
+            self.eventSink(@{kAliPlayerMethod:@"onLoadingEnd",kAliPlayerId:_playId});
             break;
         case AVPEventCompletion:
-            self.eventSink(@{kAliPlayerMethod:@"onCompletion"});
+            self.eventSink(@{kAliPlayerMethod:@"onCompletion",kAliPlayerId:_playId});
             break;
         case AVPEventSeekEnd:
-            self.eventSink(@{kAliPlayerMethod:@"onSeekComplete"});
+            self.eventSink(@{kAliPlayerMethod:@"onSeekComplete",kAliPlayerId:_playId});
             break;
         default:
             break;
@@ -74,7 +74,7 @@
  @see AVPEventType
  */
 -(void)onPlayerEvent:(AliPlayer*)player eventWithString:(AVPEventWithString)eventWithString description:(NSString *)description {
-    self.eventSink(@{kAliPlayerMethod:@"onInfo",@"infoCode":@(eventWithString),@"extraMsg":description});
+    self.eventSink(@{kAliPlayerMethod:@"onInfo",@"infoCode":@(eventWithString),@"extraMsg":description,kAliPlayerId:_playId});
 }
 
 /**
@@ -83,7 +83,7 @@
  @param position 视频当前播放位置
  */
 - (void)onCurrentPositionUpdate:(AliPlayer*)player position:(int64_t)position {
-     self.eventSink(@{kAliPlayerMethod:@"onInfo",@"infoCode":@(2),@"extraValue":@(position)});
+     self.eventSink(@{kAliPlayerMethod:@"onInfo",@"infoCode":@(2),@"extraValue":@(position),kAliPlayerId:_playId});
 }
 
 /**
@@ -92,7 +92,7 @@
  @param position 视频当前缓存位置
  */
 - (void)onBufferedPositionUpdate:(AliPlayer*)player position:(int64_t)position {
-    self.eventSink(@{kAliPlayerMethod:@"onInfo",@"infoCode":@(1),@"extraValue":@(position)});
+    self.eventSink(@{kAliPlayerMethod:@"onInfo",@"infoCode":@(1),@"extraValue":@(position),kAliPlayerId:_playId});
 }
 
 /**
@@ -101,7 +101,7 @@
  @param info track流信息数组 参考AVPTrackInfo
  */
 - (void)onTrackReady:(AliPlayer*)player info:(NSArray<AVPTrackInfo*>*)info {
-    self.eventSink(@{kAliPlayerMethod:@"onTrackReady"});
+    self.eventSink(@{kAliPlayerMethod:@"onTrackReady",kAliPlayerId:_playId});
 }
 
 /**
@@ -111,7 +111,7 @@
  @param URL 字幕url
  */
 - (void)onSubtitleExtAdded:(AliPlayer*)player trackIndex:(int)trackIndex URL:(NSString *)URL {
-    self.eventSink(@{kAliPlayerMethod:@"onSubtitleExtAdded",@"trackIndex":@(trackIndex),@"url":URL});
+    self.eventSink(@{kAliPlayerMethod:@"onSubtitleExtAdded",@"trackIndex":@(trackIndex),@"url":URL,kAliPlayerId:_playId});
 }
 
 /**
@@ -122,7 +122,7 @@
  @param subtitle 字幕显示的字符串
  */
 - (void)onSubtitleShow:(AliPlayer*)player trackIndex:(int)trackIndex subtitleID:(long)subtitleID subtitle:(NSString *)subtitle {
-    self.eventSink(@{kAliPlayerMethod:@"onSubtitleShow",@"trackIndex":@(trackIndex),@"subtitleID":@(subtitleID),@"subtitle":subtitle});
+    self.eventSink(@{kAliPlayerMethod:@"onSubtitleShow",@"trackIndex":@(trackIndex),@"subtitleID":@(subtitleID),@"subtitle":subtitle,kAliPlayerId:_playId});
 }
 
 /**
@@ -132,7 +132,7 @@
  @param subtitleID  字幕ID.
  */
 - (void)onSubtitleHide:(AliPlayer*)player trackIndex:(int)trackIndex subtitleID:(long)subtitleID {
-    self.eventSink(@{kAliPlayerMethod:@"onSubtitleHide",@"trackIndex":@(trackIndex),@"subtitleID":@(subtitleID)});
+    self.eventSink(@{kAliPlayerMethod:@"onSubtitleHide",@"trackIndex":@(trackIndex),@"subtitleID":@(subtitleID),kAliPlayerId:_playId});
 }
 
 /**
@@ -143,7 +143,7 @@
 - (void)onCaptureScreen:(AliPlayer *)player image:(UIImage *)image {
     BOOL result =[UIImagePNGRepresentation(image)writeToFile:_mSnapshotPath atomically:YES]; // 保存成功会返回YES
     if (result == YES) {
-        self.eventSink(@{kAliPlayerMethod:@"onSnapShot",@"snapShotPath":_mSnapshotPath});
+        self.eventSink(@{kAliPlayerMethod:@"onSnapShot",@"snapShotPath":_mSnapshotPath,kAliPlayerId:_playId});
     }
 }
 
@@ -154,7 +154,7 @@
  */
 - (void)onTrackChanged:(AliPlayer*)player info:(AVPTrackInfo*)info {
     NSLog(@"onTrackChanged==%@",info.mj_JSONString);
-    self.eventSink(@{kAliPlayerMethod:@"onTrackChanged",@"info":info.mj_keyValues});
+    self.eventSink(@{kAliPlayerMethod:@"onTrackChanged",@"info":info.mj_keyValues,kAliPlayerId:_playId});
 }
 
 /**
@@ -167,7 +167,7 @@
 - (void)onGetThumbnailSuc:(int64_t)positionMs fromPos:(int64_t)fromPos toPos:(int64_t)toPos image:(id)image {
     NSData *imageData = UIImageJPEGRepresentation(image,1);
 //    FlutterStandardTypedData * fdata = [FlutterStandardTypedData typedDataWithBytes:imageData];
-    self.eventSink(@{kAliPlayerMethod:@"onThumbnailGetSuccess",@"thumbnailRange":@[@(fromPos),@(toPos)],@"thumbnailbitmap":imageData});
+    self.eventSink(@{kAliPlayerMethod:@"onThumbnailGetSuccess",@"thumbnailRange":@[@(fromPos),@(toPos)],@"thumbnailbitmap":imageData,kAliPlayerId:_playId});
 }
 
 /**
@@ -175,7 +175,7 @@
  @param positionMs 指定的缩略图位置
  */
 - (void)onGetThumbnailFailed:(int64_t)positionMs {
-    self.eventSink(@{kAliPlayerMethod:@"onThumbnailGetFail"});
+    self.eventSink(@{kAliPlayerMethod:@"onThumbnailGetFail",kAliPlayerId:_playId});
 }
 
 /**
@@ -184,36 +184,8 @@
  @param progress 缓存进度0-100
  */
 - (void)onLoadingProgress:(AliPlayer*)player progress:(float)progress {
-    self.eventSink(@{kAliPlayerMethod:@"onLoadingProgress",@"percent":@((int)progress)});
+    self.eventSink(@{kAliPlayerMethod:@"onLoadingProgress",@"percent":@((int)progress),kAliPlayerId:_playId});
 }
-
-
-#pragma --mark CicadaAudioSessionDelegate
-- (BOOL)setActive:(BOOL)active error:(NSError **)outError
-{
-    return [[AVAudioSession sharedInstance] setActive:active error:outError];
-}
-
-- (BOOL)setCategory:(NSString *)category withOptions:(AVAudioSessionCategoryOptions)options error:(NSError **)outError
-{
-    if (self.enableMix) {
-        options = AVAudioSessionCategoryOptionMixWithOthers | AVAudioSessionCategoryOptionDuckOthers;
-    }
-    return [[AVAudioSession sharedInstance] setCategory:category withOptions:options error:outError];
-}
-
-- (BOOL)setCategory:(AVAudioSessionCategory)category mode:(AVAudioSessionMode)mode routeSharingPolicy:(AVAudioSessionRouteSharingPolicy)policy options:(AVAudioSessionCategoryOptions)options error:(NSError **)outError
-{
-    if (self.enableMix) {
-        return YES;
-    }
-
-    if (@available(iOS 11.0, tvOS 11.0, *)) {
-        return [[AVAudioSession sharedInstance] setCategory:category mode:mode routeSharingPolicy:policy options:options error:outError];
-    }
-    return NO;
-}
-
 
 #pragma --mark getters
 - (AliPlayer *)player{

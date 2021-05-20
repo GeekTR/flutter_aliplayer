@@ -10,16 +10,16 @@
 #import <Flutter/Flutter.h>
 
 #define kAliPlayerMethod    @"method"
+#define kAliPlayerId        @"playerId"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface AliPlayerProxy : NSObject<AVPDelegate,CicadaAudioSessionDelegate>
+@interface AliPlayerProxy : NSObject<AVPDelegate>
 
 //@property(nonatomic,strong) FlutterResult result;
 @property (nonatomic, copy) FlutterEventSink eventSink;
 
 @property(nonatomic,strong) NSString *mSnapshotPath;
-@property (nonatomic, assign) BOOL enableMix;
 
 @property(nonatomic,strong,nullable)AliPlayer *player;
 
