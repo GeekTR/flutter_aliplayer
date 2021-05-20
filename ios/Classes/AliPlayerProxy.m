@@ -141,9 +141,9 @@
  @param image 图像
  */
 - (void)onCaptureScreen:(AliPlayer *)player image:(UIImage *)image {
-    BOOL result =[UIImagePNGRepresentation(image)writeToFile:_mSnapshotPath atomically:YES]; // 保存成功会返回YES
+    BOOL result =[UIImagePNGRepresentation(image)writeToFile:_snapshotPath atomically:YES]; // 保存成功会返回YES
     if (result == YES) {
-        self.eventSink(@{kAliPlayerMethod:@"onSnapShot",@"snapShotPath":_mSnapshotPath,kAliPlayerId:_playerId});
+        self.eventSink(@{kAliPlayerMethod:@"onSnapShot",@"snapShotPath":_snapshotPath,kAliPlayerId:_playerId});
     }
 }
 

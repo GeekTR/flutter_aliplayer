@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 //@property(nonatomic,strong) FlutterResult result;
 @property (nonatomic, copy) FlutterEventSink eventSink;
 
-@property(nonatomic,strong) NSString *mSnapshotPath;
+@property(nonatomic,strong) NSString *snapshotPath;
 
 @property(nonatomic,strong,nullable)AliPlayer *player;
 

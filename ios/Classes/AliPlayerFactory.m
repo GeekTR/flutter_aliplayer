@@ -348,31 +348,28 @@
     [proxy.player setRate:val.floatValue];
 }
 
-//- (void)snapshot:(NSArray*)arr {
-//    FlutterMethodCall* call = arr.firstObject;
-//    AliPlayer *player = arr[2];
-//    NSString* val = [call arguments];
-//    mSnapshotPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
-//    if (val.length>0) {
-//        mSnapshotPath = [mSnapshotPath stringByAppendingPathComponent:val];
-//    }
-//    [player snapShot];
-//}
-//
-//- (void)createThumbnailHelper:(NSArray*)arr {
-//    FlutterMethodCall* call = arr.firstObject;
-//    AliPlayer *player = arr[2];
-//    NSString* val = [call arguments];
-//    [player setThumbnailUrl:val];
-//    self.eventSink(@{kAliPlayerMethod:@"thumbnail_onPrepared_Success"});
-//}
-//
-//- (void)requestBitmapAtPosition:(NSArray*)arr {
-//    FlutterMethodCall* call = arr.firstObject;
-//    AliPlayer *player = arr[2];
-//    NSNumber* val = [call arguments];
-//    [player getThumbnail:val.integerValue];
-//}
+- (void)snapshot:(NSArray*)arr {
+    AliPlayerProxy *proxy = arr[2];
+    NSString* val = arr[3];
+    proxy.snapshotPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
+    if (val.length>0) {
+        proxy.snapshotPath = [proxy.snapshotPath stringByAppendingPathComponent:val];
+    }
+    [proxy.player snapShot];
+}
+
+- (void)createThumbnailHelper:(NSArray*)arr {
+    AliPlayerProxy *proxy = arr[2];
+    NSString* val = arr[3];
+    [proxy.player setThumbnailUrl:val];
+    self.eventSink(@{kAliPlayerMethod:@"thumbnail_onPrepared_Success"});
+}
+
+- (void)requestBitmapAtPosition:(NSArray*)arr {
+    AliPlayerProxy *proxy = arr[2];
+    NSNumber* val = arr[3];
+    [proxy.player getThumbnail:val.integerValue];
+}
 
 - (void)getVolume:(NSArray*)arr {
     FlutterResult result = arr[1];

@@ -190,8 +190,8 @@ class FlutterAliplayer {
     return channel.invokeMethod('pause',wrapWithPlayerId(playerId:playerId));
   }
 
-  Future<dynamic> snapshot(String path) async {
-    return channel.invokeMethod('snapshot', path);
+  Future<dynamic> snapshot(String path,{playerId}) async {
+    return channel.invokeMethod('snapshot', wrapWithPlayerId(playerId:playerId,arg: path));
   }
 
   Future<void> stop({playerId}) async {
@@ -577,7 +577,7 @@ class FlutterAliplayer {
 typedef void AliPlayerViewCreatedCallback(int viewId);
 
 class AliPlayerView extends StatefulWidget {
-  final AliPlayerViewCreatedCallback onCreated;
+  final AliPlayerViewCreatedCallback? onCreated;
   final x;
   final y;
   final width;
@@ -600,12 +600,12 @@ class _VideoPlayerState extends State<AliPlayerView> {
   @override
   void initState() {
     super.initState();
-    print("abc : create PlatFormView initState");
+    // print("abc : create PlatFormView initState");
   }
 
   @override
   Widget build(BuildContext context) {
-    print("abc : create PlatFormView build");
+    // print("abc : create PlatFormView build");
     return nativeView();
   }
 
@@ -640,7 +640,7 @@ class _VideoPlayerState extends State<AliPlayerView> {
 
   Future<void> _onPlatformViewCreated(id) async {
     if (widget.onCreated != null) {
-      widget.onCreated(id);
+      widget.onCreated!(id);
     }
   }
 }
