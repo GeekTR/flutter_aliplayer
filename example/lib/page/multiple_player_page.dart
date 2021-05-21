@@ -11,17 +11,15 @@ class MultiplePlayerPage extends StatefulWidget {
 
 class _MultiplePlayerPageState extends State<MultiplePlayerPage> {
 
-  FlutterAliplayer fAliplayer;
 
-  List playIdList = ['0','1','2'];
+  List playerList = [];
   List viewList = [];
 
   @override
   void initState() {
     super.initState();
-    fAliplayer = FlutterAliPlayerFactory().createAliPlayer();
 
-    playIdList.forEach((element) {
+    ['0','1','2'].forEach((element) {
       initData(element);
     });
   }
@@ -29,15 +27,16 @@ class _MultiplePlayerPageState extends State<MultiplePlayerPage> {
    @override
   void dispose() {
     super.dispose();
-    playIdList.forEach((element) {
-      fAliplayer.stop(playerId: element);
-      fAliplayer.destroy(playerId: element);
+    playerList.forEach((element) {
+      element.stop();
+      element.destroy();
     });
   }
 
   Future<void> initData(playerId) async {
-    await fAliplayer.createAliPlayer(playerId: playerId);
-    await fAliplayer.setUrl(DataSourceRelated.DEFAULT_URL,playerId: playerId);
+    FlutterAliplayer player = FlutterAliPlayerFactory.createAliPlayer(playerId: playerId);
+    playerList.add(player);
+    await player.setUrl(DataSourceRelated.DEFAULT_URL);
   }
 
   @override
@@ -48,10 +47,10 @@ class _MultiplePlayerPageState extends State<MultiplePlayerPage> {
     print(
         "width = $width ,,,, height = $height ,,, screenHeight = $screenHeight");
         viewList.clear();
-        playIdList.forEach((element) {
+        playerList.forEach((player) {
         AliPlayerView aliPlayerView = AliPlayerView(
         onCreated: (int viewId){
-          fAliplayer.setPlayerView(viewId,playerId: element);
+          player.setPlayerView(viewId);
         },
         x: 0,
         y: 0,
@@ -69,14 +68,14 @@ class _MultiplePlayerPageState extends State<MultiplePlayerPage> {
       body: Scrollbar(
           child: SingleChildScrollView(
         child: Column(
-          children: playIdList.asMap().keys.map((idx) => Column(
+          children: playerList.asMap().keys.map((idx) => Column(
             children: [
               _buildRenderView(width, height, viewList[idx]),
             SizedBox(
               width: 0,
               height: 10,
             ),
-            _buildControllerBtn(playIdList[idx]),
+            _buildControllerBtn(playerList[idx]),
             ],
           )).toList(),
         ),
@@ -133,7 +132,7 @@ class _MultiplePlayerPageState extends State<MultiplePlayerPage> {
     );
   }
 
-  Widget _buildControllerBtn(playerId) {
+  Widget _buildControllerBtn(player) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
@@ -143,7 +142,7 @@ class _MultiplePlayerPageState extends State<MultiplePlayerPage> {
             style: TextStyle(color: Colors.blue, fontSize: 16),
           ),
           onTap: () {
-            fAliplayer.prepare(playerId: playerId);
+            player.prepare();
             print("准备");
           },
         ),
@@ -154,7 +153,7 @@ class _MultiplePlayerPageState extends State<MultiplePlayerPage> {
           ),
           onTap: () {
             print("播放");
-            fAliplayer.play(playerId: playerId);
+            player.play();
           },
         ),
         InkWell(
@@ -164,7 +163,7 @@ class _MultiplePlayerPageState extends State<MultiplePlayerPage> {
           ),
           onTap: () {
             print("暂停");
-            fAliplayer.pause(playerId: playerId);
+            player.pause();
           },
         ),
         InkWell(
@@ -174,7 +173,7 @@ class _MultiplePlayerPageState extends State<MultiplePlayerPage> {
           ),
           onTap: () {
             print("停止");
-            fAliplayer.stop(playerId: playerId);
+            player.stop();
           },
         ),
       ],

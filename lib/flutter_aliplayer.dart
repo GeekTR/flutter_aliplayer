@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_aliplayer/flutter_aliplayer_factory.dart';
 import 'package:flutter_aliplayer/flutter_avpdef.dart';
 
 import 'flutter_avpdef.dart';
@@ -16,7 +17,7 @@ typedef OnVideoSizeChanged = void Function(int width, int height,String playerId
 typedef OnSnapShot = void Function(String path,String playerId);
 
 typedef OnSeekComplete = void Function(String playerId);
-typedef OnSeiData = void Function(String playerId); //TODO
+typedef OnSeiData = void Function(String playerId);
 
 typedef OnLoadingBegin = void Function(String playerId);
 typedef OnLoadingProgress = void Function(int percent, double netSpeed,String playerId);
@@ -71,10 +72,15 @@ class FlutterAliplayer {
    OnSubtitleHide? onSubtitleHide;
    OnSubtitleShow? onSubtitleShow;
 
-  MethodChannel channel = new MethodChannel('flutter_aliplayer');
-  EventChannel eventChannel = EventChannel("flutter_aliplayer_event");
+  // static MethodChannel channel = new MethodChannel('flutter_aliplayer');
+  static EventChannel eventChannel = EventChannel("flutter_aliplayer_event");
 
-  FlutterAliplayer.init(int id) {
+  String playerId ='default';
+
+  FlutterAliplayer.init(String? id) {
+    if(id!=null){
+      playerId = id;
+    }
     eventChannel.receiveBroadcastStream().listen(_onEvent, onError: _onError);
   }
 
@@ -158,85 +164,82 @@ class FlutterAliplayer {
   }
 
   ///接口部分
-  wrapWithPlayerId({playerId,arg=''}) {
-    if(playerId==null){
-      playerId='default';
-    }
-    var map = {"arg": arg, "playerId": playerId.toString()};
+  wrapWithPlayerId({arg=''}) {
+    var map = {"arg": arg, "playerId": this.playerId.toString()};
     return map;
   }
 
-  Future<void> createAliPlayer({playerId}) async {
-    return channel.invokeMethod('createAliPlayer',wrapWithPlayerId(playerId:playerId,arg: PlayerType.PlayerType_Single));
+  Future<void> create() async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod('createAliPlayer',wrapWithPlayerId(arg: PlayerType.PlayerType_Single));
   }
 
-  Future<void> setPlayerView(int viewId,{playerId}) async {
-    return channel.invokeMethod('setPlayerView',wrapWithPlayerId(playerId:playerId,arg: viewId));
+  Future<void> setPlayerView(int viewId) async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod('setPlayerView',wrapWithPlayerId(arg: viewId));
   }
 
-  Future<void> setUrl(String url,{playerId}) async {
-    return channel.invokeMethod('setUrl', wrapWithPlayerId(playerId:playerId,arg:url));
+  Future<void> setUrl(String url) async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod('setUrl', wrapWithPlayerId(arg:url));
   }
 
-  Future<void> prepare({playerId}) async {
-    return channel.invokeMethod('prepare',wrapWithPlayerId(playerId:playerId));
+  Future<void> prepare() async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod('prepare',wrapWithPlayerId());
   }
 
-  Future<void> play({playerId}) async {
-    return channel.invokeMethod('play',wrapWithPlayerId(playerId:playerId));
+  Future<void> play() async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod('play',wrapWithPlayerId());
   }
 
-  Future<void> pause({playerId}) async {
-    return channel.invokeMethod('pause',wrapWithPlayerId(playerId:playerId));
+  Future<void> pause() async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod('pause',wrapWithPlayerId());
   }
 
-  Future<dynamic> snapshot(String path,{playerId}) async {
-    return channel.invokeMethod('snapshot', wrapWithPlayerId(playerId:playerId,arg: path));
+  Future<dynamic> snapshot(String path) async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod('snapshot', wrapWithPlayerId(arg: path));
   }
 
-  Future<void> stop({playerId}) async {
-    return channel.invokeMethod('stop',wrapWithPlayerId(playerId:playerId));
+  Future<void> stop() async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod('stop',wrapWithPlayerId());
   }
 
-  Future<void> destroy({playerId}) async {
-    return channel.invokeMethod('destroy',wrapWithPlayerId(playerId:playerId));
+  Future<void> destroy() async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod('destroy',wrapWithPlayerId());
   }
 
-  Future<void> seekTo(int position, int seekMode,{playerId}) async {
+  Future<void> seekTo(int position, int seekMode) async {
     var map = {"position": position, "seekMode": seekMode};
-    return channel.invokeMethod("seekTo", wrapWithPlayerId(playerId:playerId,arg: map));
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod("seekTo", wrapWithPlayerId(arg: map));
   }
 
-  Future<dynamic> isLoop({playerId}) async {
-    return channel.invokeMethod('isLoop',wrapWithPlayerId(playerId:playerId));
+  Future<dynamic> isLoop() async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod('isLoop',wrapWithPlayerId());
   }
 
-  Future<void> setLoop(bool isloop,{playerId}) async {
-    return channel.invokeMethod('setLoop', wrapWithPlayerId(playerId:playerId,arg: isloop));
+  Future<void> setLoop(bool isloop) async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod('setLoop', wrapWithPlayerId(arg: isloop));
   }
 
-  Future<dynamic> isAutoPlay({playerId}) async {
-    return channel.invokeMethod('isAutoPlay',wrapWithPlayerId(playerId:playerId));
+  Future<dynamic> isAutoPlay() async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod('isAutoPlay',wrapWithPlayerId());
   }
 
-  Future<void> setAutoPlay(bool isAutoPlay,{playerId}) async {
-    return channel.invokeMethod('setAutoPlay', wrapWithPlayerId(playerId:playerId,arg: isAutoPlay));
+  Future<void> setAutoPlay(bool isAutoPlay) async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod('setAutoPlay', wrapWithPlayerId(arg: isAutoPlay));
   }
 
-  Future<dynamic> isMuted({playerId}) async {
-    return channel.invokeMethod('isMuted',wrapWithPlayerId(playerId:playerId));
+  Future<dynamic> isMuted() async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod('isMuted',wrapWithPlayerId());
   }
 
-  Future<void> setMuted(bool isMuted,{playerId}) async {
-    return channel.invokeMethod('setMuted', wrapWithPlayerId(playerId:playerId,arg: isMuted));
+  Future<void> setMuted(bool isMuted) async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod('setMuted', wrapWithPlayerId(arg: isMuted));
   }
 
-  Future<dynamic> enableHardwareDecoder({playerId}) async {
-    return channel.invokeMethod('enableHardwareDecoder',wrapWithPlayerId(playerId:playerId));
+  Future<dynamic> enableHardwareDecoder() async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod('enableHardwareDecoder',wrapWithPlayerId());
   }
 
-  Future<void> setEnableHardwareDecoder(bool isHardWare,{playerId}) async {
-    return channel.invokeMethod('setEnableHardwareDecoder',wrapWithPlayerId(playerId:playerId,arg: isHardWare));
+  Future<void> setEnableHardwareDecoder(bool isHardWare) async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod('setEnableHardwareDecoder',wrapWithPlayerId(arg: isHardWare));
   }
 
   Future<void> setVidSts(
@@ -257,7 +260,7 @@ class FlutterAliplayer {
       "definitionList": definitionList,
       "previewTime": previewTime
     };
-    return channel.invokeMethod("setVidSts", wrapWithPlayerId(playerId:playerId,arg: stsInfo));
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod("setVidSts", wrapWithPlayerId(arg: stsInfo));
   }
 
   Future<void> setVidAuth({
@@ -275,158 +278,160 @@ class FlutterAliplayer {
       "definitionList": definitionList,
       "previewTime": previewTime
     };
-    return channel.invokeMethod("setVidAuth", wrapWithPlayerId(playerId:playerId,arg: authInfo));
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod("setVidAuth", wrapWithPlayerId(arg: authInfo));
   }
 
-  Future<void> setVidMps(Map<String, dynamic> mpsInfo,{playerId}) async {
-    return channel.invokeMethod("setVidMps", wrapWithPlayerId(playerId:playerId,arg: mpsInfo));
+  Future<void> setVidMps(Map<String, dynamic> mpsInfo) async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod("setVidMps", wrapWithPlayerId(arg: mpsInfo));
   }
 
-  Future<dynamic> getRotateMode({playerId}) async {
-    return channel.invokeMethod('getRotateMode',wrapWithPlayerId(playerId:playerId));
+  Future<dynamic> getRotateMode() async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod('getRotateMode',wrapWithPlayerId());
   }
 
-  Future<void> setRotateMode(int mode,{playerId}) async {
-    return channel.invokeMethod('setRotateMode', wrapWithPlayerId(playerId:playerId,arg: mode));
+  Future<void> setRotateMode(int mode) async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod('setRotateMode', wrapWithPlayerId(arg: mode));
   }
 
-  Future<dynamic> getScalingMode({playerId}) async {
-    return channel.invokeMethod('getScalingMode',wrapWithPlayerId(playerId:playerId));
+  Future<dynamic> getScalingMode() async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod('getScalingMode',wrapWithPlayerId());
   }
 
-  Future<void> setScalingMode(int mode,{playerId}) async {
-    return channel.invokeMethod('setScalingMode', wrapWithPlayerId(playerId:playerId,arg: mode));
+  Future<void> setScalingMode(int mode) async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod('setScalingMode', wrapWithPlayerId(arg: mode));
   }
 
-  Future<dynamic> getMirrorMode({playerId}) async {
-    return channel.invokeMethod('getMirrorMode',wrapWithPlayerId(playerId:playerId));
+  Future<dynamic> getMirrorMode() async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod('getMirrorMode',wrapWithPlayerId());
   }
 
-  Future<void> setMirrorMode(int mode,{playerId}) async {
-    return channel.invokeMethod('setMirrorMode', wrapWithPlayerId(playerId:playerId,arg: mode));
+  Future<void> setMirrorMode(int mode) async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod('setMirrorMode', wrapWithPlayerId(arg: mode));
   }
 
-  Future<dynamic> getRate({playerId}) async {
-    return channel.invokeMethod('getRate',wrapWithPlayerId(playerId:playerId));
+  Future<dynamic> getRate() async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod('getRate',wrapWithPlayerId());
   }
 
-  Future<void> setRate(double mode,{playerId}) async {
-    return channel.invokeMethod('setRate', wrapWithPlayerId(playerId:playerId,arg: mode));
+  Future<void> setRate(double mode) async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod('setRate', wrapWithPlayerId(arg: mode));
   }
 
-  Future<void> setVideoBackgroundColor(var color,{playerId}) async {
-    return channel.invokeMethod('setVideoBackgroundColor', wrapWithPlayerId(playerId:playerId,arg: color));
+  Future<void> setVideoBackgroundColor(var color) async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod('setVideoBackgroundColor', wrapWithPlayerId(arg: color));
   }
 
-  Future<void> setVolume(double volume,{playerId}) async {
-    return channel.invokeMethod('setVolume', wrapWithPlayerId(playerId:playerId,arg: volume));
+  Future<void> setVolume(double volume) async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod('setVolume', wrapWithPlayerId(arg: volume));
   }
 
-  Future<dynamic> getVolume({playerId}) async {
-    return channel.invokeMethod('getVolume',wrapWithPlayerId(playerId:playerId));
+  Future<dynamic> getVolume() async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod('getVolume',wrapWithPlayerId());
   }
 
-  Future<dynamic> getConfig({playerId}) async {
-    return channel.invokeMethod("getConfig",wrapWithPlayerId(playerId:playerId));
+  Future<dynamic> getConfig() async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod("getConfig",wrapWithPlayerId());
   }
 
-  Future<void> setConfig(Map map,{playerId}) async {
-    return channel.invokeMethod("setConfig", wrapWithPlayerId(playerId:playerId,arg: map));
+  Future<void> setConfig(Map map) async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod("setConfig", wrapWithPlayerId(arg: map));
   }
 
-  Future<dynamic> getCacheConfig({playerId}) async {
-    return channel.invokeMethod("getCacheConfig",wrapWithPlayerId(playerId:playerId));
+  Future<dynamic> getCacheConfig() async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod("getCacheConfig",wrapWithPlayerId());
   }
 
-  Future<void> setCacheConfig(Map map,{playerId}) async {
-    return channel.invokeMethod("setCacheConfig", wrapWithPlayerId(playerId:playerId,arg: map));
+  Future<void> setCacheConfig(Map map) async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod("setCacheConfig", wrapWithPlayerId(arg: map));
   }
 
-  ///return deviceInfo
-  Future<dynamic> createDeviceInfo() async {
-    return channel.invokeMethod("createDeviceInfo");
+  Future<dynamic> getMediaInfo() {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod("getMediaInfo",wrapWithPlayerId());
   }
 
-  ///type : {FlutterAvpdef.BLACK_DEVICES_H264 / FlutterAvpdef.BLACK_DEVICES_HEVC}
-  Future<void> addBlackDevice(String type, String model) async {
-    var map = {
-      'black_type': type,
-      'black_device': model,
-    };
-    return channel.invokeMethod("addBlackDevice", map);
+  Future<dynamic> getCurrentTrack(int trackIdx) {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod("getCurrentTrack", wrapWithPlayerId(arg: trackIdx));
   }
 
-  Future<dynamic> getSDKVersion() async {
-    return channel.invokeMethod("getSDKVersion");
+  Future<dynamic> createThumbnailHelper(String thumbnail) {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod("createThumbnailHelper", wrapWithPlayerId(arg: thumbnail));
   }
 
-  Future<void> enableMix(bool enable) {
-    return channel.invokeMethod("enableMix", enable);
+  Future<dynamic> requestBitmapAtPosition(int position) {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod("requestBitmapAtPosition", wrapWithPlayerId(arg: position));
   }
 
-  Future<void> enableConsoleLog(bool enable) {
-    return channel.invokeMethod("enableConsoleLog", enable);
+  Future<void> addExtSubtitle(String url) {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod("addExtSubtitle", wrapWithPlayerId(arg: url));
   }
 
-  Future<void> setLogLevel(int level) async {
-    return channel.invokeMethod("setLogLevel", level);
-  }
-
-  Future<dynamic> getLogLevel() {
-    return channel.invokeMethod("getLogLevel",);
-  }
-
-  Future<dynamic> getMediaInfo({playerId}) {
-    return channel.invokeMethod("getMediaInfo",wrapWithPlayerId(playerId:playerId));
-  }
-
-  Future<dynamic> getCurrentTrack(int trackIdx,{playerId}) {
-    return channel.invokeMethod("getCurrentTrack", wrapWithPlayerId(playerId:playerId,arg: trackIdx));
-  }
-
-  Future<dynamic> createThumbnailHelper(String thumbnail,{playerId}) {
-    return channel.invokeMethod("createThumbnailHelper", wrapWithPlayerId(playerId:playerId,arg: thumbnail));
-  }
-
-  Future<dynamic> requestBitmapAtPosition(int position,{playerId}) {
-    return channel.invokeMethod("requestBitmapAtPosition", wrapWithPlayerId(playerId:playerId,arg: position));
-  }
-
-  Future<void> addExtSubtitle(String url,{playerId}) {
-    return channel.invokeMethod("addExtSubtitle", wrapWithPlayerId(playerId:playerId,arg: url));
-  }
-
-  Future<void> selectExtSubtitle(int trackIndex, bool enable,{playerId}) {
+  Future<void> selectExtSubtitle(int trackIndex, bool enable) {
     var map = {'trackIndex': trackIndex, 'enable': enable};
-    return channel.invokeMethod("selectExtSubtitle", wrapWithPlayerId(playerId:playerId,arg: map));
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod("selectExtSubtitle", wrapWithPlayerId(arg: map));
   }
 
   // accurate 0 为不精确  1 为精确  不填为忽略
-  Future<void> selectTrack(int trackIdx, {int accurate = -1,playerId,}) {
+  Future<void> selectTrack(int trackIdx, {int accurate = -1,}) {
     var map = {
       'trackIdx': trackIdx,
       'accurate': accurate,
     };
-    return channel.invokeMethod("selectTrack", wrapWithPlayerId(playerId:playerId,arg: map));
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod("selectTrack", wrapWithPlayerId(arg: map));
   }
 
   Future<void> setPrivateService(Int8List data) {
-    return channel.invokeMethod("setPrivateService", data);
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod("setPrivateService", data);
   }
 
-  Future<void> setPreferPlayerName(String playerName,{playerId}) {
-    return channel.invokeMethod("setPreferPlayerName", wrapWithPlayerId(playerId:playerId,arg: playerName));
+  Future<void> setPreferPlayerName(String playerName) {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod("setPreferPlayerName", wrapWithPlayerId(arg: playerName));
   }
 
-  Future<dynamic> getPlayerName({playerId}) {
-    return channel.invokeMethod("getPlayerName",wrapWithPlayerId(playerId:playerId));
+  Future<dynamic> getPlayerName() {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod("getPlayerName",wrapWithPlayerId());
   }
 
-  Future<void> setStreamDelayTime(int trackIdx, int time,{playerId}) {
+  Future<void> setStreamDelayTime(int trackIdx, int time) {
     var map = {'index': trackIdx, 'time': time};
-    return channel.invokeMethod("setStreamDelayTime", map);
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod("setStreamDelayTime", map);
   }
 
+///静态方法
+  static Future<dynamic> getSDKVersion() async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod("getSDKVersion");
+  }
+
+  static Future<void> enableMix(bool enable) {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod("enableMix", enable);
+  }
+
+  static Future<void> enableConsoleLog(bool enable) {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod("enableConsoleLog", enable);
+  }
+
+  static Future<void> setLogLevel(int level) async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod("setLogLevel", level);
+  }
+
+  static Future<dynamic> getLogLevel() {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod("getLogLevel",);
+  }
+
+    ///return deviceInfo
+  static Future<dynamic> createDeviceInfo() async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod("createDeviceInfo");
+  }
+
+  ///type : {FlutterAvpdef.BLACK_DEVICES_H264 / FlutterAvpdef.BLACK_DEVICES_HEVC}
+  static Future<void> addBlackDevice(String type, String model) async {
+    var map = {
+      'black_type': type,
+      'black_device': model,
+    };
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod("addBlackDevice", map);
+  }
+
+///回调分发
   void _onEvent(dynamic event) {
     String method = event[EventChanneldef.TYPE_KEY];
     String playerId = event['playerId']??'';

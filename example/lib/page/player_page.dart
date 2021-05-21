@@ -85,8 +85,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    fAliplayer = FlutterAliPlayerFactory().createAliPlayer();
-    fAliplayer.createAliPlayer();
+    fAliplayer = FlutterAliPlayerFactory.createAliPlayer();
     WidgetsBinding.instance.addObserver(this);
     bottomIndex = 0;
     _playMode = widget.playMode;
@@ -94,7 +93,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
 
     //开启混音模式
     if (Platform.isIOS) {
-      fAliplayer.enableMix(true);
+      FlutterAliplayer.enableMix(true);
     }
 
     //设置播放器
@@ -322,7 +321,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     if (Platform.isIOS) {
-      fAliplayer.enableMix(false);
+      FlutterAliplayer.enableMix(false);
     }
 
     fAliplayer.stop();

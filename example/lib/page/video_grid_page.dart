@@ -44,9 +44,8 @@ class _VideoGridPageState extends State<VideoGridPage>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    fAliListPlayer = FlutterAliPlayerFactory().createAliListPlayer();
-    fAliListPlayer.createAliPlayer().then((value) {
-      fAliListPlayer.setAutoPlay(true);
+    fAliListPlayer = FlutterAliPlayerFactory.createAliListPlayer();
+    fAliListPlayer.setAutoPlay(true);
       fAliListPlayer.setLoop(true);
       var configMap = {
         'mClearFrameWhenStop': true,
@@ -84,7 +83,6 @@ class _VideoGridPageState extends State<VideoGridPage>
       });
 
       _onRefresh();
-    });
   }
 
   @override

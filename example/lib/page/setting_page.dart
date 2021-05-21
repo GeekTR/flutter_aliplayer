@@ -6,7 +6,6 @@ import 'package:flutter_aliplayer/flutter_aliplayer_factory.dart';
 import 'package:flutter_aliplayer_example/config.dart';
 
 class SettingPage extends StatefulWidget {
-  FlutterAliplayer _flutterAliPlayre;
 
   @override
   _SettingHomePageState createState() => _SettingHomePageState();
@@ -15,7 +14,6 @@ class SettingPage extends StatefulWidget {
 class _SettingHomePageState extends State<SettingPage> {
   TextEditingController _dnsTextEditingController = TextEditingController();
   String _sdkVersion;
-  FlutterAliPlayerFactory _flutterAliPlayerFactory;
   List<String> _playerName = List();
   String _currentPlayerName = "Default";
 
@@ -34,18 +32,14 @@ class _SettingHomePageState extends State<SettingPage> {
     if (Platform.isIOS) {
       _playerName..add("SuperMediaPlayer")..add("AppleAVPlayer");
     }
-    widget._flutterAliPlayre = FlutterAliplayer.init(0);
-    if (Platform.isAndroid) {
-      _flutterAliPlayerFactory = FlutterAliPlayerFactory();
-      widget._flutterAliPlayre = _flutterAliPlayerFactory.createAliPlayer();
-    }
-    widget._flutterAliPlayre.getSDKVersion().then((value) {
+
+    FlutterAliplayer.getSDKVersion().then((value) {
       setState(() {
         _sdkVersion = value;
       });
     });
 
-    widget._flutterAliPlayre.getLogLevel().then((value) {
+    FlutterAliplayer.getLogLevel().then((value) {
       setState(() {
         GlobalSettings.mLogLevel = value;
       });
@@ -80,8 +74,6 @@ class _SettingHomePageState extends State<SettingPage> {
                 Switch(
                     value: GlobalSettings.mEnableHardwareDecoder,
                     onChanged: (value) {
-                      widget._flutterAliPlayre.setEnableHardwareDecoder(value);
-                      GlobalSettings.mEnableHardwareDecoder = value;
                       setState(() {
                         GlobalSettings.mEnableHardwareDecoder = value;
                       });
@@ -117,7 +109,7 @@ class _SettingHomePageState extends State<SettingPage> {
                 Switch(
                     value: GlobalSettings.mEnableAliPlayerLog,
                     onChanged: (value) {
-                      widget._flutterAliPlayre.enableConsoleLog(value);
+                      FlutterAliplayer.enableConsoleLog(value);
                       GlobalSettings.mEnableAliPlayerLog = value;
                       setState(() {
                         GlobalSettings.mEnableAliPlayerLog = value;
@@ -166,9 +158,8 @@ class _SettingHomePageState extends State<SettingPage> {
           RaisedButton(
             child: Text("HEVC黑名单"),
             onPressed: () {
-              widget._flutterAliPlayre.createDeviceInfo().then((value) {
-                widget._flutterAliPlayre
-                    .addBlackDevice(FlutterAvpdef.BLACK_DEVICES_HEVC, value);
+              FlutterAliplayer.createDeviceInfo().then((value) {
+                FlutterAliplayer.addBlackDevice(FlutterAvpdef.BLACK_DEVICES_HEVC, value);
               });
             },
           ),
@@ -178,9 +169,8 @@ class _SettingHomePageState extends State<SettingPage> {
           RaisedButton(
             child: Text("H264黑名单"),
             onPressed: () {
-              widget._flutterAliPlayre.createDeviceInfo().then((value) {
-                widget._flutterAliPlayre
-                    .addBlackDevice(FlutterAvpdef.BLACK_DEVICES_H264, value);
+              FlutterAliplayer.createDeviceInfo().then((value) {
+                FlutterAliplayer.addBlackDevice(FlutterAvpdef.BLACK_DEVICES_H264, value);
               });
             },
           ),
@@ -234,7 +224,7 @@ class _SettingHomePageState extends State<SettingPage> {
                 value: FlutterAvpdef.AF_LOG_LEVEL_NONE,
                 groupValue: GlobalSettings.mLogLevel,
                 onChanged: (value) {
-                  widget._flutterAliPlayre.setLogLevel(value);
+                  FlutterAliplayer.setLogLevel(value);
 
                   setState(() {
                     GlobalSettings.mLogLevel = value;
@@ -249,7 +239,7 @@ class _SettingHomePageState extends State<SettingPage> {
                 value: FlutterAvpdef.AF_LOG_LEVEL_FATAL,
                 groupValue: GlobalSettings.mLogLevel,
                 onChanged: (value) {
-                  widget._flutterAliPlayre.setLogLevel(value);
+                  FlutterAliplayer.setLogLevel(value);
                   setState(() {
                     GlobalSettings.mLogLevel = value;
                   });
@@ -263,7 +253,7 @@ class _SettingHomePageState extends State<SettingPage> {
                 value: FlutterAvpdef.AF_LOG_LEVEL_ERROR,
                 groupValue: GlobalSettings.mLogLevel,
                 onChanged: (value) {
-                  widget._flutterAliPlayre.setLogLevel(value);
+                  FlutterAliplayer.setLogLevel(value);
                   setState(() {
                     GlobalSettings.mLogLevel = value;
                   });
@@ -277,7 +267,7 @@ class _SettingHomePageState extends State<SettingPage> {
                 value: FlutterAvpdef.AF_LOG_LEVEL_WARNING,
                 groupValue: GlobalSettings.mLogLevel,
                 onChanged: (value) {
-                  widget._flutterAliPlayre.setLogLevel(value);
+                  FlutterAliplayer.setLogLevel(value);
                   setState(() {
                     GlobalSettings.mLogLevel = value;
                   });
@@ -291,7 +281,7 @@ class _SettingHomePageState extends State<SettingPage> {
                 value: FlutterAvpdef.AF_LOG_LEVEL_INFO,
                 groupValue: GlobalSettings.mLogLevel,
                 onChanged: (value) {
-                  widget._flutterAliPlayre.setLogLevel(value);
+                  FlutterAliplayer.setLogLevel(value);
                   setState(() {
                     GlobalSettings.mLogLevel = value;
                   });
@@ -305,7 +295,7 @@ class _SettingHomePageState extends State<SettingPage> {
                 value: FlutterAvpdef.AF_LOG_LEVEL_DEBUG,
                 groupValue: GlobalSettings.mLogLevel,
                 onChanged: (value) {
-                  widget._flutterAliPlayre.setLogLevel(value);
+                  FlutterAliplayer.setLogLevel(value);
                   setState(() {
                     GlobalSettings.mLogLevel = value;
                   });
@@ -319,7 +309,7 @@ class _SettingHomePageState extends State<SettingPage> {
                 value: FlutterAvpdef.AF_LOG_LEVEL_TRACE,
                 groupValue: GlobalSettings.mLogLevel,
                 onChanged: (value) {
-                  widget._flutterAliPlayre.setLogLevel(value);
+                  FlutterAliplayer.setLogLevel(value);
                   setState(() {
                     GlobalSettings.mLogLevel = value;
                   });
