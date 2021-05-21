@@ -39,29 +39,29 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     //创建播放器
-    fAliplayer = FlutterAliPlayerFactory().createAliPlayer();
+    fAliplayer = FlutterAliPlayerFactory.createAliPlayer();
     _initListener();
   }
 
     ///设置监听
   _initListener() {
-    fAliplayer.setOnPrepard(() {});
-    fAliplayer.setOnRenderingStart(() {});
-    fAliplayer.setOnVideoSizeChanged((width, height) {});
-    fAliplayer.setOnStateChanged((newState) {});
+    fAliplayer.setOnPrepard((playerId) {});
+    fAliplayer.setOnRenderingStart((playerId) {});
+    fAliplayer.setOnVideoSizeChanged((width, height,playerId) {});
+    fAliplayer.setOnStateChanged((newState,playerId) {});
     fAliplayer.setOnLoadingStatusListener(
-        loadingBegin: () {},
-        loadingProgress: (percent, netSpeed) {},
-        loadingEnd: () {});
-    fAliplayer.setOnSeekComplete(() {});
-    fAliplayer.setOnInfo((infoCode, extraValue, extraMsg) {});
-    fAliplayer.setOnCompletion(() {});
-    fAliplayer.setOnTrackReady(() {});
-    fAliplayer.setOnSnapShot((path) {});
-    fAliplayer.setOnError((errorCode, errorExtra, errorMsg) {});
-    fAliplayer.setOnTrackChanged((value) {});
+        loadingBegin: (playerId) {},
+        loadingProgress: (percent, netSpeed,playerId) {},
+        loadingEnd: (playerId) {});
+    fAliplayer.setOnSeekComplete((playerId) {});
+    fAliplayer.setOnInfo((infoCode, extraValue, extraMsg,playerId) {});
+    fAliplayer.setOnCompletion((playerId) {});
+    fAliplayer.setOnTrackReady((playerId) {});
+    fAliplayer.setOnSnapShot((path,playerId) {});
+    fAliplayer.setOnError((errorCode, errorExtra, errorMsg,playerId) {});
+    fAliplayer.setOnTrackChanged((value,playerId) {});
     fAliplayer.setOnThumbnailPreparedListener(
-        preparedSuccess: () {}, preparedFail: () {});
+        preparedSuccess: (playerId) {}, preparedFail: (playerId) {});
   }
 
   @override

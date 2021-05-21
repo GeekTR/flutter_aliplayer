@@ -61,7 +61,7 @@
 
 -(void)setSaveDir:(NSArray*)arr {
     FlutterMethodCall* call = arr.firstObject;
-    NSLog(@"savePath==%@",call.arguments);
+//    NSLog(@"savePath==%@",call.arguments);
     mSavePath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
     if (mSavePath) {
         mSavePath = [mSavePath stringByAppendingPathComponent:call.arguments];
