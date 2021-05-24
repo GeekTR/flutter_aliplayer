@@ -66,6 +66,15 @@ public class FlutterAliListPlayer implements EventChannel.StreamHandler, MethodC
         initListener(mAliListPlayer);
     }
 
+    @Override
+    public void onListen(Object arguments, EventChannel.EventSink events) {
+        this.mEventSink = events;
+    }
+
+    @Override
+    public void onCancel(Object arguments) {
+    }
+
     public AliListPlayer getAliListPlayer(){
         return mAliListPlayer;
     }
@@ -285,15 +294,6 @@ public class FlutterAliListPlayer implements EventChannel.StreamHandler, MethodC
             }
         });
 
-    }
-
-    @Override
-    public void onListen(Object arguments, EventChannel.EventSink events) {
-        this.mEventSink = events;
-    }
-
-    @Override
-    public void onCancel(Object arguments) {
     }
 
     @Override

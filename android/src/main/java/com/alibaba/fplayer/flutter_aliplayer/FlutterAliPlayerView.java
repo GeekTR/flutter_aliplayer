@@ -8,23 +8,21 @@ import android.view.View;
 
 import com.aliyun.player.IPlayer;
 
-import io.flutter.embedding.engine.plugins.FlutterPlugin;
-import io.flutter.plugin.common.StandardMessageCodec;
 import io.flutter.plugin.platform.PlatformView;
-import io.flutter.plugin.platform.PlatformViewFactory;
 
 
-public class FlutterAliPlayerView extends PlatformViewFactory implements PlatformView {
+public class FlutterAliPlayerView implements PlatformView {
 
 
-    private TextureView mTextureView;
     private Context mContext;
     private IPlayer mPlayer;
 
+    private final TextureView mTextureView;
 
-    FlutterAliPlayerView(FlutterPlugin.FlutterPluginBinding flutterPluginBinding) {
-        super(StandardMessageCodec.INSTANCE);
-        this.mContext = flutterPluginBinding.getApplicationContext();
+    public FlutterAliPlayerView(Context context, int viewId) {
+        this.mContext = context;
+        mTextureView = new TextureView(mContext);
+        initRenderView(mTextureView);
     }
 
     public void setPlayer(IPlayer player) {
@@ -42,16 +40,7 @@ public class FlutterAliPlayerView extends PlatformViewFactory implements Platfor
 
     }
 
-    @Override
-    public PlatformView create(Context context, int viewId, Object args) {
-        mTextureView = new TextureView(mContext);
-        initRenderView();
-        return this;
-    }
-
-    private void initRenderView() {
-        final TextureView mTextureView;
-        mTextureView = (TextureView) getView();
+    private void initRenderView(TextureView mTextureView) {
         if (mTextureView != null) {
             mTextureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
                 @Override

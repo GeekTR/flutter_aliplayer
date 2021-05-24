@@ -2,8 +2,8 @@ package com.alibaba.fplayer.flutter_aliplayer;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.Build;
 import android.text.TextUtils;
+
 import com.aliyun.player.AliPlayer;
 import com.aliyun.player.AliPlayerFactory;
 import com.aliyun.player.IPlayer;
@@ -23,7 +23,6 @@ import com.aliyun.player.source.VidSts;
 import com.aliyun.thumbnail.ThumbnailBitmapInfo;
 import com.aliyun.thumbnail.ThumbnailHelper;
 import com.aliyun.utils.ThreadManager;
-import com.cicada.player.utils.Logger;
 import com.google.gson.Gson;
 
 import java.io.ByteArrayOutputStream;
@@ -37,38 +36,35 @@ import java.util.List;
 import java.util.Map;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
-import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 
-public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallHandler {
-
-    private FlutterPlugin.FlutterPluginBinding mFlutterPluginBinding;
+public class FlutterAliPlayer {
 
     private final Gson mGson;
     private Context mContext;
-    private EventChannel.EventSink mEventSink;
-    private EventChannel mEventChannel;
-    private AliPlayer mAliPlayer;
-    private MethodChannel mAliPlayerMethodChannel;
     private String mSnapShotPath;
     private ThumbnailHelper mThumbnailHelper;
+    private Map<Integer, FlutterAliPlayerView> mFlutterAliPlayerViewMap;
+    private AliPlayer mAliPlayer;
+    private String mPlayerId;
+    private FlutterAliPlayerListener mFlutterAliPlayerListener;
 
-    public FlutterAliPlayer(FlutterPlugin.FlutterPluginBinding flutterPluginBinding) {
-        this.mFlutterPluginBinding = flutterPluginBinding;
+    public FlutterAliPlayer(FlutterPlugin.FlutterPluginBinding flutterPluginBinding,String playerId) {
+        this.mPlayerId = playerId;
+//        this.mFlutterPluginBinding = flutterPluginBinding;
         this.mContext = flutterPluginBinding.getApplicationContext();
         mGson = new Gson();
-        mAliPlayer = AliPlayerFactory.createAliPlayer(mFlutterPluginBinding.getApplicationContext());
-        mAliPlayerMethodChannel = new MethodChannel(mFlutterPluginBinding.getFlutterEngine().getDartExecutor(),"flutter_aliplayer");
-        mAliPlayerMethodChannel.setMethodCallHandler(this);
-        mEventChannel = new EventChannel(mFlutterPluginBinding.getFlutterEngine().getDartExecutor(), "flutter_aliplayer_event");
-        mEventChannel.setStreamHandler(this);
+        mAliPlayer = AliPlayerFactory.createAliPlayer(mContext);
         initListener(mAliPlayer);
     }
 
-    public AliPlayer getAliPlayer(){
-        return mAliPlayer;
+    public void setViewMap(Map<Integer, FlutterAliPlayerView> flutterAliPlayerViewMap) {
+        this.mFlutterAliPlayerViewMap = flutterAliPlayerViewMap;
+    }
+
+    public void setOnFlutterListener(FlutterAliPlayerListener listener){
+        this.mFlutterAliPlayerListener = listener;
     }
 
     private void initListener(final IPlayer player){
@@ -77,7 +73,11 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
             public void onPrepared() {
                 Map<String,Object> map = new HashMap<>();
                 map.put("method","onPrepared");
-                mEventSink.success(map);
+                map.put("playerId",mPlayerId);
+//                mEventSink.success(map);
+                if(mFlutterAliPlayerListener != null){
+                    mFlutterAliPlayerListener.onPrepared(map);
+                }
             }
         });
 
@@ -86,7 +86,11 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
             public void onRenderingStart() {
                 Map<String,Object> map = new HashMap<>();
                 map.put("method","onRenderingStart");
-                mEventSink.success(map);
+                map.put("playerId",mPlayerId);
+//                mEventSink.success(map);
+                if(mFlutterAliPlayerListener != null){
+                    mFlutterAliPlayerListener.onRenderingStart(map);
+                }
             }
         });
 
@@ -97,7 +101,11 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
                 map.put("method","onVideoSizeChanged");
                 map.put("width",width);
                 map.put("height",height);
-                mEventSink.success(map);
+                map.put("playerId",mPlayerId);
+//                mEventSink.success(map);
+                if(mFlutterAliPlayerListener != null){
+                    mFlutterAliPlayerListener.onVideoSizeChanged(map);
+                }
             }
         });
 
@@ -107,6 +115,7 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
                 final Map<String,Object> map = new HashMap<>();
                 map.put("method","onSnapShot");
                 map.put("snapShotPath",mSnapShotPath);
+                map.put("playerId",mPlayerId);
 
                 ThreadManager.threadPool.execute(new Runnable() {
                     @Override
@@ -137,7 +146,11 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
                     }
                 });
 
-                mEventSink.success(map);
+                if(mFlutterAliPlayerListener != null){
+                    mFlutterAliPlayerListener.onSnapShot(map);
+                }
+
+//                mEventSink.success(map);
 
             }
         });
@@ -147,6 +160,7 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
             public void onChangedSuccess(TrackInfo trackInfo) {
                 Map<String,Object> map = new HashMap<>();
                 map.put("method","onTrackChanged");
+                map.put("playerId",mPlayerId);
                 Map<String,Object> infoMap = new HashMap<>();
                 infoMap.put("vodFormat",trackInfo.getVodFormat());
                 infoMap.put("videoHeight",trackInfo.getVideoHeight());
@@ -163,14 +177,21 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
                 infoMap.put("audioSamplerate",trackInfo.getAudioSampleRate());
                 infoMap.put("audioChannels",trackInfo.getAudioChannels());
                 map.put("info",infoMap);
-                mEventSink.success(map);
+//                mEventSink.success(map);
+                if(mFlutterAliPlayerListener != null){
+                    mFlutterAliPlayerListener.onTrackChangedSuccess(map);
+                }
             }
 
             @Override
             public void onChangedFail(TrackInfo trackInfo, ErrorInfo errorInfo) {
                 Map<String,Object> map = new HashMap<>();
                 map.put("method","onChangedFail");
-                mEventSink.success(map);
+                map.put("playerId",mPlayerId);
+//                mEventSink.success(map);
+                if(mFlutterAliPlayerListener != null){
+                    mFlutterAliPlayerListener.onTrackChangedFail(map);
+                }
             }
         });
 
@@ -179,7 +200,11 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
             public void onSeekComplete() {
                 Map<String,Object> map = new HashMap<>();
                 map.put("method","onSeekComplete");
-                mEventSink.success(map);
+                map.put("playerId",mPlayerId);
+//                mEventSink.success(map);
+                if(mFlutterAliPlayerListener != null){
+                    mFlutterAliPlayerListener.onSeekComplete(map);
+                }
             }
         });
 
@@ -188,8 +213,12 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
             public void onSeiData(int type, byte[] bytes) {
                 Map<String,Object> map = new HashMap<>();
                 map.put("method","onSeiData");
+                map.put("playerId",mPlayerId);
                 //TODO
-                mEventSink.success(map);
+//                mEventSink.success(map);
+                if(mFlutterAliPlayerListener != null){
+                    mFlutterAliPlayerListener.onSeiData(map);
+                }
             }
         });
 
@@ -198,7 +227,11 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
             public void onLoadingBegin() {
                 Map<String,Object> map = new HashMap<>();
                 map.put("method","onLoadingBegin");
-                mEventSink.success(map);
+                map.put("playerId",mPlayerId);
+//                mEventSink.success(map);
+                if(mFlutterAliPlayerListener != null){
+                    mFlutterAliPlayerListener.onLoadingBegin(map);
+                }
             }
 
             @Override
@@ -207,14 +240,22 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
                 map.put("method","onLoadingProgress");
                 map.put("percent",percent);
                 map.put("netSpeed",netSpeed);
-                mEventSink.success(map);
+                map.put("playerId",mPlayerId);
+//                mEventSink.success(map);
+                if(mFlutterAliPlayerListener != null){
+                    mFlutterAliPlayerListener.onLoadingProgress(map);
+                }
             }
 
             @Override
             public void onLoadingEnd() {
                 Map<String,Object> map = new HashMap<>();
                 map.put("method","onLoadingEnd");
-                mEventSink.success(map);
+                map.put("playerId",mPlayerId);
+//                mEventSink.success(map);
+                if(mFlutterAliPlayerListener != null){
+                    mFlutterAliPlayerListener.onLoadingEnd(map);
+                }
             }
         });
 
@@ -224,7 +265,11 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
                 Map<String,Object> map = new HashMap<>();
                 map.put("method","onStateChanged");
                 map.put("newState",newState);
-                mEventSink.success(map);
+                map.put("playerId",mPlayerId);
+//                mEventSink.success(map);
+                if(mFlutterAliPlayerListener != null){
+                    mFlutterAliPlayerListener.onStateChanged(map);
+                }
             }
         });
 
@@ -235,7 +280,11 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
                 map.put("method","onSubtitleExtAdded");
                 map.put("trackIndex",trackIndex);
                 map.put("url",url);
-                mEventSink.success(map);
+                map.put("playerId",mPlayerId);
+//                mEventSink.success(map);
+                if(mFlutterAliPlayerListener != null){
+                    mFlutterAliPlayerListener.onSubtitleExtAdded(map);
+                }
             }
 
             @Override
@@ -245,7 +294,11 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
                 map.put("trackIndex",trackIndex);
                 map.put("subtitleID",id);
                 map.put("subtitle",data);
-                mEventSink.success(map);
+                map.put("playerId",mPlayerId);
+//                mEventSink.success(map);
+                if(mFlutterAliPlayerListener != null){
+                    mFlutterAliPlayerListener.onSubtitleShow(map);
+                }
             }
 
             @Override
@@ -254,7 +307,11 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
                 map.put("method","onSubtitleHide");
                 map.put("trackIndex",trackIndex);
                 map.put("subtitleID",id);
-                mEventSink.success(map);
+                map.put("playerId",mPlayerId);
+//                mEventSink.success(map);
+                if(mFlutterAliPlayerListener != null){
+                    mFlutterAliPlayerListener.onSubtitleHide(map);
+                }
             }
         });
 
@@ -266,7 +323,11 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
                 map.put("infoCode",infoBean.getCode().getValue());
                 map.put("extraValue",infoBean.getExtraValue());
                 map.put("extraMsg",infoBean.getExtraMsg());
-                mEventSink.success(map);
+                map.put("playerId",mPlayerId);
+//                mEventSink.success(map);
+                if(mFlutterAliPlayerListener != null){
+                    mFlutterAliPlayerListener.onInfo(map);
+                }
             }
         });
 
@@ -278,7 +339,11 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
                 map.put("errorCode",errorInfo.getCode().getValue());
                 map.put("errorExtra",errorInfo.getExtra());
                 map.put("errorMsg",errorInfo.getMsg());
-                mEventSink.success(map);
+                map.put("playerId",mPlayerId);
+//                mEventSink.success(map);
+                if(mFlutterAliPlayerListener != null){
+                    mFlutterAliPlayerListener.onError(map);
+                }
             }
         });
 
@@ -287,7 +352,11 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
             public void onTrackReady(MediaInfo mediaInfo) {
                 Map<String,Object> map = new HashMap<>();
                 map.put("method","onTrackReady");
-                mEventSink.success(map);
+                map.put("playerId",mPlayerId);
+//                mEventSink.success(map);
+                if(mFlutterAliPlayerListener != null){
+                    mFlutterAliPlayerListener.onTrackReady(map);
+                }
             }
         });
 
@@ -296,33 +365,32 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
             public void onCompletion() {
                 Map<String,Object> map = new HashMap<>();
                 map.put("method","onCompletion");
-                mEventSink.success(map);
+                map.put("playerId",mPlayerId);
+//                mEventSink.success(map);
+                if(mFlutterAliPlayerListener != null){
+                    mFlutterAliPlayerListener.onCompletion(map);
+                }
             }
         });
 
     }
 
-    @Override
-    public void onListen(Object arguments, EventChannel.EventSink events) {
-        this.mEventSink = events;
-    }
-
-    @Override
-    public void onCancel(Object arguments) {
-    }
-
-    @Override
     public void onMethodCall(MethodCall methodCall, MethodChannel.Result result) {
         switch (methodCall.method) {
-            case "createAliPlayer":
-                createAliPlayer();
-                break;
             case "setUrl":
-                String url = methodCall.arguments.toString();
-                setDataSource(url);
+                String url = methodCall.argument("arg");
+                setDataSource(mAliPlayer,url);
+                result.success(null);
+                break;
+            case "setPlayerView":
+                Integer viewId = (Integer) methodCall.argument("arg");
+                FlutterAliPlayerView flutterAliPlayerView = mFlutterAliPlayerViewMap.get(viewId);
+                if(flutterAliPlayerView != null){
+                    flutterAliPlayerView.setPlayer(mAliPlayer);
+                }
                 break;
             case "setVidSts":
-                Map<String,Object> stsMap = (Map<String,Object>)methodCall.arguments;
+                Map<String,Object> stsMap = (Map<String,Object>)methodCall.argument("arg");
                 VidSts vidSts = new VidSts();
                 vidSts.setRegion((String) stsMap.get("region"));
                 vidSts.setVid((String) stsMap.get("vid"));
@@ -367,10 +435,10 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
                     vidPlayerConfigGen.setPreviewTime(previewTime);
                     vidSts.setPlayConfig(vidPlayerConfigGen);
                 }
-                setDataSource(vidSts);
+                setDataSource(mAliPlayer,vidSts);
                 break;
             case "setVidAuth":
-                Map<String,Object> authMap = (Map<String,Object>)methodCall.arguments;
+                Map<String,Object> authMap = (Map<String,Object>)methodCall.argument("arg");
                 VidAuth vidAuth = new VidAuth();
                 vidAuth.setVid((String) authMap.get("vid"));
                 vidAuth.setRegion((String) authMap.get("region"));
@@ -413,10 +481,10 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
                     vidPlayerConfigGen.setPreviewTime(previewTime);
                     vidAuth.setPlayConfig(vidPlayerConfigGen);
                 }
-                setDataSource(vidAuth);
+                setDataSource(mAliPlayer,vidAuth);
                 break;
             case "setVidMps":
-                Map<String,Object> mpsMap = (Map<String,Object>)methodCall.arguments;
+                Map<String,Object> mpsMap = (Map<String,Object>)methodCall.argument("arg");
                 VidMps vidMps = new VidMps();
                 vidMps.setMediaId((String) mpsMap.get("vid"));
                 vidMps.setRegion((String) mpsMap.get("region"));
@@ -460,34 +528,34 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
                 vidMps.setAuthInfo((String) mpsMap.get("authInfo"));
                 vidMps.setHlsUriToken((String) mpsMap.get("hlsUriToken"));
                 vidMps.setSecurityToken((String) mpsMap.get("securityToken"));
-                setDataSource(vidMps);
+                setDataSource(mAliPlayer,vidMps);
                 break;
             case "prepare":
-                prepare();
+                prepare(mAliPlayer);
                 break;
             case "play":
-                start();
+                start(mAliPlayer);
                 break;
             case "pause":
-                pause();
+                pause(mAliPlayer);
                 break;
             case "stop":
-                stop();
+                stop(mAliPlayer);
                 break;
             case "destroy":
-                release();
+                release(mAliPlayer);
                 break;
             case "seekTo":
             {
-                Map<String,Object> seekToMap = (Map<String,Object>)methodCall.arguments;
+                Map<String,Object> seekToMap = (Map<String,Object>)methodCall.argument("arg");
                 Integer position = (Integer) seekToMap.get("position");
                 Integer seekMode = (Integer) seekToMap.get("seekMode");
-                seekTo(position,seekMode);
+                seekTo(mAliPlayer,position,seekMode);
             }
             break;
             case "getMediaInfo":
             {
-                MediaInfo mediaInfo = getMediaInfo();
+                MediaInfo mediaInfo = getMediaInfo(mAliPlayer);
                 if(mediaInfo != null){
                     Map<String,Object> getMediaInfoMap = new HashMap<>();
                     getMediaInfoMap.put("title",mediaInfo.getTitle());
@@ -530,77 +598,77 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
             }
             break;
             case "snapshot":
-                mSnapShotPath = methodCall.arguments.toString();
-                snapshot();
+                mSnapShotPath = methodCall.argument("arg").toString();
+                snapshot(mAliPlayer);
                 break;
             case "setLoop":
-                setLoop((Boolean)methodCall.arguments);
+                setLoop(mAliPlayer,(Boolean)methodCall.argument("arg"));
                 break;
             case "isLoop":
-                result.success(isLoop());
+                result.success(isLoop(mAliPlayer));
                 break;
             case "setAutoPlay":
-                setAutoPlay((Boolean)methodCall.arguments);
+                setAutoPlay(mAliPlayer,(Boolean)methodCall.argument("arg"));
                 break;
             case "isAutoPlay":
-                result.success(isAutoPlay());
+                result.success(isAutoPlay(mAliPlayer));
                 break;
             case "setMuted":
-                setMuted((Boolean)methodCall.arguments);
+                setMuted(mAliPlayer,(Boolean)methodCall.argument("arg"));
                 break;
             case "isMuted":
-                result.success(isMuted());
+                result.success(isMuted(mAliPlayer));
                 break;
             case "setEnableHardwareDecoder":
-                Boolean setEnableHardwareDecoderArgumnt = (Boolean) methodCall.arguments;
-                setEnableHardWareDecoder(setEnableHardwareDecoderArgumnt);
+                Boolean setEnableHardwareDecoderArgumnt = (Boolean) methodCall.argument("arg");
+                setEnableHardWareDecoder(mAliPlayer,setEnableHardwareDecoderArgumnt);
                 break;
             case "setScalingMode":
-                setScaleMode((Integer) methodCall.arguments);
+                setScaleMode(mAliPlayer,(Integer) methodCall.argument("arg"));
                 break;
             case "getScalingMode":
-                result.success(getScaleMode());
+                result.success(getScaleMode(mAliPlayer));
                 break;
             case "setMirrorMode":
-                setMirrorMode((Integer) methodCall.arguments);
+                setMirrorMode(mAliPlayer,(Integer) methodCall.argument("arg"));
                 break;
             case "getMirrorMode":
-                result.success(getMirrorMode());
+                result.success(getMirrorMode(mAliPlayer));
                 break;
             case "setRotateMode":
-                setRotateMode((Integer) methodCall.arguments);
+                setRotateMode(mAliPlayer,(Integer) methodCall.argument("arg"));
                 break;
             case "getRotateMode":
-                result.success(getRotateMode());
+                result.success(getRotateMode(mAliPlayer));
                 break;
             case "setRate":
-                setSpeed((Double) methodCall.arguments);
+                setSpeed(mAliPlayer,(Double) methodCall.argument("arg"));
                 break;
             case "getRate":
-                result.success(getSpeed());
+                result.success(getSpeed(mAliPlayer));
                 break;
             case "setVideoBackgroundColor":
-                setVideoBackgroundColor((Long) methodCall.arguments);
+                setVideoBackgroundColor(mAliPlayer,(Long) methodCall.argument("arg"));
                 break;
             case "setVolume":
-                setVolume((Double) methodCall.arguments);
+                setVolume(mAliPlayer,(Double) methodCall.argument("arg"));
                 break;
             case "getVolume":
-                result.success(getVolume());
+                result.success(getVolume(mAliPlayer));
                 break;
             case "setConfig":
             {
-                Map<String,Object> setConfigMap = (Map<String, Object>) methodCall.arguments;
-                PlayerConfig config = getConfig();
+                Map<String,Object> setConfigMap = (Map<String, Object>) methodCall.argument("arg");
+                PlayerConfig config = getConfig(mAliPlayer);
                 if(config != null){
                     String configJson = mGson.toJson(setConfigMap);
                     config = mGson.fromJson(configJson,PlayerConfig.class);
-                    setConfig(config);
+                    setConfig(mAliPlayer,config);
                 }
             }
             break;
             case "getConfig":
-                PlayerConfig config = getConfig();
+                PlayerConfig config = getConfig(mAliPlayer);
                 String json = mGson.toJson(config);
                 Map<String,Object> configMap = mGson.fromJson(json,Map.class);
                 result.success(configMap);
@@ -612,14 +680,14 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
                 result.success(cacheConfigMap);
                 break;
             case "setCacheConfig":
-                Map<String,Object> setCacheConnfigMap = (Map<String, Object>) methodCall.arguments;
+                Map<String,Object> setCacheConnfigMap = (Map<String, Object>) methodCall.argument("arg");
                 String setCacheConfigJson = mGson.toJson(setCacheConnfigMap);
                 CacheConfig setCacheConfig = mGson.fromJson(setCacheConfigJson,CacheConfig.class);
-                setCacheConfig(setCacheConfig);
+                setCacheConfig(mAliPlayer,setCacheConfig);
                 break;
             case "getCurrentTrack":
-                Integer currentTrackIndex = (Integer) methodCall.arguments;
-                TrackInfo currentTrack = getCurrentTrack(currentTrackIndex);
+                Integer currentTrackIndex = (Integer) methodCall.argument("arg");
+                TrackInfo currentTrack = getCurrentTrack(mAliPlayer,currentTrackIndex);
                 if(currentTrack != null){
                     Map<String,Object> map = new HashMap<>();
                     map.put("vodFormat",currentTrack.getVodFormat());
@@ -640,77 +708,49 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
                 }
                 break;
             case "selectTrack":
-                Map<String,Object> selectTrackMap = (Map<String, Object>) methodCall.arguments;
+                Map<String,Object> selectTrackMap = (Map<String, Object>) methodCall.argument("arg");
                 Integer trackIdx = (Integer) selectTrackMap.get("trackIdx");
                 Integer accurate = (Integer) selectTrackMap.get("accurate");
-                selectTrack(trackIdx, accurate == 1);
+                selectTrack(mAliPlayer,trackIdx, accurate == 1);
                 break;
             case "addExtSubtitle":
                 String extSubtitlUrl = (String) methodCall.arguments;
-                addExtSubtitle(extSubtitlUrl);
+                addExtSubtitle(mAliPlayer,extSubtitlUrl);
                 break;
             case "selectExtSubtitle":
-                Map<String,Object> selectExtSubtitleMap = (Map<String, Object>) methodCall.arguments;
+                Map<String,Object> selectExtSubtitleMap = (Map<String, Object>) methodCall.argument("arg");
                 Integer trackIndex = (Integer) selectExtSubtitleMap.get("trackIndex");
                 Boolean selectExtSubtitlEnable = (Boolean) selectExtSubtitleMap.get("enable");
-                selectExtSubtitle(trackIndex,selectExtSubtitlEnable);
+                selectExtSubtitle(mAliPlayer,trackIndex,selectExtSubtitlEnable);
                 result.success(null);
                 break;
-            case "enableConsoleLog":
-                Boolean enableLog = (Boolean) methodCall.arguments;
-                enableConsoleLog(enableLog);
-                break;
-            case "setLogLevel":
-                Integer level = (Integer) methodCall.arguments;
-                setLogLevel(level);
-                break;
-            case "getLogLevel":
-                result.success(getLogLevel());
-                break;
-            case "createDeviceInfo":
-                result.success(createDeviceInfo());
-                break;
-            case "addBlackDevice":
-                Map<String,String> addBlackDeviceMap = methodCall.arguments();
-                String blackType = addBlackDeviceMap.get("black_type");
-                String blackDevice = addBlackDeviceMap.get("black_device");
-                addBlackDevice(blackType,blackDevice);
-                break;
             case "createThumbnailHelper":
-                String thhumbnailUrl = (String) methodCall.arguments;
+                String thhumbnailUrl = (String) methodCall.argument("arg");
                 createThumbnailHelper(thhumbnailUrl);
                 break;
             case "requestBitmapAtPosition":
-                Integer requestBitmapProgress = (Integer) methodCall.arguments;
+                Integer requestBitmapProgress = (Integer) methodCall.argument("arg");
                 requestBitmapAtPosition(requestBitmapProgress);
                 break;
-            case "getSDKVersion":
-                result.success(AliPlayerFactory.getSdkVersion());
-                break;
             case "setPreferPlayerName":
-                String playerName = methodCall.arguments();
-                setPlayerName(playerName);
+                String playerName = methodCall.argument("arg");
+                setPlayerName(mAliPlayer,playerName);
                 break;
             case "getPlayerName":
-                result.success(getPlayerName());
+                result.success(getPlayerName(mAliPlayer));
                 break;
             case "setStreamDelayTime":
-                Map<String,Object> streamDelayTimeMap = (Map<String, Object>) methodCall.arguments;
+                Map<String,Object> streamDelayTimeMap = (Map<String, Object>) methodCall.argument("arg");
                 Integer index = (Integer) streamDelayTimeMap.get("index");
                 Integer time = (Integer) streamDelayTimeMap.get("time");
-                setStreamDelayTime(index,time);
+                setStreamDelayTime(mAliPlayer,index,time);
                 break;
             default:
                 result.notImplemented();
         }
     }
 
-    private void createAliPlayer(){
-        mAliPlayer = AliPlayerFactory.createAliPlayer(mContext);
-        initListener(mAliPlayer);
-    }
-
-    private void setDataSource(String url){
+    private void setDataSource(AliPlayer mAliPlayer,String url){
         if(mAliPlayer != null){
             UrlSource urlSource = new UrlSource();
             urlSource.setUri(url);
@@ -718,56 +758,56 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
         }
     }
 
-    private void setDataSource(VidSts vidSts){
+    private void setDataSource(AliPlayer mAliPlayer,VidSts vidSts){
         if(mAliPlayer != null){
             ((AliPlayer)mAliPlayer).setDataSource(vidSts);
         }
     }
 
-    private void setDataSource(VidAuth vidAuth){
+    private void setDataSource(AliPlayer mAliPlayer,VidAuth vidAuth){
         if(mAliPlayer != null){
             ((AliPlayer)mAliPlayer).setDataSource(vidAuth);
         }
     }
 
-    private void setDataSource(VidMps vidMps){
+    private void setDataSource(AliPlayer mAliPlayer,VidMps vidMps){
         if(mAliPlayer != null){
             ((AliPlayer)mAliPlayer).setDataSource(vidMps);
         }
     }
 
-    private void prepare(){
+    private void prepare(AliPlayer mAliPlayer){
         if(mAliPlayer != null){
             mAliPlayer.prepare();
         }
     }
 
-    private void start(){
+    private void start(AliPlayer mAliPlayer){
         if(mAliPlayer != null){
             mAliPlayer.start();
         }
     }
 
-    private void pause(){
+    private void pause(AliPlayer mAliPlayer){
         if(mAliPlayer != null){
             mAliPlayer.pause();
         }
     }
 
-    private void stop(){
+    private void stop(AliPlayer mAliPlayer){
         if(mAliPlayer != null){
             mAliPlayer.stop();
         }
     }
 
-    private void release(){
+    private void release(AliPlayer mAliPlayer){
         if(mAliPlayer != null){
             mAliPlayer.release();
             mAliPlayer = null;
         }
     }
 
-    private void seekTo(long position,int seekMode){
+    private void seekTo(AliPlayer mAliPlayer,long position,int seekMode){
         if(mAliPlayer != null){
             IPlayer.SeekMode mSeekMode;
             if(seekMode == IPlayer.SeekMode.Accurate.getValue()){
@@ -779,62 +819,63 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
         }
     }
 
-    private MediaInfo getMediaInfo(){
+
+    private MediaInfo getMediaInfo(AliPlayer mAliPlayer){
         if(mAliPlayer != null){
             return mAliPlayer.getMediaInfo();
         }
         return null;
     }
 
-    private void snapshot(){
+    private void snapshot(AliPlayer mAliPlayer){
         if(mAliPlayer != null){
             mAliPlayer.snapshot();
         }
     }
 
-    private void setLoop(Boolean isLoop){
+    private void setLoop(AliPlayer mAliPlayer,Boolean isLoop){
         if(mAliPlayer != null){
             mAliPlayer.setLoop(isLoop);
         }
     }
 
-    private Boolean isLoop(){
+    private Boolean isLoop(AliPlayer mAliPlayer){
         return mAliPlayer != null && mAliPlayer.isLoop();
     }
 
-    private void setAutoPlay(Boolean isAutoPlay){
+    private void setAutoPlay(AliPlayer mAliPlayer,Boolean isAutoPlay){
         if(mAliPlayer != null){
             mAliPlayer.setAutoPlay(isAutoPlay);
         }
     }
 
-    private Boolean isAutoPlay(){
+    private Boolean isAutoPlay(AliPlayer mAliPlayer){
         if (mAliPlayer != null) {
             return mAliPlayer.isAutoPlay();
         }
         return false;
     }
 
-    private void setMuted(Boolean muted){
+    private void setMuted(AliPlayer mAliPlayer,Boolean muted){
         if(mAliPlayer != null){
             mAliPlayer.setMute(muted);
         }
     }
 
-    private Boolean isMuted(){
+    private Boolean isMuted(AliPlayer mAliPlayer){
         if (mAliPlayer != null) {
             return mAliPlayer.isMute();
         }
         return false;
     }
 
-    private void setEnableHardWareDecoder(Boolean mEnableHardwareDecoder){
+    private void setEnableHardWareDecoder(AliPlayer mAliPlayer,Boolean mEnableHardwareDecoder){
         if(mAliPlayer != null){
             mAliPlayer.enableHardwareDecoder(mEnableHardwareDecoder);
         }
     }
 
-    private void setScaleMode(int model){
+    private void setScaleMode(AliPlayer mAliPlayer,int model){
         if(mAliPlayer != null){
             IPlayer.ScaleMode mScaleMode = IPlayer.ScaleMode.SCALE_ASPECT_FIT;
             if(model == IPlayer.ScaleMode.SCALE_ASPECT_FIT.getValue()){
@@ -848,7 +889,7 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
         }
     }
 
-    private int getScaleMode(){
+    private int getScaleMode(AliPlayer mAliPlayer){
         int scaleMode = IPlayer.ScaleMode.SCALE_ASPECT_FIT.getValue();
         if (mAliPlayer != null) {
             scaleMode =  mAliPlayer.getScaleMode().getValue();
@@ -856,7 +897,7 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
         return scaleMode;
     }
 
-    private void setMirrorMode(int mirrorMode){
+    private void setMirrorMode(AliPlayer mAliPlayer,int mirrorMode){
         if(mAliPlayer != null){
             IPlayer.MirrorMode mMirrorMode;
             if(mirrorMode == IPlayer.MirrorMode.MIRROR_MODE_HORIZONTAL.getValue()){
@@ -870,7 +911,7 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
         }
     }
 
-    private int getMirrorMode(){
+    private int getMirrorMode(AliPlayer mAliPlayer){
         int mirrorMode = IPlayer.MirrorMode.MIRROR_MODE_NONE.getValue();
         if (mAliPlayer != null) {
             mirrorMode = mAliPlayer.getMirrorMode().getValue();
@@ -878,7 +919,7 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
         return mirrorMode;
     }
 
-    private void setRotateMode(int rotateMode){
+    private void setRotateMode(AliPlayer mAliPlayer,int rotateMode){
         if(mAliPlayer != null){
             IPlayer.RotateMode mRotateMode;
             if(rotateMode == IPlayer.RotateMode.ROTATE_90.getValue()){
@@ -894,7 +935,7 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
         }
     }
 
-    private int getRotateMode(){
+    private int getRotateMode(AliPlayer mAliPlayer){
         int rotateMode = IPlayer.RotateMode.ROTATE_0.getValue();
         if(mAliPlayer != null){
             rotateMode =  mAliPlayer.getRotateMode().getValue();
@@ -902,13 +943,13 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
         return rotateMode;
     }
 
-    private void setSpeed(double speed){
+    private void setSpeed(AliPlayer mAliPlayer,double speed){
         if(mAliPlayer != null){
             mAliPlayer.setSpeed((float) speed);
         }
     }
 
-    private double getSpeed(){
+    private double getSpeed(AliPlayer mAliPlayer){
         double speed = 0;
         if(mAliPlayer != null){
             speed = mAliPlayer.getSpeed();
@@ -916,19 +957,19 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
         return speed;
     }
 
-    private void setVideoBackgroundColor(long color){
+    private void setVideoBackgroundColor(AliPlayer mAliPlayer,long color){
         if(mAliPlayer != null){
             mAliPlayer.setVideoBackgroundColor((int) color);
         }
     }
 
-    private void setVolume(double volume){
+    private void setVolume(AliPlayer mAliPlayer,double volume){
         if(mAliPlayer != null){
             mAliPlayer.setVolume((float)volume);
         }
     }
 
-    private double getVolume(){
+    private double getVolume(AliPlayer mAliPlayer){
         double volume = 1.0;
         if(mAliPlayer != null){
             volume = mAliPlayer.getVolume();
@@ -936,13 +977,13 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
         return volume;
     }
 
-    private void setConfig(PlayerConfig playerConfig){
+    private void setConfig(AliPlayer mAliPlayer,PlayerConfig playerConfig){
         if(mAliPlayer != null){
             mAliPlayer.setConfig(playerConfig);
         }
     }
 
-    private PlayerConfig getConfig(){
+    private PlayerConfig getConfig(AliPlayer mAliPlayer){
         if(mAliPlayer != null){
             return mAliPlayer.getConfig();
         }
@@ -953,13 +994,13 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
         return new CacheConfig();
     }
 
-    private void setCacheConfig(CacheConfig cacheConfig){
+    private void setCacheConfig(AliPlayer mAliPlayer,CacheConfig cacheConfig){
         if(mAliPlayer != null){
             mAliPlayer.setCacheConfig(cacheConfig);
         }
     }
 
-    private TrackInfo getCurrentTrack(int currentTrackIndex){
+    private TrackInfo getCurrentTrack(AliPlayer mAliPlayer,int currentTrackIndex){
         if(mAliPlayer != null){
             return mAliPlayer.currentTrack(currentTrackIndex);
         }else{
@@ -967,70 +1008,22 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
         }
     }
 
-    private void selectTrack(int trackId,boolean accurate){
+    private void selectTrack(AliPlayer mAliPlayer,int trackId,boolean accurate){
         if(mAliPlayer != null){
             mAliPlayer.selectTrack(trackId,accurate);
         }
     }
 
-    private void addExtSubtitle(String url){
+    private void addExtSubtitle(AliPlayer mAliPlayer,String url){
         if(mAliPlayer != null){
             mAliPlayer.addExtSubtitle(url);
         }
     }
 
-    private void selectExtSubtitle(int trackIndex,boolean enable){
+    private void selectExtSubtitle(AliPlayer mAliPlayer,int trackIndex,boolean enable){
         if(mAliPlayer != null){
             mAliPlayer.selectExtSubtitle(trackIndex,enable);
         }
-    }
-
-    private void enableConsoleLog(Boolean enableLog){
-        Logger.getInstance(mContext).enableConsoleLog(enableLog);
-    }
-
-    private void setLogLevel(int level){
-        Logger.LogLevel mLogLevel;
-        if(level == Logger.LogLevel.AF_LOG_LEVEL_NONE.getValue()){
-            mLogLevel = Logger.LogLevel.AF_LOG_LEVEL_NONE;
-        }else if(level == Logger.LogLevel.AF_LOG_LEVEL_FATAL.getValue()){
-            mLogLevel = Logger.LogLevel.AF_LOG_LEVEL_FATAL;
-        }else if(level == Logger.LogLevel.AF_LOG_LEVEL_ERROR.getValue()){
-            mLogLevel = Logger.LogLevel.AF_LOG_LEVEL_ERROR;
-        }else if(level == Logger.LogLevel.AF_LOG_LEVEL_WARNING.getValue()){
-            mLogLevel = Logger.LogLevel.AF_LOG_LEVEL_WARNING;
-        }else if(level == Logger.LogLevel.AF_LOG_LEVEL_INFO.getValue()){
-            mLogLevel = Logger.LogLevel.AF_LOG_LEVEL_INFO;
-        }else if(level == Logger.LogLevel.AF_LOG_LEVEL_DEBUG.getValue()){
-            mLogLevel = Logger.LogLevel.AF_LOG_LEVEL_DEBUG;
-        }else if(level == Logger.LogLevel.AF_LOG_LEVEL_TRACE.getValue()){
-            mLogLevel = Logger.LogLevel.AF_LOG_LEVEL_TRACE;
-        }else{
-            mLogLevel = Logger.LogLevel.AF_LOG_LEVEL_NONE;
-        }
-        Logger.getInstance(mContext).setLogLevel(mLogLevel);
-    }
-
-    private Integer getLogLevel(){
-        return Logger.getInstance(mContext).getLogLevel().getValue();
-    }
-
-    private String createDeviceInfo(){
-        AliPlayerFactory.DeviceInfo deviceInfo = new AliPlayerFactory.DeviceInfo();
-        deviceInfo.model = Build.MODEL;
-        return deviceInfo.model;
-    }
-
-    private void addBlackDevice(String blackType,String modelInfo){
-        AliPlayerFactory.DeviceInfo deviceInfo = new AliPlayerFactory.DeviceInfo();
-        deviceInfo.model = modelInfo;
-        AliPlayerFactory.BlackType aliPlayerBlackType;
-        if(!TextUtils.isEmpty(blackType) && blackType.equals("HW_Decode_H264")){
-            aliPlayerBlackType = AliPlayerFactory.BlackType.HW_Decode_H264;
-        }else{
-            aliPlayerBlackType = AliPlayerFactory.BlackType.HW_Decode_HEVC;
-        }
-        AliPlayerFactory.addBlackDevice(aliPlayerBlackType,deviceInfo);
     }
 
     private void createThumbnailHelper(String url){
@@ -1040,14 +1033,14 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
             public void onPrepareSuccess() {
                 Map<String,Object> map = new HashMap<>();
                 map.put("method","thumbnail_onPrepared_Success");
-                mEventSink.success(map);
+//                mEventSink.success(map);
             }
 
             @Override
             public void onPrepareFail() {
                 Map<String,Object> map = new HashMap<>();
                 map.put("method","thumbnail_onPrepared_Fail");
-                mEventSink.success(map);
+//                mEventSink.success(map);
             }
         });
 
@@ -1066,7 +1059,7 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
                     map.put("method","onThumbnailGetSuccess");
                     map.put("thumbnailbitmap",stream.toByteArray());
                     map.put("thumbnailRange",positionRange);
-                    mEventSink.success(map);
+//                    mEventSink.success(map);
                 }
             }
 
@@ -1074,7 +1067,7 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
             public void onThumbnailGetFail(long l, String s) {
                 Map<String,Object> map = new HashMap<>();
                 map.put("method","onThumbnailGetFail");
-                mEventSink.success(map);
+//                mEventSink.success(map);
             }
         });
         mThumbnailHelper.prepare();
@@ -1086,17 +1079,17 @@ public class FlutterAliPlayer implements EventChannel.StreamHandler, MethodCallH
         }
     }
 
-    private void setPlayerName(String playerName) {
+    private void setPlayerName(AliPlayer mAliPlayer,String playerName) {
         if(mAliPlayer != null){
             mAliPlayer.setPreferPlayerName(playerName);
         }
     }
 
-    private String getPlayerName(){
+    private String getPlayerName(AliPlayer mAliPlayer){
         return mAliPlayer == null ? "" : mAliPlayer.getPlayerName();
     }
 
-    private void setStreamDelayTime(int index,int time){
+    private void setStreamDelayTime(AliPlayer mAliPlayer,int index,int time){
         if(mAliPlayer != null){
             mAliPlayer.setStreamDelayTime(index,time);
         }

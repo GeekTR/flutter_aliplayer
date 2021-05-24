@@ -2,11 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_aliplayer/flutter_aliplayer.dart';
-import 'package:flutter_aliplayer/flutter_aliplayer_factory.dart';
 import 'package:flutter_aliplayer_example/config.dart';
 
 class SettingPage extends StatefulWidget {
-
   @override
   _SettingHomePageState createState() => _SettingHomePageState();
 }
@@ -159,7 +157,8 @@ class _SettingHomePageState extends State<SettingPage> {
             child: Text("HEVC黑名单"),
             onPressed: () {
               FlutterAliplayer.createDeviceInfo().then((value) {
-                FlutterAliplayer.addBlackDevice(FlutterAvpdef.BLACK_DEVICES_HEVC, value);
+                FlutterAliplayer.addBlackDevice(
+                    FlutterAvpdef.BLACK_DEVICES_HEVC, value);
               });
             },
           ),
@@ -170,7 +169,8 @@ class _SettingHomePageState extends State<SettingPage> {
             child: Text("H264黑名单"),
             onPressed: () {
               FlutterAliplayer.createDeviceInfo().then((value) {
-                FlutterAliplayer.addBlackDevice(FlutterAvpdef.BLACK_DEVICES_H264, value);
+                FlutterAliplayer.addBlackDevice(
+                    FlutterAvpdef.BLACK_DEVICES_H264, value);
               });
             },
           ),

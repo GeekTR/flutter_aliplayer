@@ -126,13 +126,19 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   _initListener() {
     fAliplayer.setOnPrepared((playerId) {
       Fluttertoast.showToast(msg: "OnPrepared ");
-      fAliplayer.getPlayerName().then((value) => print("getPlayerName==${value}"));
+      fAliplayer
+          .getPlayerName()
+          .then((value) => print("getPlayerName==${value}"));
+      fAliplayer.getMediaInfo().then((value) {
+        _videoDuration = value['duration'];
+        setState(() {});
+      });
     });
     fAliplayer.setOnRenderingStart((playerId) {
       Fluttertoast.showToast(msg: " OnFirstFrameShow ");
     });
-    fAliplayer.setOnVideoSizeChanged((width, height,playerId) {});
-    fAliplayer.setOnStateChanged((newState,playerId) {
+    fAliplayer.setOnVideoSizeChanged((width, height, playerId) {});
+    fAliplayer.setOnStateChanged((newState, playerId) {
       _currentPlayerState = newState;
       print("aliyun : onStateChanged $newState");
       switch (newState) {
@@ -152,7 +158,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
         _loadingPercent = 0;
         _showLoading = true;
       });
-    }, loadingProgress: (percent, netSpeed,playerId) {
+    }, loadingProgress: (percent, netSpeed, playerId) {
       _loadingPercent = percent;
       if (percent == 100) {
         _showLoading = false;
@@ -166,7 +172,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     fAliplayer.setOnSeekComplete((playerId) {
       _inSeek = false;
     });
-    fAliplayer.setOnInfo((infoCode, extraValue, extraMsg,playerId) {
+    fAliplayer.setOnInfo((infoCode, extraValue, extraMsg, playerId) {
       if (infoCode == FlutterAvpdef.CURRENTPOSITION) {
         if (_videoDuration != 0 && extraValue <= _videoDuration) {
           _currentPosition = extraValue;
@@ -202,7 +208,6 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     });
     fAliplayer.setOnTrackReady((playerId) {
       fAliplayer.getMediaInfo().then((value) {
-        _videoDuration = value['duration'];
         setState(() {});
         List thumbnails = value['thumbnails'];
         if (thumbnails != null && thumbnails.isNotEmpty) {
@@ -215,18 +220,18 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
       setState(() {});
     });
 
-    fAliplayer.setOnSnapShot((path,playerId) {
+    fAliplayer.setOnSnapShot((path, playerId) {
       print("aliyun : snapShotPath = $path");
       Fluttertoast.showToast(msg: "SnapShot Save : $path");
     });
-    fAliplayer.setOnError((errorCode, errorExtra, errorMsg,playerId) {
+    fAliplayer.setOnError((errorCode, errorExtra, errorMsg, playerId) {
       _showTipsWidget = true;
       _showLoading = false;
       _tipsContent = "$errorCode \n $errorMsg";
       setState(() {});
     });
 
-    fAliplayer.setOnTrackChanged((value,playerId) {
+    fAliplayer.setOnTrackChanged((value, playerId) {
       AVPTrackInfo info = AVPTrackInfo.fromJson(value);
       if (info != null && info.trackDefinition.length > 0) {
         trackFragmentKey.currentState.onTrackChanged(info);
@@ -241,7 +246,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     });
 
     fAliplayer.setOnThumbnailGetListener(
-        onThumbnailGetSuccess: (bitmap, range,playerId) {
+        onThumbnailGetSuccess: (bitmap, range, playerId) {
           // _thumbnailBitmap = bitmap;
           var provider = MemoryImage(bitmap);
           precacheImage(provider, context).then((_) {
@@ -252,7 +257,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
         },
         onThumbnailGetFail: (playerId) {});
 
-    this.fAliplayer.setOnSubtitleHide((trackIndex, subtitleID,playerId) {
+    this.fAliplayer.setOnSubtitleHide((trackIndex, subtitleID, playerId) {
       if (mounted) {
         setState(() {
           extSubTitleText = '';
@@ -260,7 +265,9 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
       }
     });
 
-    this.fAliplayer.setOnSubtitleShow((trackIndex, subtitleID, subtitle,playerId) {
+    this
+        .fAliplayer
+        .setOnSubtitleShow((trackIndex, subtitleID, subtitle, playerId) {
       if (mounted) {
         setState(() {
           extSubTitleText = subtitle;
