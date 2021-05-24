@@ -12,8 +12,6 @@
 
 @interface AliPlayerFactory () {
     NSObject<FlutterBinaryMessenger>* _messenger;
-//    FlutterMethodChannel* _channel;
-//    FlutterMethodChannel* _listPlayerchannel;
     FlutterMethodChannel* _commonChannel;
     UIView *playerView;
 }
@@ -38,7 +36,6 @@
         
         _commonChannel = [FlutterMethodChannel methodChannelWithName:@"plugins.flutter_aliplayer_factory" binaryMessenger:messenger];
         [_commonChannel setMethodCallHandler:^(FlutterMethodCall* call, FlutterResult result) {
-//            [weakSelf onMethodCall:call result:result atObj:@"" arg:@""];
             NSObject* obj = [call arguments];
             if ([obj isKindOfClass:NSDictionary.class]) {
                 NSDictionary *dic = (NSDictionary*)obj;
@@ -51,26 +48,6 @@
                 [weakSelf onMethodCall:call result:result atObj:@"" arg:@""];
             }
         }];
-        
-//        _channel = [FlutterMethodChannel methodChannelWithName:@"flutter_aliplayer" binaryMessenger:messenger];
-//        [_channel setMethodCallHandler:^(FlutterMethodCall* call, FlutterResult result) {
-//            NSObject* obj = [call arguments];
-//            if ([obj isKindOfClass:NSDictionary.class]) {
-//                NSDictionary *dic = (NSDictionary*)obj;
-//                NSString *playerId = [dic objectForKey:@"playerId"];
-//
-//                AliPlayerProxy *proxy = [weakSelf.playerProxyDic objectForKey:playerId];
-//                NSObject *arguments= [dic objectForKey:@"arg"];
-//                [weakSelf onMethodCall:call result:result atObj:proxy?:@"" arg:arguments?:@""];
-//            }else{
-//                [weakSelf onMethodCall:call result:result atObj:@"" arg:@""];
-//            }
-//        }];
-        
-//        _listPlayerchannel = [FlutterMethodChannel methodChannelWithName:@"flutter_alilistplayer" binaryMessenger:messenger];
-//        [_listPlayerchannel setMethodCallHandler:^(FlutterMethodCall* call, FlutterResult result) {
-//            [weakSelf onMethodCall:call result:result atObj:weakSelf.aliListPlayer arg:@""];
-//        }];
         
         FlutterEventChannel *eventChannel = [FlutterEventChannel eventChannelWithName:@"flutter_aliplayer_event" binaryMessenger:messenger];
         [eventChannel setStreamHandler:self];
@@ -653,7 +630,7 @@
             @"URL" : @"url",
         };
     }];
-    NSLog(@"getMediaInfo==%@",info.mj_JSONString);
+//    NSLog(@"getMediaInfo==%@",info.mj_JSONString);
     result(info.mj_keyValues);
 }
 

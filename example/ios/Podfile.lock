@@ -1,20 +1,20 @@
 PODS:
-  - AliPlayerSDK_iOS (5.3.1):
-    - AliPlayerSDK_iOS/AliPlayerSDK (= 5.3.1)
-  - AliPlayerSDK_iOS/AliPlayerSDK (5.3.1)
-  - AliPlayerSDK_iOS_ARTC (5.3.1):
-    - AliPlayerSDK_iOS_ARTC/AliPlayerSDK (= 5.3.1)
-  - AliPlayerSDK_iOS_ARTC/AliPlayerSDK (5.3.1)
+  - AliPlayerSDK_iOS (5.4.0):
+    - AliPlayerSDK_iOS/AliPlayerSDK (= 5.4.0)
+  - AliPlayerSDK_iOS/AliPlayerSDK (5.4.0)
+  - AliPlayerSDK_iOS_ARTC (5.4.0):
+    - AliPlayerSDK_iOS_ARTC/AliPlayerSDK (= 5.4.0)
+  - AliPlayerSDK_iOS_ARTC/AliPlayerSDK (5.4.0)
   - connectivity (0.0.1):
     - Flutter
     - Reachability
   - Flutter (1.0.0)
   - flutter_aliplayer (0.0.1):
-    - AliPlayerSDK_iOS (= 5.3.1)
+    - AliPlayerSDK_iOS (= 5.4.0)
     - Flutter
     - MJExtension
   - flutter_aliplayer_artc (0.0.1):
-    - AliPlayerSDK_iOS_ARTC (= 5.3.1)
+    - AliPlayerSDK_iOS_ARTC (= 5.4.0)
     - Flutter
   - flutter_aliplayer_rts (0.0.1):
     - Flutter
@@ -79,12 +79,12 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/sqflite/ios"
 
 SPEC CHECKSUMS:
-  AliPlayerSDK_iOS: 122ba2f5a32d64ae89e19bdb58859875e248cdce
-  AliPlayerSDK_iOS_ARTC: 959afeb848231c5fcdbe29badab136e963d44da8
+  AliPlayerSDK_iOS: adb99e9427d1ee5357053fe49b9c1dfe25af1ef8
+  AliPlayerSDK_iOS_ARTC: 0303aa5405311ff3b01bbebbbe1c9d6876f90ae3
   connectivity: c4130b2985d4ef6fd26f9702e886bd5260681467
   Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
-  flutter_aliplayer: 956869ab3ed7f8bf6cbb2d2aefab9396b1f5e544
-  flutter_aliplayer_artc: 18455720439a261ef2a08ca10fcfc95624d21938
+  flutter_aliplayer: ceb07021f2af6498550bd2726d1e1bfeda36627a
+  flutter_aliplayer_artc: ca6bbc436f76835c4eba2b328a904e4f76d070f9
   flutter_aliplayer_rts: 09575da8f791a3dd05e86b52cf40769565b02c52
   fluttertoast: 6122fa75143e992b1d3470f61000f591a798cc58
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
