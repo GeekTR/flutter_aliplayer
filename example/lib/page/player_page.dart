@@ -184,7 +184,9 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
         }
       } else if (infoCode == FlutterAvpdef.BUFFEREDPOSITION) {
         _bufferPosition = extraValue;
-        setState(() {});
+        if(mounted){
+          setState(() {});
+        }
       } else if (infoCode == FlutterAvpdef.AUTOPLAYSTART) {
         Fluttertoast.showToast(msg: "AutoPlay");
       } else if (infoCode == FlutterAvpdef.CACHESUCCESS) {

@@ -6,7 +6,7 @@ import 'package:flutter_aliplayer_example/config.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_aliplayer_example/page/auth_page.dart';
 import 'package:flutter_aliplayer_example/page/download_page.dart';
-import 'package:flutter_aliplayer_example/page/multiple_player_page.dart';
+import 'package:flutter_aliplayer_example/page/multiple_player_test.dart';
 import 'package:flutter_aliplayer_example/page/setting_page.dart';
 import 'package:flutter_aliplayer_example/page/sts_page.dart';
 import 'package:flutter_aliplayer_example/page/url_page.dart';
@@ -121,7 +121,7 @@ class _MyAppState extends State<HomePage> {
                       setState(() {});
                       break;
                     case 6:
-                      CommomUtils.pushPage(context, MultiplePlayerPage());
+                      CommomUtils.pushPage(context, MultiplePlayerTest());
                       break;
                     case 7:
                       if (Platform.isAndroid) {

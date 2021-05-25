@@ -16,10 +16,12 @@ public class FlutterAliPlayerView implements PlatformView {
 
     private Context mContext;
     private IPlayer mPlayer;
+    private int mViewId;
 
     private final TextureView mTextureView;
 
     public FlutterAliPlayerView(Context context, int viewId) {
+        this.mViewId = viewId;
         this.mContext = context;
         mTextureView = new TextureView(mContext);
         initRenderView(mTextureView);
@@ -37,7 +39,9 @@ public class FlutterAliPlayerView implements PlatformView {
 
     @Override
     public void dispose() {
-
+        if(mFlutterAliPlayerViewListener != null){
+            mFlutterAliPlayerViewListener.onDispose(mViewId);
+        }
     }
 
     private void initRenderView(TextureView mTextureView) {
@@ -72,5 +76,15 @@ public class FlutterAliPlayerView implements PlatformView {
                 }
             });
         }
+    }
+
+    public interface FlutterAliPlayerViewListener{
+        void onDispose(int viewId);
+    }
+
+    private FlutterAliPlayerViewListener mFlutterAliPlayerViewListener;
+
+    public void setFlutterAliPlayerViewListener(FlutterAliPlayerViewListener listener){
+        this.mFlutterAliPlayerViewListener = listener;
     }
 }

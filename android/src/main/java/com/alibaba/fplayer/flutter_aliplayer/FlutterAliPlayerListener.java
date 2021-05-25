@@ -45,4 +45,12 @@ public interface FlutterAliPlayerListener {
 
     void onError(Map<String,Object> map);
 
+    void onThumbnailPrepareSuccess(Map<String,Object> map);
+
+    void onThumbnailPrepareFail(Map<String,Object> map);
+
+    void onThumbnailGetSuccess(Map<String,Object> map);
+
+    void onThumbnailGetFail(Map<String,Object> map);
+
 }

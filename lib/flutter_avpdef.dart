@@ -130,8 +130,8 @@ class PlayerType {
 class AVPMediaInfo {
   String? status;
   String? mediaType;
-  List<AVPThumbnailInfo>? thumbnails;
-  List<AVPTrackInfo>? tracks;
+  List<AVPThumbnailInfo>? thumbnails = [];
+  List<AVPTrackInfo>? tracks = [];
   String? title;
   int? duration;
   String? transcodeMode;
@@ -152,14 +152,13 @@ class AVPMediaInfo {
     mediaType = json['mediaType'];
     if (json['thumbnails'] != null) {
       // thumbnails = new List<AVPThumbnailInfo>();
-      thumbnails = List.empty();
+      // thumbnails = List.empty();
       json['thumbnails'].forEach((v) {
         thumbnails!.add(new AVPThumbnailInfo.fromJson(v));
       });
     }
     if (json['tracks'] != null) {
       // tracks = new List<AVPTrackInfo>();
-      tracks = List.empty();
       json['tracks'].forEach((v) {
         tracks!.add(new AVPTrackInfo.fromJson(v));
       });

@@ -714,7 +714,7 @@ public class FlutterAliPlayer {
                 selectTrack(mAliPlayer,trackIdx, accurate == 1);
                 break;
             case "addExtSubtitle":
-                String extSubtitlUrl = (String) methodCall.arguments;
+                String extSubtitlUrl = (String) methodCall.argument("arg");
                 addExtSubtitle(mAliPlayer,extSubtitlUrl);
                 break;
             case "selectExtSubtitle":
@@ -1034,6 +1034,9 @@ public class FlutterAliPlayer {
                 Map<String,Object> map = new HashMap<>();
                 map.put("method","thumbnail_onPrepared_Success");
 //                mEventSink.success(map);
+                if(mFlutterAliPlayerListener != null){
+                    mFlutterAliPlayerListener.onThumbnailPrepareSuccess(map);
+                }
             }
 
             @Override
@@ -1041,6 +1044,9 @@ public class FlutterAliPlayer {
                 Map<String,Object> map = new HashMap<>();
                 map.put("method","thumbnail_onPrepared_Fail");
 //                mEventSink.success(map);
+                if(mFlutterAliPlayerListener != null){
+                    mFlutterAliPlayerListener.onThumbnailPrepareFail(map);
+                }
             }
         });
 
@@ -1060,6 +1066,9 @@ public class FlutterAliPlayer {
                     map.put("thumbnailbitmap",stream.toByteArray());
                     map.put("thumbnailRange",positionRange);
 //                    mEventSink.success(map);
+                    if(mFlutterAliPlayerListener != null){
+                        mFlutterAliPlayerListener.onThumbnailGetSuccess(map);
+                    }
                 }
             }
 
@@ -1068,6 +1077,9 @@ public class FlutterAliPlayer {
                 Map<String,Object> map = new HashMap<>();
                 map.put("method","onThumbnailGetFail");
 //                mEventSink.success(map);
+                if(mFlutterAliPlayerListener != null){
+                    mFlutterAliPlayerListener.onThumbnailGetFail(map);
+                }
             }
         });
         mThumbnailHelper.prepare();

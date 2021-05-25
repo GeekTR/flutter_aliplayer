@@ -27,7 +27,7 @@ import io.flutter.plugin.platform.PlatformViewFactory;
 /**
  * FlutterAliplayerPlugin
  */
-public class FlutterAliplayerPlugin extends PlatformViewFactory implements FlutterPlugin, MethodCallHandler, EventChannel.StreamHandler {
+public class FlutterAliplayerPlugin extends PlatformViewFactory implements FlutterPlugin, MethodCallHandler, EventChannel.StreamHandler, FlutterAliPlayerView.FlutterAliPlayerViewListener {
     /// The MethodChannel that will the communication between Flutter and native Android
     ///
     /// This local reference serves to register the plugin with the Flutter Engine and unregister it
@@ -39,6 +39,7 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
     private Map<Integer, FlutterAliPlayerView> mFlutterAliPlayerViewMap = new HashMap<>();
     private EventChannel.EventSink mEventSink;
     private EventChannel mEventChannel;
+    private Integer playerType = -1;
 
     public FlutterAliplayerPlugin() {
         super(StandardMessageCodec.INSTANCE);
@@ -72,14 +73,21 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
     public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
         switch (call.method) {
             case "createAliPlayer":
-                String createPlayerId = call.argument("playerId");
-                FlutterAliPlayer flutterAliPlayer = new FlutterAliPlayer(flutterPluginBinding,createPlayerId);
-                initListener(flutterAliPlayer);
-                mFlutterAliPlayerMap.put(createPlayerId,flutterAliPlayer);
-                result.success(null);
-                break;
-            case "createAliListPlayer":
-                mFlutterAliListPlayer = new FlutterAliListPlayer(flutterPluginBinding);
+                playerType = call.argument("arg");
+                if(0 == playerType){
+                    //AliPlayer
+                    String createPlayerId = call.argument("playerId");
+                    FlutterAliPlayer flutterAliPlayer = new FlutterAliPlayer(flutterPluginBinding,createPlayerId);
+                    initListener(flutterAliPlayer);
+                    mFlutterAliPlayerMap.put(createPlayerId,flutterAliPlayer);
+                }else if(1 == playerType){
+                    //AliListPlayer
+                    mFlutterAliListPlayer = new FlutterAliListPlayer(flutterPluginBinding);
+                    initListener(mFlutterAliListPlayer);
+                }else{
+
+                }
+
                 result.success(null);
                 break;
             case "initService":
@@ -110,17 +118,30 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
                 addBlackDevice(blackType,blackDevice);
                 break;
             case "setPlayerView":
-                String setPlayerViewPlayerId = call.argument("playerId");
-                FlutterAliPlayer mSetPlayerViewCurrentFlutterAliPlayer = mFlutterAliPlayerMap.get(setPlayerViewPlayerId);
-                if(mSetPlayerViewCurrentFlutterAliPlayer != null){
-                    mSetPlayerViewCurrentFlutterAliPlayer.setViewMap(mFlutterAliPlayerViewMap);
+                if(playerType == 0){
+                    String setPlayerViewPlayerId = call.argument("playerId");
+                    FlutterAliPlayer mSetPlayerViewCurrentFlutterAliPlayer = mFlutterAliPlayerMap.get(setPlayerViewPlayerId);
+                    if(mSetPlayerViewCurrentFlutterAliPlayer != null){
+                        mSetPlayerViewCurrentFlutterAliPlayer.setViewMap(mFlutterAliPlayerViewMap);
+                    }
+                }else if(playerType == 1){
+                    mFlutterAliListPlayer.setViewMap(mFlutterAliPlayerViewMap);
                 }
+
             default:
-                String playerId = call.argument("playerId");
-                FlutterAliPlayer mCurrentFlutterAliPlayer = mFlutterAliPlayerMap.get(playerId);
-                if(mCurrentFlutterAliPlayer != null){
-                    mCurrentFlutterAliPlayer.onMethodCall(call,result);
+                if(playerType == 0){
+                    String playerId = call.argument("playerId");
+                    FlutterAliPlayer mCurrentFlutterAliPlayer = mFlutterAliPlayerMap.get(playerId);
+                    if(call.method.equals("destroy")){
+                        mFlutterAliPlayerMap.remove(playerId);
+                    }
+                    if(mCurrentFlutterAliPlayer != null){
+                        mCurrentFlutterAliPlayer.onMethodCall(call,result);
+                    }
+                }else if(playerType == 1){
+                    mFlutterAliListPlayer.onMethodCall(call,result);
                 }
+
                 break;
         }
     }
@@ -272,6 +293,148 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
             public void onError(Map<String, Object> map) {
                 mEventSink.success(map);
             }
+
+            @Override
+            public void onThumbnailPrepareSuccess(Map<String, Object> map) {
+                mEventSink.success(map);
+            }
+
+            @Override
+            public void onThumbnailPrepareFail(Map<String, Object> map) {
+                mEventSink.success(map);
+            }
+
+            @Override
+            public void onThumbnailGetSuccess(Map<String, Object> map) {
+                mEventSink.success(map);
+            }
+
+            @Override
+            public void onThumbnailGetFail(Map<String, Object> map) {
+                mEventSink.success(map);
+            }
+        });
+    }
+
+    /**
+     * 设置监听
+     */
+    private void initListener(FlutterAliListPlayer flutterAliPlayer) {
+        flutterAliPlayer.setOnFlutterListener(new FlutterAliPlayerListener() {
+            @Override
+            public void onPrepared(Map<String, Object> map) {
+                mEventSink.success(map);
+            }
+
+            @Override
+            public void onTrackReady(Map<String, Object> map) {
+                mEventSink.success(map);
+            }
+
+            @Override
+            public void onCompletion(Map<String, Object> map) {
+                mEventSink.success(map);
+            }
+
+            @Override
+            public void onRenderingStart(Map<String, Object> map) {
+                mEventSink.success(map);
+            }
+
+            @Override
+            public void onVideoSizeChanged(Map<String, Object> map) {
+                mEventSink.success(map);
+            }
+
+            @Override
+            public void onSnapShot(Map<String, Object> map) {
+                mEventSink.success(map);
+            }
+
+            @Override
+            public void onTrackChangedSuccess(Map<String, Object> map) {
+                mEventSink.success(map);
+            }
+
+            @Override
+            public void onTrackChangedFail(Map<String, Object> map) {
+                mEventSink.success(map);
+            }
+
+            @Override
+            public void onSeekComplete(Map<String, Object> map) {
+                mEventSink.success(map);
+            }
+
+            @Override
+            public void onSeiData(Map<String, Object> map) {
+                mEventSink.success(map);
+            }
+
+            @Override
+            public void onLoadingBegin(Map<String, Object> map) {
+                mEventSink.success(map);
+            }
+
+            @Override
+            public void onLoadingProgress(Map<String, Object> map) {
+                mEventSink.success(map);
+            }
+
+            @Override
+            public void onLoadingEnd(Map<String, Object> map) {
+                mEventSink.success(map);
+            }
+
+            @Override
+            public void onStateChanged(Map<String, Object> map) {
+                mEventSink.success(map);
+            }
+
+            @Override
+            public void onSubtitleExtAdded(Map<String, Object> map) {
+                mEventSink.success(map);
+            }
+
+            @Override
+            public void onSubtitleShow(Map<String, Object> map) {
+                mEventSink.success(map);
+            }
+
+            @Override
+            public void onSubtitleHide(Map<String, Object> map) {
+                mEventSink.success(map);
+            }
+
+            @Override
+            public void onInfo(Map<String, Object> map) {
+                mEventSink.success(map);
+            }
+
+            @Override
+            public void onError(Map<String, Object> map) {
+                mEventSink.success(map);
+            }
+
+            @Override
+            public void onThumbnailPrepareSuccess(Map<String, Object> map) {
+                mEventSink.success(map);
+            }
+
+            @Override
+            public void onThumbnailPrepareFail(Map<String, Object> map) {
+                mEventSink.success(map);
+            }
+
+            @Override
+            public void onThumbnailGetSuccess(Map<String, Object> map) {
+                mEventSink.success(map);
+            }
+
+            @Override
+            public void onThumbnailGetFail(Map<String, Object> map) {
+                mEventSink.success(map);
+            }
         });
     }
 
@@ -282,6 +445,7 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
     @Override
     public PlatformView create(Context context, int viewId, Object args) {
         FlutterAliPlayerView flutterAliPlayerView = new FlutterAliPlayerView(context,viewId);
+        flutterAliPlayerView.setFlutterAliPlayerViewListener(this);
         mFlutterAliPlayerViewMap.put(viewId,flutterAliPlayerView);
         return flutterAliPlayerView;
     }
@@ -293,5 +457,10 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
 
     @Override
     public void onCancel(Object arguments) {
+    }
+
+    @Override
+    public void onDispose(int viewId) {
+        mFlutterAliPlayerViewMap.remove(viewId);
     }
 }

@@ -3,7 +3,6 @@ import 'package:flutter_aliplayer/flutter_aliplayer.dart';
 import 'package:flutter_aliplayer/flutter_aliplayer_factory.dart';
 import 'package:flutter_aliplayer_example/config.dart';
 import 'package:flutter_aliplayer_example/util/formatter_utils.dart';
-import 'package:flutter_aliplayer_example/widget/aliyun_slider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class MultiplePlayerPage extends StatefulWidget {
@@ -78,15 +77,7 @@ class _MultiplePlayerPageState extends State<MultiplePlayerPage> {
       }
     });
 
-    if (playerId == '0') {
-      await player.setUrl(DataSourceRelated.DEFAULT_URL);
-    } else if (playerId == '1') {
-      await player.setUrl(
-          "https://alivc-demo-vod.aliyuncs.com/a3b9e7dba80b4600924754fc624238ae/737c5bac56bb4d45bdfc67659b21984b-dd187725b56b7c3b4df998570f5c967a-ld.m3u8");
-    } else {
-      await player.setUrl(DataSourceRelated.DEFAULT_URL);
-    }
-    // await player.setUrl(DataSourceRelated.DEFAULT_URL);
+    await player.setUrl(DataSourceRelated.DEFAULT_URL);
   }
 
   @override
@@ -108,7 +99,7 @@ class _MultiplePlayerPageState extends State<MultiplePlayerPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("多实例播放"),
+        title: Text("多实例播放1"),
         centerTitle: true,
       ),
       body: Scrollbar(
@@ -154,40 +145,12 @@ class _MultiplePlayerPageState extends State<MultiplePlayerPage> {
               children: [
                 Text(
                   "${FormatterUtils.getTimeformatByMs(currentDurationList[index])}",
-                  style: TextStyle(color: Colors.white, fontSize: 11),
+                  style: TextStyle(color: Colors.white, fontSize: 12),
                 ),
-                Expanded(
-                  child: AliyunSlider(
-                    value: currentDurationList[index].toDouble(),
-                    max: durationList[index].toDouble() == 0
-                        ? 1
-                        : durationList[index].toDouble(),
-                    min: 0,
-                    bufferColor: Colors.white,
-                    bufferValue: 100,
-                    onChanged: (value) {
-                      setState(() {
-                        currentDurationList[index] = value.ceil();
-                      });
-                    },
-                    onChangeStart: (value) {
-                      _inSeek = true;
-                      setState(() {});
-                    },
-                    onChangeEnd: (value) {
-                      _inSeek = false;
-                      setState(() {});
-                      playerList[index].seekTo(
-                          value.ceil(),
-                          GlobalSettings.mEnableAccurateSeek
-                              ? FlutterAvpdef.ACCURATE
-                              : FlutterAvpdef.INACCURATE);
-                    },
-                  ),
-                ),
+                Text("/",style: TextStyle(color: Colors.white, fontSize: 12)),
                 Text(
                   "${FormatterUtils.getTimeformatByMs(durationList[index])}",
-                  style: TextStyle(color: Colors.white, fontSize: 11),
+                  style: TextStyle(color: Colors.white, fontSize: 12),
                 ),
                 SizedBox(height: 0, width: 10),
               ],
