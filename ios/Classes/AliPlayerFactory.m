@@ -40,8 +40,13 @@
             if ([obj isKindOfClass:NSDictionary.class]) {
                 NSDictionary *dic = (NSDictionary*)obj;
                 NSString *playerId = [dic objectForKey:@"playerId"];
-                
                 AliPlayerProxy *proxy = [weakSelf.playerProxyDic objectForKey:playerId];
+                
+                if(!proxy && playerId.length>0 && ![call.method isEqualToString:@"createAliPlayer"]){
+                    NSLog(@"flutter aliplayer sdk err : player whith playerId %@ is not exist",playerId);
+                    return;
+                }
+                
                 NSObject *arguments= [dic objectForKey:@"arg"];
                 [weakSelf onMethodCall:call result:result atObj:proxy?:@"" arg:arguments?:@""];
             }else{
