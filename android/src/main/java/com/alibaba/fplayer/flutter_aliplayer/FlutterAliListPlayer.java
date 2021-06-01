@@ -361,11 +361,11 @@ public class FlutterAliListPlayer implements EventChannel.StreamHandler{
                 setPreloadCount(count);
                 break;
             case "setPlayerView":
-                Integer viewId = (Integer) methodCall.argument("arg");
-                FlutterAliPlayerView flutterAliPlayerView = mFlutterAliPlayerViewMap.get(viewId);
-                if(flutterAliPlayerView != null){
-                    flutterAliPlayerView.setPlayer(mAliListPlayer);
-                }
+//                Integer viewId = (Integer) methodCall.argument("arg");
+//                FlutterAliPlayerView flutterAliPlayerView = mFlutterAliPlayerViewMap.get(viewId);
+//                if(flutterAliPlayerView != null){
+//                    flutterAliPlayerView.setPlayer(mAliListPlayer);
+//                }
                 break;
             case "prepare":
                 prepare();
@@ -636,6 +636,10 @@ public class FlutterAliListPlayer implements EventChannel.StreamHandler{
             default:
                 result.notImplemented();
         }
+    }
+
+    public IPlayer getAliPlayer(){
+        return mAliListPlayer;
     }
 
     private void setPreloadCount(int count){

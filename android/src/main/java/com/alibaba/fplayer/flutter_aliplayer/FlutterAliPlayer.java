@@ -45,7 +45,6 @@ public class FlutterAliPlayer {
     private Context mContext;
     private String mSnapShotPath;
     private ThumbnailHelper mThumbnailHelper;
-    private Map<Integer, FlutterAliPlayerView> mFlutterAliPlayerViewMap;
     private AliPlayer mAliPlayer;
     private String mPlayerId;
     private FlutterAliPlayerListener mFlutterAliPlayerListener;
@@ -57,10 +56,6 @@ public class FlutterAliPlayer {
         mGson = new Gson();
         mAliPlayer = AliPlayerFactory.createAliPlayer(mContext);
         initListener(mAliPlayer);
-    }
-
-    public void setViewMap(Map<Integer, FlutterAliPlayerView> flutterAliPlayerViewMap) {
-        this.mFlutterAliPlayerViewMap = flutterAliPlayerViewMap;
     }
 
     public void setOnFlutterListener(FlutterAliPlayerListener listener){
@@ -383,11 +378,11 @@ public class FlutterAliPlayer {
                 result.success(null);
                 break;
             case "setPlayerView":
-                Integer viewId = (Integer) methodCall.argument("arg");
-                FlutterAliPlayerView flutterAliPlayerView = mFlutterAliPlayerViewMap.get(viewId);
-                if(flutterAliPlayerView != null){
-                    flutterAliPlayerView.setPlayer(mAliPlayer);
-                }
+//                Integer viewId = (Integer) methodCall.argument("arg");
+//                FlutterAliPlayerView flutterAliPlayerView = mFlutterAliPlayerViewMap.get(viewId);
+//                if(flutterAliPlayerView != null){
+//                    flutterAliPlayerView.setPlayer(mAliPlayer);
+//                }
                 break;
             case "setVidSts":
                 Map<String,Object> stsMap = (Map<String,Object>)methodCall.argument("arg");
@@ -748,6 +743,10 @@ public class FlutterAliPlayer {
             default:
                 result.notImplemented();
         }
+    }
+
+    public IPlayer getAliPlayer(){
+        return mAliPlayer;
     }
 
     private void setDataSource(AliPlayer mAliPlayer,String url){

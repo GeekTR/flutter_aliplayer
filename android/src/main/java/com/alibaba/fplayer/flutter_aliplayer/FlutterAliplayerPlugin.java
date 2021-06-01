@@ -118,14 +118,22 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
                 addBlackDevice(blackType,blackDevice);
                 break;
             case "setPlayerView":
+                Integer viewId = (Integer) call.argument("arg");
+                FlutterAliPlayerView flutterAliPlayerView = mFlutterAliPlayerViewMap.get(viewId);
                 if(playerType == 0){
                     String setPlayerViewPlayerId = call.argument("playerId");
                     FlutterAliPlayer mSetPlayerViewCurrentFlutterAliPlayer = mFlutterAliPlayerMap.get(setPlayerViewPlayerId);
-                    if(mSetPlayerViewCurrentFlutterAliPlayer != null){
-                        mSetPlayerViewCurrentFlutterAliPlayer.setViewMap(mFlutterAliPlayerViewMap);
+//                    if(mSetPlayerViewCurrentFlutterAliPlayer != null){
+//                        mSetPlayerViewCurrentFlutterAliPlayer.setViewMap(mFlutterAliPlayerViewMap);
+//                    }
+                    if(flutterAliPlayerView != null && mSetPlayerViewCurrentFlutterAliPlayer != null){
+                        flutterAliPlayerView.setPlayer(mSetPlayerViewCurrentFlutterAliPlayer.getAliPlayer());
                     }
                 }else if(playerType == 1){
-                    mFlutterAliListPlayer.setViewMap(mFlutterAliPlayerViewMap);
+//                    mFlutterAliListPlayer.setViewMap(mFlutterAliPlayerViewMap);
+                    if(flutterAliPlayerView != null && mFlutterAliListPlayer != null){
+                        flutterAliPlayerView.setPlayer(mFlutterAliListPlayer.getAliPlayer());
+                    }
                 }
 
             default:

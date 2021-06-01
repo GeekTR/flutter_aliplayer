@@ -83,7 +83,6 @@ class FlutterAliplayer {
   String playerId = 'default';
 
   FlutterAliplayer.init(String? id) {
-    print("abc : init ${id}");
     if (id != null) {
       playerId = id;
     }
@@ -171,7 +170,6 @@ class FlutterAliplayer {
 
   ///接口部分
   wrapWithPlayerId({arg = ''}) {
-    print("abc : ${this.playerId.toString()}");
     var map = {"arg": arg, "playerId": this.playerId.toString()};
     return map;
   }
@@ -197,13 +195,11 @@ class FlutterAliplayer {
   }
 
   Future<void> play() async {
-    print("abc : play");
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('play', wrapWithPlayerId());
   }
 
   Future<void> pause() async {
-    print("abc : pause()");
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('pause', wrapWithPlayerId());
   }
@@ -219,7 +215,6 @@ class FlutterAliplayer {
   }
 
   Future<void> destroy() async {
-    print("abc : destroy");
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('destroy', wrapWithPlayerId());
   }

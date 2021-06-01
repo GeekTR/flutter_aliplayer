@@ -63,6 +63,16 @@ class _MultiplePlayerBetweenPageAState
             height: 50,
           ),
           InkWell(
+            child: Text("准备"),
+            onTap: () {
+              player.prepare();
+            },
+          ),
+          SizedBox(
+            width: 0,
+            height: 30,
+          ),
+          InkWell(
             child: Text("播放"),
             onTap: () {
               player.play();
