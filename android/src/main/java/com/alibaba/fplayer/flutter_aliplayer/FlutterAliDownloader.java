@@ -15,6 +15,7 @@ import com.aliyun.player.source.VidSts;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -22,7 +23,9 @@ import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 
-public class FlutterAliDownloader implements FlutterPlugin,MethodChannel.MethodCallHandler, EventChannel.StreamHandler {
+import com.aliyun.player.nativeclass.TrackInfo;
+
+public class FlutterAliDownloader implements FlutterPlugin, MethodChannel.MethodCallHandler, EventChannel.StreamHandler {
 
     private static final String SEPARA_SYMBOLS = "_";
     private MethodChannel mMethodChannel;
@@ -30,12 +33,12 @@ public class FlutterAliDownloader implements FlutterPlugin,MethodChannel.MethodC
     private EventChannel.EventSink mEventSink;
     private Context mContext;
     private String mSavePath;
-    private Map<String,AliMediaDownloader> mAliMediaDownloadMap = new HashMap<>();
+    private Map<String, AliMediaDownloader> mAliMediaDownloadMap = new HashMap<>();
 
-    public FlutterAliDownloader(Context context, FlutterPlugin.FlutterPluginBinding flutterPluginBinding){
+    public FlutterAliDownloader(Context context, FlutterPlugin.FlutterPluginBinding flutterPluginBinding) {
         this.mContext = context;
-        this.mMethodChannel = new MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(),"plugins.flutter_alidownload");
-        this.mEventChannel = new EventChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(),"plugins.flutter_alidownload_event");
+        this.mMethodChannel = new MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "plugins.flutter_alidownload");
+        this.mEventChannel = new EventChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "plugins.flutter_alidownload_event");
         this.mEventChannel.setStreamHandler(this);
         this.mMethodChannel.setMethodCallHandler(this);
     }
@@ -57,133 +60,126 @@ public class FlutterAliDownloader implements FlutterPlugin,MethodChannel.MethodC
                     vidSts.setAccessKeyId((String) prepareMap.get("accessKeyId"));
                     vidSts.setAccessKeySecret((String) prepareMap.get("accessKeySecret"));
                     vidSts.setSecurityToken((String) prepareMap.get("securityToken"));
-                    if(index == null){
+                    if (index == null) {
                         prepare(vidSts, result);
-                    }else{
-                        prepare(vidSts,index, result);
+                    } else {
+                        prepare(vidSts, index, result);
                     }
 
                 } else if (type != null && type.equals("download_auth")) {
                     VidAuth vidAuth = new VidAuth();
                     vidAuth.setVid(vid);
                     vidAuth.setPlayAuth((String) prepareMap.get("playAuth"));
-                    if(index == null){
+                    if (index == null) {
                         prepare(vidAuth, result);
-                    }else{
-                        prepare(vidAuth,index, result);
+                    } else {
+                        prepare(vidAuth, index, result);
                     }
                 }
             }
-                break;
-            case "setSaveDir":
-            {
+            break;
+            case "setSaveDir": {
                 mSavePath = (String) methodCall.arguments;
             }
-                break;
-            case "selectItem":
-            {
+            break;
+            case "selectItem": {
                 Map<String, Object> selectItem = (Map<String, Object>) methodCall.arguments;
                 String videoId = (String) selectItem.get("vid");
                 Integer index = (Integer) selectItem.get("index");
-                if(mAliMediaDownloadMap.containsKey(videoId)){
+                if (mAliMediaDownloadMap.containsKey(videoId)) {
                     AliMediaDownloader aliMediaDownloader = mAliMediaDownloadMap.get(videoId);
-                    if(aliMediaDownloader != null){
+                    if (aliMediaDownloader != null) {
                         mAliMediaDownloadMap.remove(videoId);
-                        mAliMediaDownloadMap.put(videoId + SEPARA_SYMBOLS + index,aliMediaDownloader);
-                        selectItem(aliMediaDownloader,index);
+                        mAliMediaDownloadMap.put(videoId + SEPARA_SYMBOLS + index, aliMediaDownloader);
+                        selectItem(aliMediaDownloader, index);
                     }
                 }
             }
-                break;
+            break;
             case "start": {
                 Map<String, Object> startMap = (Map<String, Object>) methodCall.arguments;
                 String videoId = (String) startMap.get("vid");
                 Integer index = (Integer) startMap.get("index");
-                AliMediaDownloader aliMediaDownloader = mAliMediaDownloadMap.get(videoId+SEPARA_SYMBOLS+index);
+                AliMediaDownloader aliMediaDownloader = mAliMediaDownloadMap.get(videoId + SEPARA_SYMBOLS + index);
                 if (aliMediaDownloader != null) {
                     aliMediaDownloader.setSaveDir(mSavePath);
                     start(aliMediaDownloader, startMap);
                 }
             }
-                break;
-            case "stop":
-            {
+            break;
+            case "stop": {
                 Map<String, Object> stopMap = (Map<String, Object>) methodCall.arguments;
                 String videoId = (String) stopMap.get("vid");
                 Integer index = (Integer) stopMap.get("index");
-                AliMediaDownloader aliMediaDownloader = mAliMediaDownloadMap.get(videoId+SEPARA_SYMBOLS+index);
+                AliMediaDownloader aliMediaDownloader = mAliMediaDownloadMap.get(videoId + SEPARA_SYMBOLS + index);
                 if (aliMediaDownloader != null) {
                     stop(aliMediaDownloader);
                 }
             }
-                break;
+            break;
             case "delete": {
                 Map<String, Object> deleteMap = (Map<String, Object>) methodCall.arguments;
                 String videoId = (String) deleteMap.get("vid");
                 Integer index = (Integer) deleteMap.get("index");
-                AliMediaDownloader aliMediaDownloader = mAliMediaDownloadMap.get(videoId+SEPARA_SYMBOLS+index);
+                AliMediaDownloader aliMediaDownloader = mAliMediaDownloadMap.get(videoId + SEPARA_SYMBOLS + index);
                 if (aliMediaDownloader != null) {
                     delete(aliMediaDownloader);
                 }
             }
-                break;
-            case "getFilePath":
-            {
+            break;
+            case "getFilePath": {
                 Map<String, Object> getFilePathMap = (Map<String, Object>) methodCall.arguments;
                 String videoId = (String) getFilePathMap.get("vid");
                 Integer index = (Integer) getFilePathMap.get("index");
-                AliMediaDownloader aliMediaDownloader = mAliMediaDownloadMap.get(videoId+SEPARA_SYMBOLS+index);
-                if(aliMediaDownloader != null){
+                AliMediaDownloader aliMediaDownloader = mAliMediaDownloadMap.get(videoId + SEPARA_SYMBOLS + index);
+                if (aliMediaDownloader != null) {
                     String filePath = getFilePath(aliMediaDownloader);
-                    getFilePathMap.put("savePath",filePath);
+                    getFilePathMap.put("savePath", filePath);
                     result.success(filePath);
                 }
 
             }
-                break;
-            case "release":
-            {
+            break;
+            case "release": {
                 Map<String, Object> releasMap = (Map<String, Object>) methodCall.arguments;
                 String videoId = (String) releasMap.get("vid");
                 Integer index = (Integer) releasMap.get("index");
                 AliMediaDownloader aliMediaDownloader = mAliMediaDownloadMap.remove(videoId + SEPARA_SYMBOLS + index);
-                if(aliMediaDownloader != null){
+                if (aliMediaDownloader != null) {
                     release(aliMediaDownloader);
                 }
             }
-                break;
-            case "updateSource":
-            {
+            break;
+            case "updateSource": {
                 Map<String, Object> updateSourceMap = (Map<String, Object>) methodCall.arguments;
                 Integer index = (Integer) updateSourceMap.get("index");
                 String type = (String) updateSourceMap.get("type");
                 String vid = (String) updateSourceMap.get("vid");
                 AliMediaDownloader aliMediaDownloader = mAliMediaDownloadMap.remove(vid + SEPARA_SYMBOLS + index);
-                if(aliMediaDownloader != null){
+                if (aliMediaDownloader != null) {
                     if (type != null && type.equals("download_sts")) {
                         VidSts vidSts = new VidSts();
                         vidSts.setVid(vid);
                         vidSts.setAccessKeyId((String) updateSourceMap.get("accessKeyId"));
                         vidSts.setAccessKeySecret((String) updateSourceMap.get("accessKeySecret"));
                         vidSts.setSecurityToken((String) updateSourceMap.get("securityToken"));
-                        updateSource(aliMediaDownloader,vidSts);
+                        updateSource(aliMediaDownloader, vidSts);
 
                     } else if (type != null && type.equals("download_auth")) {
                         VidAuth vidAuth = new VidAuth();
                         vidAuth.setVid(vid);
                         vidAuth.setPlayAuth((String) updateSourceMap.get("playAuth"));
-                        updateSource(aliMediaDownloader,vidAuth);
+                        updateSource(aliMediaDownloader, vidAuth);
                     }
                 }
             }
-                break;
-            case "setDownloaderConfig":
-            {
+            break;
+            case "setDownloaderConfig": {
                 Map<String, Object> downloadConfigMap = (Map<String, Object>) methodCall.arguments;
                 String videoId = (String) downloadConfigMap.get("vid");
                 Integer index = (Integer) downloadConfigMap.get("index");
                 AliMediaDownloader aliMediaDownloader = mAliMediaDownloadMap.remove(videoId + SEPARA_SYMBOLS + index);
-                if(aliMediaDownloader != null){
+                if (aliMediaDownloader != null) {
                     DownloaderConfig downloaderConfig = new DownloaderConfig();
                     String mUserAgent = (String) downloadConfigMap.get("UserAgent");
                     downloaderConfig.mUserAgent = TextUtils.isEmpty(mUserAgent) ? "" : mUserAgent;
@@ -200,10 +196,10 @@ public class FlutterAliDownloader implements FlutterPlugin,MethodChannel.MethodC
                     Integer mNetworkTimeoutMs = (Integer) downloadConfigMap.get("NetworkTimeoutMs");
                     downloaderConfig.mNetworkTimeoutMs = mNetworkTimeoutMs == null ? 0 : mNetworkTimeoutMs;
 
-                    setDownloaderConfig(aliMediaDownloader,downloaderConfig);
+                    setDownloaderConfig(aliMediaDownloader, downloaderConfig);
                 }
             }
-                break;
+            break;
             default:
                 break;
         }
@@ -218,15 +214,13 @@ public class FlutterAliDownloader implements FlutterPlugin,MethodChannel.MethodC
     public void onCancel(Object arguments) {
     }
 
-    private void createMediaDownloader(){
+    private void createMediaDownloader() {
         AliMediaDownloader aliMediaDownloader = AliDownloaderFactory.create(mContext);
     }
 
-    private void prepare(VidAuth vidAuth, final int index, final MethodChannel.Result result){
-        AliMediaDownloader aliMediaDownloader = mAliMediaDownloadMap.get(vidAuth.getVid());
-        if(aliMediaDownloader == null){
-            aliMediaDownloader = AliDownloaderFactory.create(mContext);
-        }
+    private void prepare(VidAuth vidAuth, final int index, final MethodChannel.Result result) {
+        AliMediaDownloader aliMediaDownloader = AliDownloaderFactory.create(mContext);
+        mAliMediaDownloadMap.put(vidAuth.getVid(), aliMediaDownloader);
         final AliMediaDownloader finalAliMediaDownloader = aliMediaDownloader;
         aliMediaDownloader.setOnPreparedListener(new AliMediaDownloader.OnPreparedListener() {
             @Override
@@ -242,22 +236,21 @@ public class FlutterAliDownloader implements FlutterPlugin,MethodChannel.MethodC
         aliMediaDownloader.setOnErrorListener(new AliMediaDownloader.OnErrorListener() {
             @Override
             public void onError(ErrorInfo errorInfo) {
-                result.error(errorInfo.getCode().toString(),errorInfo.getMsg(),errorInfo.getExtra());
+                result.error(errorInfo.getCode().toString(), errorInfo.getMsg(), errorInfo.getExtra());
             }
         });
         aliMediaDownloader.prepare(vidAuth);
     }
 
-    private void prepare(VidAuth vidAuth, final MethodChannel.Result result){
-        AliMediaDownloader aliMediaDownloader = mAliMediaDownloadMap.get(vidAuth.getVid());
-        if(aliMediaDownloader == null){
-            aliMediaDownloader = AliDownloaderFactory.create(mContext);
-        }
+    private void prepare(VidAuth vidAuth, final MethodChannel.Result result) {
+        AliMediaDownloader aliMediaDownloader = AliDownloaderFactory.create(mContext);
+        mAliMediaDownloadMap.put(vidAuth.getVid(), aliMediaDownloader);
         aliMediaDownloader.setOnPreparedListener(new AliMediaDownloader.OnPreparedListener() {
             @Override
             public void onPrepared(MediaInfo mediaInfo) {
                 Gson gson = new Gson();
                 String mediaInfoJson = gson.toJson(mediaInfo);
+                List<TrackInfo> trackInfos = mediaInfo.getTrackInfos();
                 result.success(mediaInfoJson);
             }
         });
@@ -265,18 +258,16 @@ public class FlutterAliDownloader implements FlutterPlugin,MethodChannel.MethodC
         aliMediaDownloader.setOnErrorListener(new AliMediaDownloader.OnErrorListener() {
             @Override
             public void onError(ErrorInfo errorInfo) {
-                result.error(errorInfo.getCode().toString(),errorInfo.getMsg(),errorInfo.getExtra());
+                result.error(errorInfo.getCode().toString(), errorInfo.getMsg(), errorInfo.getExtra());
             }
         });
 
         aliMediaDownloader.prepare(vidAuth);
     }
 
-    private void prepare(VidSts vidSts, final int index, final MethodChannel.Result result){
-        AliMediaDownloader aliMediaDownloader = mAliMediaDownloadMap.get(vidSts.getVid());
-        if(aliMediaDownloader == null){
-            aliMediaDownloader = AliDownloaderFactory.create(mContext);
-        }
+    private void prepare(VidSts vidSts, final int index, final MethodChannel.Result result) {
+        AliMediaDownloader aliMediaDownloader = AliDownloaderFactory.create(mContext);
+        mAliMediaDownloadMap.put(vidSts.getVid(), aliMediaDownloader);
         final AliMediaDownloader finalAliMediaDownloader = aliMediaDownloader;
         aliMediaDownloader.setOnPreparedListener(new AliMediaDownloader.OnPreparedListener() {
             @Override
@@ -292,17 +283,15 @@ public class FlutterAliDownloader implements FlutterPlugin,MethodChannel.MethodC
         aliMediaDownloader.setOnErrorListener(new AliMediaDownloader.OnErrorListener() {
             @Override
             public void onError(ErrorInfo errorInfo) {
-                result.error(errorInfo.getCode().toString(),errorInfo.getMsg(),errorInfo.getExtra());
+                result.error(errorInfo.getCode().toString(), errorInfo.getMsg(), errorInfo.getExtra());
             }
         });
         aliMediaDownloader.prepare(vidSts);
     }
 
-    private void prepare(VidSts vidSts, final MethodChannel.Result result){
-        AliMediaDownloader aliMediaDownloader = mAliMediaDownloadMap.get(vidSts.getVid());
-        if(aliMediaDownloader == null){
-            aliMediaDownloader = AliDownloaderFactory.create(mContext);
-        }
+    private void prepare(VidSts vidSts, final MethodChannel.Result result) {
+        AliMediaDownloader aliMediaDownloader = AliDownloaderFactory.create(mContext);
+        mAliMediaDownloadMap.put(vidSts.getVid(), aliMediaDownloader);
         aliMediaDownloader.setOnPreparedListener(new AliMediaDownloader.OnPreparedListener() {
             @Override
             public void onPrepared(MediaInfo mediaInfo) {
@@ -315,20 +304,20 @@ public class FlutterAliDownloader implements FlutterPlugin,MethodChannel.MethodC
         aliMediaDownloader.setOnErrorListener(new AliMediaDownloader.OnErrorListener() {
             @Override
             public void onError(ErrorInfo errorInfo) {
-                result.error(errorInfo.getCode().toString(),errorInfo.getMsg(),errorInfo.getExtra());
+                result.error(errorInfo.getCode().toString(), errorInfo.getMsg(), errorInfo.getExtra());
             }
         });
 
         aliMediaDownloader.prepare(vidSts);
     }
 
-    private void start(final AliMediaDownloader aliMediaDownloader, final Map<String,Object> startMap){
+    private void start(final AliMediaDownloader aliMediaDownloader, final Map<String, Object> startMap) {
         aliMediaDownloader.setOnErrorListener(new AliMediaDownloader.OnErrorListener() {
             @Override
             public void onError(ErrorInfo errorInfo) {
-                startMap.put("method","download_error");
-                startMap.put("errorCode",errorInfo.getCode()+"");
-                startMap.put("errorMsg",errorInfo.getMsg());
+                startMap.put("method", "download_error");
+                startMap.put("errorCode", errorInfo.getCode() + "");
+                startMap.put("errorMsg", errorInfo.getMsg());
                 mEventSink.success(startMap);
             }
         });
@@ -336,15 +325,15 @@ public class FlutterAliDownloader implements FlutterPlugin,MethodChannel.MethodC
         aliMediaDownloader.setOnProgressListener(new AliMediaDownloader.OnProgressListener() {
             @Override
             public void onDownloadingProgress(int i) {
-                startMap.put("method","download_progress");
-                startMap.put("download_progress",i+"");
+                startMap.put("method", "download_progress");
+                startMap.put("download_progress", i + "");
                 mEventSink.success(startMap);
             }
 
             @Override
             public void onProcessingProgress(int i) {
-                startMap.put("method","download_process");
-                startMap.put("download_process",i+"");
+                startMap.put("method", "download_process");
+                startMap.put("download_process", i + "");
                 mEventSink.success(startMap);
             }
         });
@@ -352,48 +341,48 @@ public class FlutterAliDownloader implements FlutterPlugin,MethodChannel.MethodC
         aliMediaDownloader.setOnCompletionListener(new AliMediaDownloader.OnCompletionListener() {
             @Override
             public void onCompletion() {
-                startMap.put("method","download_completion");
-                startMap.put("savePath",aliMediaDownloader.getFilePath());
+                startMap.put("method", "download_completion");
+                startMap.put("savePath", aliMediaDownloader.getFilePath());
                 mEventSink.success(startMap);
             }
         });
         aliMediaDownloader.start();
     }
 
-    private void selectItem(AliMediaDownloader aliMediaDownloader,int index){
+    private void selectItem(AliMediaDownloader aliMediaDownloader, int index) {
         aliMediaDownloader.selectItem(index);
     }
 
-    private void stop(AliMediaDownloader aliMediaDownloader){
+    private void stop(AliMediaDownloader aliMediaDownloader) {
         aliMediaDownloader.stop();
     }
 
-    private void delete(AliMediaDownloader aliMediaDownloader){
+    private void delete(AliMediaDownloader aliMediaDownloader) {
 
         aliMediaDownloader.deleteFile();
     }
 
-    private void release(AliMediaDownloader aliMediaDownloader){
+    private void release(AliMediaDownloader aliMediaDownloader) {
         aliMediaDownloader.release();
     }
 
-    private void setSaveDir(AliMediaDownloader aliMediaDownloader,String path){
+    private void setSaveDir(AliMediaDownloader aliMediaDownloader, String path) {
         aliMediaDownloader.setSaveDir(path);
     }
 
-    private String getFilePath(AliMediaDownloader aliMediaDownloader){
+    private String getFilePath(AliMediaDownloader aliMediaDownloader) {
         return aliMediaDownloader.getFilePath();
     }
 
-    private void updateSource(AliMediaDownloader aliMediaDownloader,VidSts vidSts){
+    private void updateSource(AliMediaDownloader aliMediaDownloader, VidSts vidSts) {
         aliMediaDownloader.updateSource(vidSts);
     }
 
-    private void updateSource(AliMediaDownloader aliMediaDownloader, VidAuth vidAuth){
+    private void updateSource(AliMediaDownloader aliMediaDownloader, VidAuth vidAuth) {
         aliMediaDownloader.updateSource(vidAuth);
     }
 
-    private void setDownloaderConfig(AliMediaDownloader aliMediaDownloader, DownloaderConfig downloaderConfig){
+    private void setDownloaderConfig(AliMediaDownloader aliMediaDownloader, DownloaderConfig downloaderConfig) {
         aliMediaDownloader.setDownloaderConfig(downloaderConfig);
     }
 
