@@ -34,7 +34,8 @@ class DownloadPage extends StatefulWidget {
 class _DownloadPageState extends State<DownloadPage> {
   AliyunDownloadManager _aliyunDownloadManager;
 
-  List<CustomDownloaderModel> _dataList = List<CustomDownloaderModel>();
+  // List<CustomDownloaderModel> _dataList = List<CustomDownloaderModel>();
+  List<CustomDownloaderModel> _dataList = [];
 
   @override
   void initState() {

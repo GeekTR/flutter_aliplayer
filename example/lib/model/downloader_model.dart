@@ -12,7 +12,7 @@ class DownloadModel {
     title = jsonMap['mTitle'];
     coverUrl = jsonMap['mCoverUrl'];
     if (jsonMap['mTrackInfos'] != null) {
-      trackInfos = List();
+      trackInfos = [];
       jsonMap['mTrackInfos'].forEach((v) {
         trackInfos.add(TrackInfoModel.fromJson(v));
       });
@@ -27,6 +27,7 @@ class DownloadModel {
     if (this.trackInfos.isNotEmpty) {
       data['mTrackInfos'] = this.trackInfos.map((e) => e.toJson()).toList();
     }
+    return data;
   }
 }
 

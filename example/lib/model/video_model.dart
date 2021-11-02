@@ -7,7 +7,8 @@ class VideoListModel {
   VideoListModel.fromJson(Map<String, dynamic> json) {
     total = json['total'];
     if (json['videoList'] != null) {
-      videoList = new List<VideoModel>();
+      // videoList = new List<VideoModel>();
+      videoList = [];
       json['videoList'].forEach((v) {
         videoList.add(new VideoModel.fromJson(v));
       });

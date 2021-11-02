@@ -125,6 +125,7 @@ class EventChanneldef {
 class PlayerType {
   static const int PlayerType_Single = 0;
   static const int PlayerType_List = 1;
+  static const int PlayerType_LiveShift = 2;
 }
 
 class AVPMediaInfo {

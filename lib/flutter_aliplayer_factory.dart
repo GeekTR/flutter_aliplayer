@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_aliplayer/flutter_alilistplayer.dart';
+import 'package:flutter_aliplayer/flutter_aliliveshiftplayer.dart';
 
 class FlutterAliPlayerFactory {
   static MethodChannel methodChannel =
@@ -18,6 +19,12 @@ class FlutterAliPlayerFactory {
     FlutterAliplayer flutterAliplayer = FlutterAliplayer.init(playerId);
     flutterAliplayer.create();
     return flutterAliplayer;
+  }
+
+  static FlutterAliLiveShiftPlayer createAliLiveShiftPlayer({playerId}){
+    FlutterAliLiveShiftPlayer flutterAliLiveShiftPlayer = FlutterAliLiveShiftPlayer.init(playerId);
+    flutterAliLiveShiftPlayer.create();
+    return flutterAliLiveShiftPlayer;
   }
 
   static Future<void> initService(Uint8List byteData) {

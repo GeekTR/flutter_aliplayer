@@ -22,7 +22,7 @@ class _AuthPageState extends State<AuthPage> {
 
   ///设置点播服务器返回的码率清晰度类型。
   int _selectDefinition = -1;
-  List<String> _selectedDefinition = List();
+  List<String> _selectedDefinition = [];
 
   bool _inPushing;
 

@@ -1,8 +1,4 @@
-import 'dart:io';
-
 import 'package:flutter_aliplayer/flutter_avpdef.dart';
-import 'package:flutter_aliplayer_example/model/definition_model.dart';
-import 'package:path_provider/path_provider.dart';
 
 class HttpConstant {
   static const String HTTP_HOST = 'https://alivc-demo.aliyuncs.com/';

@@ -6,6 +6,7 @@ import 'package:flutter_aliplayer_example/config.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_aliplayer_example/page/auth_page.dart';
 import 'package:flutter_aliplayer_example/page/download_page.dart';
+import 'package:flutter_aliplayer_example/page/live_shift_page.dart';
 import 'package:flutter_aliplayer_example/page/multiple_player_test.dart';
 import 'package:flutter_aliplayer_example/page/setting_page.dart';
 import 'package:flutter_aliplayer_example/page/sts_page.dart';
@@ -32,7 +33,8 @@ class _MyAppState extends State<HomePage> {
     '播放列表演示(URL)',
     '断点下载',
     '多实例播放器',
-    '本地文件'
+    '本地文件',
+    '直播时移'
   ];
 
   @override
@@ -127,6 +129,9 @@ class _MyAppState extends State<HomePage> {
                       if (Platform.isAndroid) {
                         CommomUtils.pushPage(context, LocalPage());
                       }
+                      break;
+                    case 8:
+                      CommomUtils.pushPage(context, LiveShiftPage());
                       break;
                     default:
                   }
