@@ -36,6 +36,7 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
     private FlutterPluginBinding flutterPluginBinding;
     private FlutterAliListPlayer mFlutterAliListPlayer;
     private Map<String,FlutterAliPlayer> mFlutterAliPlayerMap = new HashMap<>();
+    private Map<String,FlutterAliLiveShiftPlayer> mFlutterAliLiveShiftPlayerMap = new HashMap<>();
     private Map<Integer, FlutterAliPlayerView> mFlutterAliPlayerViewMap = new HashMap<>();
     private EventChannel.EventSink mEventSink;
     private EventChannel mEventChannel;
@@ -84,6 +85,12 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
                     //AliListPlayer
                     mFlutterAliListPlayer = new FlutterAliListPlayer(flutterPluginBinding);
                     initListener(mFlutterAliListPlayer);
+                }else if(2 == playerType){
+                    //AliLiveShiftPlayer
+                    String createPlayerId = call.argument("playerId");
+                    FlutterAliLiveShiftPlayer flutterAliLiveShiftPlayer = new FlutterAliLiveShiftPlayer(flutterPluginBinding,createPlayerId);
+                    initListener(flutterAliLiveShiftPlayer);
+                    mFlutterAliLiveShiftPlayerMap.put(createPlayerId,flutterAliLiveShiftPlayer);
                 }else{
 
                 }
@@ -134,6 +141,12 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
                     if(flutterAliPlayerView != null && mFlutterAliListPlayer != null){
                         flutterAliPlayerView.setPlayer(mFlutterAliListPlayer.getAliPlayer());
                     }
+                }else if(playerType == 2){
+                    String setPlayerViewPlayerId = call.argument("playerId");
+                    FlutterAliLiveShiftPlayer mSetPlayerViewCurrentFlutterAliLiveShiftPlayer = mFlutterAliLiveShiftPlayerMap.get(setPlayerViewPlayerId);
+                    if(flutterAliPlayerView != null && mSetPlayerViewCurrentFlutterAliLiveShiftPlayer != null){
+                        flutterAliPlayerView.setPlayer(mSetPlayerViewCurrentFlutterAliLiveShiftPlayer.getAliPlayer());
+                    }
                 }
 
             default:
@@ -147,7 +160,18 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
                         mCurrentFlutterAliPlayer.onMethodCall(call,result);
                     }
                 }else if(playerType == 1){
-                    mFlutterAliListPlayer.onMethodCall(call,result);
+                    if(mFlutterAliListPlayer != null){
+                        mFlutterAliListPlayer.onMethodCall(call,result);
+                    }
+                }else if(playerType == 2){
+                    String playerId = call.argument("playerId");
+                    FlutterAliLiveShiftPlayer mCurrentFlutterAliLiveShiftPlayer = mFlutterAliLiveShiftPlayerMap.get(playerId);
+                    if(call.method.equals("destroy")){
+                        mFlutterAliLiveShiftPlayerMap.remove(playerId);
+                    }
+                    if(mCurrentFlutterAliLiveShiftPlayer != null){
+                        mCurrentFlutterAliLiveShiftPlayer.onMethodCall(call,result);
+                    }
                 }
 
                 break;
@@ -205,8 +229,8 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
     /**
      * 设置监听
      */
-    private void initListener(FlutterAliPlayer flutterAliPlayer) {
-        flutterAliPlayer.setOnFlutterListener(new FlutterAliPlayerListener() {
+    private void initListener(FlutterPlayerBase flutterPlayerBase) {
+        flutterPlayerBase.setOnFlutterListener(new FlutterAliPlayerListener() {
             @Override
             public void onPrepared(Map<String, Object> map) {
                 mEventSink.success(map);
@@ -321,128 +345,17 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
             public void onThumbnailGetFail(Map<String, Object> map) {
                 mEventSink.success(map);
             }
-        });
-    }
 
-    /**
-     * 设置监听
-     */
-    private void initListener(FlutterAliListPlayer flutterAliPlayer) {
-        flutterAliPlayer.setOnFlutterListener(new FlutterAliPlayerListener() {
             @Override
-            public void onPrepared(Map<String, Object> map) {
+            public void onTimeShiftUpdater(Map<String, Object> map) {
                 mEventSink.success(map);
             }
 
             @Override
-            public void onTrackReady(Map<String, Object> map) {
+            public void onSeekLiveCompletion(Map<String, Object> map) {
                 mEventSink.success(map);
             }
 
-            @Override
-            public void onCompletion(Map<String, Object> map) {
-                mEventSink.success(map);
-            }
-
-            @Override
-            public void onRenderingStart(Map<String, Object> map) {
-                mEventSink.success(map);
-            }
-
-            @Override
-            public void onVideoSizeChanged(Map<String, Object> map) {
-                mEventSink.success(map);
-            }
-
-            @Override
-            public void onSnapShot(Map<String, Object> map) {
-                mEventSink.success(map);
-            }
-
-            @Override
-            public void onTrackChangedSuccess(Map<String, Object> map) {
-                mEventSink.success(map);
-            }
-
-            @Override
-            public void onTrackChangedFail(Map<String, Object> map) {
-                mEventSink.success(map);
-            }
-
-            @Override
-            public void onSeekComplete(Map<String, Object> map) {
-                mEventSink.success(map);
-            }
-
-            @Override
-            public void onSeiData(Map<String, Object> map) {
-                mEventSink.success(map);
-            }
-
-            @Override
-            public void onLoadingBegin(Map<String, Object> map) {
-                mEventSink.success(map);
-            }
-
-            @Override
-            public void onLoadingProgress(Map<String, Object> map) {
-                mEventSink.success(map);
-            }
-
-            @Override
-            public void onLoadingEnd(Map<String, Object> map) {
-                mEventSink.success(map);
-            }
-
-            @Override
-            public void onStateChanged(Map<String, Object> map) {
-                mEventSink.success(map);
-            }
-
-            @Override
-            public void onSubtitleExtAdded(Map<String, Object> map) {
-                mEventSink.success(map);
-            }
-
-            @Override
-            public void onSubtitleShow(Map<String, Object> map) {
-                mEventSink.success(map);
-            }
-
-            @Override
-            public void onSubtitleHide(Map<String, Object> map) {
-                mEventSink.success(map);
-            }
-
-            @Override
-            public void onInfo(Map<String, Object> map) {
-                mEventSink.success(map);
-            }
-
-            @Override
-            public void onError(Map<String, Object> map) {
-                mEventSink.success(map);
-            }
-
-            @Override
-            public void onThumbnailPrepareSuccess(Map<String, Object> map) {
-                mEventSink.success(map);
-            }
-
-            @Override
-            public void onThumbnailPrepareFail(Map<String, Object> map) {
-                mEventSink.success(map);
-            }
-
-            @Override
-            public void onThumbnailGetSuccess(Map<String, Object> map) {
-                mEventSink.success(map);
-            }
-
-            @Override
-            public void onThumbnailGetFail(Map<String, Object> map) {
-                mEventSink.success(map);
-            }
         });
     }
 

@@ -53,4 +53,8 @@ public interface FlutterAliPlayerListener {
 
     void onThumbnailGetFail(Map<String,Object> map);
 
+    void onTimeShiftUpdater(Map<String,Object> map);
+
+    void onSeekLiveCompletion(Map<String,Object> map);
+
 }
