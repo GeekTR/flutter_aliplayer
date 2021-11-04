@@ -3,6 +3,7 @@ import 'package:flutter_aliplayer/flutter_aliplayer.dart';
 import 'package:flutter_aliplayer/flutter_aliplayer_factory.dart';
 import 'package:flutter_aliplayer_example/config.dart';
 import 'package:flutter_aliplayer_example/util/common_utils.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'multiple_player_between_page_b.dart';
 
@@ -24,6 +25,14 @@ class _MultiplePlayerBetweenPageAState
     player = FlutterAliPlayerFactory.createAliPlayer(playerId: "playerA");
     player.setAutoPlay(true);
     player.setUrl(DataSourceRelated.DEFAULT_URL);
+
+    player.setOnPrepared((playerId) {
+      Fluttertoast.showToast(msg: "prepared : ${player.playerId}");
+      print("prepared : ${player.playerId}");
+      player
+          .getPlayerName()
+          .then((value) => print("getPlayerName==${value}"));
+    });
   }
 
   @override

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_aliplayer/flutter_aliplayer.dart';
 import 'package:flutter_aliplayer/flutter_aliplayer_factory.dart';
 import 'package:flutter_aliplayer_example/config.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class MultiplePlayerBetweenPageB extends StatefulWidget {
   const MultiplePlayerBetweenPageB({Key key}) : super(key: key);
@@ -21,6 +22,14 @@ class _MultiplePlayerBetweenPageBState
     player = FlutterAliPlayerFactory.createAliPlayer(playerId: "playerB");
     player.setAutoPlay(true);
     player.setUrl(DataSourceRelated.DEFAULT_URL);
+
+    player.setOnPrepared((playerId) {
+      Fluttertoast.showToast(msg: "prepared : ${player.playerId}");
+      print("prepared : ${player.playerId}");
+      player
+          .getPlayerName()
+          .then((value) => print("getPlayerName==${value}"));
+    });
   }
 
   @override
