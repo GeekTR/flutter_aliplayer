@@ -7,6 +7,8 @@ import 'package:flutter_aliplayer/flutter_aliliveshiftplayer.dart';
 class FlutterAliPlayerFactory {
   static MethodChannel methodChannel =
       MethodChannel("plugins.flutter_aliplayer_factory");
+  
+  static Map<String,FlutterAliplayer> instanceMap = {};
 
   static FlutterAliListPlayer createAliListPlayer({playerId}) {
     FlutterAliListPlayer flutterAliListPlayer =

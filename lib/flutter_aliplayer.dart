@@ -78,7 +78,7 @@ class FlutterAliplayer {
   OnSubtitleShow? onSubtitleShow;
 
   // static MethodChannel channel = new MethodChannel('flutter_aliplayer');
-  static EventChannel eventChannel = EventChannel("flutter_aliplayer_event");
+  EventChannel eventChannel = EventChannel("flutter_aliplayer_event");
 
   String playerId = 'default';
 
@@ -86,6 +86,11 @@ class FlutterAliplayer {
     if (id != null) {
       playerId = id;
     }
+    FlutterAliPlayerFactory.instanceMap[playerId] = this;
+    register();
+  }
+
+  void register(){
     eventChannel.receiveBroadcastStream().listen(_onEvent, onError: _onError);
   }
 
@@ -215,6 +220,7 @@ class FlutterAliplayer {
   }
 
   Future<void> destroy() async {
+    FlutterAliPlayerFactory.instanceMap.remove(playerId);
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('destroy', wrapWithPlayerId());
   }
@@ -496,28 +502,29 @@ class FlutterAliplayer {
   void _onEvent(dynamic event) {
     String method = event[EventChanneldef.TYPE_KEY];
     String playerId = event['playerId'] ?? '';
+    FlutterAliplayer player = FlutterAliPlayerFactory.instanceMap[playerId]??this;
     switch (method) {
       case "onPrepared":
-        if (onPrepared != null) {
-          onPrepared!(playerId);
+        if (player.onPrepared != null) {
+          player.onPrepared!(playerId);
         }
         break;
       case "onRenderingStart":
-        if (onRenderingStart != null) {
-          onRenderingStart!(playerId);
+        if (player.onRenderingStart != null) {
+          player.onRenderingStart!(playerId);
         }
         break;
       case "onVideoSizeChanged":
-        if (onVideoSizeChanged != null) {
+        if (player.onVideoSizeChanged != null) {
           int width = event['width'];
           int height = event['height'];
-          onVideoSizeChanged!(width, height, playerId);
+          player.onVideoSizeChanged!(width, height, playerId);
         }
         break;
       case "onSnapShot":
-        if (onSnapShot != null) {
+        if (player.onSnapShot != null) {
           String snapShotPath = event['snapShotPath'];
-          onSnapShot!(snapShotPath, playerId);
+          player.onSnapShot!(snapShotPath, playerId);
         }
         break;
       case "onChangedSuccess":
@@ -525,113 +532,113 @@ class FlutterAliplayer {
       case "onChangedFail":
         break;
       case "onSeekComplete":
-        if (onSeekComplete != null) {
-          onSeekComplete!(playerId);
+        if (player.onSeekComplete != null) {
+          player.onSeekComplete!(playerId);
         }
         break;
       case "onSeiData":
         break;
       case "onLoadingBegin":
-        if (onLoadingBegin != null) {
-          onLoadingBegin!(playerId);
+        if (player.onLoadingBegin != null) {
+          player.onLoadingBegin!(playerId);
         }
         break;
       case "onLoadingProgress":
         int percent = event['percent'];
         double netSpeed = event['netSpeed'];
-        if (onLoadingProgress != null) {
-          onLoadingProgress!(percent, netSpeed, playerId);
+        if (player.onLoadingProgress != null) {
+          player.onLoadingProgress!(percent, netSpeed, playerId);
         }
         break;
       case "onLoadingEnd":
-        if (onLoadingEnd != null) {
+        if (player.onLoadingEnd != null) {
           print("onLoadingEnd");
-          onLoadingEnd!(playerId);
+          player.onLoadingEnd!(playerId);
         }
         break;
       case "onStateChanged":
-        if (onStateChanged != null) {
+        if (player.onStateChanged != null) {
           int newState = event['newState'];
-          onStateChanged!(newState, playerId);
+          player.onStateChanged!(newState, playerId);
         }
         break;
       case "onInfo":
-        if (onInfo != null) {
+        if (player.onInfo != null) {
           int infoCode = event['infoCode'];
           int extraValue = event['extraValue'];
           String extraMsg = event['extraMsg'];
-          onInfo!(infoCode, extraValue, extraMsg, playerId);
+          player.onInfo!(infoCode, extraValue, extraMsg, playerId);
         }
         break;
       case "onError":
-        if (onError != null) {
+        if (player.onError != null) {
           int errorCode = event['errorCode'];
           String errorExtra = event['errorExtra'];
           String errorMsg = event['errorMsg'];
-          onError!(errorCode, errorExtra, errorMsg, playerId);
+          player.onError!(errorCode, errorExtra, errorMsg, playerId);
         }
         break;
       case "onCompletion":
-        if (onCompletion != null) {
-          onCompletion!(playerId);
+        if (player.onCompletion != null) {
+          player.onCompletion!(playerId);
         }
         break;
       case "onTrackReady":
-        if (onTrackReady != null) {
-          this.onTrackReady!(playerId);
+        if (player.onTrackReady != null) {
+          player.onTrackReady!(playerId);
         }
         break;
       case "onTrackChanged":
-        if (onTrackChanged != null) {
+        if (player.onTrackChanged != null) {
           dynamic info = event['info'];
-          this.onTrackChanged!(info, playerId);
+          player.onTrackChanged!(info, playerId);
         }
         break;
       case "thumbnail_onPrepared_Success":
-        if (onThumbnailPreparedSuccess != null) {
-          onThumbnailPreparedSuccess!(playerId);
+        if (player.onThumbnailPreparedSuccess != null) {
+          player.onThumbnailPreparedSuccess!(playerId);
         }
         break;
       case "thumbnail_onPrepared_Fail":
-        if (onThumbnailPreparedFail != null) {
-          onThumbnailPreparedFail!(playerId);
+        if (player.onThumbnailPreparedFail != null) {
+          player.onThumbnailPreparedFail!(playerId);
         }
         break;
       case "onThumbnailGetSuccess":
         dynamic bitmap = event['thumbnailbitmap'];
         dynamic range = event['thumbnailRange'];
-        if (onThumbnailGetSuccess != null) {
+        if (player.onThumbnailGetSuccess != null) {
           if (Platform.isIOS) {
             range = Int64List.fromList(range.cast<int>());
           }
-          onThumbnailGetSuccess!(bitmap, range, playerId);
+          player.onThumbnailGetSuccess!(bitmap, range, playerId);
         }
         break;
       case "onThumbnailGetFail":
-        if (onThumbnailGetFail != null) {
-          onThumbnailGetFail!(playerId);
+        if (player.onThumbnailGetFail != null) {
+          player.onThumbnailGetFail!(playerId);
         }
         break;
       case "onSubtitleExtAdded":
-        if (onSubtitleExtAdded != null) {
+        if (player.onSubtitleExtAdded != null) {
           int trackIndex = event['trackIndex'];
           String url = event['url'];
-          onSubtitleExtAdded!(trackIndex, url, playerId);
+          player.onSubtitleExtAdded!(trackIndex, url, playerId);
         }
         break;
       case "onSubtitleShow":
-        if (onSubtitleShow != null) {
+        if (player.onSubtitleShow != null) {
           int trackIndex = event['trackIndex'];
           int subtitleID = event['subtitleID'];
           String subtitle = event['subtitle'];
-          onSubtitleShow!(trackIndex, subtitleID, subtitle, playerId);
+          player.onSubtitleShow!(trackIndex, subtitleID, subtitle, playerId);
         }
         break;
       case "onSubtitleHide":
-        if (onSubtitleHide != null) {
+        if (player.onSubtitleHide != null) {
           int trackIndex = event['trackIndex'];
           int subtitleID = event['subtitleID'];
-          onSubtitleHide!(trackIndex, subtitleID, playerId);
+          player.onSubtitleHide!(trackIndex, subtitleID, playerId);
         }
         break;
     }
