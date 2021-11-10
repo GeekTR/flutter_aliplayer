@@ -33,9 +33,7 @@ class FlutterAliLiveShiftPlayer extends FlutterAliplayer {
   }
 
   Future<void> setDataSource(String timeLineUrl, String url,
-      {required String coverPath,
-      required String format,
-      required String title}) async {
+      {String? coverPath, String? format, String? title}) async {
     Map<String, dynamic> dataSourceMap = {
       'timeLineUrl': timeLineUrl,
       'url': url,

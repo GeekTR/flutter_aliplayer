@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_aliplayer/flutter_aliliveshiftplayer.dart';
 import 'package:flutter_aliplayer/flutter_aliplayer.dart';
 import 'package:flutter_aliplayer/flutter_aliplayer_factory.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class LiveShiftPage extends StatefulWidget {
   const LiveShiftPage({Key key}) : super(key: key);
@@ -11,6 +12,8 @@ class LiveShiftPage extends StatefulWidget {
 }
 
 class _LiveShiftPageState extends State<LiveShiftPage> {
+  var _url = "http://qt1.alivecdn.com/align/sla02.m3u8?lhs_start_human_s_8=20211102200011&aliyunols=on";
+  var _timeLineUrl = "http://qt1.alivecdn.com/openapi/timeline/query?aliyunols=on&app=align&stream=sla02&format=ts";
   GlobalKey _sliderDividerContainerKey = GlobalKey();
   double _dividerHeight = 0.0;
   double _dividerWidth = 0.0;
@@ -33,6 +36,38 @@ class _LiveShiftPageState extends State<LiveShiftPage> {
 
     _flutterAliLiveShiftPlayer =
         FlutterAliPlayerFactory.createAliLiveShiftPlayer();
+    _flutterAliLiveShiftPlayer.setAutoPlay(true);
+
+    _initListener();
+  }
+
+  void _initListener(){
+
+    _flutterAliLiveShiftPlayer.setOnPrepared((playerId) {
+      Fluttertoast.showToast(msg: "prepare Success");
+    });
+
+    //时移时间更新监听事件
+    _flutterAliLiveShiftPlayer.setOnTimeShiftUpdater((currentTime, shiftStartTime, shiftEndTime) {
+
+    });
+
+    //时移seek完成通知
+    _flutterAliLiveShiftPlayer.setOnSeekLiveCompletion((playTime) {
+
+    });
+
+    _flutterAliLiveShiftPlayer.setOnLoadingStatusListener(loadingBegin: (playerId){
+
+    }, loadingProgress: (percent, netSpeed, playerId){
+
+    }, loadingEnd: (playerId){
+
+    });
+
+    _flutterAliLiveShiftPlayer.setOnError((errorCode, errorExtra, errorMsg, playerId) {
+
+    });
   }
 
   @override
@@ -129,7 +164,11 @@ class _LiveShiftPageState extends State<LiveShiftPage> {
   }
 
   void onViewPlayerCreated(int viewId) {
-    //TODO
+    this._flutterAliLiveShiftPlayer.setPlayerView(viewId);
+    var time = new DateTime.now().millisecondsSinceEpoch;
+    var timeLineUrl = "$_timeLineUrl&lhs_start_unix_s_0=${time - 5 * 60}&lhs_end_unix_s_0=${time + 5 * 60}";
+    _flutterAliLiveShiftPlayer.setDataSource(timeLineUrl, _url);
+    _flutterAliLiveShiftPlayer.prepare();
   }
 }
 
