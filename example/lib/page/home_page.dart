@@ -126,9 +126,7 @@ class _MyAppState extends State<HomePage> {
                       CommomUtils.pushPage(context, MultiplePlayerTest());
                       break;
                     case 7:
-                      if (Platform.isAndroid) {
                         CommomUtils.pushPage(context, LocalPage());
-                      }
                       break;
                     case 8:
                       CommomUtils.pushPage(context, LiveShiftPage());

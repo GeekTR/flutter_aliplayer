@@ -18,7 +18,20 @@ class _LocalPageState extends State<LocalPage> {
   @override
   void initState() {
     super.initState();
-    getExternalStorageDirectories().then((value) {
+    if(Platform.isIOS){
+      getApplicationDocumentsDirectory().then((value) {
+      List<FileSystemEntity> files = value.listSync();
+      for (FileSystemEntity f in files) {
+        var bool = FileSystemEntity.isFileSync(f.path);
+        //目前只添加后缀mp4
+        if (bool && f.path.endsWith('mp4')) {
+          _localFileList.add(f.path);
+        }
+      }
+      setState(() {});
+    });
+    }else{
+       getExternalStorageDirectories().then((value) {
       if (value.length > 0) {
         _cacheSavePath = value[0].path + "/cache/";
         return Directory(_cacheSavePath);
@@ -33,6 +46,7 @@ class _LocalPageState extends State<LocalPage> {
       }
       setState(() {});
     });
+    }
   }
 
   @override
