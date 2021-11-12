@@ -50,6 +50,10 @@ typedef OnThumbnailGetSuccess = void Function(
     Uint8List bitmap, Int64List range, String playerId);
 typedef OnThumbnailGetFail = void Function(String playerId);
 
+typedef OnSeekLiveCompletion = void Function(int playTime, String playerId);
+typedef OnTimeShiftUpdater = void Function(
+    int currentTime, int shiftStartTime, int shiftEndTime, String playerId);
+
 class FlutterAliplayer {
   OnLoadingBegin? onLoadingBegin;
   OnLoadingProgress? onLoadingProgress;
@@ -63,6 +67,7 @@ class FlutterAliplayer {
   OnCompletion? onCompletion;
   OnTrackReady? onTrackReady;
   OnError? onError;
+  OnSeiData? onSeiData;
   OnSnapShot? onSnapShot;
 
   OnTrackChanged? onTrackChanged;
@@ -77,6 +82,10 @@ class FlutterAliplayer {
   OnSubtitleHide? onSubtitleHide;
   OnSubtitleShow? onSubtitleShow;
 
+  //直播时移
+  OnSeekLiveCompletion? onSeekLiveCompletion;
+  OnTimeShiftUpdater? onTimeShiftUpdater;
+
   // static MethodChannel channel = new MethodChannel('flutter_aliplayer');
   EventChannel eventChannel = EventChannel("flutter_aliplayer_event");
 
@@ -90,7 +99,7 @@ class FlutterAliplayer {
     register();
   }
 
-  void register(){
+  void register() {
     eventChannel.receiveBroadcastStream().listen(_onEvent, onError: _onError);
   }
 
@@ -116,6 +125,10 @@ class FlutterAliplayer {
 
   void setOnError(OnError onError) {
     this.onError = onError;
+  }
+
+  void setOnSeiData(OnSeiData seiData){
+    this.onSeiData = seiData;
   }
 
   void setOnLoadingStatusListener(
@@ -171,6 +184,14 @@ class FlutterAliplayer {
 
   void setOnSubtitleExtAdded(OnSubtitleExtAdded onSubtitleExtAdded) {
     this.onSubtitleExtAdded = onSubtitleExtAdded;
+  }
+
+  void setOnSeekLiveCompletion(OnSeekLiveCompletion seekLiveCompletion) {
+    this.onSeekLiveCompletion = seekLiveCompletion;
+  }
+
+  void setOnTimeShiftUpdater(OnTimeShiftUpdater timeShiftUpdater) {
+    this.onTimeShiftUpdater = timeShiftUpdater;
   }
 
   ///接口部分
@@ -641,6 +662,20 @@ class FlutterAliplayer {
           player.onSubtitleHide!(trackIndex, subtitleID, playerId);
         }
         break;
+      case "onUpdater":
+        if(player.onTimeShiftUpdater != null){
+          var currentTime = event['currentTime'];
+          var shiftStartTime = event['shiftStartTime'];
+          var shiftEndTime = event['shiftEndTime'];
+          player.onTimeShiftUpdater!(
+              currentTime, shiftStartTime, shiftEndTime, playerId);
+        }
+        break;
+      case "onSeekLiveCompletion":
+        if(player.onSeekLiveCompletion != null){
+          var playTime = event['playTime'];
+          player.onSeekLiveCompletion!(playTime, playerId);
+        }
     }
   }
 

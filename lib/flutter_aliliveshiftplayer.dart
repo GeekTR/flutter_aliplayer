@@ -1,13 +1,7 @@
 import 'package:flutter_aliplayer/flutter_aliplayer.dart';
 import 'package:flutter_aliplayer/flutter_aliplayer_factory.dart';
 
-typedef OnSeekLiveCompletion = void Function(int playTime);
-typedef OnTimeShiftUpdater = void Function(
-    int currentTime, int shiftStartTime, int shiftEndTime);
-
 class FlutterAliLiveShiftPlayer extends FlutterAliplayer {
-  OnSeekLiveCompletion? onSeekLiveCompletion;
-  OnTimeShiftUpdater? onTimeShiftUpdater;
 
   FlutterAliLiveShiftPlayer.init(String? id) : super.init(id);
 
@@ -43,13 +37,5 @@ class FlutterAliLiveShiftPlayer extends FlutterAliplayer {
     };
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('setDataSource', wrapWithPlayerId(arg: dataSourceMap));
-  }
-
-  void setOnSeekLiveCompletion(OnSeekLiveCompletion seekLiveCompletion) {
-    this.onSeekLiveCompletion = seekLiveCompletion;
-  }
-
-  void setOnTimeShiftUpdater(OnTimeShiftUpdater timeShiftUpdater) {
-    this.onTimeShiftUpdater = timeShiftUpdater;
   }
 }

@@ -5,7 +5,6 @@ import com.aliyun.player.AliPlayerFactory;
 import com.aliyun.player.IPlayer;
 import com.aliyun.player.source.LiveShift;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -14,7 +13,7 @@ import io.flutter.plugin.common.MethodChannel;
 
 public class FlutterAliLiveShiftPlayer extends FlutterPlayerBase{
 
-    private AliLiveShiftPlayer mAliLiveShiftPlayer;
+    private final AliLiveShiftPlayer mAliLiveShiftPlayer;
 
     public FlutterAliLiveShiftPlayer(FlutterPlugin.FlutterPluginBinding flutterPluginBinding, String playerId) {
         this.mPlayerId = playerId;
@@ -66,38 +65,6 @@ public class FlutterAliLiveShiftPlayer extends FlutterPlayerBase{
                 release();
                 break;
         }
-    }
-
-    @Override
-    public void initListener(IPlayer player) {
-        super.initListener(player);
-        mAliLiveShiftPlayer.setOnTimeShiftUpdaterListener(new AliLiveShiftPlayer.OnTimeShiftUpdaterListener() {
-            @Override
-            public void onUpdater(long currentTime, long shiftStartTime, long shiftEndTime) {
-                Map<String,Object> map = new HashMap<>();
-                map.put("method","onUpdater");
-                map.put("currentTime",currentTime);
-                map.put("shiftStartTime",shiftStartTime);
-                map.put("shiftEndTime",shiftEndTime);
-                map.put("playerId",mPlayerId);
-                if(mFlutterAliPlayerListener != null){
-                    mFlutterAliPlayerListener.onTimeShiftUpdater(map);
-                }
-            }
-        });
-
-        mAliLiveShiftPlayer.setOnSeekLiveCompletionListener(new AliLiveShiftPlayer.OnSeekLiveCompletionListener() {
-            @Override
-            public void onSeekLiveCompletion(long playTime) {
-                Map<String,Object> map = new HashMap<>();
-                map.put("method","onSeekLiveCompletion");
-                map.put("playTime",playTime);
-                map.put("playerId",mPlayerId);
-                if(mFlutterAliPlayerListener != null){
-                    mFlutterAliPlayerListener.onSeekLiveCompletion(map);
-                }
-            }
-        });
     }
 
     private void prepare(){

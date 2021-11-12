@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_aliplayer/flutter_aliliveshiftplayer.dart';
 import 'package:flutter_aliplayer/flutter_aliplayer.dart';
@@ -19,7 +21,13 @@ class _LiveShiftPageState extends State<LiveShiftPage> {
   double _dividerWidth = 0.0;
   var _sliderDividerLeft = 0.0;
   var _sliderValue = 0.0;
+  //是否展示提示内容
+  bool _showTipsWidget = false;
+  //提示内容
+  String _tipsContent;
   FlutterAliLiveShiftPlayer _flutterAliLiveShiftPlayer;
+  var _slider_max = 0.0;
+  var endTime = -1;
 
   @override
   void initState() {
@@ -36,38 +44,63 @@ class _LiveShiftPageState extends State<LiveShiftPage> {
 
     _flutterAliLiveShiftPlayer =
         FlutterAliPlayerFactory.createAliLiveShiftPlayer();
-    _flutterAliLiveShiftPlayer.setAutoPlay(true);
 
     _initListener();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _flutterAliLiveShiftPlayer?.stop();
+    _flutterAliLiveShiftPlayer?.destroy();
   }
 
   void _initListener(){
 
     _flutterAliLiveShiftPlayer.setOnPrepared((playerId) {
-      Fluttertoast.showToast(msg: "prepare Success");
+      Fluttertoast.showToast(msg: "OnPrepared");
     });
 
     //时移时间更新监听事件
-    _flutterAliLiveShiftPlayer.setOnTimeShiftUpdater((currentTime, shiftStartTime, shiftEndTime) {
+    _flutterAliLiveShiftPlayer.setOnTimeShiftUpdater((currentTime, shiftStartTime, shiftEndTime, playerId) {
+      int currentLiveTime = _flutterAliLiveShiftPlayer.getCurrentLiveTime() as int;
+      int currentTime = _flutterAliLiveShiftPlayer.getCurrentTime() as int;
+      var offsetTimeLen = shiftEndTime - shiftStartTime;
+      if (endTime - currentLiveTime < offsetTimeLen * 0.05) {
+        endTime = (currentLiveTime + offsetTimeLen * 0.1) as int;
+      }
+      // 123123123
+      // if (mControlView != null) {
+      //   mControlView.setPlayProgress(mCurrentTime);
+      //   mControlView.setLiveTime(mCurrentLiveTime);
+      //   mControlView.updateRange(mShiftStartTime, mEndTime);
+      // }
+      setState(() {
+        _updateRange(shiftStartTime,endTime);
+      });
 
     });
 
     //时移seek完成通知
-    _flutterAliLiveShiftPlayer.setOnSeekLiveCompletion((playTime) {
-
+    _flutterAliLiveShiftPlayer.setOnSeekLiveCompletion((playTime,playerId) {
+      Fluttertoast.showToast(msg: "OnSeekLiveCompletion");
     });
 
     _flutterAliLiveShiftPlayer.setOnLoadingStatusListener(loadingBegin: (playerId){
-
+      _tipsContent = "loadingBegin";
     }, loadingProgress: (percent, netSpeed, playerId){
-
+      _tipsContent = "loading $percent";
     }, loadingEnd: (playerId){
-
+      _tipsContent = "loadingEnd";
     });
 
     _flutterAliLiveShiftPlayer.setOnError((errorCode, errorExtra, errorMsg, playerId) {
-
+      _tipsContent = "errorCode:$errorCode -- errorMsg:$errorMsg";
     });
+  }
+
+  void _updateRange(var startTime,var endTime){
+    _slider_max = max(startTime * 1.0, endTime * 1.0);
   }
 
   @override
@@ -102,7 +135,9 @@ class _LiveShiftPageState extends State<LiveShiftPage> {
         SizedBox(width: 1, height: 30),
         _buildSlider(),
         SizedBox(width: 1, height: 30),
-        _buildPlayerOperator()
+        _buildPlayerOperator(),
+        SizedBox(width: 1, height: 30),
+        _buildTipsView()
       ]),
     );
   }
@@ -121,7 +156,7 @@ class _LiveShiftPageState extends State<LiveShiftPage> {
               child: Slider(
                   key: _sliderDividerContainerKey,
                   min: 0,
-                  max: 100,
+                  max: _slider_max as double,
                   value: _sliderValue,
                   onChanged: (value) {
                     _sliderValue = value;
@@ -155,20 +190,32 @@ class _LiveShiftPageState extends State<LiveShiftPage> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        InkWell(child: Text("准备"), onTap: () {}),
-        InkWell(child: Text("播放"), onTap: () {}),
-        InkWell(child: Text("暂停"), onTap: () {}),
-        InkWell(child: Text("停止"), onTap: () {})
+        InkWell(child: Text("准备"), onTap: () {
+          _flutterAliLiveShiftPlayer.prepare();
+        }),
+        InkWell(child: Text("播放"), onTap: () {
+          _flutterAliLiveShiftPlayer.play();
+        }),
+        InkWell(child: Text("停止"), onTap: () {
+          _flutterAliLiveShiftPlayer.stop();
+        })
       ],
     );
   }
 
+  Widget _buildTipsView(){
+    if(_showTipsWidget){
+      return Text(_tipsContent,style: TextStyle(fontSize: 20,color: Colors.red),);
+    }else{
+      return Container();
+    }
+  }
+
   void onViewPlayerCreated(int viewId) {
     this._flutterAliLiveShiftPlayer.setPlayerView(viewId);
-    var time = new DateTime.now().millisecondsSinceEpoch;
+    int time = (new DateTime.now().millisecondsSinceEpoch / 1000).round();
     var timeLineUrl = "$_timeLineUrl&lhs_start_unix_s_0=${time - 5 * 60}&lhs_end_unix_s_0=${time + 5 * 60}";
     _flutterAliLiveShiftPlayer.setDataSource(timeLineUrl, _url);
-    _flutterAliLiveShiftPlayer.prepare();
   }
 }
 
