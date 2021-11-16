@@ -18,6 +18,7 @@ class FlutterAliDownloader {
   ///AUTH {vid,playAuth}
   Future<dynamic> prepare(String type, String vid,
       {int? index,
+      String? region,
       String? accessKeyId,
       String? accessKeySecret,
       String? securityToken,
@@ -26,6 +27,7 @@ class FlutterAliDownloader {
       'type': type,
       'vid': vid,
       'index': index,
+      'region':region,
       'accessKeyId': accessKeyId,
       'accessKeySecret': accessKeySecret,
       'securityToken': securityToken,
@@ -70,7 +72,8 @@ class FlutterAliDownloader {
   }
 
   Future<dynamic> updateSource(String type, String vid, String index,
-      {String? accessKeyId,
+      {String? region,
+      String? accessKeyId,
       String? accessKeySecret,
       String? securityToken,
       String? playAuth}) {
@@ -78,6 +81,7 @@ class FlutterAliDownloader {
       'type': type,
       'vid': vid,
       'index': index,
+      'region':region,
       'accessKeyId': accessKeyId,
       'accessKeySecret': accessKeySecret,
       'securityToken': securityToken,

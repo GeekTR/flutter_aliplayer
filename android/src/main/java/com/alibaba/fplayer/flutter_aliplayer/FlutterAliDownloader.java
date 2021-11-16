@@ -54,9 +54,11 @@ public class FlutterAliDownloader implements FlutterPlugin, MethodChannel.Method
                 Integer index = (Integer) prepareMap.get("index");
                 String type = (String) prepareMap.get("type");
                 String vid = (String) prepareMap.get("vid");
+                String region = (String) prepareMap.get("region");
                 if (type != null && type.equals("download_sts")) {
                     VidSts vidSts = new VidSts();
                     vidSts.setVid(vid);
+                    vidSts.setRegion(region);
                     vidSts.setAccessKeyId((String) prepareMap.get("accessKeyId"));
                     vidSts.setAccessKeySecret((String) prepareMap.get("accessKeySecret"));
                     vidSts.setSecurityToken((String) prepareMap.get("securityToken"));
@@ -69,6 +71,7 @@ public class FlutterAliDownloader implements FlutterPlugin, MethodChannel.Method
                 } else if (type != null && type.equals("download_auth")) {
                     VidAuth vidAuth = new VidAuth();
                     vidAuth.setVid(vid);
+                    vidAuth.setRegion(region);
                     vidAuth.setPlayAuth((String) prepareMap.get("playAuth"));
                     if (index == null) {
                         prepare(vidAuth, result);
@@ -162,11 +165,13 @@ public class FlutterAliDownloader implements FlutterPlugin, MethodChannel.Method
                 Integer index = (Integer) updateSourceMap.get("index");
                 String type = (String) updateSourceMap.get("type");
                 String vid = (String) updateSourceMap.get("vid");
+                String region = (String) updateSourceMap.get("region");
                 AliMediaDownloader aliMediaDownloader = mAliMediaDownloadMap.remove(vid + SEPARA_SYMBOLS + index);
                 if (aliMediaDownloader != null) {
                     if (type != null && type.equals("download_sts")) {
                         VidSts vidSts = new VidSts();
                         vidSts.setVid(vid);
+                        vidSts.setRegion(region);
                         vidSts.setAccessKeyId((String) updateSourceMap.get("accessKeyId"));
                         vidSts.setAccessKeySecret((String) updateSourceMap.get("accessKeySecret"));
                         vidSts.setSecurityToken((String) updateSourceMap.get("securityToken"));
@@ -175,6 +180,7 @@ public class FlutterAliDownloader implements FlutterPlugin, MethodChannel.Method
                     } else if (type != null && type.equals("download_auth")) {
                         VidAuth vidAuth = new VidAuth();
                         vidAuth.setVid(vid);
+                        vidAuth.setRegion(region);
                         vidAuth.setPlayAuth((String) updateSourceMap.get("playAuth"));
                         updateSource(aliMediaDownloader, vidAuth);
                     }
