@@ -38,6 +38,7 @@ public class FlutterAliLiveShiftPlayer extends FlutterPlayerBase{
             case "seekToLiveTime":
                 int seekToLiveTime = methodCall.argument("arg");
                 seekToLiveTime(seekToLiveTime);
+                result.success(null);
                 break;
             case "setDataSource":
                 Map<String,Object> dataSourceMap = (Map<String,Object>)methodCall.argument("arg");
@@ -48,21 +49,27 @@ public class FlutterAliLiveShiftPlayer extends FlutterPlayerBase{
                 liveShift.setFormat((String) dataSourceMap.get("format"));
                 liveShift.setTitle((String) dataSourceMap.get("title"));
                 setDataSource(liveShift);
+                result.success(null);
                 break;
             case "prepare":
                 prepare();
+                result.success(null);
                 break;
             case "play":
                 start();
+                result.success(null);
                 break;
             case "pause":
                 pause();
+                result.success(null);
                 break;
             case "stop":
                 stop();
+                result.success(null);
                 break;
             case "destroy":
                 release();
+                result.success(null);
                 break;
         }
     }

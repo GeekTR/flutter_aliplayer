@@ -76,10 +76,12 @@ public class FlutterAliDownloader implements FlutterPlugin, MethodChannel.Method
                         prepare(vidAuth, index, result);
                     }
                 }
+                result.success(null);
             }
             break;
             case "setSaveDir": {
                 mSavePath = (String) methodCall.arguments;
+                result.success(null);
             }
             break;
             case "selectItem": {
@@ -94,6 +96,7 @@ public class FlutterAliDownloader implements FlutterPlugin, MethodChannel.Method
                         selectItem(aliMediaDownloader, index);
                     }
                 }
+                result.success(null);
             }
             break;
             case "start": {
@@ -105,6 +108,7 @@ public class FlutterAliDownloader implements FlutterPlugin, MethodChannel.Method
                     aliMediaDownloader.setSaveDir(mSavePath);
                     start(aliMediaDownloader, startMap);
                 }
+                result.success(null);
             }
             break;
             case "stop": {
@@ -115,6 +119,7 @@ public class FlutterAliDownloader implements FlutterPlugin, MethodChannel.Method
                 if (aliMediaDownloader != null) {
                     stop(aliMediaDownloader);
                 }
+                result.success(null);
             }
             break;
             case "delete": {
@@ -125,6 +130,7 @@ public class FlutterAliDownloader implements FlutterPlugin, MethodChannel.Method
                 if (aliMediaDownloader != null) {
                     delete(aliMediaDownloader);
                 }
+                result.success(null);
             }
             break;
             case "getFilePath": {
@@ -137,7 +143,7 @@ public class FlutterAliDownloader implements FlutterPlugin, MethodChannel.Method
                     getFilePathMap.put("savePath", filePath);
                     result.success(filePath);
                 }
-
+                result.success(null);
             }
             break;
             case "release": {
@@ -148,6 +154,7 @@ public class FlutterAliDownloader implements FlutterPlugin, MethodChannel.Method
                 if (aliMediaDownloader != null) {
                     release(aliMediaDownloader);
                 }
+                result.success(null);
             }
             break;
             case "updateSource": {
@@ -172,6 +179,7 @@ public class FlutterAliDownloader implements FlutterPlugin, MethodChannel.Method
                         updateSource(aliMediaDownloader, vidAuth);
                     }
                 }
+                result.success(null);
             }
             break;
             case "setDownloaderConfig": {
@@ -198,6 +206,7 @@ public class FlutterAliDownloader implements FlutterPlugin, MethodChannel.Method
 
                     setDownloaderConfig(aliMediaDownloader, downloaderConfig);
                 }
+                result.success(null);
             }
             break;
             default:

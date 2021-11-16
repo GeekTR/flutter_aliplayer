@@ -101,6 +101,7 @@ public class FlutterAliPlayer extends FlutterPlayerBase {
                     vidSts.setPlayConfig(vidPlayerConfigGen);
                 }
                 setDataSource(mAliPlayer,vidSts);
+                result.success(null);
                 break;
             case "setVidAuth":
                 Map<String,Object> authMap = (Map<String,Object>)methodCall.argument("arg");
@@ -147,6 +148,7 @@ public class FlutterAliPlayer extends FlutterPlayerBase {
                     vidAuth.setPlayConfig(vidPlayerConfigGen);
                 }
                 setDataSource(mAliPlayer,vidAuth);
+                result.success(null);
                 break;
             case "setVidMps":
                 Map<String,Object> mpsMap = (Map<String,Object>)methodCall.argument("arg");
@@ -194,21 +196,27 @@ public class FlutterAliPlayer extends FlutterPlayerBase {
                 vidMps.setHlsUriToken((String) mpsMap.get("hlsUriToken"));
                 vidMps.setSecurityToken((String) mpsMap.get("securityToken"));
                 setDataSource(mAliPlayer,vidMps);
+                result.success(null);
                 break;
             case "prepare":
                 prepare(mAliPlayer);
+                result.success(null);
                 break;
             case "play":
                 start(mAliPlayer);
+                result.success(null);
                 break;
             case "pause":
                 pause(mAliPlayer);
+                result.success(null);
                 break;
             case "stop":
                 stop(mAliPlayer);
+                result.success(null);
                 break;
             case "destroy":
                 release(mAliPlayer);
+                result.success(null);
                 break;
             case "seekTo":
             {
@@ -216,6 +224,7 @@ public class FlutterAliPlayer extends FlutterPlayerBase {
                 Integer position = (Integer) seekToMap.get("position");
                 Integer seekMode = (Integer) seekToMap.get("seekMode");
                 seekTo(mAliPlayer,position,seekMode);
+                result.success(null);
             }
             break;
             case "getMediaInfo":
@@ -265,21 +274,25 @@ public class FlutterAliPlayer extends FlutterPlayerBase {
             case "snapshot":
                 mSnapShotPath = methodCall.argument("arg").toString();
                 snapshot(mAliPlayer);
+                result.success(null);
                 break;
             case "setLoop":
                 setLoop(mAliPlayer,(Boolean)methodCall.argument("arg"));
+                result.success(null);
                 break;
             case "isLoop":
                 result.success(isLoop(mAliPlayer));
                 break;
             case "setAutoPlay":
                 setAutoPlay(mAliPlayer,(Boolean)methodCall.argument("arg"));
+                result.success(null);
                 break;
             case "isAutoPlay":
                 result.success(isAutoPlay(mAliPlayer));
                 break;
             case "setMuted":
                 setMuted(mAliPlayer,(Boolean)methodCall.argument("arg"));
+                result.success(null);
                 break;
             case "isMuted":
                 result.success(isMuted(mAliPlayer));
@@ -287,36 +300,43 @@ public class FlutterAliPlayer extends FlutterPlayerBase {
             case "setEnableHardwareDecoder":
                 Boolean setEnableHardwareDecoderArgumnt = (Boolean) methodCall.argument("arg");
                 setEnableHardWareDecoder(mAliPlayer,setEnableHardwareDecoderArgumnt);
+                result.success(null);
                 break;
             case "setScalingMode":
                 setScaleMode(mAliPlayer,(Integer) methodCall.argument("arg"));
+                result.success(null);
                 break;
             case "getScalingMode":
                 result.success(getScaleMode(mAliPlayer));
                 break;
             case "setMirrorMode":
                 setMirrorMode(mAliPlayer,(Integer) methodCall.argument("arg"));
+                result.success(null);
                 break;
             case "getMirrorMode":
                 result.success(getMirrorMode(mAliPlayer));
                 break;
             case "setRotateMode":
                 setRotateMode(mAliPlayer,(Integer) methodCall.argument("arg"));
+                result.success(null);
                 break;
             case "getRotateMode":
                 result.success(getRotateMode(mAliPlayer));
                 break;
             case "setRate":
                 setSpeed(mAliPlayer,(Double) methodCall.argument("arg"));
+                result.success(null);
                 break;
             case "getRate":
                 result.success(getSpeed(mAliPlayer));
                 break;
             case "setVideoBackgroundColor":
                 setVideoBackgroundColor(mAliPlayer,(Long) methodCall.argument("arg"));
+                result.success(null);
                 break;
             case "setVolume":
                 setVolume(mAliPlayer,(Double) methodCall.argument("arg"));
+                result.success(null);
                 break;
             case "getVolume":
                 result.success(getVolume(mAliPlayer));
@@ -330,6 +350,7 @@ public class FlutterAliPlayer extends FlutterPlayerBase {
                     config = mGson.fromJson(configJson,PlayerConfig.class);
                     setConfig(mAliPlayer,config);
                 }
+                result.success(null);
             }
             break;
             case "getConfig":
@@ -349,6 +370,7 @@ public class FlutterAliPlayer extends FlutterPlayerBase {
                 String setCacheConfigJson = mGson.toJson(setCacheConnfigMap);
                 CacheConfig setCacheConfig = mGson.fromJson(setCacheConfigJson,CacheConfig.class);
                 setCacheConfig(mAliPlayer,setCacheConfig);
+                result.success(null);
                 break;
             case "getCurrentTrack":
                 Integer currentTrackIndex = (Integer) methodCall.argument("arg");
@@ -377,10 +399,12 @@ public class FlutterAliPlayer extends FlutterPlayerBase {
                 Integer trackIdx = (Integer) selectTrackMap.get("trackIdx");
                 Integer accurate = (Integer) selectTrackMap.get("accurate");
                 selectTrack(mAliPlayer,trackIdx, accurate == 1);
+                result.success(null);
                 break;
             case "addExtSubtitle":
                 String extSubtitlUrl = (String) methodCall.argument("arg");
                 addExtSubtitle(mAliPlayer,extSubtitlUrl);
+                result.success(null);
                 break;
             case "selectExtSubtitle":
                 Map<String,Object> selectExtSubtitleMap = (Map<String, Object>) methodCall.argument("arg");
@@ -392,14 +416,17 @@ public class FlutterAliPlayer extends FlutterPlayerBase {
             case "createThumbnailHelper":
                 String thhumbnailUrl = (String) methodCall.argument("arg");
                 createThumbnailHelper(thhumbnailUrl);
+                result.success(null);
                 break;
             case "requestBitmapAtPosition":
                 Integer requestBitmapProgress = (Integer) methodCall.argument("arg");
                 requestBitmapAtPosition(requestBitmapProgress);
+                result.success(null);
                 break;
             case "setPreferPlayerName":
                 String playerName = methodCall.argument("arg");
                 setPlayerName(mAliPlayer,playerName);
+                result.success(null);
                 break;
             case "getPlayerName":
                 result.success(getPlayerName(mAliPlayer));
@@ -409,6 +436,7 @@ public class FlutterAliPlayer extends FlutterPlayerBase {
                 Integer index = (Integer) streamDelayTimeMap.get("index");
                 Integer time = (Integer) streamDelayTimeMap.get("time");
                 setStreamDelayTime(mAliPlayer,index,time);
+                result.success(null);
                 break;
             default:
                 result.notImplemented();

@@ -77,6 +77,7 @@ public class FlutterAliListPlayer extends FlutterPlayerBase implements EventChan
             case "setPreloadCount":
                 Integer count = (Integer) methodCall.argument("arg");
                 setPreloadCount(count);
+                result.success(null);
                 break;
             case "setPlayerView":
 //                Integer viewId = (Integer) methodCall.argument("arg");
@@ -87,18 +88,23 @@ public class FlutterAliListPlayer extends FlutterPlayerBase implements EventChan
                 break;
             case "prepare":
                 prepare();
+                result.success(null);
                 break;
             case "play":
                 start();
+                result.success(null);
                 break;
             case "pause":
                 pause();
+                result.success(null);
                 break;
             case "stop":
                 stop();
+                result.success(null);
                 break;
             case "destroy":
                 release();
+                result.success(null);
                 break;
             case "seekTo":
             {
@@ -106,6 +112,7 @@ public class FlutterAliListPlayer extends FlutterPlayerBase implements EventChan
                 Integer position = (Integer) seekToMap.get("position");
                 Integer seekMode = (Integer) seekToMap.get("seekMode");
                 seekTo(position,seekMode);
+                result.success(null);
             }
             break;
             case "getMediaInfo":
@@ -155,21 +162,25 @@ public class FlutterAliListPlayer extends FlutterPlayerBase implements EventChan
             case "snapshot":
                 mSnapShotPath = methodCall.argument("arg").toString();
                 snapshot();
+                result.success(null);
                 break;
             case "setLoop":
                 setLoop((Boolean)methodCall.argument("arg"));
+                result.success(null);
                 break;
             case "isLoop":
                 result.success(isLoop());
                 break;
             case "setAutoPlay":
                 setAutoPlay((Boolean)methodCall.argument("arg"));
+                result.success(null);
                 break;
             case "isAutoPlay":
                 result.success(isAutoPlay());
                 break;
             case "setMuted":
                 setMuted((Boolean)methodCall.argument("arg"));
+                result.success(null);
                 break;
             case "isMuted":
                 result.success(isMuted());
@@ -177,36 +188,43 @@ public class FlutterAliListPlayer extends FlutterPlayerBase implements EventChan
             case "setEnableHardwareDecoder":
                 Boolean setEnableHardwareDecoderArgumnt = (Boolean) methodCall.argument("arg");
                 setEnableHardWareDecoder(setEnableHardwareDecoderArgumnt);
+                result.success(null);
                 break;
             case "setScalingMode":
                 setScaleMode((Integer) methodCall.argument("arg"));
+                result.success(null);
                 break;
             case "getScalingMode":
                 result.success(getScaleMode());
                 break;
             case "setMirrorMode":
                 setMirrorMode((Integer) methodCall.argument("arg"));
+                result.success(null);
                 break;
             case "getMirrorMode":
                 result.success(getMirrorMode());
                 break;
             case "setRotateMode":
                 setRotateMode((Integer) methodCall.argument("arg"));
+                result.success(null);
                 break;
             case "getRotateMode":
                 result.success(getRotateMode());
                 break;
             case "setRate":
                 setSpeed((Double) methodCall.argument("arg"));
+                result.success(null);
                 break;
             case "getRate":
                 result.success(getSpeed());
                 break;
             case "setVideoBackgroundColor":
                 setVideoBackgroundColor((Integer) methodCall.argument("arg"));
+                result.success(null);
                 break;
             case "setVolume":
                 setVolume((Double) methodCall.argument("arg"));
+                result.success(null);
                 break;
             case "getVolume":
                 result.success(getVolume());
@@ -220,6 +238,7 @@ public class FlutterAliListPlayer extends FlutterPlayerBase implements EventChan
                     config = mGson.fromJson(configJson,PlayerConfig.class);
                     setConfig(config);
                 }
+                result.success(null);
             }
             break;
             case "getConfig":
@@ -239,6 +258,7 @@ public class FlutterAliListPlayer extends FlutterPlayerBase implements EventChan
                 String setCacheConfigJson = mGson.toJson(setCacheConnfigMap);
                 CacheConfig setCacheConfig = mGson.fromJson(setCacheConfigJson,CacheConfig.class);
                 setCacheConfig(setCacheConfig);
+                result.success(null);
                 break;
             case "getCurrentTrack":
                 Integer currentTrackIndex = (Integer) methodCall.argument("arg");
@@ -267,36 +287,42 @@ public class FlutterAliListPlayer extends FlutterPlayerBase implements EventChan
                 Integer trackIdx = (Integer) selectTrackMap.get("trackIdx");
                 Integer accurate = (Integer) selectTrackMap.get("accurate");
                 selectTrack(trackIdx, accurate == 1);
+                result.success(null);
                 break;
             case "addExtSubtitle":
                 String extSubtitlUrl = (String) methodCall.arguments;
                 addExtSubtitle(extSubtitlUrl);
+                result.success(null);
                 break;
             case "selectExtSubtitle":
                 Map<String,Object> selectExtSubtitleMap = (Map<String, Object>) methodCall.argument("arg");
                 Integer trackIndex = (Integer) selectExtSubtitleMap.get("trackIndex");
                 Boolean selectExtSubtitlEnable = (Boolean) selectExtSubtitleMap.get("enable");
                 selectExtSubtitle(trackIndex,selectExtSubtitlEnable);
+                result.success(null);
                 break;
             case "addVidSource":
                 Map<String,Object> addVidSourceMap = methodCall.argument("arg");
                 String addSourceVid = (String) addVidSourceMap.get("vid");
                 String vidUid = (String) addVidSourceMap.get("uid");
                 addVidSource(addSourceVid,vidUid);
+                result.success(null);
                 break;
             case "addUrlSource":
                 Map<String,Object> addSourceUrlMap = methodCall.argument("arg");
                 String addSourceUrl = (String) addSourceUrlMap.get("url");
                 String urlUid = (String) addSourceUrlMap.get("uid");
                 addUrlSource(addSourceUrl,urlUid);
+                result.success(null);
                 break;
             case "removeSource":
-                //TODO
                 String removeUid = methodCall.arguments();
                 removeSource(removeUid);
+                result.success(null);
                 break;
             case "clear":
                 clear();
+                result.success(null);
                 break;
             case "moveToNext":
                 Map<String,Object> moveToNextMap = methodCall.argument("arg");
@@ -310,6 +336,7 @@ public class FlutterAliListPlayer extends FlutterPlayerBase implements EventChan
                 moveToNextStsInfo.setSecurityToken(moveToNextSecurityToken);
                 moveToNextStsInfo.setRegion(moveToNextRegion);
                 moveToNext(moveToNextStsInfo);
+                result.success(null);
                 break;
             case "moveToPre":
                 Map<String,Object> moveToPreMap = methodCall.argument("arg");
@@ -323,6 +350,7 @@ public class FlutterAliListPlayer extends FlutterPlayerBase implements EventChan
                 moveToPreStsInfo.setSecurityToken(moveToPreSecurityToken);
                 moveToPreStsInfo.setRegion(moveToPreRegion);
                 moveToPre(moveToPreStsInfo);
+                result.success(null);
                 break;
             case "moveTo":
                 Map<String,Object> moveToMap = methodCall.argument("arg");
@@ -341,15 +369,18 @@ public class FlutterAliListPlayer extends FlutterPlayerBase implements EventChan
                 }else{
                     moveTo(moveToUid);
                 }
+                result.success(null);
 
                 break;
             case "createThumbnailHelper":
                 String thhumbnailUrl = (String) methodCall.argument("arg");
                 createThumbnailHelper(thhumbnailUrl);
+                result.success(null);
                 break;
             case "requestBitmapAtPosition":
                 Integer requestBitmapProgress = (Integer) methodCall.argument("arg");
                 requestBitmapAtPosition(requestBitmapProgress);
+                result.success(null);
                 break;
             default:
                 result.notImplemented();
