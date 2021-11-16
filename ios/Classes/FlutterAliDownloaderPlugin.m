@@ -61,11 +61,13 @@
 
 -(void)setSaveDir:(NSArray*)arr {
     FlutterMethodCall* call = arr.firstObject;
+    FlutterResult result = arr[1];
 //    NSLog(@"savePath==%@",call.arguments);
     mSavePath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
     if (mSavePath) {
         mSavePath = [mSavePath stringByAppendingPathComponent:call.arguments];
     }
+    result(nil);
 }
 
 - (void)prepare:(NSArray*)arr {
@@ -79,6 +81,7 @@
         if([type isEqualToString:@"download_sts"]){
             AVPVidStsSource *source = [[AVPVidStsSource alloc] init];
             [source setVid:vid];
+            [source setRegion:dic[@"region"]];
             [source setAccessKeyId:dic[@"accessKeyId"]];
             [source setAccessKeySecret:dic[@"accessKeySecret"]];
             [source setSecurityToken:dic[@"securityToken"]];
@@ -90,6 +93,7 @@
         }else if([type isEqualToString:@"download_auth"]){
             AVPVidAuthSource *source = [[AVPVidAuthSource alloc] init];
             [source setVid:vid];
+            [source setRegion:dic[@"region"]];
             [source setPlayAuth:dic[@"playAuth"]];
             if ([idxNum isKindOfClass:NSNumber.class]) {
                 [self prepareVidAuth:source result:result idx:idxNum.intValue];
@@ -98,6 +102,40 @@
             }
         }
     }
+    result(nil);
+}
+
+- (void)updateSource:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    FlutterResult result = arr[1];
+    NSDictionary *dic = [call.arguments removeNull];
+    NSNumber *idxNum = dic[@"index"];
+    NSString *type = dic[@"type"];
+    NSString *vid = dic[@"vid"];
+    if(type.length>0){
+        if([type isEqualToString:@"download_sts"]){
+            AVPVidStsSource *source = [[AVPVidStsSource alloc] init];
+            [source setVid:vid];
+            [source setRegion:dic[@"region"]];
+            [source setAccessKeyId:dic[@"accessKeyId"]];
+            [source setAccessKeySecret:dic[@"accessKeySecret"]];
+            [source setSecurityToken:dic[@"securityToken"]];
+            AliMediaDownloader *downloader = [self.mAliMediaDownloadMap objectForKey:[NSString stringWithFormat:@"%@_%@",vid,idxNum]];
+            if (downloader) {
+                [downloader updateWithVid:source];
+            }
+        }else if([type isEqualToString:@"download_auth"]){
+            AVPVidAuthSource *source = [[AVPVidAuthSource alloc] init];
+            [source setVid:vid];
+            [source setRegion:dic[@"region"]];
+            [source setPlayAuth:dic[@"playAuth"]];
+            AliMediaDownloader *downloader = [self.mAliMediaDownloadMap objectForKey:[NSString stringWithFormat:@"%@_%@",vid,idxNum]];
+            if (downloader) {
+                [downloader updateWithPlayAuth:source];
+            }
+        }
+    }
+    result(nil);
 }
 
 - (void)prepareVidSts:(AVPVidStsSource*)vidSts result:(FlutterResult)result idx:(int)idx{
@@ -167,6 +205,7 @@
 
 - (void)selectItem:(NSArray*)arr {
     FlutterMethodCall* call = arr.firstObject;
+    FlutterResult result = arr[1];
     NSDictionary *dic = [call.arguments removeNull];
     NSNumber *idxNum = dic[@"index"];
     NSString *vid = dic[@"vid"];
@@ -183,10 +222,12 @@
         
         [downloader selectTrack:idxNum.intValue];
     }
+    result(nil);
 }
 
 - (void)start:(NSArray*)arr {
     FlutterMethodCall* call = arr.firstObject;
+    FlutterResult result = arr[1];
     NSDictionary *dic = [call.arguments removeNull];
     NSString *vid = dic[@"vid"];
     NSString *index = dic[@"index"];
@@ -201,10 +242,12 @@
         }
         [downloader start];
     }
+    result(nil);
 }
 
 - (void)stop:(NSArray*)arr {
     FlutterMethodCall* call = arr.firstObject;
+    FlutterResult result = arr[1];
     NSDictionary *dic = [call.arguments removeNull];
     NSString *vid = dic[@"vid"];
     NSString *index = dic[@"index"];
@@ -212,10 +255,12 @@
     if (downloader) {
         [downloader stop];
     }
+    result(nil);
 }
 
 - (void)delete:(NSArray*)arr {
     FlutterMethodCall* call = arr.firstObject;
+    FlutterResult result = arr[1];
     NSDictionary *dic = [call.arguments removeNull];
     NSString *vid = dic[@"vid"];
     NSString *index = dic[@"index"];
@@ -223,10 +268,12 @@
     if (downloader) {
         [downloader deleteFile];
     }
+    result(nil);
 }
 
 - (void)release:(NSArray*)arr {
     FlutterMethodCall* call = arr.firstObject;
+    FlutterResult result = arr[1];
     NSDictionary *dic = [call.arguments removeNull];
     NSString *vid = dic[@"vid"];
     NSString *index = dic[@"index"];
@@ -234,6 +281,7 @@
     if (downloader) {
         [downloader destroy];
     }
+    result(nil);
 }
 
 - (void)getFilePath:(NSArray*)arr {
