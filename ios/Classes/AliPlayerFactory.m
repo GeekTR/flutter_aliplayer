@@ -135,23 +135,29 @@
 }
 
 - (void)setPlayerView:(NSArray*)arr {
+    FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     NSNumber* viewId = arr[3];
     FlutterAliPlayerView *fapv = [_viewDic objectForKey:[NSString stringWithFormat:@"%@",viewId]];
 //    [proxy.player setPlayerView:fapv.view];
     [proxy bindPlayerView:fapv];
+    result(nil);
 }
 
 - (void)setUrl:(NSArray*)arr {
+    FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     NSString* url = arr[3];
     AVPUrlSource *source = [[AVPUrlSource alloc] urlWithString:url];
     [proxy.player setUrlSource:source];
+    result(nil);
 }
 
 - (void)prepare:(NSArray*)arr {
+    FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     [proxy.player prepare];
+    result(nil);
 }
 
 - (void)play:(NSArray*)arr {
@@ -219,9 +225,11 @@
 }
 
 - (void)setLoop:(NSArray*)arr {
+    FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     NSNumber* isLoop = arr[3];
     [proxy.player setLoop:isLoop.boolValue];
+    result(nil);
 }
 
 - (void)isAutoPlay:(NSArray*)arr {
@@ -231,9 +239,11 @@
 }
 
 - (void)setAutoPlay:(NSArray*)arr {
+    FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     NSNumber* val = arr[3];
     [proxy.player setAutoPlay:val.boolValue];
+    result(nil);
 }
 
 - (void)isMuted:(NSArray*)arr {
@@ -243,9 +253,11 @@
 }
 
 - (void)setMuted:(NSArray*)arr {
+    FlutterResult result = arr[1];
     NSNumber* val = arr[3];
     AliPlayerProxy *proxy = arr[2];
     [proxy.player setMuted:val.boolValue];
+    result(nil);
 }
 
 - (void)enableHardwareDecoder:(NSArray*)arr {
@@ -255,9 +267,11 @@
 }
 
 - (void)setEnableHardwareDecoder:(NSArray*)arr {
+    FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     NSNumber* val = arr[3];
     [proxy.player setEnableHardwareDecoder:val.boolValue];
+    result(nil);
 }
 
 - (void)getRotateMode:(NSArray*)arr {
@@ -267,9 +281,11 @@
 }
 
 - (void)setRotateMode:(NSArray*)arr {
+    FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     NSNumber* val = arr[3];
     [proxy.player setRotateMode:val.intValue];
+    result(nil);
 }
 
 - (void)getScalingMode:(NSArray*)arr {
@@ -324,9 +340,11 @@
 }
 
 - (void)setMirrorMode:(NSArray*)arr {
+    FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     NSNumber* val = arr[3];
     [proxy.player setMirrorMode:val.intValue];
+    result(nil);
 }
 
 - (void)getRate:(NSArray*)arr {
@@ -336,12 +354,15 @@
 }
 
 - (void)setRate:(NSArray*)arr {
+    FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     NSNumber* val = arr[3];
     [proxy.player setRate:val.floatValue];
+    result(nil);
 }
 
 - (void)snapshot:(NSArray*)arr {
+    FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     NSString* val = arr[3];
     proxy.snapshotPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
@@ -349,19 +370,24 @@
         proxy.snapshotPath = [proxy.snapshotPath stringByAppendingPathComponent:val];
     }
     [proxy.player snapShot];
+    result(nil);
 }
 
 - (void)createThumbnailHelper:(NSArray*)arr {
+    FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     NSString* val = arr[3];
     [proxy.player setThumbnailUrl:val];
     self.eventSink(@{kAliPlayerMethod:@"thumbnail_onPrepared_Success"});
+    result(nil);
 }
 
 - (void)requestBitmapAtPosition:(NSArray*)arr {
+    FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     NSNumber* val = arr[3];
     [proxy.player getThumbnail:val.integerValue];
+    result(nil);
 }
 
 - (void)getVolume:(NSArray*)arr {
@@ -371,17 +397,21 @@
 }
 
 - (void)setVolume:(NSArray*)arr {
+    FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     NSNumber* val = arr[3];
     [proxy.player setVolume:val.floatValue];
+    result(nil);
 }
 
 - (void)setVideoBackgroundColor:(NSArray*)arr {
+    FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     NSNumber* val = arr[3];
     int c = val.intValue;
     UIColor *color = [UIColor colorWithRed:((c>>16)&0xFF)/255.0 green:((c>>8)&0xFF)/255.0 blue:((c)&0xFF)/255.0  alpha:((c>>24)&0xFF)/255.0];
     [proxy.player setVideoBackgroundColor:color];
+    result(nil);
 }
 
 -(void)getSDKVersion:(NSArray*)arr{
@@ -390,9 +420,11 @@
 }
 
 - (void)enableConsoleLog:(NSArray*)arr {
+    FlutterResult result = arr[1];
     FlutterMethodCall* call = arr.firstObject;
     NSNumber* val = [call arguments];
     [AliPlayer setEnableLog:val.boolValue];
+    result(nil);
 }
 
 - (void)getLogLevel:(NSArray*)arr {
@@ -402,21 +434,26 @@
 }
 
 - (void)setLogLevel:(NSArray*)arr {
+    FlutterResult result = arr[1];
     FlutterMethodCall* call = arr.firstObject;
     NSNumber* val = [call arguments];
     [AliPlayer setLogCallbackInfo:val.intValue callbackBlock:nil];
+    result(nil);
 }
 
 - (void)seekTo:(NSArray*)arr {
+    FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     NSDictionary* dic = arr[3];
     NSNumber *position = dic[@"position"];
     NSNumber *seekMode = dic[@"seekMode"];
     [proxy.player seekToTime:position.integerValue seekMode:seekMode.intValue];
+    result(nil);
 }
 
 //TODO 应该是根据已经有的key 替换比较合理
 - (void)setConfig:(NSArray*)arr {
+    FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     NSDictionary* val = arr[3];
     AVPConfig *config = [proxy.player getConfig];
@@ -447,7 +484,7 @@
     config = [AVPConfig mj_objectWithKeyValues:val];
 
     [proxy.player setConfig:config];
-
+    result(nil);
 }
 
 //- (void)getCacheConfig:(NSArray*)arr {
@@ -465,6 +502,7 @@
 //}
 
 - (void)setCacheConfig:(NSArray*)arr {
+    FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     NSDictionary* val = arr[3];
 
@@ -481,7 +519,7 @@
     [config setPath:[path stringByAppendingPathComponent:config.path]];
 
     [proxy.player setCacheConfig:config];
-
+    result(nil);
 }
 
 - (void)getConfig:(NSArray*)arr {
@@ -526,6 +564,7 @@
 }
 
 - (void)setVidSts:(NSArray*)arr {
+    FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     NSDictionary *dic = arr[3];
     AVPVidStsSource *source = [AVPVidStsSource mj_objectWithKeyValues:dic];
@@ -539,9 +578,11 @@
 
     [self setSource:source withDefinitions:dic];
     [proxy.player setStsSource:source];
+    result(nil);
 }
 
 - (void)setVidAuth:(NSArray*)arr {
+    FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     NSDictionary *dic = arr[3];
     AVPVidAuthSource *source = [AVPVidAuthSource mj_objectWithKeyValues:dic];
@@ -555,9 +596,11 @@
 
     [self setSource:source withDefinitions:dic];
     [proxy.player setAuthSource:source];
+    result(nil);
 }
 
 - (void)setVidMps:(NSArray*)arr {
+    FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     AVPVidMpsSource *source = [[AVPVidMpsSource alloc] init];
     NSDictionary *dic = [arr[3] removeNull];
@@ -571,21 +614,27 @@
     [source setMtsHlsUriToken:dic[@"hlsUriToken"]];
     [self setSource:source withDefinitions:dic];
     [proxy.player setMpsSource:source];
+    result(nil);
 }
 
 - (void)addVidSource:(NSArray*)arr {
+    FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     NSDictionary *dic = arr[3];
     [(AliListPlayer*)proxy.player addVidSource:dic[@"vid"] uid:dic[@"uid"]];
+    result(nil);
 }
 
 - (void)addUrlSource:(NSArray*)arr {
+    FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     NSDictionary *dic = arr[3];
     [(AliListPlayer*)proxy.player addUrlSource:dic[@"url"] uid:dic[@"uid"]];
+    result(nil);
 }
 
 - (void)moveTo:(NSArray*)arr {
+    FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     NSDictionary *dic = [arr[3] removeNull];
 
@@ -595,18 +644,23 @@
     }else{
         [(AliListPlayer*)proxy.player moveTo:dic[@"uid"]];
     }
+    result(nil);
 }
 
 - (void)moveToNext:(NSArray*)arr {
+    FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     NSDictionary *dic = [arr[3] removeNull];
     [(AliListPlayer*)proxy.player moveToNext:dic[@"accId"] accKey:dic[@"accKey"] token:dic[@"token"] region:dic[@"region"]];
+    result(nil);
 }
 
 - (void)setPreloadCount:(NSArray*)arr {
+    FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     NSNumber* val = arr[3];
     [(AliListPlayer*)proxy.player setPreloadCount:val.intValue];
+    result(nil);
 }
 
 - (void)getMediaInfo:(NSArray*)arr {
@@ -649,6 +703,7 @@
 }
 
 - (void)selectTrack:(NSArray*)arr {
+    FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     NSDictionary *dic = [arr[3] removeNull];
     NSNumber *trackIdxNum = dic[@"trackIdx"];
@@ -658,13 +713,15 @@
     }else{
         [proxy.player selectTrack:trackIdxNum.intValue accurate:accurateNum.boolValue];
     }
-
+    result(nil);
 }
 
 - (void)addExtSubtitle:(NSArray*)arr {
+    FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     NSString *url = arr[3];
     [proxy.player addExtSubtitle:url];
+    result(nil);
 }
 
 - (void)selectExtSubtitle:(NSArray*)arr {
@@ -699,8 +756,45 @@
     FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     result([proxy.player getPlayerName]);
+    result(nil);
 }
 
+//直播时移相关
+
+- (void)getCurrentLiveTime:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    AVPLiveTimeShift *player = (AVPLiveTimeShift*)proxy.player;
+    result(@(player.liveTime));
+}
+
+- (void)getCurrentTime:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    AVPLiveTimeShift *player = (AVPLiveTimeShift*)proxy.player;
+    result(@(player.currentPlayTime));
+}
+
+- (void)seekToLiveTime:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSNumber *liveTime = arr[3];
+    AVPLiveTimeShift *player = (AVPLiveTimeShift*)proxy.player;
+    [player seekToLiveTime:liveTime.integerValue];
+    result(nil);
+}
+
+- (void)setDataSource:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    AVPLiveTimeShift *player = (AVPLiveTimeShift*)proxy.player;
+    NSDictionary *dic = [arr[3] removeNull];
+    NSString *timeLineUrl = dic[@"timeLineUrl"];
+    NSString *url = dic[@"url"];
+    [player prepareWithLiveTimeUrl:url];
+    [player setLiveTimeShiftUrl:timeLineUrl];
+    result(nil);
+}
 #pragma --mark CicadaAudioSessionDelegate
 - (BOOL)setActive:(BOOL)active error:(NSError **)outError
 {

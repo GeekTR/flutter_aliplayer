@@ -198,6 +198,8 @@
         if (_playerType==1) {
             _player = [[AliListPlayer alloc] init];
             ((AliListPlayer*)_player).stsPreloadDefinition = @"FD";
+        }else if(_playerType==2){
+            _player = [[AVPLiveTimeShift alloc] init];
         }else{
             _player = [[AliPlayer alloc] init];
         }
