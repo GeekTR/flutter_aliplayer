@@ -3,6 +3,7 @@ package com.alibaba.fplayer.flutter_aliplayer;
 import android.content.Context;
 import android.graphics.Bitmap;
 
+import com.aliyun.player.AliLiveShiftPlayer;
 import com.aliyun.player.IPlayer;
 import com.aliyun.player.bean.ErrorInfo;
 import com.aliyun.player.bean.InfoBean;
@@ -177,6 +178,7 @@ public abstract class FlutterPlayerBase {
                 Map<String,Object> map = new HashMap<>();
                 map.put("method","onSeiData");
                 map.put("playerId",mPlayerId);
+
                 //TODO
 //                mEventSink.success(map);
                 if(mFlutterAliPlayerListener != null){
@@ -335,6 +337,37 @@ public abstract class FlutterPlayerBase {
                 }
             }
         });
+
+        if(player instanceof AliLiveShiftPlayer){
+            ((AliLiveShiftPlayer)player).setOnTimeShiftUpdaterListener(new AliLiveShiftPlayer.OnTimeShiftUpdaterListener() {
+                @Override
+                public void onUpdater(long currentTime, long shiftStartTime, long shiftEndTime) {
+                    Map<String,Object> map = new HashMap<>();
+                    map.put("method","onUpdater");
+                    map.put("currentTime",currentTime);
+                    map.put("shiftStartTime",shiftStartTime);
+                    map.put("shiftEndTime",shiftEndTime);
+                    map.put("playerId",mPlayerId);
+                    System.out.println("abc : java onTimeShiftUpdate");
+                    if(mFlutterAliPlayerListener != null){
+                        mFlutterAliPlayerListener.onTimeShiftUpdater(map);
+                    }
+                }
+            });
+
+            ((AliLiveShiftPlayer)player).setOnSeekLiveCompletionListener(new AliLiveShiftPlayer.OnSeekLiveCompletionListener() {
+                @Override
+                public void onSeekLiveCompletion(long playTime) {
+                    Map<String,Object> map = new HashMap<>();
+                    map.put("method","onSeekLiveCompletion");
+                    map.put("playTime",playTime);
+                    map.put("playerId",mPlayerId);
+                    if(mFlutterAliPlayerListener != null){
+                        mFlutterAliPlayerListener.onSeekLiveCompletion(map);
+                    }
+                }
+            });
+        }
 
     }
 

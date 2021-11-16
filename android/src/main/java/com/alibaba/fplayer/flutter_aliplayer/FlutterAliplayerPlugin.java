@@ -100,6 +100,7 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
             case "initService":
                 byte[] datas = (byte[]) call.arguments;
                 PrivateService.initService(flutterPluginBinding.getApplicationContext(),datas);
+                result.success(null);
                 break;
             case "getSDKVersion":
                 result.success(AliPlayerFactory.getSdkVersion());
@@ -110,10 +111,12 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
             case "enableConsoleLog":
                 Boolean enableLog = (Boolean) call.argument("arg");
                 enableConsoleLog(enableLog);
+                result.success(null);
                 break;
             case "setLogLevel":
                 Integer level = (Integer) call.argument("arg");
                 setLogLevel(level);
+                result.success(null);
                 break;
             case "createDeviceInfo":
                 result.success(createDeviceInfo());
@@ -123,6 +126,7 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
                 String blackType = addBlackDeviceMap.get("black_type");
                 String blackDevice = addBlackDeviceMap.get("black_device");
                 addBlackDevice(blackType,blackDevice);
+                result.success(null);
                 break;
             case "setPlayerView":
                 Integer viewId = (Integer) call.argument("arg");

@@ -36,7 +36,7 @@ public class FlutterAliLiveShiftPlayer extends FlutterPlayerBase{
                 result.success(getCurrentTime());
                 break;
             case "seekToLiveTime":
-                long seekToLiveTime = methodCall.argument("arg");
+                int seekToLiveTime = methodCall.argument("arg");
                 seekToLiveTime(seekToLiveTime);
                 break;
             case "setDataSource":

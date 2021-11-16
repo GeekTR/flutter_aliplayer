@@ -115,6 +115,7 @@ public class FlutterAliPlayerView implements PlatformView {
             switch (msg.what){
                 case ALIYUNN_PLAYER_SETSURFACE:
                     if(flutterAliPlayerView.mPlayer != null && flutterAliPlayerView.mSurface != null){
+                        flutterAliPlayerView.mPlayer.setSurface(null);
                         flutterAliPlayerView.mPlayer.setSurface(flutterAliPlayerView.mSurface);
                     }
                     break;

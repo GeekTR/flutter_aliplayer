@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -14,24 +15,33 @@ class LiveShiftPage extends StatefulWidget {
 }
 
 class _LiveShiftPageState extends State<LiveShiftPage> {
-  var _url = "http://qt1.alivecdn.com/align/sla02.m3u8?lhs_start_human_s_8=20211102200011&aliyunols=on";
-  var _timeLineUrl = "http://qt1.alivecdn.com/openapi/timeline/query?aliyunols=on&app=align&stream=sla02&format=ts";
+  var _url =
+      "http://qt1.alivecdn.com/align/sla02.m3u8?lhs_start_human_s_8=20211102200011&aliyunols=on";
+  var _timeLineUrl =
+      "http://qt1.alivecdn.com/openapi/timeline/query?aliyunols=on&app=align&stream=sla02&format=ts";
   GlobalKey _sliderDividerContainerKey = GlobalKey();
   double _dividerHeight = 0.0;
   double _dividerWidth = 0.0;
+  var _sliderWidth = 0.0;
+  var _sliderHeight = 0.0;
   var _sliderDividerLeft = 0.0;
   var _sliderValue = 0.0;
+
   //是否展示提示内容
   bool _showTipsWidget = false;
+
   //提示内容
   String _tipsContent;
   FlutterAliLiveShiftPlayer _flutterAliLiveShiftPlayer;
-  var _slider_max = 0.0;
-  var endTime = -1;
+  var _sliderMax = 0.0;
+  var mShiftStartTime = 0;
+  var mShiftEndTime = -1;
+  var timer;
 
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       RenderBox containerRenderBox =
           _sliderDividerContainerKey.currentContext.findRenderObject();
@@ -55,52 +65,72 @@ class _LiveShiftPageState extends State<LiveShiftPage> {
     _flutterAliLiveShiftPlayer?.destroy();
   }
 
-  void _initListener(){
-
+  void _initListener() {
     _flutterAliLiveShiftPlayer.setOnPrepared((playerId) {
       Fluttertoast.showToast(msg: "OnPrepared");
     });
 
     //时移时间更新监听事件
-    _flutterAliLiveShiftPlayer.setOnTimeShiftUpdater((currentTime, shiftStartTime, shiftEndTime, playerId) {
-      int currentLiveTime = _flutterAliLiveShiftPlayer.getCurrentLiveTime() as int;
-      int currentTime = _flutterAliLiveShiftPlayer.getCurrentTime() as int;
+    _flutterAliLiveShiftPlayer.setOnTimeShiftUpdater(
+        (currentTime, shiftStartTime, shiftEndTime, playerId) {
+      mShiftEndTime = shiftEndTime;
+      mShiftStartTime = shiftStartTime;
       var offsetTimeLen = shiftEndTime - shiftStartTime;
-      if (endTime - currentLiveTime < offsetTimeLen * 0.05) {
-        endTime = (currentLiveTime + offsetTimeLen * 0.1) as int;
-      }
-      // 123123123
-      // if (mControlView != null) {
-      //   mControlView.setPlayProgress(mCurrentTime);
-      //   mControlView.setLiveTime(mCurrentLiveTime);
-      //   mControlView.updateRange(mShiftStartTime, mEndTime);
-      // }
-      setState(() {
-        _updateRange(shiftStartTime,endTime);
+      _flutterAliLiveShiftPlayer.getCurrentLiveTime().then((value) {
+        int currentLiveTime = value;
+        if (mShiftEndTime - currentLiveTime < offsetTimeLen * 0.05) {
+          mShiftEndTime = (currentLiveTime + offsetTimeLen * 0.1).round();
+        }
+        _startUpdateTimer();
       });
-
     });
 
     //时移seek完成通知
-    _flutterAliLiveShiftPlayer.setOnSeekLiveCompletion((playTime,playerId) {
+    _flutterAliLiveShiftPlayer.setOnSeekLiveCompletion((playTime, playerId) {
       Fluttertoast.showToast(msg: "OnSeekLiveCompletion");
     });
 
-    _flutterAliLiveShiftPlayer.setOnLoadingStatusListener(loadingBegin: (playerId){
+    _flutterAliLiveShiftPlayer.setOnLoadingStatusListener(
+        loadingBegin: (playerId) {
       _tipsContent = "loadingBegin";
-    }, loadingProgress: (percent, netSpeed, playerId){
+    }, loadingProgress: (percent, netSpeed, playerId) {
       _tipsContent = "loading $percent";
-    }, loadingEnd: (playerId){
+    }, loadingEnd: (playerId) {
       _tipsContent = "loadingEnd";
     });
 
-    _flutterAliLiveShiftPlayer.setOnError((errorCode, errorExtra, errorMsg, playerId) {
+    _flutterAliLiveShiftPlayer
+        .setOnError((errorCode, errorExtra, errorMsg, playerId) {
       _tipsContent = "errorCode:$errorCode -- errorMsg:$errorMsg";
     });
   }
 
-  void _updateRange(var startTime,var endTime){
-    _slider_max = max(startTime * 1.0, endTime * 1.0);
+  void _startUpdateTimer() {
+    _flutterAliLiveShiftPlayer.getCurrentTime().then((value) {
+      setState(() {
+        _updateRange();
+        _sliderValue = value - mShiftStartTime * 1.0;
+        if(_sliderValue > _sliderMax){
+          _sliderValue = _sliderMax;
+        }
+      });
+      _flutterAliLiveShiftPlayer.getCurrentLiveTime().then((value){
+        var secondProgress = value - mShiftStartTime;
+        setState(() {
+          _sliderDividerLeft = secondProgress * 1.0 / _sliderMax * _dividerWidth;
+        });
+      });
+      if (timer != null) {
+        timer.cancel();
+      }
+      timer = new Timer.periodic(Duration(seconds: 1), (_) {
+        _startUpdateTimer();
+      });
+    });
+  }
+
+  void _updateRange() {
+    _sliderMax = max(mShiftStartTime * 1.0, mShiftEndTime * 1.0);
   }
 
   @override
@@ -156,18 +186,13 @@ class _LiveShiftPageState extends State<LiveShiftPage> {
               child: Slider(
                   key: _sliderDividerContainerKey,
                   min: 0,
-                  max: _slider_max as double,
+                  max: _sliderMax,
                   value: _sliderValue,
                   onChanged: (value) {
-                    _sliderValue = value;
+                    print("abc : seek $value");
+                    _flutterAliLiveShiftPlayer.seekToLiveTime((value + mShiftStartTime).round());
                     setState(() {
-                      if (value >= 100) {
-                        _sliderDividerLeft = _dividerWidth * value / 100 - 5;
-                      } else if (value <= 0) {
-                        _sliderDividerLeft = _dividerWidth * value / 100 + 5;
-                      } else {
-                        _sliderDividerLeft = _dividerWidth * value / 100;
-                      }
+                      _sliderValue = value;
                     });
                   })),
           Positioned(
@@ -190,23 +215,32 @@ class _LiveShiftPageState extends State<LiveShiftPage> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        InkWell(child: Text("准备"), onTap: () {
-          _flutterAliLiveShiftPlayer.prepare();
-        }),
-        InkWell(child: Text("播放"), onTap: () {
-          _flutterAliLiveShiftPlayer.play();
-        }),
-        InkWell(child: Text("停止"), onTap: () {
-          _flutterAliLiveShiftPlayer.stop();
-        })
+        InkWell(
+            child: Text("准备"),
+            onTap: () {
+              _flutterAliLiveShiftPlayer.prepare();
+            }),
+        InkWell(
+            child: Text("播放"),
+            onTap: () {
+              _flutterAliLiveShiftPlayer.play();
+            }),
+        InkWell(
+            child: Text("停止"),
+            onTap: () {
+              _flutterAliLiveShiftPlayer.stop();
+            })
       ],
     );
   }
 
-  Widget _buildTipsView(){
-    if(_showTipsWidget){
-      return Text(_tipsContent,style: TextStyle(fontSize: 20,color: Colors.red),);
-    }else{
+  Widget _buildTipsView() {
+    if (_showTipsWidget) {
+      return Text(
+        _tipsContent,
+        style: TextStyle(fontSize: 20, color: Colors.red),
+      );
+    } else {
       return Container();
     }
   }
@@ -214,7 +248,8 @@ class _LiveShiftPageState extends State<LiveShiftPage> {
   void onViewPlayerCreated(int viewId) {
     this._flutterAliLiveShiftPlayer.setPlayerView(viewId);
     int time = (new DateTime.now().millisecondsSinceEpoch / 1000).round();
-    var timeLineUrl = "$_timeLineUrl&lhs_start_unix_s_0=${time - 5 * 60}&lhs_end_unix_s_0=${time + 5 * 60}";
+    var timeLineUrl =
+        "$_timeLineUrl&lhs_start_unix_s_0=${time - 5 * 60}&lhs_end_unix_s_0=${time + 5 * 60}";
     _flutterAliLiveShiftPlayer.setDataSource(timeLineUrl, _url);
   }
 }
@@ -231,7 +266,7 @@ class CustomTrackShape extends RoundedRectSliderTrackShape {
     final double trackLeft = offset.dx + 10;
     final double trackTop =
         offset.dy + (parentBox.size.height - trackHeight) / 2;
-    final double trackWidth = parentBox.size.width - 10;
+    final double trackWidth = parentBox.size.width - 20;
     return Rect.fromLTWH(trackLeft, trackTop, trackWidth, trackHeight);
   }
 }
