@@ -765,14 +765,14 @@
     FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     AVPLiveTimeShift *player = (AVPLiveTimeShift*)proxy.player;
-    result(@(player.liveTime));
+    result(@(((int)player.liveTime)));
 }
 
 - (void)getCurrentTime:(NSArray*)arr {
     FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     AVPLiveTimeShift *player = (AVPLiveTimeShift*)proxy.player;
-    result(@(player.currentPlayTime));
+    result(@(((int)player.currentPlayTime)));
 }
 
 - (void)seekToLiveTime:(NSArray*)arr {

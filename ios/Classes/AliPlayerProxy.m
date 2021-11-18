@@ -8,6 +8,10 @@
 #import "AliPlayerProxy.h"
 #import "MJExtension.h"
 
+@interface AliPlayerProxy ()
+@property(nonatomic,strong) NSTimer *timer;
+@end
+
 @implementation AliPlayerProxy
 
 #pragma mark AVPDelegate
@@ -192,6 +196,24 @@
     self.player.playerView = fapv.view;
 }
 
+- (void)timerAction {
+    if ([_player isKindOfClass:AVPLiveTimeShift.class]) {
+        AVPTimeShiftModel *timeShiftModel = ((AVPLiveTimeShift*)self.player).timeShiftModel;
+        if (!timeShiftModel) {
+            return;
+        }
+        self.eventSink(@{kAliPlayerMethod:@"onUpdater",@"currentTime":@((int)(timeShiftModel.currentTime)),@"shiftStartTime":@((int)(timeShiftModel.startTime)),@"shiftEndTime":@((int)(timeShiftModel.endTime)),kAliPlayerId:_playerId});
+    }
+}
+
+- (void)dealloc
+{
+    if (_timer) {
+        [_timer invalidate];
+        _timer = nil;
+    }
+}
+
 #pragma --mark getters
 - (AliPlayer *)player{
     if (!_player) {
@@ -200,6 +222,9 @@
             ((AliListPlayer*)_player).stsPreloadDefinition = @"FD";
         }else if(_playerType==2){
             _player = [[AVPLiveTimeShift alloc] init];
+            _timer = [NSTimer timerWithTimeInterval:5 target:self selector:@selector(timerAction) userInfo:nil repeats:YES];
+            [[NSRunLoop mainRunLoop] addTimer:_timer forMode:NSDefaultRunLoopMode];
+            [_timer fire];
         }else{
             _player = [[AliPlayer alloc] init];
         }

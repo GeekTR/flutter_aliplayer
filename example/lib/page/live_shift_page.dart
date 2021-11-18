@@ -16,9 +16,9 @@ class LiveShiftPage extends StatefulWidget {
 
 class _LiveShiftPageState extends State<LiveShiftPage> {
   var _url =
-      "http://qt1.alivecdn.com/align/sla02.m3u8?lhs_start_human_s_8=20211102200011&aliyunols=on";
+      "http://pull.livetest2.aliyunlive.com/demo_use/nochange.m3u8?lhs_start_human_s_8=20211118112200&aliyunols=on";
   var _timeLineUrl =
-      "http://qt1.alivecdn.com/openapi/timeline/query?aliyunols=on&app=align&stream=sla02&format=ts";
+      "http://pull.livetest2.aliyunlive.com/openapi/timeline/query?aliyunols=on&app=demo_use&stream=nochange&format=ts";
   GlobalKey _sliderDividerContainerKey = GlobalKey();
   double _dividerHeight = 0.0;
   double _dividerWidth = 0.0;
