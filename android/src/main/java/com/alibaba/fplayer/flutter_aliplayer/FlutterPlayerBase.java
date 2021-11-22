@@ -348,7 +348,6 @@ public abstract class FlutterPlayerBase {
                     map.put("shiftStartTime",shiftStartTime);
                     map.put("shiftEndTime",shiftEndTime);
                     map.put("playerId",mPlayerId);
-                    System.out.println("abc : java onTimeShiftUpdate");
                     if(mFlutterAliPlayerListener != null){
                         mFlutterAliPlayerListener.onTimeShiftUpdater(map);
                     }

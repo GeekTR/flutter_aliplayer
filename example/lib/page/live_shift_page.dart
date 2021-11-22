@@ -22,13 +22,8 @@ class _LiveShiftPageState extends State<LiveShiftPage> {
   GlobalKey _sliderDividerContainerKey = GlobalKey();
   double _dividerHeight = 0.0;
   double _dividerWidth = 0.0;
-  var _sliderWidth = 0.0;
-  var _sliderHeight = 0.0;
   var _sliderDividerLeft = 0.0;
   var _sliderValue = 0.0;
-
-  //是否展示提示内容
-  bool _showTipsWidget = false;
 
   //提示内容
   String _tipsContent;
@@ -92,16 +87,26 @@ class _LiveShiftPageState extends State<LiveShiftPage> {
 
     _flutterAliLiveShiftPlayer.setOnLoadingStatusListener(
         loadingBegin: (playerId) {
-      _tipsContent = "loadingBegin";
+          setState(() {
+            _tipsContent = "loadingBegin";
+          });
+
     }, loadingProgress: (percent, netSpeed, playerId) {
-      _tipsContent = "loading $percent";
+          setState(() {
+            _tipsContent = "loading $percent";
+          });
+
     }, loadingEnd: (playerId) {
-      _tipsContent = "loadingEnd";
+          setState(() {
+            _tipsContent = "loadingEnd";
+          });
     });
 
     _flutterAliLiveShiftPlayer
         .setOnError((errorCode, errorExtra, errorMsg, playerId) {
-      _tipsContent = "errorCode:$errorCode -- errorMsg:$errorMsg";
+      setState(() {
+        _tipsContent = "errorCode:$errorCode -- errorMsg:$errorMsg";
+      });
     });
   }
 
@@ -110,14 +115,15 @@ class _LiveShiftPageState extends State<LiveShiftPage> {
       setState(() {
         _updateRange();
         _sliderValue = value - mShiftStartTime * 1.0;
-        if(_sliderValue > _sliderMax){
+        if (_sliderValue > _sliderMax) {
           _sliderValue = _sliderMax;
         }
       });
-      _flutterAliLiveShiftPlayer.getCurrentLiveTime().then((value){
+      _flutterAliLiveShiftPlayer.getCurrentLiveTime().then((value) {
         var secondProgress = value - mShiftStartTime;
         setState(() {
-          _sliderDividerLeft = secondProgress * 1.0 / _sliderMax * _dividerWidth;
+          _sliderDividerLeft =
+              secondProgress * 1.0 / _sliderMax * _dividerWidth;
         });
       });
       if (timer != null) {
@@ -189,8 +195,8 @@ class _LiveShiftPageState extends State<LiveShiftPage> {
                   max: _sliderMax,
                   value: _sliderValue,
                   onChanged: (value) {
-                    print("abc : seek $value");
-                    _flutterAliLiveShiftPlayer.seekToLiveTime((value + mShiftStartTime).round());
+                    _flutterAliLiveShiftPlayer
+                        .seekToLiveTime((value + mShiftStartTime).round());
                     setState(() {
                       _sliderValue = value;
                     });
@@ -235,7 +241,7 @@ class _LiveShiftPageState extends State<LiveShiftPage> {
   }
 
   Widget _buildTipsView() {
-    if (_showTipsWidget) {
+    if (_tipsContent.isNotEmpty) {
       return Text(
         _tipsContent,
         style: TextStyle(fontSize: 20, color: Colors.red),
