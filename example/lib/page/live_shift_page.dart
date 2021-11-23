@@ -26,7 +26,7 @@ class _LiveShiftPageState extends State<LiveShiftPage> {
   var _sliderValue = 0.0;
 
   //提示内容
-  String _tipsContent;
+  String _tipsContent = '';
   FlutterAliLiveShiftPlayer _flutterAliLiveShiftPlayer;
   var _sliderMax = 0.0;
   var mShiftStartTime = 0;
