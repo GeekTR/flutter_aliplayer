@@ -32,6 +32,10 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 
 public class FlutterAliPlayer extends FlutterPlayerBase {
+    
+    static{
+        System.loadLibrary("RtsSDK");
+    }
 
     private final Gson mGson;
     private ThumbnailHelper mThumbnailHelper;
