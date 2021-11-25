@@ -278,6 +278,11 @@ public abstract class FlutterPlayerBase {
                     mFlutterAliPlayerListener.onSubtitleHide(map);
                 }
             }
+
+            @Override
+            public void onSubtitleHeader(int trackIndex, String header) {
+
+            }
         });
 
         player.setOnInfoListener(new IPlayer.OnInfoListener() {
