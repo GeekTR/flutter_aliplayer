@@ -5,16 +5,20 @@ A new flutter plugin project , The project supports Android and iOS base on Aliy
 [iOS SDK URL](https://help.aliyun.com/document_detail/94428.html?spm=a2c4g.11186623.6.980.7fc22a88xOI4gc)
 
 ## Installation
+
 ```yaml
 dependencies:
   flutter_aliplayer: ^{{latest version}}
 ```
 
 ## 说明
+
   flutter 播放器在原生层是基于 Android 播放器 SDK 和 iOS 播放器 SDK 的。可能部分原生播放器 SDK 的接口有遗漏，在 flutter 播放器插件中没有暴露出来。目前我们已将源码提供出来，开发者可以自行添加。也可以通知给我们，我们会对遗漏的接口进行补充。
 
-播放控制
-1.播放流程
+## AliPlayer
+
+### 1. 播放控制
+
 ```dart
   ///1、创建播放器
   FlutterAliplayer fAliplayer = FlutterAliPlayerFactory.createAliPlayer();
@@ -131,64 +135,57 @@ dependencies:
   fAliplayer.prepare();
   ///说明：如果开启了自动播放，则调用 prepare 后即可，播放器在 prepare 成功后会自动播放，如果未开启自动播放，则需要在 setOnPrepard() 准备成功回调中，调用 fAliplayer.play() 开始播放
 
-2.暂停播放
-```dart
-  ///暂停播放后，恢复播放直接调用 play 即可
-  fAliplayer.pause();
+//暂停播放
+///暂停播放后，恢复播放直接调用 play 即可
+fAliplayer.pause();
 
-3.停止播放
-```dart
-  ///停止播放后，恢复播放需要重新走一遍播放流程：prepare --> play
-  fAliplayer.stop();
+//停止播放
+///停止播放后，恢复播放需要重新走一遍播放流程：prepare --> play
+fAliplayer.stop();
 
-4.销毁
-```dart
-  fAliplayer.release();
+//销毁
+fAliplayer.release();
 
-5.seek
-```dart
-  ///seekMode 可选值：FlutterAvpdef.ACCURATE(精准seek) 和 FlutterAvpdef.INACCURATE(非精准seek)
-  fAliplayer.seek(position,seekMode);
+//seek
+///seekMode 可选值：FlutterAvpdef.ACCURATE(精准seek) 和 FlutterAvpdef.INACCURATE(非精准seek)
+fAliplayer.seek(position,seekMode);
 
-6.循环播放
-```dart
-  fAliplayer.setLoop(true);
+//循环播放
+fAliplayer.setLoop(true);
 
-7.静音、音量控制
-```dart
-  fAliplayer.setMute(true);
-  ///设置播放器音量,范围0~1.
-  fAliPlayer.setVolume(1);
+//静音、音量控制
+fAliplayer.setMute(true);
+///设置播放器音量,范围0~1.
+fAliPlayer.setVolume(1);
 
-8.倍速播放
-```dart
-  ///可选值：0.5，1.0，1.5，2.0
-  fAliplayer.setRate(1.0);
+//倍速播放
+///可选值：0.5，1.0，1.5，2.0
+fAliplayer.setRate(1.0);
 
-9.切换多码率，自动码率切换
-```dart
-  ///在prepare成功之后，通过getMediaInfo可以获取到各个码流的信息，即TrackInfo
-  fAliplayer.getMediaInfo().then((value) {
-    //value 为 map，value['tracks'] 可以获取对应的 TrackInfos 列表信息，可以参考 Demo 中 AVPMediaInfo info = AVPMediaInfo.fromJson(value); 如何解析 TrackInfo
-  };
-  ///在播放过程中，可以通过调用播放器的selectTrack方法切换播放的码流,参数为 TrackInfo 中的 trackIndex，切换的结果会在OnTrackChangedListener监听之后会回调
-  fAliplayer.selectTrack(index);
+//切换多码率，自动码率切换
+///在prepare成功之后，通过getMediaInfo可以获取到各个码流的信息，即TrackInfo
+fAliplayer.getMediaInfo().then((value) {
+//value 为 map，value['tracks'] 可以获取对应的 TrackInfos 列表信息，可以参考 Demo 中 AVPMediaInfo info = AVPMediaInfo.fromJson(value); 如何解析 TrackInfo
+};
+///在播放过程中，可以通过调用播放器的selectTrack方法切换播放的码流,参数为 TrackInfo 中的 trackIndex，切换的结果会在OnTrackChangedListener监听之后会回调
+fAliplayer.selectTrack(index);
   
-  ///自动码率切换
-  fAliplayer.selectTrack(-1);
+///自动码率切换
+fAliplayer.selectTrack(-1);
 
-10.画面旋转、填充、镜像操作
-```dart
-  //设置画面的镜像模式：水平镜像，垂直镜像，无镜像。
-  fAliplayer.setMirrorMode(FlutterAvpdef.AVP_MIRRORMODE_NONE);
-  //设置画面旋转模式：旋转0度，90度，180度，270度
-  fAliplayer.setRotateMode(FlutterAvpdef.AVP_ROTATE_0);
-  //设置画面缩放模式：宽高比填充，宽高比适应，拉伸填充
-  fAliplayer.setScalingMode(FlutterAvpdef.AVP_SCALINGMODE_SCALETOFILL);
+//画面旋转、填充、镜像操作
+//设置画面的镜像模式：水平镜像，垂直镜像，无镜像。
+fAliplayer.setMirrorMode(FlutterAvpdef.AVP_MIRRORMODE_NONE);
+//设置画面旋转模式：旋转0度，90度，180度，270度
+fAliplayer.setRotateMode(FlutterAvpdef.AVP_ROTATE_0);
+//设置画面缩放模式：宽高比填充，宽高比适应，拉伸填充
+fAliplayer.setScalingMode(FlutterAvpdef.AVP_SCALINGMODE_SCALETOFILL);
+```
 
+### 2. 边播边缓存
 
-边播边缓存
   需要在 prepare 之前设置给播放器
+
 ```dart
 var map = {
   "mMaxSizeMB": _mMaxSizeMBController.text,///缓存目录的最大占用空间
@@ -197,10 +194,12 @@ var map = {
   "mEnable": mEnableCacheConfig,///是否开启缓存功能
 };
 fAliplayer.setCacheConfig(map);
+```
 
+### 3. 播放器其他配置
 
-播放器其他配置
-  需要在 prepare 之前设置给播放器
+ 需要在 prepare 之前设置给播放器
+
 ```dart
 var configMap = {
   'mStartBufferDuration':_mStartBufferDurationController.text,///起播缓冲区时长
@@ -218,47 +217,124 @@ var configMap = {
   'mDisableAudio': mDisableAudio///禁用Audio
 };
 widget.fAliplayer.setConfig(configMap);
-  
+```
 
+## AliListPlayer
 
-列表播放器
-  1.创建列表播放器
 ```dart
+//1.创建列表播放器
 FlutterAliListPlayer fAliListPlayer = FlutterAliPlayerFactory.createAliListPlayer();
 
-  2.添加资源、移除资源
-    列表播放器目前只支持两种播放方式，URL 和 STS
+//2.添加资源、移除资源。列表播放器目前只支持两种播放方式，URL 和 STS    
+///uid是视频的唯一标志。用于区分视频是否一样。如果uid一样，则认为是一样的
+fAliListPlayer.addUrlSource(url,uid);
+fAliListPlayer.addVidSource(vid,uid);
+fAliListPlayer.removeSource(uid);
+
+//设置预加载个数
+fAliListPlayer.setPreloadCount(count);
+
+//播放视频源
+///uid 为必填项，如果是 URL 播放方式，只需要 uid 即可，如果是 STS 方式，则需要填写 STS 信息
+fAliListPlayer.moveTo();
+```
+
+## AliLiveShiftPlayer
+
 ```dart
-  ///uid是视频的唯一标志。用于区分视频是否一样。如果uid一样，则认为是一样的
-  fAliListPlayer.addUrlSource(url,uid);
-  fAliListPlayer.addVidSource(vid,uid);
-  fAliListPlayer.removeSource(uid);
+//创建直播时移播放器
+FlutterAliLiveShiftPlayer _flutterAliLiveShiftPlayer = FlutterAliPlayerFactory.createAliLiveShiftPlayer();
 
-  3.设置预加载个数
-```dart
-  fAliListPlayer.setPreloadCount(count);
+//设置渲染 View
+@override
+  Widget build(BuildContext context) {
+    var x = 0.0;
+    var y = 0.0;
+    Orientation orientation = MediaQuery.of(context).orientation;
+    var width = MediaQuery.of(context).size.width;
 
-  4.播放视频源
-```dart
-  ///uid 为必填项，如果是 URL 播放方式，只需要 uid 即可，如果是 STS 方式，则需要填写 STS 信息
-  fAliListPlayer.moveTo();
+    var height;
+    if (orientation == Orientation.portrait) {
+      height = width * 9.0 / 16.0;
+    } else {
+      height = MediaQuery.of(context).size.height;
+    }
+    AliPlayerView aliPlayerView = AliPlayerView(
+        onCreated: onViewPlayerCreated,
+        x: x,
+        y: y,
+        width: width,
+        height: height);
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Plugin for LiveShiftPlayer'),
+      ),
+      body: Column(children: [
+        Container(
+          width: width,
+          height: height,
+          child: aliPlayerView,
+        ),
+      ]),
+    );
+  }
+
+///setPlayerView(viewId) 给播放器设置渲染 View
+///setDataSource(timelineUrl,url) 设置播放源，其中 url 为播放地址，timelineurl 为时移请求地址
+void onViewPlayerCreated(int viewId) {
+    this._flutterAliLiveShiftPlayer.setPlayerView(viewId);
+    int time = (new DateTime.now().millisecondsSinceEpoch / 1000).round();
+    var timeLineUrl =
+        "$_timeLineUrl&lhs_start_unix_s_0=${time - 5 * 60}&lhs_end_unix_s_0=${time + 5 * 60}";
+    _flutterAliLiveShiftPlayer.setDataSource(timeLineUrl, _url);
+  }
+}
+
+///时移到某个时间
+_flutterAliLiveShiftPlayer.seekToLiveTime();
+
+///获取当前直播的播放时间
+flutterAliLiveShiftPlayer.getCurrentTime().then((value) {});
+
+///获取当前直播的现实时间
+_flutterAliLiveShiftPlayer.getCurrentLiveTime().then((value) {});
+
+///准备
+_flutterAliLiveShiftPlayer.prepare();
+
+///开始播放
+_flutterAliLiveShiftPlayer.play();
+
+///停止
+_flutterAliLiveShiftPlayer?.stop();
+///销毁
+_flutterAliLiveShiftPlayer?.destroy();
+
+///时移seek完成通知。playerTime:实际播放的时间
+_flutterAliLiveShiftPlayer.setOnSeekLiveCompletion(playTime, playerId) {});
+
+//时移时间更新监听事件。currentTime - 当前现实时间，shiftStartTime - 可时移的起始时间，shiftEndTime - 可时移的结束时间
+_flutterAliLiveShiftPlayer.setOnTimeShiftUpdater((currentTime, shiftStartTime, shiftEndTime, playerId) {});
+```
 
 
-视频下载
+
+## 下载
+
   可选步骤,如果是安全下载，需要配置自己的加密校验文件到 SDK 中，普通下载则不需要
-```dart
-  FlutterAliPlayerFactory.initService(byteData);
 
-  1.创建下载器
 ```dart
-  FlutterAliDownloader donwloader = FlutterAliDownloader.init();
-  ///设置保存路径
-  donwloader.setSaveDir(path)
+//配置加密校验文件，尽可能提前配置(可选)  
+FlutterAliPlayerFactory.initService(byteData);
 
-  2.开始下载
-```dart
-  ///1.prepare
-  ///参数说明：type 可选值为 FlutterAvpdef.DOWNLOADTYPE_STS / FlutterAvpdef.DOWNLOADTYPE_AUTH 。当 type 为 DOWNLOADTYPE_STS 时候，必填参数为： {vid,accessKeyId,accessKeySecret,securityToken}，当 type 为 DOWNLOADTYPE_AUTH 时，必须填参数为 {vid,playAuth}
+//创建下载器
+FlutterAliDownloader donwloader = FlutterAliDownloader.init();
+///设置保存路径
+donwloader.setSaveDir(path)
+
+//开始下载
+///1.prepare
+///参数说明：type 可选值为 FlutterAvpdef.DOWNLOADTYPE_STS / FlutterAvpdef.DOWNLOADTYPE_AUTH 。当 type 为 DOWNLOADTYPE_STS 时候，必填参数为： {vid,accessKeyId,accessKeySecret,securityToken}，当 type 为 DOWNLOADTYPE_AUTH 时，必须填参数为 {vid,playAuth}
   downloader.prepare(type, vid).then((value) {
       //value 为 map，对应 Demo 中的 DownloadModel 自定义下载类
       DownloadModel downloadModel = DownloadModel.fromJson(value);
@@ -280,11 +356,9 @@ FlutterAliListPlayer fAliListPlayer = FlutterAliPlayerFactory.createAliListPlaye
       });
   });
 
-  3.停止下载、删除和释放
-```dart
-  downloader.stop(vid, index)
-  //可以删除下载的本地文件
-  downloader.delete(vid, index)
-  downloader.release(vid, index)
-
-
+//停止下载、删除和释放
+downloader.stop(vid, index)
+//可以删除下载的本地文件
+downloader.delete(vid, index)
+downloader.release(vid, index)
+```
