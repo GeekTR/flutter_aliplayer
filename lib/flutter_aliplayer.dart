@@ -18,7 +18,7 @@ typedef OnVideoSizeChanged = void Function(
 typedef OnSnapShot = void Function(String path, String playerId);
 
 typedef OnSeekComplete = void Function(String playerId);
-typedef OnSeiData = void Function(String playerId);
+typedef OnSeiData = void Function(String data,String playerId);
 
 typedef OnLoadingBegin = void Function(String playerId);
 typedef OnLoadingProgress = void Function(
@@ -558,6 +558,10 @@ class FlutterAliplayer {
         }
         break;
       case "onSeiData":
+        if(player.onSeiData !=null){
+          String data = event['data'];
+          player.onSeiData!(data,playerId);
+        }
         break;
       case "onLoadingBegin":
         if (player.onLoadingBegin != null) {
