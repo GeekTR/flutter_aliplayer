@@ -18,7 +18,7 @@ typedef OnVideoSizeChanged = void Function(
 typedef OnSnapShot = void Function(String path, String playerId);
 
 typedef OnSeekComplete = void Function(String playerId);
-typedef OnSeiData = void Function(int type,String data,String playerId);
+typedef OnSeiData = void Function(int type, String data, String playerId);
 
 typedef OnLoadingBegin = void Function(String playerId);
 typedef OnLoadingProgress = void Function(
@@ -33,6 +33,7 @@ typedef OnSubtitleShow = void Function(
     int trackIndex, int subtitleID, String subtitle, String playerId);
 typedef OnSubtitleHide = void Function(
     int trackIndex, int subtitleID, String playerId);
+typedef OnSubtitleHeader = void Function(int trackIndex, String head, String playerId);
 typedef OnTrackReady = void Function(String playerId);
 
 typedef OnInfo = void Function(
@@ -81,6 +82,7 @@ class FlutterAliplayer {
   OnSubtitleExtAdded? onSubtitleExtAdded;
   OnSubtitleHide? onSubtitleHide;
   OnSubtitleShow? onSubtitleShow;
+  OnSubtitleHeader? onSubtitleHeader;
 
   //直播时移
   OnSeekLiveCompletion? onSeekLiveCompletion;
@@ -127,7 +129,7 @@ class FlutterAliplayer {
     this.onError = onError;
   }
 
-  void setOnSeiData(OnSeiData seiData){
+  void setOnSeiData(OnSeiData seiData) {
     this.onSeiData = seiData;
   }
 
@@ -180,6 +182,10 @@ class FlutterAliplayer {
 
   void setOnSubtitleHide(OnSubtitleHide onSubtitleHide) {
     this.onSubtitleHide = onSubtitleHide;
+  }
+
+  void setOnSubtitleHeader(OnSubtitleHeader onSubtitleHeader){
+    this.onSubtitleHeader = onSubtitleHeader;
   }
 
   void setOnSubtitleExtAdded(OnSubtitleExtAdded onSubtitleExtAdded) {
@@ -523,7 +529,8 @@ class FlutterAliplayer {
   void _onEvent(dynamic event) {
     String method = event[EventChanneldef.TYPE_KEY];
     String playerId = event['playerId'] ?? '';
-    FlutterAliplayer player = FlutterAliPlayerFactory.instanceMap[playerId]??this;
+    FlutterAliplayer player =
+        FlutterAliPlayerFactory.instanceMap[playerId] ?? this;
     switch (method) {
       case "onPrepared":
         if (player.onPrepared != null) {
@@ -558,10 +565,10 @@ class FlutterAliplayer {
         }
         break;
       case "onSeiData":
-        if(player.onSeiData !=null){
+        if (player.onSeiData != null) {
           String data = event['data'];
           int type = event['type'];
-          player.onSeiData!(type,data,playerId);
+          player.onSeiData!(type, data, playerId);
         }
         break;
       case "onLoadingBegin":
@@ -667,8 +674,15 @@ class FlutterAliplayer {
           player.onSubtitleHide!(trackIndex, subtitleID, playerId);
         }
         break;
+      case "onSubtitleHeader":
+        if(player.onSubtitleHeader != null){
+          int trackIndex = event['trackIndex'];
+          String header = event['header'];
+          player.onSubtitleHeader!(trackIndex,header,playerId);
+        }
+        break;
       case "onUpdater":
-        if(player.onTimeShiftUpdater != null){
+        if (player.onTimeShiftUpdater != null) {
           var currentTime = event['currentTime'];
           var shiftStartTime = event['shiftStartTime'];
           var shiftEndTime = event['shiftEndTime'];
@@ -677,7 +691,7 @@ class FlutterAliplayer {
         }
         break;
       case "onSeekLiveCompletion":
-        if(player.onSeekLiveCompletion != null){
+        if (player.onSeekLiveCompletion != null) {
           var playTime = event['playTime'];
           player.onSeekLiveCompletion!(playTime, playerId);
         }
