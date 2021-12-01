@@ -281,7 +281,15 @@ public abstract class FlutterPlayerBase {
 
             @Override
             public void onSubtitleHeader(int trackIndex, String header) {
+                Map<String,Object> map = new HashMap<>();
+                map.put("method","onSubtitleHeader");
+                map.put("trackIndex",trackIndex);
+                map.put("header",header);
+                map.put("playerId",mPlayerId);
 
+                if(mFlutterAliPlayerListener != null){
+                    mFlutterAliPlayerListener.onSubtitleHeader(map);
+                }
             }
         });
 

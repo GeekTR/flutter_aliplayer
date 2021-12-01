@@ -41,6 +41,8 @@ public interface FlutterAliPlayerListener {
 
     void onSubtitleHide(Map<String,Object> map);
 
+    void onSubtitleHeader(Map<String,Object> map);
+
     void onInfo(Map<String,Object> map);
 
     void onError(Map<String,Object> map);

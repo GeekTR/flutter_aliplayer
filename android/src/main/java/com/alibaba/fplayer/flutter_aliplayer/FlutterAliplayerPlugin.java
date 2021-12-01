@@ -322,6 +322,11 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
             }
 
             @Override
+            public void onSubtitleHeader(Map<String, Object> map) {
+                mEventSink.success(map);
+            }
+
+            @Override
             public void onInfo(Map<String, Object> map) {
                 mEventSink.success(map);
             }
