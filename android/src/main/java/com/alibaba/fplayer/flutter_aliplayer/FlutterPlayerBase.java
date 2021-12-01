@@ -177,10 +177,10 @@ public abstract class FlutterPlayerBase {
             public void onSeiData(int type, byte[] bytes) {
                 Map<String,Object> map = new HashMap<>();
                 map.put("method","onSeiData");
+                map.put("type",type);
+                map.put("data",new String(bytes));
                 map.put("playerId",mPlayerId);
 
-                //TODO
-//                mEventSink.success(map);
                 if(mFlutterAliPlayerListener != null){
                     mFlutterAliPlayerListener.onSeiData(map);
                 }
