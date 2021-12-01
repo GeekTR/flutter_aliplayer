@@ -44,7 +44,7 @@ class _VideoGridPageState extends State<VideoGridPage>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    fAliListPlayer = FlutterAliPlayerFactory.createAliListPlayer();
+    fAliListPlayer = FlutterAliPlayerFactory.createAliListPlayer(playerId: 'aliListPlayer');
     fAliListPlayer.setAutoPlay(true);
       fAliListPlayer.setLoop(true);
       var configMap = {
