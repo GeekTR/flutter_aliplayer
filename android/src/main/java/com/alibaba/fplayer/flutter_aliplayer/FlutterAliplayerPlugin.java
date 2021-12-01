@@ -154,7 +154,8 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
                 }
 
             default:
-                if(playerType == 0){
+                String otherPlayerId = call.argument("playerId");
+                if(mFlutterAliPlayerMap.containsKey(otherPlayerId)){
                     String playerId = call.argument("playerId");
                     FlutterAliPlayer mCurrentFlutterAliPlayer = mFlutterAliPlayerMap.get(playerId);
                     if(call.method.equals("destroy")){
@@ -163,18 +164,18 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
                     if(mCurrentFlutterAliPlayer != null){
                         mCurrentFlutterAliPlayer.onMethodCall(call,result);
                     }
-                }else if(playerType == 1){
-                    if(mFlutterAliListPlayer != null){
-                        mFlutterAliListPlayer.onMethodCall(call,result);
-                    }
-                }else if(playerType == 2){
-                    String playerId = call.argument("playerId");
-                    FlutterAliLiveShiftPlayer mCurrentFlutterAliLiveShiftPlayer = mFlutterAliLiveShiftPlayerMap.get(playerId);
+                }else if(mFlutterAliLiveShiftPlayerMap.containsKey(otherPlayerId)){
+//                    String playerId = call.argument("playerId");
+                    FlutterAliLiveShiftPlayer mCurrentFlutterAliLiveShiftPlayer = mFlutterAliLiveShiftPlayerMap.get(otherPlayerId);
                     if(call.method.equals("destroy")){
-                        mFlutterAliLiveShiftPlayerMap.remove(playerId);
+                        mFlutterAliLiveShiftPlayerMap.remove(otherPlayerId);
                     }
                     if(mCurrentFlutterAliLiveShiftPlayer != null){
                         mCurrentFlutterAliLiveShiftPlayer.onMethodCall(call,result);
+                    }
+                }else{
+                    if(mFlutterAliListPlayer != null){
+                        mFlutterAliListPlayer.onMethodCall(call,result);
                     }
                 }
 
