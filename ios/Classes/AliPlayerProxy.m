@@ -38,7 +38,7 @@
 - (void)onSEIData:(AliPlayer*)player type:(int)type data:(NSData *)data {
     NSString *str = [NSString stringWithUTF8String:data.bytes];
     NSLog(@"SEI: %@", str);
-    self.eventSink(@{kAliPlayerMethod:@"onSeiData",@"data":str?:@"",kAliPlayerId:_playerId});
+    self.eventSink(@{kAliPlayerMethod:@"onSeiData",@"data":str?:@"",@"type":@(type),kAliPlayerId:_playerId});
 }
 
 /**
