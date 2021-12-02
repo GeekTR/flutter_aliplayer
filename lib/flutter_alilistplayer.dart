@@ -5,6 +5,9 @@ import 'flutter_aliplayer.dart';
 export 'flutter_aliplayer.dart';
 
 class FlutterAliListPlayer extends FlutterAliplayer {
+
+  String playerId = 'listPlayerDefault';
+
   FlutterAliListPlayer.init(String id) : super.init(id);
 
   @override

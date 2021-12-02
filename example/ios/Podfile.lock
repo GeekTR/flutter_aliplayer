@@ -1,37 +1,37 @@
 PODS:
-  - AliPlayerSDK_iOS (5.4.0):
-    - AliPlayerSDK_iOS/AliPlayerSDK (= 5.4.0)
-  - AliPlayerSDK_iOS/AliPlayerSDK (5.4.0)
-  - AliPlayerSDK_iOS_ARTC (5.4.0):
-    - AliPlayerSDK_iOS_ARTC/AliPlayerSDK (= 5.4.0)
-  - AliPlayerSDK_iOS_ARTC/AliPlayerSDK (5.4.0)
+  - AliPlayerSDK_iOS (5.4.2.0):
+    - AliPlayerSDK_iOS/AliPlayerSDK (= 5.4.2.0)
+  - AliPlayerSDK_iOS/AliPlayerSDK (5.4.2.0)
+  - AliPlayerSDK_iOS_ARTC (5.4.2.0):
+    - AliPlayerSDK_iOS_ARTC/AliPlayerSDK (= 5.4.2.0)
+  - AliPlayerSDK_iOS_ARTC/AliPlayerSDK (5.4.2.0)
   - connectivity (0.0.1):
     - Flutter
     - Reachability
   - Flutter (1.0.0)
   - flutter_aliplayer (0.0.1):
-    - AliPlayerSDK_iOS (= 5.4.0)
+    - AliPlayerSDK_iOS (= 5.4.2.0)
     - Flutter
     - MJExtension
   - flutter_aliplayer_artc (0.0.1):
-    - AliPlayerSDK_iOS_ARTC (= 5.4.0)
+    - AliPlayerSDK_iOS_ARTC (= 5.4.2.0)
     - Flutter
   - flutter_aliplayer_rts (0.0.1):
     - Flutter
-    - RtsSDK (= 1.5.0)
+    - RtsSDK (= 1.9.0)
   - fluttertoast (0.0.2):
     - Flutter
     - Toast
   - FMDB (2.7.5):
     - FMDB/standard (= 2.7.5)
   - FMDB/standard (2.7.5)
-  - MJExtension (3.3.0)
+  - MJExtension (3.4.0)
   - path_provider (0.0.1):
     - Flutter
   - qrcode_reader (0.0.1):
     - Flutter
   - Reachability (3.2)
-  - RtsSDK (1.5.0)
+  - RtsSDK (1.9.0)
   - sqflite (0.0.2):
     - Flutter
     - FMDB (>= 2.7.5)
@@ -79,20 +79,20 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/sqflite/ios"
 
 SPEC CHECKSUMS:
-  AliPlayerSDK_iOS: adb99e9427d1ee5357053fe49b9c1dfe25af1ef8
-  AliPlayerSDK_iOS_ARTC: 0303aa5405311ff3b01bbebbbe1c9d6876f90ae3
+  AliPlayerSDK_iOS: 6f7cc2a5a6634c8638d59d50f5675640efbd4aa7
+  AliPlayerSDK_iOS_ARTC: 8e9fd4731614d22d4a0e9d3feca67a501d123ee7
   connectivity: c4130b2985d4ef6fd26f9702e886bd5260681467
   Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
-  flutter_aliplayer: ceb07021f2af6498550bd2726d1e1bfeda36627a
-  flutter_aliplayer_artc: ca6bbc436f76835c4eba2b328a904e4f76d070f9
-  flutter_aliplayer_rts: 09575da8f791a3dd05e86b52cf40769565b02c52
+  flutter_aliplayer: 960c333017a8d10de9ef5fcfeb357d5cf41c5207
+  flutter_aliplayer_artc: c8743b8d693a4d94ecc95c24f24d6aa1c3d8b8a2
+  flutter_aliplayer_rts: 115ae11a926df35e158e4b4b5a4b4b7c65732023
   fluttertoast: 6122fa75143e992b1d3470f61000f591a798cc58
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
-  MJExtension: 01704cca2b60a214c10761b6491eab74069d68a9
+  MJExtension: 6c15c7b93398447252c0defdb8d69d02d218a41e
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
   qrcode_reader: 09b34d43b4c08fe5b63a6e56c96789bcea7b9148
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
-  RtsSDK: c2ec9dc1a75306a93143773b40bc5e65c0be23b6
+  RtsSDK: 0c74bbd14505b576102212e0e013f49bc753db3a
   sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
 

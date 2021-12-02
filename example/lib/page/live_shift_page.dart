@@ -49,7 +49,6 @@ class _LiveShiftPageState extends State<LiveShiftPage> {
 
     _flutterAliLiveShiftPlayer =
         FlutterAliPlayerFactory.createAliLiveShiftPlayer(playerId: "aliLiveShiftPlayer");
-
     _initListener();
   }
 

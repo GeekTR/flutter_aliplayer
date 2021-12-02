@@ -3,6 +3,8 @@ import 'package:flutter_aliplayer/flutter_aliplayer_factory.dart';
 
 class FlutterAliLiveShiftPlayer extends FlutterAliplayer {
 
+  String playerId = 'liveShiftPlayerDefault';
+
   FlutterAliLiveShiftPlayer.init(String? id) : super.init(id);
 
   @override

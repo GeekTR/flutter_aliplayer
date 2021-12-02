@@ -117,21 +117,21 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "5.4.2"
+    version: "5.4.3-dev.3"
   flutter_aliplayer_artc:
     dependency: "direct main"
     description:
       name: flutter_aliplayer_artc
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "5.4.0"
+    version: "5.4.2"
   flutter_aliplayer_rts:
     dependency: "direct main"
     description:
       name: flutter_aliplayer_rts
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.5.0"
+    version: "1.9.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
