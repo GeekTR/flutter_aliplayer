@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_aliplayer/flutter_alilistplayer.dart';
@@ -31,5 +32,11 @@ class FlutterAliPlayerFactory {
 
   static Future<void> initService(Uint8List byteData) {
     return methodChannel.invokeMethod("initService", byteData);
+  }
+
+  static void loadRtsLibrary(){
+    if(Platform.isAndroid){
+      methodChannel.invokeMethod("loadRtsLibrary");
+    }
   }
 }

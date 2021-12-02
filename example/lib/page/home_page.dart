@@ -40,6 +40,7 @@ class _MyAppState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    FlutterAliPlayerFactory.loadRtsLibrary();
     _loadEncrypted();
     _downloadPage = DownloadPage();
     SystemChrome.setPreferredOrientations(

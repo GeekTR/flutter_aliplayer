@@ -102,6 +102,9 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
                 PrivateService.initService(flutterPluginBinding.getApplicationContext(),datas);
                 result.success(null);
                 break;
+            case "loadRtsLibrary":
+                System.loadLibrary("RtsSDK");
+                break;
             case "getSDKVersion":
                 result.success(AliPlayerFactory.getSdkVersion());
                 break;
