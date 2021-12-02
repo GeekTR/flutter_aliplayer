@@ -110,6 +110,16 @@
 }
 
 /**
+ @brief 字幕头信息回调，ass字幕，如果实现了此回调，则播放器不会渲染字幕，由调用者完成渲染，否则播放器自动完成字幕的渲染
+ @param player 播放器player指针
+ @param trackIndex 字幕显示的索引号
+ @param header 头内容
+ */
+- (void)onSubtitleHeader:(AliPlayer *)player trackIndex:(int)trackIndex Header:(NSString *)header{
+    self.eventSink(@{kAliPlayerMethod:@"onSubtitleHeader",@"trackIndex":@(trackIndex),@"header":header?:@"",kAliPlayerId:_playerId});
+}
+
+/**
  @brief 外挂字幕被添加
  @param player 播放器player指针
  @param trackIndex 字幕显示的索引号
