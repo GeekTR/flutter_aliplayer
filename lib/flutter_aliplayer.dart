@@ -33,13 +33,14 @@ typedef OnSubtitleShow = void Function(
     int trackIndex, int subtitleID, String subtitle, String playerId);
 typedef OnSubtitleHide = void Function(
     int trackIndex, int subtitleID, String playerId);
-typedef OnSubtitleHeader = void Function(int trackIndex, String head, String playerId);
+typedef OnSubtitleHeader = void Function(
+    int trackIndex, String head, String playerId);
 typedef OnTrackReady = void Function(String playerId);
 
 typedef OnInfo = void Function(
     int infoCode, int extraValue, String extraMsg, String playerId);
 typedef OnError = void Function(
-    int errorCode, String errorExtra, String errorMsg, String playerId);
+    int errorCode, String? errorExtra, String? errorMsg, String playerId);
 typedef OnCompletion = void Function(String playerId);
 
 typedef OnTrackChanged = void Function(dynamic value, String playerId);
@@ -184,7 +185,7 @@ class FlutterAliplayer {
     this.onSubtitleHide = onSubtitleHide;
   }
 
-  void setOnSubtitleHeader(OnSubtitleHeader onSubtitleHeader){
+  void setOnSubtitleHeader(OnSubtitleHeader onSubtitleHeader) {
     this.onSubtitleHeader = onSubtitleHeader;
   }
 
@@ -606,8 +607,8 @@ class FlutterAliplayer {
       case "onError":
         if (player.onError != null) {
           int errorCode = event['errorCode'];
-          String errorExtra = event['errorExtra'];
-          String errorMsg = event['errorMsg'];
+          String? errorExtra = event['errorExtra'];
+          String? errorMsg = event['errorMsg'];
           player.onError!(errorCode, errorExtra, errorMsg, playerId);
         }
         break;
@@ -675,10 +676,10 @@ class FlutterAliplayer {
         }
         break;
       case "onSubtitleHeader":
-        if(player.onSubtitleHeader != null){
+        if (player.onSubtitleHeader != null) {
           int trackIndex = event['trackIndex'];
           String header = event['header'];
-          player.onSubtitleHeader!(trackIndex,header,playerId);
+          player.onSubtitleHeader!(trackIndex, header, playerId);
         }
         break;
       case "onUpdater":
