@@ -79,7 +79,7 @@ public class FlutterAliDownloader implements FlutterPlugin, MethodChannel.Method
                         prepare(vidAuth, index, result);
                     }
                 }
-                result.success(null);
+//                result.success(null);
             }
             break;
             case "setSaveDir": {
