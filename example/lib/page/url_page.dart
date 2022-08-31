@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_aliplayer_example/config.dart';
 import 'package:flutter_aliplayer_example/page/player_page.dart';
 import 'package:flutter_aliplayer_example/util/common_utils.dart';
@@ -55,7 +54,7 @@ class _UrlPageState extends State<UrlPage> {
             ),
             keyboardType: TextInputType.number,
           ),
-          RaisedButton(
+          ElevatedButton(
             child: Text("开始播放"),
             onPressed: () {
               if (_inPushing == true) {

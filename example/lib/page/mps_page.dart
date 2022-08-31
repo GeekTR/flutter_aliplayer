@@ -166,7 +166,7 @@ class _MpsPagePageState extends State<MpsPage> {
 
             Row(
               children: [
-                RaisedButton(
+                ElevatedButton(
                   child: Text("MPS播放"),
                   onPressed: () {
                     List<String> _definitionList = List();
@@ -220,7 +220,7 @@ class _MpsPagePageState extends State<MpsPage> {
                 Expanded(
                   child: SizedBox(),
                 ),
-                RaisedButton(
+                ElevatedButton(
                   child: Text("清除"),
                   onPressed: () {
                     _vidController.clear();

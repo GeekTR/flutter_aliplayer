@@ -153,7 +153,7 @@ class _SettingHomePageState extends State<SettingPage> {
     if (Platform.isAndroid) {
       return Row(
         children: [
-          RaisedButton(
+          ElevatedButton(
             child: Text("HEVC黑名单"),
             onPressed: () {
               FlutterAliplayer.createDeviceInfo().then((value) {
@@ -165,7 +165,7 @@ class _SettingHomePageState extends State<SettingPage> {
           SizedBox(
             width: 10.0,
           ),
-          RaisedButton(
+          ElevatedButton(
             child: Text("H264黑名单"),
             onPressed: () {
               FlutterAliplayer.createDeviceInfo().then((value) {
@@ -199,7 +199,7 @@ class _SettingHomePageState extends State<SettingPage> {
             border: OutlineInputBorder(),
           ),
         ),
-        RaisedButton(
+        ElevatedButton(
           child: Text("设置DNS"),
           onPressed: () {
             String dns = _dnsTextEditingController.text;

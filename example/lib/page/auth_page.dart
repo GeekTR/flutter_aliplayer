@@ -132,7 +132,7 @@ class _AuthPageState extends State<AuthPage> {
 
             Row(
               children: [
-                RaisedButton(
+                ElevatedButton(
                   child: Text("AUTH播放"),
                   onPressed: () {
                     if (_inPushing == true) {
@@ -175,7 +175,7 @@ class _AuthPageState extends State<AuthPage> {
                 Expanded(
                   child: SizedBox(),
                 ),
-                RaisedButton(
+                ElevatedButton(
                   child: Text("清除"),
                   onPressed: () {
                     _vidController.clear();

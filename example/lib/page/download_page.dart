@@ -136,7 +136,7 @@ class _DownloadPageState extends State<DownloadPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
-                      child: RaisedButton(
+                      child: ElevatedButton(
                         child: Text("开始"),
                         onPressed: () {
                           CustomDownloaderModel customDownloaderModel =
@@ -180,7 +180,7 @@ class _DownloadPageState extends State<DownloadPage> {
                       ),
                     ),
                     Expanded(
-                      child: RaisedButton(
+                      child: ElevatedButton(
                         child: Text("停止"),
                         onPressed: () {
                           CustomDownloaderModel customDownloaderModel =
@@ -196,7 +196,7 @@ class _DownloadPageState extends State<DownloadPage> {
                       ),
                     ),
                     Expanded(
-                      child: RaisedButton(
+                      child: ElevatedButton(
                         child: Text("播放"),
                         onPressed: () {
                           CustomDownloaderModel customDownloaderModel =
@@ -217,7 +217,7 @@ class _DownloadPageState extends State<DownloadPage> {
                       ),
                     ),
                     Expanded(
-                      child: RaisedButton(
+                      child: ElevatedButton(
                         child: Text("删除"),
                         onPressed: () {
                           _aliyunDownloadManager

@@ -152,7 +152,7 @@ class _StsHomePageState extends State<StsPage> {
 
             Row(
               children: [
-                RaisedButton(
+                ElevatedButton(
                   child: Text("STS播放"),
                   onPressed: () {
                     if (_inPushing == true) {
@@ -201,7 +201,7 @@ class _StsHomePageState extends State<StsPage> {
                 Expanded(
                   child: SizedBox(),
                 ),
-                RaisedButton(
+                ElevatedButton(
                   child: Text("清除"),
                   onPressed: () {
                     _vidController.clear();

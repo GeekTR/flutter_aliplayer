@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_aliplayer/flutter_aliplayer.dart';
 import 'package:flutter_aliplayer_example/config.dart';
 import 'package:flutter_aliplayer_example/model/custom_downloader_model.dart';
@@ -101,7 +100,7 @@ class AliyunDownloadDialog extends Dialog {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         Expanded(
-                          child: RaisedButton(
+                          child: ElevatedButton(
                             child: Text("sts"),
                             onPressed: () {
                               _mCurrentModeType = ModeType.STS;
@@ -113,7 +112,7 @@ class AliyunDownloadDialog extends Dialog {
                           width: 5.0,
                         ),
                         Expanded(
-                          child: RaisedButton(
+                          child: ElevatedButton(
                             child: Text("auth"),
                             onPressed: () {
                               _mCurrentModeType = ModeType.AUTH;
@@ -125,7 +124,7 @@ class AliyunDownloadDialog extends Dialog {
                           width: 5.0,
                         ),
                         Expanded(
-                          child: RaisedButton(
+                          child: ElevatedButton(
                             child: Text("add"),
                             onPressed: () {
                               if (_selectedIndex >= 0 && onItemAdd != null) {
@@ -153,7 +152,7 @@ class AliyunDownloadDialog extends Dialog {
                           width: 5.0,
                         ),
                         Expanded(
-                          child: RaisedButton(
+                          child: ElevatedButton(
                             child: Text("Close"),
                             onPressed: () {
                               onClose();
