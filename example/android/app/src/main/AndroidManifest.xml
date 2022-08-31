@@ -13,10 +13,10 @@
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-  
+
+    <meta-data android:name="flutterEmbedding" android:value="2"/>
 
     <application
-        android:name="io.flutter.app.FlutterApplication"
         android:label="flutter_aliplayer_example"
         android:icon="@mipmap/ic_launcher">
         <activity

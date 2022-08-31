@@ -24,10 +24,10 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 30
 
     defaultConfig {
-        minSdkVersion 18
+        minSdkVersion 21
     }
     lintOptions {
         disable 'InvalidPackage'
@@ -45,6 +45,6 @@ android {
 }
 
 dependencies {
-    implementation 'com.aliyun.sdk.android:AliyunPlayer:5.4.2.0-full'
+    implementation 'com.aliyun.sdk.android:AliyunPlayer:5.4.8.0-full'
     implementation 'com.google.code.gson:gson:2.8.6'
 }
