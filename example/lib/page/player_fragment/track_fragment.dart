@@ -168,7 +168,7 @@ class TrackFragmentState extends State<TrackFragment> {
                     ),
                   ),
                 ),
-                FlatButton(
+                TextButton(
                   onPressed: () {
                     FocusScope.of(context).requestFocus(FocusNode());
                     int duration = int.tryParse(_durationController.text);

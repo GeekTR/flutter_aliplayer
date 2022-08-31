@@ -98,7 +98,7 @@ class _MyAppState extends State<HomePage> {
             itemExtent: 50.0,
             itemCount: titleArr.length,
             itemBuilder: (BuildContext context, int index) {
-              return FlatButton(
+              return TextButton(
                 child: Text(titleArr[index]),
                 onPressed: () {
                   switch (index) {

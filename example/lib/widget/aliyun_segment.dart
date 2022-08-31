@@ -20,10 +20,13 @@ class AliyunSegment extends StatelessWidget {
                 i,
                 Expanded(
                     child: i == selIdx
-                        ? FlatButton(
-                            color: Theme.of(context).accentColor,
-                            textColor: Theme.of(context).canvasColor,
-                            shape: RoundedRectangleBorder(),
+                        ? TextButton(
+                            style: TextButton.styleFrom(
+                                foregroundColor:
+                                    Theme.of(context).colorScheme.secondary,
+                                shape: RoundedRectangleBorder(),
+                                textStyle: TextStyle(
+                                    color: Theme.of(context).canvasColor)),
                             onPressed: () => _onSelIdx(i),
                             child: Text(
                               value,

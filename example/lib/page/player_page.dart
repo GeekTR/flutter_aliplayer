@@ -35,31 +35,44 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   ModeType _playMode;
   Map<String, dynamic> _dataSourceMap;
   OptionsFragment mOptionsFragment;
+
   //是否允许后台播放
   bool _mEnablePlayBack = false;
+
   //当前播放进度
   int _currentPosition = 0;
+
   //当前播放时间，用于Text展示
   int _currentPositionText = 0;
+
   //当前buffer进度
   int _bufferPosition = 0;
+
   //是否展示loading
   bool _showLoading = false;
+
   //loading进度
   int _loadingPercent = 0;
+
   //视频时长
   int _videoDuration = 1;
+
   //截图保存路径
   String _snapShotPath;
+
   //提示内容
   String _tipsContent;
+
   //是否展示提示内容
   bool _showTipsWidget = false;
+
   //是否有缩略图
   bool _thumbnailSuccess = false;
+
   //缩略图
   // Uint8List _thumbnailBitmap;
   ImageProvider _imageProvider;
+
   //当前网络状态
   ConnectivityResult _currentConnectivityResult;
 
@@ -67,6 +80,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   bool _inSeek = false;
 
   bool _isLock = false;
+
   //网络状态
   bool _isShowMobileNetWork = false;
 
@@ -74,6 +88,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   int _currentPlayerState = 0;
 
   String extSubTitleText = '';
+
   //网络状态监听
   StreamSubscription _networkSubscriptiion;
 
@@ -181,7 +196,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
         }
       } else if (infoCode == FlutterAvpdef.BUFFEREDPOSITION) {
         _bufferPosition = extraValue;
-        if(mounted){
+        if (mounted) {
           setState(() {});
         }
       } else if (infoCode == FlutterAvpdef.AUTOPLAYSTART) {
@@ -791,13 +806,13 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
         type: BottomNavigationBarType.fixed,
         items: [
           BottomNavigationBarItem(
-              title: Text('options'), icon: Icon(Icons.control_point)),
+              label: "options", icon: Icon(Icons.control_point)),
           BottomNavigationBarItem(
-              title: Text('play_cfg'), icon: Icon(Icons.control_point)),
+              label: "play_cfg", icon: Icon(Icons.control_point)),
           BottomNavigationBarItem(
-              title: Text('cache_cfg'), icon: Icon(Icons.control_point)),
+              label: "cache_cfg", icon: Icon(Icons.control_point)),
           BottomNavigationBarItem(
-              title: Text('track'), icon: Icon(Icons.control_point)),
+              label: "track", icon: Icon(Icons.control_point)),
         ],
         currentIndex: bottomIndex,
         onTap: (index) {
