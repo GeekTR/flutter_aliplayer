@@ -33,10 +33,12 @@ class AliyunSegment extends StatelessWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ))
-                        : OutlineButton(
-                            color: Theme.of(context).accentColor,
-                            textColor: Theme.of(context).accentColor,
-                            shape: RoundedRectangleBorder(),
+                        : OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              backgroundColor: Theme.of(context).colorScheme.secondary,
+                              shape: RoundedRectangleBorder(),
+                              textStyle: TextStyle(color: Theme.of(context).colorScheme.secondary)
+                            ),
                             onPressed: () => _onSelIdx(i),
                             child: Text(
                               value,

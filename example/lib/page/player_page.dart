@@ -590,14 +590,16 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
             SizedBox(
               height: 5.0,
             ),
-            OutlineButton(
-              shape: BeveledRectangleBorder(
-                side: BorderSide(
-                  style: BorderStyle.solid,
-                  color: Colors.blue,
-                  width: 5,
-                ),
-                borderRadius: BorderRadius.circular(5),
+            OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                  shape: BeveledRectangleBorder(
+                    side: BorderSide(
+                      style: BorderStyle.solid,
+                      color: Colors.blue,
+                      width: 5,
+                    ),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
               ),
               child: Text("Replay", style: TextStyle(color: Colors.white)),
               onPressed: () {
@@ -638,14 +640,16 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
             Wrap(
               direction: Axis.horizontal,
               children: [
-                OutlineButton(
-                  shape: BeveledRectangleBorder(
-                    side: BorderSide(
-                      style: BorderStyle.solid,
-                      color: Colors.blue,
-                      width: 5,
+                OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    shape: BeveledRectangleBorder(
+                      side: BorderSide(
+                        style: BorderStyle.solid,
+                        color: Colors.blue,
+                        width: 5,
+                      ),
+                      borderRadius: BorderRadius.circular(5),
                     ),
-                    borderRadius: BorderRadius.circular(5),
                   ),
                   child: Text("继续播放", style: TextStyle(color: Colors.white)),
                   onPressed: () {
@@ -658,14 +662,16 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                 SizedBox(
                   width: 10.0,
                 ),
-                OutlineButton(
-                  shape: BeveledRectangleBorder(
-                    side: BorderSide(
-                      style: BorderStyle.solid,
-                      color: Colors.blue,
-                      width: 5,
+                OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    shape: BeveledRectangleBorder(
+                      side: BorderSide(
+                        style: BorderStyle.solid,
+                        color: Colors.blue,
+                        width: 5,
+                      ),
+                      borderRadius: BorderRadius.circular(5),
                     ),
-                    borderRadius: BorderRadius.circular(5),
                   ),
                   child: Text("退出播放", style: TextStyle(color: Colors.white)),
                   onPressed: () {
