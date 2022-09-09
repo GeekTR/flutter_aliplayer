@@ -7,6 +7,7 @@ import 'package:flutter_aliplayer/flutter_aliplayer.dart';
 import 'package:flutter_aliplayer/flutter_aliplayer_factory.dart';
 import 'package:flutter_aliplayer_example/config.dart';
 import 'package:flutter_aliplayer_example/page/player_fragment/cache_config_fragment.dart';
+import 'package:flutter_aliplayer_example/page/player_fragment/filter_fragment.dart';
 import 'package:flutter_aliplayer_example/page/player_fragment/options_fragment.dart';
 import 'package:flutter_aliplayer_example/page/player_fragment/play_config_fragment.dart';
 import 'package:flutter_aliplayer_example/page/player_fragment/track_fragment.dart';
@@ -124,6 +125,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     mFramePage = [
       mOptionsFragment,
       PlayConfigFragment(fAliplayer),
+      FilterFragment(fAliplayer),
       CacheConfigFragment(fAliplayer),
       TrackFragment(trackFragmentKey, fAliplayer),
     ];
@@ -815,6 +817,8 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
               label: "options", icon: Icon(Icons.control_point)),
           BottomNavigationBarItem(
               label: "play_cfg", icon: Icon(Icons.control_point)),
+          BottomNavigationBarItem(
+              label: "filter", icon: Icon(Icons.control_point)),
           BottomNavigationBarItem(
               label: "cache_cfg", icon: Icon(Icons.control_point)),
           BottomNavigationBarItem(
