@@ -22,8 +22,7 @@ class AliyunSegment extends StatelessWidget {
                     child: i == selIdx
                         ? TextButton(
                             style: TextButton.styleFrom(
-                                foregroundColor:
-                                    Theme.of(context).colorScheme.secondary,
+                                backgroundColor: Colors.black12,
                                 shape: RoundedRectangleBorder(),
                                 textStyle: TextStyle(
                                     color: Theme.of(context).canvasColor)),
@@ -35,7 +34,6 @@ class AliyunSegment extends StatelessWidget {
                             ))
                         : OutlinedButton(
                             style: OutlinedButton.styleFrom(
-                              backgroundColor: Theme.of(context).colorScheme.secondary,
                               shape: RoundedRectangleBorder(),
                               textStyle: TextStyle(color: Theme.of(context).colorScheme.secondary)
                             ),
