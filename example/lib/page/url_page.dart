@@ -52,7 +52,7 @@ class _UrlPageState extends State<UrlPage> {
             decoration: InputDecoration(
               labelText: "url",
             ),
-            keyboardType: TextInputType.number,
+            keyboardType: TextInputType.multiline,
           ),
           ElevatedButton(
             child: Text("开始播放"),

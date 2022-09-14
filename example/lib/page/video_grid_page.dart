@@ -200,7 +200,7 @@ class _VideoGridPageState extends State<VideoGridPage>
                 setState(() {
                   _curIdx = index;
                   _lastCurIndex = index;
-                  _showMode = VideoShowMode.Srceen;
+                  _showMode = VideoShowMode.Screen;
                   _pageController = PageController(initialPage: _curIdx);
                 });
                 start();
@@ -222,7 +222,7 @@ class _VideoGridPageState extends State<VideoGridPage>
   _buildFullScreenView() {
     return WillPopScope(
       onWillPop: () async {
-        if (_showMode == VideoShowMode.Srceen) {
+        if (_showMode == VideoShowMode.Screen) {
           _exitScreenMode();
           return false;
         }
@@ -366,7 +366,7 @@ class _VideoGridPageState extends State<VideoGridPage>
 
   @override
   Widget build(BuildContext context) {
-    return _showMode == VideoShowMode.Srceen
+    return _showMode == VideoShowMode.Screen
         ? _buildFullScreenView()
         : _buildGridView();
   }

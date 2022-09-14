@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_aliplayer/flutter_aliplayer.dart';
 import 'package:flutter_aliplayer_example/config.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class SettingPage extends StatefulWidget {
   @override
@@ -11,6 +13,15 @@ class SettingPage extends StatefulWidget {
 
 class _SettingHomePageState extends State<SettingPage> {
   TextEditingController _dnsTextEditingController = TextEditingController();
+  TextEditingController _mLocalCacheDirController = TextEditingController();
+  TextEditingController _mLocalCacheMaxLocalSizeController =
+      TextEditingController();
+  TextEditingController _mLocalCacheExpirationController =
+      TextEditingController();
+  TextEditingController _mLocalCacheMaxCacheCapacityController =
+      TextEditingController();
+  TextEditingController _mLocalCacheMinDiskCapacityController =
+      TextEditingController();
   String _sdkVersion;
   List<String> _playerName = List();
   String _currentPlayerName = "Default";
@@ -18,6 +29,7 @@ class _SettingHomePageState extends State<SettingPage> {
   @override
   void initState() {
     super.initState();
+
     if (GlobalSettings.mPlayerName.isNotEmpty) {
       _currentPlayerName = GlobalSettings.mPlayerName;
     }
@@ -28,8 +40,18 @@ class _SettingHomePageState extends State<SettingPage> {
       _playerName.add("MediaPlayer");
     }
     if (Platform.isIOS) {
-      _playerName..add("SuperMediaPlayer")..add("AppleAVPlayer");
+      _playerName
+        ..add("SuperMediaPlayer")
+        ..add("AppleAVPlayer");
     }
+
+    //TODO
+    _mLocalCacheDirController.text = "";
+    _mLocalCacheMaxLocalSizeController.text = GlobalSettings.mMaxCacheSize;
+    _mLocalCacheExpirationController.text = GlobalSettings.mExpiration;
+    _mLocalCacheMaxCacheCapacityController.text = GlobalSettings.mMaxCapacity;
+    _mLocalCacheMinDiskCapacityController.text =
+        GlobalSettings.mMinDiskCapacity;
 
     FlutterAliplayer.getSDKVersion().then((value) {
       setState(() {
@@ -63,17 +85,44 @@ class _SettingHomePageState extends State<SettingPage> {
 
             //硬解开关
             Row(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text("硬解开关"),
-                SizedBox(
-                  width: 5.0,
-                ),
                 Switch(
                     value: GlobalSettings.mEnableHardwareDecoder,
                     onChanged: (value) {
                       setState(() {
                         GlobalSettings.mEnableHardwareDecoder = value;
+                      });
+                    }),
+              ],
+            ),
+
+            //HTTP 2 开关
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("HTTP 2"),
+                Switch(
+                    value: GlobalSettings.mEnableHTTP2,
+                    onChanged: (value) {
+                      setState(() {
+                        GlobalSettings.mEnableHTTP2 = value;
+                      });
+                    }),
+              ],
+            ),
+
+            //httpdns 开关
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("HTTPDNS"),
+                Switch(
+                    value: GlobalSettings.mEnableHTTPDNS,
+                    onChanged: (value) {
+                      setState(() {
+                        GlobalSettings.mEnableHTTPDNS = value;
                       });
                     }),
               ],
@@ -92,6 +141,13 @@ class _SettingHomePageState extends State<SettingPage> {
             //黑名单,Android显示，iOS不显示
             Text(Platform.operatingSystemVersion),
             _blackListForAndroid(),
+
+            SizedBox(
+              height: 5.0,
+            ),
+
+            //本地缓存
+            _localCache(),
 
             SizedBox(
               height: 10.0,
@@ -181,6 +237,164 @@ class _SettingHomePageState extends State<SettingPage> {
     }
   }
 
+  //本地缓存
+  Widget _localCache() {
+    return Column(
+      children: [
+        //是否开启缓存
+        Row(
+          children: [
+            Text("是否开启本地缓存："),
+            SizedBox(
+              width: 5.0,
+            ),
+            Switch(
+                value: GlobalSettings.mEnableLocalCache,
+                onChanged: (value) {
+                  setState(() {
+                    GlobalSettings.mEnableLocalCache = value;
+                  });
+                }),
+            SizedBox(
+              width: 5.0,
+            ),
+            Text("缓存大小："),
+            Text("125M")
+          ],
+        ),
+
+        SizedBox(
+          height: 10.0,
+        ),
+
+        TextField(
+          readOnly: true,
+          controller: _mLocalCacheDirController,
+          keyboardType: TextInputType.multiline,
+          maxLines: 1,
+          decoration: InputDecoration(
+            label: Text("缓存目录"),
+            border: OutlineInputBorder(),
+          ),
+        ),
+
+        SizedBox(
+          height: 10.0,
+        ),
+
+        TextField(
+          controller: _mLocalCacheMaxLocalSizeController,
+          keyboardType: TextInputType.multiline,
+          maxLines: 1,
+          inputFormatters: <TextInputFormatter>[
+            LengthLimitingTextInputFormatter(9),
+          ],
+          decoration: InputDecoration(
+            label: Text("最大缓存大小(M)"),
+            border: OutlineInputBorder(),
+          ),
+        ),
+
+        SizedBox(
+          height: 10.0,
+        ),
+
+        TextField(
+          controller: _mLocalCacheExpirationController,
+          keyboardType: TextInputType.multiline,
+          maxLines: 1,
+          inputFormatters: <TextInputFormatter>[
+            LengthLimitingTextInputFormatter(9),
+          ],
+          decoration: InputDecoration(
+            label: Text("缓存过期时间(天)"),
+            border: OutlineInputBorder(),
+          ),
+        ),
+
+        SizedBox(
+          height: 10.0,
+        ),
+
+        TextField(
+          controller: _mLocalCacheMaxCacheCapacityController,
+          keyboardType: TextInputType.multiline,
+          maxLines: 1,
+          inputFormatters: <TextInputFormatter>[
+            LengthLimitingTextInputFormatter(9),
+          ],
+          decoration: InputDecoration(
+            label: Text("最大缓存容量(M)"),
+            border: OutlineInputBorder(),
+          ),
+        ),
+
+        SizedBox(
+          height: 10.0,
+        ),
+
+        TextField(
+          controller: _mLocalCacheMinDiskCapacityController,
+          keyboardType: TextInputType.multiline,
+          maxLines: 1,
+          inputFormatters: <TextInputFormatter>[
+            LengthLimitingTextInputFormatter(9),
+          ],
+          decoration: InputDecoration(
+            label: Text("磁盘最小空余容量(M)"),
+            border: OutlineInputBorder(),
+          ),
+        ),
+
+        SizedBox(
+          height: 10.0,
+        ),
+
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            ElevatedButton(
+              child: Text("恢复默认"),
+              onPressed: () {
+                _mLocalCacheMaxLocalSizeController.text =
+                    LocalCacheDefaultValue.mDefaultMaxCacheSize;
+                _mLocalCacheExpirationController.text =
+                    LocalCacheDefaultValue.mDefaultExpiration;
+                _mLocalCacheMaxCacheCapacityController.text =
+                    LocalCacheDefaultValue.mDefaultMaxCapacity;
+                _mLocalCacheMinDiskCapacityController.text =
+                    LocalCacheDefaultValue.mDefaultMinDiskCapacity;
+              },
+            ),
+            ElevatedButton(
+              child: Text("应用配置"),
+              onPressed: () {
+                GlobalSettings.mCacheDir = _mLocalCacheDirController.text;
+                GlobalSettings.mMaxCacheSize =
+                    _mLocalCacheMaxLocalSizeController.text;
+                GlobalSettings.mExpiration =
+                    _mLocalCacheExpirationController.text;
+                GlobalSettings.mMaxCapacity =
+                    _mLocalCacheMaxCacheCapacityController.text;
+                GlobalSettings.mMinDiskCapacity =
+                    _mLocalCacheMinDiskCapacityController.text;
+                //TODO 设置给播放器
+                Fluttertoast.showToast(msg: "本地缓存配置成功");
+              },
+            ),
+            ElevatedButton(
+              child: Text("删除缓存"),
+              onPressed: () {
+                //TODO
+                print("恢复默认");
+              },
+            ),
+          ],
+        )
+      ],
+    );
+  }
+
   //DNS
   Widget _buildDNSResolve() {
     return Column(
@@ -200,6 +414,7 @@ class _SettingHomePageState extends State<SettingPage> {
           ),
         ),
         ElevatedButton(
+          //TODO 设置无效
           child: Text("设置DNS"),
           onPressed: () {
             String dns = _dnsTextEditingController.text;

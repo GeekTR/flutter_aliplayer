@@ -18,6 +18,12 @@ class GlobalSettings {
   ///软硬解开关
   static bool mEnableHardwareDecoder = true;
 
+  ///http2 开关
+  static bool mEnableHTTP2 = false;
+
+  ///http dns 开关
+  static bool mEnableHTTPDNS = false;
+
   ///播放器日志开关
   static bool mEnableAliPlayerLog = true;
 
@@ -29,12 +35,36 @@ class GlobalSettings {
 
   ///播放器名称
   static String mPlayerName = "";
+
+  ///本地缓存开关
+  static bool mEnableLocalCache = false;
+
+  static String mCacheDir = "";
+  static String mMaxCacheSize = LocalCacheDefaultValue.mDefaultMaxCacheSize;
+  static String mExpiration = LocalCacheDefaultValue.mDefaultExpiration;
+  static String mMaxCapacity = LocalCacheDefaultValue.mDefaultMaxCapacity;
+  static String mMinDiskCapacity = LocalCacheDefaultValue.mDefaultMinDiskCapacity;
+}
+
+///本地缓存默认设置
+class LocalCacheDefaultValue{
+  ///最大缓存大小(M)
+  static String mDefaultMaxCacheSize = "10";
+
+  ///缓存过期天数
+  static String mDefaultExpiration = "30";
+
+  ///最大缓存容量
+  static String mDefaultMaxCapacity = "20480";
+
+  ///最小磁盘剩余容量
+  static String mDefaultMinDiskCapacity = "0";
 }
 
 /// 播放方式
 enum ModeType { URL, STS, AUTH, MPS }
 
-enum VideoShowMode { Grid, Srceen }
+enum VideoShowMode { Grid, Screen }
 
 ///播放源相关
 class DataSourceRelated {
