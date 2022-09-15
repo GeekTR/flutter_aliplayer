@@ -546,6 +546,64 @@ class FlutterAliplayer {
         .invokeMethod("enableHttpDns", enable);
   }
 
+  static Future<dynamic> setIpResolveType(UnsignedInt type) {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("setIpResolveType", type);
+  }
+
+  static Future<dynamic> setFairPlayCertID(String certID) {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("setFairPlayCertID", certID);
+  }
+
+  static Future<dynamic> enableHWAduioTempo(bool enable) {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("enableHWAduioTempo", enable);
+  }
+
+  static Future<dynamic> forceAudioRendingFormat(
+      bool force, String fmt, int channels, int sample_rate) {
+    var map = {
+      'force': force,
+      'fmt': fmt,
+      'channels': channels,
+      'sample_rate': sample_rate
+    };
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("enableHWAduioTempo", map);
+  }
+
+  static Future<dynamic> enableLocalCache(
+      bool enable, int maxBufferMemoryKB, String localCacheDir) {
+    var map = {
+      'enable': enable,
+      'maxBufferMemoryKB': maxBufferMemoryKB,
+      'localCacheDir': localCacheDir,
+    };
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("enableLocalCache", map);
+  }
+
+  static Future<dynamic> setCacheFileClearConfig(
+      LongLong expireMin, LongLong maxCapacityMB, LongLong freeStorageMB) {
+    var map = {
+      'expireMin': expireMin,
+      'maxCapacityMB': maxCapacityMB,
+      'freeStorageMB': freeStorageMB,
+    };
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("enableLocalCache", map);
+  }
+
+  static Future<dynamic> setCacheUrlHashCallback() async {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("setCacheUrlHashCallback");
+  }
+
+  static Future<dynamic> clearCaches() {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod("clearCaches");
+  }
+
   ///return deviceInfo
   static Future<dynamic> createDeviceInfo() async {
     return FlutterAliPlayerFactory.methodChannel

@@ -9,6 +9,7 @@
 #import "NSDictionary+ext.h"
 #import "MJExtension.h"
 #import "AliPlayerProxy.h"
+#import<CommonCrypto/CommonDigest.h>
 
 @interface AliPlayerFactory () {
     NSObject<FlutterBinaryMessenger>* _messenger;
@@ -478,6 +479,88 @@
     FlutterMethodCall* call = arr.firstObject;
     NSNumber* val = [call arguments];
     [AliPlayerGlobalSettings enableHttpDns:val.boolValue];
+    result(nil);
+}
+
+- (void)setIpResolveType:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    FlutterMethodCall* call = arr.firstObject;
+    NSNumber* val = [call arguments];
+    [AliPlayerGlobalSettings setIpResolveType:(AVPIpResolveType)val.unsignedIntegerValue];
+    result(nil);
+}
+
+- (void)setFairPlayCertID:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    FlutterMethodCall* call = arr.firstObject;
+    NSString* val = [call arguments];
+    [AliPlayerGlobalSettings setFairPlayCertID:val];
+    result(nil);
+}
+
+- (void)enableHWAduioTempo:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    FlutterMethodCall* call = arr.firstObject;
+    NSNumber* val = [call arguments];
+    [AliPlayerGlobalSettings enableHWAduioTempo:val.boolValue];
+    result(nil);
+}
+
+- (void)forceAudioRendingFormat:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    FlutterMethodCall* call = arr.firstObject;
+    NSDictionary* val = [call arguments];
+    
+    [AliPlayerGlobalSettings forceAudioRendingFormat:[val[@"force"] boolValue] fmt:val[@"fmt"] channels:[val[@"channels"] intValue] sample_rate:[val[@"sample_rate"] intValue]];
+    result(nil);
+}
+
+- (void)enableLocalCache:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    FlutterMethodCall* call = arr.firstObject;
+    NSDictionary* val = [call arguments];
+    
+    [AliPlayerGlobalSettings enableLocalCache:[val[@"enable"] boolValue] maxBufferMemoryKB:[val[@"maxBufferMemoryKB"] intValue] localCacheDir:val[@"localCacheDir"]];
+    result(nil);
+}
+
+- (void)setCacheFileClearConfig:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    FlutterMethodCall* call = arr.firstObject;
+    NSDictionary* val = [call arguments];
+    
+    [AliPlayerGlobalSettings setCacheFileClearConfig:[val[@"expireMin"] longLongValue] maxCapacityMB:[val[@"maxCapacityMB"] longLongValue] freeStorageMB:[val[@"freeStorageMB"] longLongValue]];
+    result(nil);
+}
+
+- (void)setCacheUrlHashCallback:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    
+    [AliPlayerGlobalSettings setCacheUrlHashCallback:hashCallback];
+    result(nil);
+}
+
+NSString *hashCallback(NSString* url) {
+    NSArray *array = [[url stringByReplacingOccurrencesOfString:@"https" withString:@"http"] componentsSeparatedByString:@"?"];
+    NSString *md5Str = array.firstObject;
+    return [AliPlayerFactory md5:md5Str];
+}
+
++ (NSString *) md5:(NSString *) input {
+    const char *cStr = [input UTF8String];
+    unsigned char digest[CC_MD5_DIGEST_LENGTH];
+    CC_MD5( cStr, strlen(cStr), digest );
+    NSMutableString *output = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH * 2];
+    for(int i = 0; i < CC_MD5_DIGEST_LENGTH; i++){
+        [output appendFormat:@"%02x", digest[i]];
+    }
+    return  output;
+}
+
+- (void)clearCaches:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    
+    [AliPlayerGlobalSettings clearCaches];
     result(nil);
 }
 
