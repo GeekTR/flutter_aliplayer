@@ -83,12 +83,42 @@
 }
 
 /**
+ @brief 视频大小变化回调
+ @param player 播放器player指针
+ @param width 视频宽度
+ @param height 视频高度
+ @param rotation 视频旋转角度
+ */
+- (void)onVideoSizeChanged:(AliPlayer*)player width:(int)width height:(int)height rotation:(int)rotation {
+    self.eventSink(@{kAliPlayerMethod:@"onVideoSizeChanged",@"width":@(width),@"height":@(height),@"rotation":@(rotation),kAliPlayerId:_playerId});
+}
+
+
+/**
  @brief 视频当前播放位置回调
  @param player 播放器player指针
  @param position 视频当前播放位置
  */
 - (void)onCurrentPositionUpdate:(AliPlayer*)player position:(int64_t)position {
      self.eventSink(@{kAliPlayerMethod:@"onInfo",@"infoCode":@(2),@"extraValue":@(position),kAliPlayerId:_playerId});
+}
+
+/**
+ @brief 视频当前播放内容对应的utc时间回调
+ @param player 播放器player指针
+ @param time utc时间
+ */
+- (void)onCurrentUtcTimeUpdate:(AliPlayer *)player time:(int64_t)time {
+    self.eventSink(@{kAliPlayerMethod:@"onCurrentUtcTimeUpdate",@"time":@(time),kAliPlayerId:_playerId});
+}
+
+/**
+ @brief 视频当前播放缓存命中回调
+ @param player 播放器player指针
+ @param size 文件大小
+ */
+- (void)onLocalCacheLoaded:(AliPlayer *)player size:(int64_t)size {
+    self.eventSink(@{kAliPlayerMethod:@"onLocalCacheLoaded",@"size":@(size),kAliPlayerId:_playerId});
 }
 
 /**
@@ -163,6 +193,17 @@
 }
 
 /**
+ @brief 选择希望播放的流
+ @param player 播放器player指针
+ @param info track流信息数组
+ @see AVPTrackInfo
+ */
+- (int)onChooseTrackIndex:(AliPlayer *)player info:(NSArray<AVPTrackInfo *> *)info {
+    NSArray *chooseTrackInfo = [AVPTrackInfo mj_keyValuesArrayWithObjectArray:info].mutableCopy;
+    self.eventSink(@{kAliPlayerMethod:@"onChooseTrackIndex",@"info":chooseTrackInfo,kAliPlayerId:_playerId});
+}
+
+/**
  @brief track切换完成回调
  @param player 播放器player指针
  @param info 切换后的信息 参考AVPTrackInfo
@@ -200,6 +241,15 @@
  */
 - (void)onLoadingProgress:(AliPlayer*)player progress:(float)progress {
     self.eventSink(@{kAliPlayerMethod:@"onLoadingProgress",@"percent":@((int)progress),kAliPlayerId:_playerId});
+}
+
+/**
+ @brief 当前下载速度回调
+ @param player 播放器player指针
+ @param speed bits per second
+ */
+- (void)onCurrentDownloadSpeed:(AliPlayer *)player speed:(int64_t)speed {
+    self.eventSink(@{kAliPlayerMethod:@"onCurrentDownloadSpeed",@"speed":@(speed),kAliPlayerId:_playerId});
 }
 
 -(void)bindPlayerView:(FlutterAliPlayerView*)fapv{

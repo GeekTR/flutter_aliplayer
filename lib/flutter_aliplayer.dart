@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ffi';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -16,6 +17,8 @@ typedef OnRenderingStart = void Function(String playerId);
 typedef OnVideoSizeChanged = void Function(
     int width, int height, String playerId);
 typedef OnSnapShot = void Function(String path, String playerId);
+typedef OnChooseTrackIndex = void Function(
+    Array chooseTrackInfo, String playerId);
 
 typedef OnSeekComplete = void Function(String playerId);
 typedef OnSeiData = void Function(int type, String data, String playerId);
@@ -71,7 +74,7 @@ class FlutterAliplayer {
   OnError? onError;
   OnSeiData? onSeiData;
   OnSnapShot? onSnapShot;
-
+  OnChooseTrackIndex? onChooseTrackIndex;
   OnTrackChanged? onTrackChanged;
   OnThumbnailPreparedSuccess? onThumbnailPreparedSuccess;
   OnThumbnailPreparedFail? onThumbnailPreparedFail;
@@ -120,6 +123,10 @@ class FlutterAliplayer {
 
   void setOnSnapShot(OnSnapShot snapShot) {
     this.onSnapShot = snapShot;
+  }
+
+  void setOnChooseTrackIndex(OnChooseTrackIndex chooseTrackIndex) {
+    this.onChooseTrackIndex = chooseTrackIndex;
   }
 
   void setOnSeekComplete(OnSeekComplete seekComplete) {
@@ -419,6 +426,25 @@ class FlutterAliplayer {
         .invokeMethod("setCacheConfig", wrapWithPlayerId(arg: map));
   }
 
+  Future<void> setFilterConfig(Array config) async {
+    // config格式: [{"target":"<target>", "options":{"key":"<options_key>", "value": "<options_value>"}}, ...]
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("setFilterConfig", wrapWithPlayerId(arg: config));
+  }
+
+  Future<void> updateFilterConfig(String target, Map options) async {
+    var map = {'target': target, 'options': options};
+    // options格式: {"key":"<options_key>", "value": "<options_value>"}
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("updateFilterConfig", wrapWithPlayerId(arg: map));
+  }
+
+  Future<void> setFilterInvalid(String target, bool invalid) async {
+    var map = {'target': target, 'invalid': invalid};
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("updateFilterConfig", wrapWithPlayerId(arg: map));
+  }
+
   Future<dynamic> getMediaInfo() {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("getMediaInfo", wrapWithPlayerId());
@@ -510,6 +536,16 @@ class FlutterAliplayer {
     );
   }
 
+  static Future<dynamic> setUseHttp2(bool use) {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("setUseHttp2", use);
+  }
+
+  static Future<dynamic> enableHttpDns(bool enable) {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("enableHttpDns", enable);
+  }
+
   ///return deviceInfo
   static Future<dynamic> createDeviceInfo() async {
     return FlutterAliPlayerFactory.methodChannel
@@ -554,6 +590,12 @@ class FlutterAliplayer {
         if (player.onSnapShot != null) {
           String snapShotPath = event['snapShotPath'];
           player.onSnapShot!(snapShotPath, playerId);
+        }
+        break;
+      case "onChooseTrackIndex":
+        if (player.onChooseTrackIndex != null) {
+          Array info = event['info'];
+          player.onChooseTrackIndex!(info, playerId);
         }
         break;
       case "onChangedSuccess":

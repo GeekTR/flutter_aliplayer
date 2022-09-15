@@ -174,6 +174,13 @@
     result(nil);
 }
 
+- (void)clearScreen:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    [proxy.player clearScreen];
+    result(nil);
+}
+
 - (void)stop:(NSArray*)arr {
     FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
@@ -205,7 +212,14 @@
     result(nil);
 }
 
--(void)enableMix:(NSArray*)arr {
+- (void)setMaxAccurateSeekDelta:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSNumber* val = arr[3];
+    [proxy.player setMaxAccurateSeekDelta:val.intValue];
+}
+
+- (void)enableMix:(NSArray*)arr {
     FlutterMethodCall* call = arr.firstObject;
     FlutterResult result = arr[1];
     NSNumber* val = [call arguments];
@@ -451,6 +465,22 @@
     result(nil);
 }
 
+- (void)setUseHttp2:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    FlutterMethodCall* call = arr.firstObject;
+    NSNumber* val = [call arguments];
+    [AliPlayerGlobalSettings setUseHttp2:val.boolValue];
+    result(nil);
+}
+
+- (void)enableHttpDns:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    FlutterMethodCall* call = arr.firstObject;
+    NSNumber* val = [call arguments];
+    [AliPlayerGlobalSettings enableHttpDns:val.boolValue];
+    result(nil);
+}
+
 //TODO 应该是根据已经有的key 替换比较合理
 - (void)setConfig:(NSArray*)arr {
     FlutterResult result = arr[1];
@@ -519,6 +549,52 @@
     [config setPath:[path stringByAppendingPathComponent:config.path]];
 
     [proxy.player setCacheConfig:config];
+    result(nil);
+}
+
+- (void)setFilterConfig:(NSArray *)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSArray<NSDictionary *>* val = arr[3];
+    
+    AVPFilterConfig *filterConfig = [[AVPFilterConfig alloc] init];
+    
+    for (int i = 0; i < val.count; i++) {
+        NSDictionary *filterDic = val[i];
+        NSDictionary *filterOptionsDic = filterDic[@"options"];
+        
+        AVPFilter *filter = [[AVPFilter alloc] initWithTarget:filterDic[@"target"]];
+        
+        AVPFilterOptions *options = [[AVPFilterOptions alloc] init];
+        [options setOptions:filterOptionsDic[@"key"] value:filterOptionsDic[@"value"]];
+        
+        [filter setOptions:options];
+        [filterConfig addFilter:filter];
+    }
+    
+    [proxy.player setFilterConfig:filterConfig];
+    result(nil);
+}
+
+- (void)updateFilterConfig:(NSArray *)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSDictionary *configDic = arr[3];
+    NSDictionary *filterOptionsDic = configDic[@"options"];
+    
+    AVPFilterOptions *options = [[AVPFilterOptions alloc] init];
+    [options setOptions:filterOptionsDic[@"key"] value:filterOptionsDic[@"value"]];
+    
+    [proxy.player updateFilterConfig:configDic[@"target"] options:options];
+    result(nil);
+}
+
+- (void)setFilterInvalid:(NSArray *)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSDictionary *dic = arr[3];
+    
+    [proxy.player setFilterInvalid:dic[@"target"] invalid:[dic[@"invalid"] boolValue]];
     result(nil);
 }
 
