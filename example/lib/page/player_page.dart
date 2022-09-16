@@ -151,7 +151,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     fAliplayer.setOnRenderingStart((playerId) {
       Fluttertoast.showToast(msg: " OnFirstFrameShow ");
     });
-    fAliplayer.setOnVideoSizeChanged((width, height, playerId) {});
+    fAliplayer.setOnVideoSizeChanged((width, height, rotation, playerId) {});
     fAliplayer.setOnStateChanged((newState, playerId) {
       _currentPlayerState = newState;
       print("aliyun : onStateChanged $newState");
@@ -594,14 +594,14 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
             ),
             OutlinedButton(
               style: OutlinedButton.styleFrom(
-                  shape: BeveledRectangleBorder(
-                    side: BorderSide(
-                      style: BorderStyle.solid,
-                      color: Colors.blue,
-                      width: 5,
-                    ),
-                    borderRadius: BorderRadius.circular(5),
+                shape: BeveledRectangleBorder(
+                  side: BorderSide(
+                    style: BorderStyle.solid,
+                    color: Colors.blue,
+                    width: 5,
                   ),
+                  borderRadius: BorderRadius.circular(5),
+                ),
               ),
               child: Text("Replay", style: TextStyle(color: Colors.white)),
               onPressed: () {
