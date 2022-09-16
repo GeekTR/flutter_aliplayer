@@ -201,6 +201,7 @@
 - (int)onChooseTrackIndex:(AliPlayer *)player info:(NSArray<AVPTrackInfo *> *)info {
     NSArray *chooseTrackInfo = [AVPTrackInfo mj_keyValuesArrayWithObjectArray:info].mutableCopy;
     self.eventSink(@{kAliPlayerMethod:@"onChooseTrackIndex",@"info":chooseTrackInfo,kAliPlayerId:_playerId});
+    return 0;
 }
 
 /**

@@ -15,7 +15,7 @@ export 'flutter_avpdef.dart';
 typedef OnPrepared = void Function(String playerId);
 typedef OnRenderingStart = void Function(String playerId);
 typedef OnVideoSizeChanged = void Function(
-    int width, int height, String playerId);
+    int width, int height, int rotation, String playerId);
 typedef OnSnapShot = void Function(String path, String playerId);
 typedef OnChooseTrackIndex = void Function(
     Array chooseTrackInfo, String playerId);
@@ -244,6 +244,11 @@ class FlutterAliplayer {
         .invokeMethod('pause', wrapWithPlayerId());
   }
 
+  Future<void> clearScreen() async {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod('clearScreen', wrapWithPlayerId());
+  }
+
   Future<dynamic> snapshot(String path) async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('snapshot', wrapWithPlayerId(arg: path));
@@ -264,6 +269,11 @@ class FlutterAliplayer {
     var map = {"position": position, "seekMode": seekMode};
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("seekTo", wrapWithPlayerId(arg: map));
+  }
+
+  Future<void> setMaxAccurateSeekDelta(int delta) async {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("setMaxAccurateSeekDelta", wrapWithPlayerId(arg: delta));
   }
 
   Future<dynamic> isLoop() async {
@@ -349,6 +359,46 @@ class FlutterAliplayer {
   Future<void> setVidMps(Map<String, dynamic> mpsInfo) async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("setVidMps", wrapWithPlayerId(arg: mpsInfo));
+  }
+
+  Future<void> setLiveSts(
+      {String? url,
+      String? accessKeyId,
+      String? accessKeySecret,
+      String? securityToken,
+      String? region,
+      String? domain,
+      String? app,
+      String? stream,
+      UnsignedInt? encryptionType,
+      List<String>? definitionList,
+      playerId}) async {
+    Map<String, dynamic> liveStsInfo = {
+      "url": url,
+      "accessKeyId": accessKeyId,
+      "accessKeySecret": accessKeySecret,
+      "securityToken": securityToken,
+      "region": region,
+      "domain": domain,
+      "app": app,
+      "stream": stream,
+      "encryptionType": encryptionType,
+      "definitionList": definitionList,
+    };
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("setLiveSts", wrapWithPlayerId(arg: liveStsInfo));
+  }
+
+  Future<dynamic> updateLiveStsInfo(
+      String accId, String accKey, String token, String region) async {
+    Map<String, String> liveStsInfo = {
+      "accId": accId,
+      "accKey": accKey,
+      "token": token,
+      "region": region,
+    };
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod('updateLiveStsInfo', wrapWithPlayerId(arg: liveStsInfo));
   }
 
   Future<dynamic> getRotateMode() async {
@@ -465,6 +515,11 @@ class FlutterAliplayer {
         "requestBitmapAtPosition", wrapWithPlayerId(arg: position));
   }
 
+  Future<dynamic> setTraceID(String traceID) {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("setTraceID", wrapWithPlayerId(arg: traceID));
+  }
+
   Future<void> addExtSubtitle(String url) {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("addExtSubtitle", wrapWithPlayerId(arg: url));
@@ -551,9 +606,9 @@ class FlutterAliplayer {
         .invokeMethod("setIpResolveType", type);
   }
 
-  static Future<dynamic> setFairPlayCertID(String certID) {
+  static Future<dynamic> setFairPlayCertIDAtIOS(String certID) {
     return FlutterAliPlayerFactory.methodChannel
-        .invokeMethod("setFairPlayCertID", certID);
+        .invokeMethod("setFairPlayCertIDAtIOS", certID);
   }
 
   static Future<dynamic> enableHWAduioTempo(bool enable) {
@@ -641,7 +696,8 @@ class FlutterAliplayer {
         if (player.onVideoSizeChanged != null) {
           int width = event['width'];
           int height = event['height'];
-          player.onVideoSizeChanged!(width, height, playerId);
+          int rotation = event['rotation'];
+          player.onVideoSizeChanged!(width, height, rotation, playerId);
         }
         break;
       case "onSnapShot":

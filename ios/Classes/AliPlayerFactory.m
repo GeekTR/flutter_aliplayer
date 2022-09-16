@@ -110,6 +110,12 @@
     }
 }
 
+- (void)initLicenseService:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    
+    [AliPrivateService initLicenseService];
+    result(nil);
+}
 
 - (void)initService:(NSArray*)arr {
     FlutterMethodCall* call = arr.firstObject;
@@ -211,13 +217,6 @@
 //        self.aliPlayer = nil;
 //    }
     result(nil);
-}
-
-- (void)setMaxAccurateSeekDelta:(NSArray*)arr {
-    FlutterResult result = arr[1];
-    AliPlayerProxy *proxy = arr[2];
-    NSNumber* val = arr[3];
-    [proxy.player setMaxAccurateSeekDelta:val.intValue];
 }
 
 - (void)enableMix:(NSArray*)arr {
@@ -405,6 +404,14 @@
     result(nil);
 }
 
+- (void)setTraceID:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSString* val = arr[3];
+    [proxy.player setTraceID:val];
+    result(nil);
+}
+
 - (void)getVolume:(NSArray*)arr {
     FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
@@ -466,6 +473,14 @@
     result(nil);
 }
 
+- (void)setMaxAccurateSeekDelta:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSNumber* val = arr[3];
+    [proxy.player setMaxAccurateSeekDelta:val.intValue];
+    result(nil);
+}
+
 - (void)setUseHttp2:(NSArray*)arr {
     FlutterResult result = arr[1];
     FlutterMethodCall* call = arr.firstObject;
@@ -490,7 +505,7 @@
     result(nil);
 }
 
-- (void)setFairPlayCertID:(NSArray*)arr {
+- (void)setFairPlayCertIDAtIOS:(NSArray*)arr {
     FlutterResult result = arr[1];
     FlutterMethodCall* call = arr.firstObject;
     NSString* val = [call arguments];
@@ -681,6 +696,15 @@ NSString *hashCallback(NSString* url) {
     result(nil);
 }
 
+- (void)getCacheFilePath:(NSArray *)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSString *val = arr[3];
+    
+    NSString *filePath = [proxy.player getCacheFilePath:val];
+    result(filePath);
+}
+
 - (void)getConfig:(NSArray*)arr {
     FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
@@ -773,6 +797,26 @@ NSString *hashCallback(NSString* url) {
     [source setMtsHlsUriToken:dic[@"hlsUriToken"]];
     [self setSource:source withDefinitions:dic];
     [proxy.player setMpsSource:source];
+    result(nil);
+}
+
+- (void)setLiveSts:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSDictionary *dic = arr[3];
+    AVPLiveStsSource *source = [AVPLiveStsSource mj_objectWithKeyValues:dic];
+    [self setSource:source withDefinitions:dic];
+    
+    [proxy.player setLiveStsSource:source];
+    result(nil);
+}
+
+- (void)updateLiveStsInfo:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSDictionary *dic = arr[3];
+    
+    [proxy.player updateLiveStsInfo:dic[@"accId"] accKey:dic[@"accKey"] token:dic[@"token"] region:dic[@"region"]];
     result(nil);
 }
 
