@@ -816,11 +816,11 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
           BottomNavigationBarItem(
               label: "options", icon: Icon(Icons.control_point)),
           BottomNavigationBarItem(
-              label: "play_cfg", icon: Icon(Icons.control_point)),
+              label: "config", icon: Icon(Icons.control_point)),
           BottomNavigationBarItem(
               label: "filter", icon: Icon(Icons.control_point)),
           BottomNavigationBarItem(
-              label: "cache_cfg", icon: Icon(Icons.control_point)),
+              label: "cache", icon: Icon(Icons.control_point)),
           BottomNavigationBarItem(
               label: "track", icon: Icon(Icons.control_point)),
         ],

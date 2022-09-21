@@ -279,6 +279,16 @@ class FlutterAliplayer {
         .invokeMethod('setAutoPlay', wrapWithPlayerId(arg: isAutoPlay));
   }
 
+  void setFastStart(bool fastStart) {
+    FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("setFastStart", wrapWithPlayerId(arg: fastStart));
+  }
+
+  Future<void> setMaxAccurateSeekDelta(int time) {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("setMaxAccurateSeekDelta", wrapWithPlayerId(arg: time));
+  }
+
   Future<dynamic> isMuted() async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('isMuted', wrapWithPlayerId());
@@ -450,6 +460,11 @@ class FlutterAliplayer {
         .invokeMethod("selectExtSubtitle", wrapWithPlayerId(arg: map));
   }
 
+  void setDefaultBandWidth(int parse) {
+    FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("setDefaultBandWidth", wrapWithPlayerId(arg: parse));
+  }
+
   // accurate 0 为不精确  1 为精确  不填为忽略
   Future<void> selectTrack(
     int trackIdx, {
@@ -524,6 +539,35 @@ class FlutterAliplayer {
     };
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("addBlackDevice", map);
+  }
+
+  ///本地缓存
+  static Future<void> enableLocalCache(
+      bool enable, String maxBufferMemoryKB, String localCacheDir) {
+    var map = {
+      "enable": enable,
+      "maxBufferMemoryKB": maxBufferMemoryKB,
+      "localCacheDir": localCacheDir
+    };
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("enableLocalCache", map);
+  }
+
+  ///本地缓存文件自动清理相关的设置
+  static Future<void> setCacheFileClearConfig(
+      String expireMin, String maxCapacityMB, String freeStorageMB) {
+    var map = {
+      "expireMin": expireMin,
+      "maxCapacityMB": maxCapacityMB,
+      "freeStorageMB": freeStorageMB
+    };
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("setCacheFileClearConfig", map);
+  }
+
+  ///清理本地缓存，需要先应用配置缓存，才能清理本地缓存
+  static Future<void> clearCaches() {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod("clearCaches");
   }
 
   ///回调分发

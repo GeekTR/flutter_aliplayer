@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_aliplayer/flutter_aliplayer.dart';
+import 'package:flutter_aliplayer/flutter_aliplayer_medialoader.dart';
 import 'package:flutter_aliplayer_example/config.dart';
 import 'package:flutter_aliplayer_example/widget/aliyun_segment.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -12,6 +13,7 @@ class OptionsFragment extends StatefulWidget {
   final FlutterAliplayer fAliplayer;
   Function playBackChanged;
   _OptionsFragmentState _optionsFragmentState;
+
   OptionsFragment(this.fAliplayer);
 
   ///硬解失败切换到软解
@@ -34,6 +36,7 @@ class _OptionsFragmentState extends State<OptionsFragment> {
   bool mAutoPlay = false;
   bool mMute = false;
   bool mLoop = false;
+  bool mFastStart = false;
   bool mEnableHardwareDecoder = false;
   bool mEnablePlayBack = false;
   int mScaleGroupValue = 0;
@@ -43,6 +46,8 @@ class _OptionsFragmentState extends State<OptionsFragment> {
   double mSpeedGroupValue = 1;
   double _volume = 100;
   TextEditingController _bgColorController = TextEditingController();
+  TextEditingController _setMaxAccurateSeekController = TextEditingController();
+  TextEditingController _setDefaultBandWidthController = TextEditingController();
 
   _loadInitData() async {
     mLoop = await widget.fAliplayer.isLoop();
@@ -100,6 +105,8 @@ class _OptionsFragmentState extends State<OptionsFragment> {
               _buildMirror(),
               _buildRotate(),
               _buildSpeed(),
+              _buildAccurateSeek(),
+              _buildDefaultBandWidth(),
               _buildBgColor(),
               _buildPlayBack(),
             ],
@@ -110,9 +117,8 @@ class _OptionsFragmentState extends State<OptionsFragment> {
   }
 
   /// switch for : autoplay、mute、loop...
-  Row _buildSwitch() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
+  Wrap _buildSwitch() {
+    return Wrap(
       children: [
         Column(
           children: [
@@ -128,6 +134,22 @@ class _OptionsFragmentState extends State<OptionsFragment> {
             Text("自动播放"),
           ],
         ),
+        SizedBox(width: 10.0),
+        Column(
+          children: [
+            CupertinoSwitch(
+              value: mFastStart,
+              onChanged: (value) {
+                setState(() {
+                  mFastStart = value;
+                });
+                widget.fAliplayer.setFastStart(mFastStart);
+              },
+            ),
+            Text("快速播放"),
+          ],
+        ),
+        SizedBox(width: 10.0),
         Column(
           children: [
             CupertinoSwitch(
@@ -142,6 +164,7 @@ class _OptionsFragmentState extends State<OptionsFragment> {
             Text("静音"),
           ],
         ),
+        SizedBox(width: 10.0),
         Column(
           children: [
             CupertinoSwitch(
@@ -156,6 +179,7 @@ class _OptionsFragmentState extends State<OptionsFragment> {
             Text("循环"),
           ],
         ),
+        SizedBox(width: 10.0),
         Column(
           children: [
             CupertinoSwitch(
@@ -165,6 +189,7 @@ class _OptionsFragmentState extends State<OptionsFragment> {
             Text("硬解"),
           ],
         ),
+        SizedBox(width: 10.0),
         Column(
           children: [
             CupertinoSwitch(
@@ -178,6 +203,7 @@ class _OptionsFragmentState extends State<OptionsFragment> {
             Text("精准seek"),
           ],
         ),
+        SizedBox(width: 10.0),
       ],
     );
   }
@@ -347,6 +373,97 @@ class _OptionsFragmentState extends State<OptionsFragment> {
               widget.fAliplayer.setVideoBackgroundColor(color);
             } else {
               Fluttertoast.showToast(msg: '请输入正确的色值');
+            }
+          },
+          child: Text(
+            "确定",
+            style: TextStyle(color: Colors.blue),
+          ),
+        ),
+        SizedBox(
+          width: 10.0,
+        ),
+      ],
+    );
+  }
+
+  ///精准 seek 最大间隔
+  Row _buildAccurateSeek() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        SizedBox(
+          width: 10.0,
+        ),
+        SizedBox(
+          child: Text("精准seek间隔(ms)"),
+          width: 50.0,
+        ),
+        SizedBox(
+          width: 10.0,
+        ),
+        Expanded(
+          child: TextField(
+            maxLines: 1,
+            maxLength: 10,
+            controller: _setMaxAccurateSeekController,
+          ),
+        ),
+        SizedBox(
+          width: 30.0,
+        ),
+        InkWell(
+          onTap: () {
+            String time = _setMaxAccurateSeekController.text;
+            if (time != null) {
+              widget.fAliplayer.setMaxAccurateSeekDelta(int.parse(time));
+            } else {
+              Fluttertoast.showToast(msg: '请输入正确的值');
+            }
+          },
+          child: Text(
+            "确定",
+            style: TextStyle(color: Colors.blue),
+          ),
+        ),
+        SizedBox(
+          width: 10.0,
+        ),
+      ],
+    );
+  }
+
+  Row _buildDefaultBandWidth() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        SizedBox(
+          width: 10.0,
+        ),
+        SizedBox(
+          child: Text("多码率默认播放码率"),
+          width: 50.0,
+        ),
+        SizedBox(
+          width: 10.0,
+        ),
+        Expanded(
+          child: TextField(
+            maxLines: 1,
+            maxLength: 10,
+            controller: _setDefaultBandWidthController,
+          ),
+        ),
+        SizedBox(
+          width: 30.0,
+        ),
+        InkWell(
+          onTap: () {
+            String time = _setDefaultBandWidthController.text;
+            if (time != null) {
+              widget.fAliplayer.setDefaultBandWidth(int.parse(time));
+            } else {
+              Fluttertoast.showToast(msg: '请输入正确的值');
             }
           },
           child: Text(

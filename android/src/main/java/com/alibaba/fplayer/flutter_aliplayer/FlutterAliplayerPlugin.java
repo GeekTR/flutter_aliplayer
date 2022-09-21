@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 
 import com.aliyun.player.AliPlayerFactory;
+import com.aliyun.player.AliPlayerGlobalSettings;
 import com.aliyun.private_service.PrivateService;
 import com.cicada.player.utils.Logger;
 
@@ -33,10 +34,11 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
     /// This local reference serves to register the plugin with the Flutter Engine and unregister it
     /// when the Flutter Engine is detached from the Activity
     private FlutterAliDownloader mAliyunDownload;
+    private FlutterAliMediaLoader mAliyunMediaLoader;
     private FlutterPluginBinding flutterPluginBinding;
     private FlutterAliListPlayer mFlutterAliListPlayer;
-    private Map<String,FlutterAliPlayer> mFlutterAliPlayerMap = new HashMap<>();
-    private Map<String,FlutterAliLiveShiftPlayer> mFlutterAliLiveShiftPlayerMap = new HashMap<>();
+    private Map<String, FlutterAliPlayer> mFlutterAliPlayerMap = new HashMap<>();
+    private Map<String, FlutterAliLiveShiftPlayer> mFlutterAliLiveShiftPlayerMap = new HashMap<>();
     private Map<Integer, FlutterAliPlayerView> mFlutterAliPlayerViewMap = new HashMap<>();
     private EventChannel.EventSink mEventSink;
     private EventChannel mEventChannel;
@@ -52,10 +54,24 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
         this.flutterPluginBinding = flutterPluginBinding;
         flutterPluginBinding.getPlatformViewRegistry().registerViewFactory("flutter_aliplayer_render_view", this);
         mAliyunDownload = new FlutterAliDownloader(flutterPluginBinding.getApplicationContext(), flutterPluginBinding);
+        mAliyunMediaLoader = new FlutterAliMediaLoader(flutterPluginBinding.getApplicationContext(), flutterPluginBinding);
         MethodChannel mAliPlayerFactoryMethodChannel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "plugins.flutter_aliplayer_factory");
         mAliPlayerFactoryMethodChannel.setMethodCallHandler(this);
         mEventChannel = new EventChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "flutter_aliplayer_event");
         mEventChannel.setStreamHandler(this);
+
+        AliPlayerGlobalSettings.setCacheUrlHashCallback(new AliPlayerGlobalSettings.OnGetUrlHashCallback() {
+            @Override
+            public String getUrlHashCallback(String s) {
+                String result = s;
+                if (s.contains("?")) {
+                    String[] split = s.split("\\?");
+                    result = split[0];
+                }
+                System.out.println("java urlHashCallback " + s);
+                return FlutterAliPlayerStringUtils.stringToMD5(result);
+            }
+        });
     }
 
     //   This static function is optional and equivalent to onAttachedToEngine. It supports the old
@@ -75,23 +91,23 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
         switch (call.method) {
             case "createAliPlayer":
                 playerType = call.argument("arg");
-                if(0 == playerType){
+                if (0 == playerType) {
                     //AliPlayer
                     String createPlayerId = call.argument("playerId");
-                    FlutterAliPlayer flutterAliPlayer = new FlutterAliPlayer(flutterPluginBinding,createPlayerId);
+                    FlutterAliPlayer flutterAliPlayer = new FlutterAliPlayer(flutterPluginBinding, createPlayerId);
                     initListener(flutterAliPlayer);
-                    mFlutterAliPlayerMap.put(createPlayerId,flutterAliPlayer);
-                }else if(1 == playerType){
+                    mFlutterAliPlayerMap.put(createPlayerId, flutterAliPlayer);
+                } else if (1 == playerType) {
                     //AliListPlayer
                     mFlutterAliListPlayer = new FlutterAliListPlayer(flutterPluginBinding);
                     initListener(mFlutterAliListPlayer);
-                }else if(2 == playerType){
+                } else if (2 == playerType) {
                     //AliLiveShiftPlayer
                     String createPlayerId = call.argument("playerId");
-                    FlutterAliLiveShiftPlayer flutterAliLiveShiftPlayer = new FlutterAliLiveShiftPlayer(flutterPluginBinding,createPlayerId);
+                    FlutterAliLiveShiftPlayer flutterAliLiveShiftPlayer = new FlutterAliLiveShiftPlayer(flutterPluginBinding, createPlayerId);
                     initListener(flutterAliLiveShiftPlayer);
-                    mFlutterAliLiveShiftPlayerMap.put(createPlayerId,flutterAliLiveShiftPlayer);
-                }else{
+                    mFlutterAliLiveShiftPlayerMap.put(createPlayerId, flutterAliLiveShiftPlayer);
+                } else {
 
                 }
 
@@ -99,7 +115,7 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
                 break;
             case "initService":
                 byte[] datas = (byte[]) call.arguments;
-                PrivateService.initService(flutterPluginBinding.getApplicationContext(),datas);
+                PrivateService.initService(flutterPluginBinding.getApplicationContext(), datas);
                 result.success(null);
                 break;
             case "loadRtsLibrary":
@@ -125,60 +141,80 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
                 result.success(createDeviceInfo());
                 break;
             case "addBlackDevice":
-                Map<String,String> addBlackDeviceMap = call.arguments();
+                Map<String, String> addBlackDeviceMap = call.arguments();
                 String blackType = addBlackDeviceMap.get("black_type");
                 String blackDevice = addBlackDeviceMap.get("black_device");
-                addBlackDevice(blackType,blackDevice);
+                addBlackDevice(blackType, blackDevice);
                 result.success(null);
                 break;
             case "setPlayerView":
                 Integer viewId = (Integer) call.argument("arg");
                 FlutterAliPlayerView flutterAliPlayerView = mFlutterAliPlayerViewMap.get(viewId);
-                if(playerType == 0){
+                if (playerType == 0) {
                     String setPlayerViewPlayerId = call.argument("playerId");
                     FlutterAliPlayer mSetPlayerViewCurrentFlutterAliPlayer = mFlutterAliPlayerMap.get(setPlayerViewPlayerId);
 //                    if(mSetPlayerViewCurrentFlutterAliPlayer != null){
 //                        mSetPlayerViewCurrentFlutterAliPlayer.setViewMap(mFlutterAliPlayerViewMap);
 //                    }
-                    if(flutterAliPlayerView != null && mSetPlayerViewCurrentFlutterAliPlayer != null){
+                    if (flutterAliPlayerView != null && mSetPlayerViewCurrentFlutterAliPlayer != null) {
                         flutterAliPlayerView.setPlayer(mSetPlayerViewCurrentFlutterAliPlayer.getAliPlayer());
                     }
-                }else if(playerType == 1){
+                } else if (playerType == 1) {
 //                    mFlutterAliListPlayer.setViewMap(mFlutterAliPlayerViewMap);
-                    if(flutterAliPlayerView != null && mFlutterAliListPlayer != null){
+                    if (flutterAliPlayerView != null && mFlutterAliListPlayer != null) {
                         flutterAliPlayerView.setPlayer(mFlutterAliListPlayer.getAliPlayer());
                     }
-                }else if(playerType == 2){
+                } else if (playerType == 2) {
                     String setPlayerViewPlayerId = call.argument("playerId");
                     FlutterAliLiveShiftPlayer mSetPlayerViewCurrentFlutterAliLiveShiftPlayer = mFlutterAliLiveShiftPlayerMap.get(setPlayerViewPlayerId);
-                    if(flutterAliPlayerView != null && mSetPlayerViewCurrentFlutterAliLiveShiftPlayer != null){
+                    if (flutterAliPlayerView != null && mSetPlayerViewCurrentFlutterAliLiveShiftPlayer != null) {
                         flutterAliPlayerView.setPlayer(mSetPlayerViewCurrentFlutterAliLiveShiftPlayer.getAliPlayer());
                     }
                 }
-
+            case "enableLocalCache":
+                Map<String, Object> localCacheMap = call.arguments();
+                if (localCacheMap != null) {
+                    Boolean enable = (Boolean) localCacheMap.get("enable");
+                    String maxBufferMemoryKB = (String) localCacheMap.get("maxBufferMemoryKB");
+                    String localCacheDir = (String) localCacheMap.get("localCacheDir");
+                    AliPlayerGlobalSettings.enableLocalCache(enable, Integer.valueOf(maxBufferMemoryKB), localCacheDir);
+                }
+                break;
+            case "setCacheFileClearConfig":
+                Map<String, Object> cacheFileClearConfig = call.arguments();
+                if (cacheFileClearConfig != null) {
+                    String expireMin = (String) cacheFileClearConfig.get("expireMin");
+                    String maxCapacityMB = (String) cacheFileClearConfig.get("maxCapacityMB");
+                    String freeStorageMB = (String) cacheFileClearConfig.get("freeStorageMB");
+                    AliPlayerGlobalSettings.setCacheFileClearConfig(Long.parseLong(expireMin), Long.parseLong(maxCapacityMB), Long.parseLong(freeStorageMB));
+                }
+                break;
+            case "clearCaches":
+                AliPlayerGlobalSettings.clearCaches();
+                break;
             default:
                 String otherPlayerId = call.argument("playerId");
-                if(mFlutterAliPlayerMap.containsKey(otherPlayerId)){
+                if (mFlutterAliPlayerMap.containsKey(otherPlayerId)) {
                     String playerId = call.argument("playerId");
                     FlutterAliPlayer mCurrentFlutterAliPlayer = mFlutterAliPlayerMap.get(playerId);
-                    if(call.method.equals("destroy")){
+                    if (call.method.equals("destroy")) {
                         mFlutterAliPlayerMap.remove(playerId);
                     }
-                    if(mCurrentFlutterAliPlayer != null){
-                        mCurrentFlutterAliPlayer.onMethodCall(call,result);
+                    if (mCurrentFlutterAliPlayer != null) {
+                        mCurrentFlutterAliPlayer.onMethodCall(call, result);
                     }
-                }else if(mFlutterAliLiveShiftPlayerMap.containsKey(otherPlayerId)){
+                } else if (mFlutterAliLiveShiftPlayerMap.containsKey(otherPlayerId)) {
 //                    String playerId = call.argument("playerId");
                     FlutterAliLiveShiftPlayer mCurrentFlutterAliLiveShiftPlayer = mFlutterAliLiveShiftPlayerMap.get(otherPlayerId);
-                    if(call.method.equals("destroy")){
+                    if (call.method.equals("destroy")) {
                         mFlutterAliLiveShiftPlayerMap.remove(otherPlayerId);
                     }
-                    if(mCurrentFlutterAliLiveShiftPlayer != null){
-                        mCurrentFlutterAliLiveShiftPlayer.onMethodCall(call,result);
+                    if (mCurrentFlutterAliLiveShiftPlayer != null) {
+                        mCurrentFlutterAliLiveShiftPlayer.onMethodCall(call, result);
                     }
-                }else{
-                    if(mFlutterAliListPlayer != null){
-                        mFlutterAliListPlayer.onMethodCall(call,result);
+                } else {
+                    if (mFlutterAliListPlayer != null) {
+                        mFlutterAliListPlayer.onMethodCall(call, result);
                     }
                 }
 
@@ -186,49 +222,49 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
         }
     }
 
-    private Integer getLogLevel(){
+    private Integer getLogLevel() {
         return Logger.getInstance(flutterPluginBinding.getApplicationContext()).getLogLevel().getValue();
     }
 
-    private String createDeviceInfo(){
+    private String createDeviceInfo() {
         AliPlayerFactory.DeviceInfo deviceInfo = new AliPlayerFactory.DeviceInfo();
         deviceInfo.model = Build.MODEL;
         return deviceInfo.model;
     }
 
-    private void addBlackDevice(String blackType,String modelInfo){
+    private void addBlackDevice(String blackType, String modelInfo) {
         AliPlayerFactory.DeviceInfo deviceInfo = new AliPlayerFactory.DeviceInfo();
         deviceInfo.model = modelInfo;
         AliPlayerFactory.BlackType aliPlayerBlackType;
-        if(!TextUtils.isEmpty(blackType) && blackType.equals("HW_Decode_H264")){
+        if (!TextUtils.isEmpty(blackType) && blackType.equals("HW_Decode_H264")) {
             aliPlayerBlackType = AliPlayerFactory.BlackType.HW_Decode_H264;
-        }else{
+        } else {
             aliPlayerBlackType = AliPlayerFactory.BlackType.HW_Decode_HEVC;
         }
-        AliPlayerFactory.addBlackDevice(aliPlayerBlackType,deviceInfo);
+        AliPlayerFactory.addBlackDevice(aliPlayerBlackType, deviceInfo);
     }
 
-    private void enableConsoleLog(Boolean enableLog){
+    private void enableConsoleLog(Boolean enableLog) {
         Logger.getInstance(flutterPluginBinding.getApplicationContext()).enableConsoleLog(enableLog);
     }
 
-    private void setLogLevel(int level){
+    private void setLogLevel(int level) {
         Logger.LogLevel mLogLevel;
-        if(level == Logger.LogLevel.AF_LOG_LEVEL_NONE.getValue()){
+        if (level == Logger.LogLevel.AF_LOG_LEVEL_NONE.getValue()) {
             mLogLevel = Logger.LogLevel.AF_LOG_LEVEL_NONE;
-        }else if(level == Logger.LogLevel.AF_LOG_LEVEL_FATAL.getValue()){
+        } else if (level == Logger.LogLevel.AF_LOG_LEVEL_FATAL.getValue()) {
             mLogLevel = Logger.LogLevel.AF_LOG_LEVEL_FATAL;
-        }else if(level == Logger.LogLevel.AF_LOG_LEVEL_ERROR.getValue()){
+        } else if (level == Logger.LogLevel.AF_LOG_LEVEL_ERROR.getValue()) {
             mLogLevel = Logger.LogLevel.AF_LOG_LEVEL_ERROR;
-        }else if(level == Logger.LogLevel.AF_LOG_LEVEL_WARNING.getValue()){
+        } else if (level == Logger.LogLevel.AF_LOG_LEVEL_WARNING.getValue()) {
             mLogLevel = Logger.LogLevel.AF_LOG_LEVEL_WARNING;
-        }else if(level == Logger.LogLevel.AF_LOG_LEVEL_INFO.getValue()){
+        } else if (level == Logger.LogLevel.AF_LOG_LEVEL_INFO.getValue()) {
             mLogLevel = Logger.LogLevel.AF_LOG_LEVEL_INFO;
-        }else if(level == Logger.LogLevel.AF_LOG_LEVEL_DEBUG.getValue()){
+        } else if (level == Logger.LogLevel.AF_LOG_LEVEL_DEBUG.getValue()) {
             mLogLevel = Logger.LogLevel.AF_LOG_LEVEL_DEBUG;
-        }else if(level == Logger.LogLevel.AF_LOG_LEVEL_TRACE.getValue()){
+        } else if (level == Logger.LogLevel.AF_LOG_LEVEL_TRACE.getValue()) {
             mLogLevel = Logger.LogLevel.AF_LOG_LEVEL_TRACE;
-        }else{
+        } else {
             mLogLevel = Logger.LogLevel.AF_LOG_LEVEL_NONE;
         }
         Logger.getInstance(flutterPluginBinding.getApplicationContext()).setLogLevel(mLogLevel);
@@ -378,9 +414,9 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
 
     @Override
     public PlatformView create(Context context, int viewId, Object args) {
-        FlutterAliPlayerView flutterAliPlayerView = new FlutterAliPlayerView(context,viewId);
+        FlutterAliPlayerView flutterAliPlayerView = new FlutterAliPlayerView(context, viewId);
         flutterAliPlayerView.setFlutterAliPlayerViewListener(this);
-        mFlutterAliPlayerViewMap.put(viewId,flutterAliPlayerView);
+        mFlutterAliPlayerViewMap.put(viewId, flutterAliPlayerView);
         return flutterAliPlayerView;
     }
 

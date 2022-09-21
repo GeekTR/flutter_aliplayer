@@ -5,37 +5,41 @@ import 'flutter_aliplayer.dart';
 export 'flutter_aliplayer.dart';
 
 class FlutterAliListPlayer extends FlutterAliplayer {
-
   String playerId = 'listPlayerDefault';
 
   FlutterAliListPlayer.init(String id) : super.init(id);
 
   @override
   Future<void> create() async {
-    return FlutterAliPlayerFactory.methodChannel.invokeMethod('createAliPlayer',
-        wrapWithPlayerId(arg: PlayerType.PlayerType_List));
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod(
+        'createAliPlayer', wrapWithPlayerId(arg: PlayerType.PlayerType_List));
   }
 
   Future<void> setPreloadCount(int count) async {
-    return FlutterAliPlayerFactory.methodChannel.invokeMethod(
-        "setPreloadCount", wrapWithPlayerId(arg: count));
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("setPreloadCount", wrapWithPlayerId(arg: count));
   }
 
   Future<void> addVidSource({@required vid, @required uid}) async {
     Map<String, dynamic> info = {'vid': vid, 'uid': uid};
-    return FlutterAliPlayerFactory.methodChannel.invokeMethod(
-        "addVidSource", wrapWithPlayerId(arg: info));
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("addVidSource", wrapWithPlayerId(arg: info));
   }
 
   Future<void> addUrlSource({@required url, @required uid}) async {
     Map<String, dynamic> info = {'url': url, 'uid': uid};
-    return FlutterAliPlayerFactory.methodChannel.invokeMethod(
-        "addUrlSource", wrapWithPlayerId(arg: info));
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("addUrlSource", wrapWithPlayerId(arg: info));
   }
 
   Future<void> removeSource(String uid) async {
-    return FlutterAliPlayerFactory.methodChannel.invokeMethod(
-        "removeSource", wrapWithPlayerId(arg: uid));
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("removeSource", wrapWithPlayerId(arg: uid));
+  }
+
+  Future<dynamic> getCurrentUid() {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("getCurrentUid", wrapWithPlayerId());
   }
 
   Future<void> clear() async {
@@ -43,11 +47,13 @@ class FlutterAliListPlayer extends FlutterAliplayer {
         .invokeMethod("clear", wrapWithPlayerId());
   }
 
+  Future<void> setMaxPreloadMemorySizeMB(int size) {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("setMaxPreloadMemorySizeMB", wrapWithPlayerId(arg: size));
+  }
+
   Future<void> moveToNext(
-      {@required accId,
-      @required accKey,
-      @required token,
-      @required region}) async {
+      {String? accId, String? accKey, String? token, String? region}) async {
     Map<String, dynamic> info = {
       'accId': accId,
       'accKey': accKey,
@@ -58,20 +64,20 @@ class FlutterAliListPlayer extends FlutterAliplayer {
         .invokeMethod("moveToNext", wrapWithPlayerId(arg: info));
   }
 
-  Future<void> moveToPre(
-      {@required accId,
-      @required accKey,
-      @required token,
-      @required region,
-      playerId}) async {
+  Future<void> moveToPre({
+    String? accId,
+    String? accKey,
+    String? token,
+    String? region,
+  }) async {
     Map<String, dynamic> info = {
       'accId': accId,
       'accKey': accKey,
       'token': token,
       'region': region
     };
-    return FlutterAliPlayerFactory.methodChannel.invokeMethod(
-        "moveToPre", wrapWithPlayerId(arg: info));
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("moveToPre", wrapWithPlayerId(arg: info));
   }
 
   ///移动到指定位置开始准备播放,url播放方式只需要填写uid；sts播放方式，需要更新sts信息
@@ -81,8 +87,7 @@ class FlutterAliListPlayer extends FlutterAliplayer {
       String? accId,
       String? accKey,
       String? token,
-      String? region,
-      playerId}) async {
+      String? region}) async {
     Map<String, dynamic> info = {
       'uid': uid,
       'accId': accId,
@@ -90,7 +95,7 @@ class FlutterAliListPlayer extends FlutterAliplayer {
       'token': token,
       'region': region
     };
-    return FlutterAliPlayerFactory.methodChannel.invokeMethod(
-        "moveTo", wrapWithPlayerId(arg: info));
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("moveTo", wrapWithPlayerId(arg: info));
   }
 }

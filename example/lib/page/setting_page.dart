@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_aliplayer/flutter_aliplayer.dart';
 import 'package:flutter_aliplayer_example/config.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:path_provider/path_provider.dart';
 
 class SettingPage extends StatefulWidget {
   @override
@@ -15,16 +16,19 @@ class _SettingHomePageState extends State<SettingPage> {
   TextEditingController _dnsTextEditingController = TextEditingController();
   TextEditingController _mLocalCacheDirController = TextEditingController();
   TextEditingController _mLocalCacheMaxLocalSizeController =
-      TextEditingController();
+  TextEditingController();
   TextEditingController _mLocalCacheExpirationController =
-      TextEditingController();
+  TextEditingController();
   TextEditingController _mLocalCacheMaxCacheCapacityController =
-      TextEditingController();
+  TextEditingController();
   TextEditingController _mLocalCacheMinDiskCapacityController =
-      TextEditingController();
+  TextEditingController();
   String _sdkVersion;
   List<String> _playerName = List();
   String _currentPlayerName = "Default";
+
+  //保存地址
+  String _savePath;
 
   @override
   void initState() {
@@ -40,13 +44,32 @@ class _SettingHomePageState extends State<SettingPage> {
       _playerName.add("MediaPlayer");
     }
     if (Platform.isIOS) {
-      _playerName
-        ..add("SuperMediaPlayer")
-        ..add("AppleAVPlayer");
+      _playerName..add("SuperMediaPlayer")..add("AppleAVPlayer");
     }
 
-    //TODO
-    _mLocalCacheDirController.text = "";
+    if (Platform.isAndroid) {
+      getExternalStorageDirectories().then((value) {
+        if (value.length > 0) {
+          _savePath = value[0].path + "/localCache/";
+          return Directory(_savePath);
+        }
+      }).then((value) {
+        return value.exists();
+      }).then((value) {
+        if (!value) {
+          Directory directory = Directory(_savePath);
+          directory.create();
+        }
+        return _savePath;
+      }).then((value) {
+        _mLocalCacheDirController.text = _savePath;
+      });
+    } else if (Platform.isIOS) {
+      //TODO  IOS
+      _mLocalCacheDirController.text = "localCache";
+    }
+
+    _mLocalCacheDirController.text = GlobalSettings.mCacheDir;
     _mLocalCacheMaxLocalSizeController.text = GlobalSettings.mMaxCacheSize;
     _mLocalCacheExpirationController.text = GlobalSettings.mExpiration;
     _mLocalCacheMaxCacheCapacityController.text = GlobalSettings.mMaxCapacity;
@@ -378,15 +401,24 @@ class _SettingHomePageState extends State<SettingPage> {
                     _mLocalCacheMaxCacheCapacityController.text;
                 GlobalSettings.mMinDiskCapacity =
                     _mLocalCacheMinDiskCapacityController.text;
-                //TODO 设置给播放器
+
+                FlutterAliplayer.enableLocalCache(
+                    GlobalSettings.mEnableLocalCache,
+                    GlobalSettings.mMaxCacheSize,
+                    GlobalSettings.mCacheDir);
+
+                FlutterAliplayer.setCacheFileClearConfig(
+                    GlobalSettings.mExpiration,
+                    GlobalSettings.mMaxCapacity,
+                    GlobalSettings.mMinDiskCapacity);
+
                 Fluttertoast.showToast(msg: "本地缓存配置成功");
               },
             ),
             ElevatedButton(
               child: Text("删除缓存"),
               onPressed: () {
-                //TODO
-                print("恢复默认");
+                FlutterAliplayer.clearCaches();
               },
             ),
           ],

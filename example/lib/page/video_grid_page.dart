@@ -25,64 +25,63 @@ class _VideoGridPageState extends State<VideoGridPage>
 
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
+
+  RefreshController _videoListRefreshController =
+      RefreshController(initialRefresh: false);
   PageController _pageController;
 
   FlutterAliListPlayer fAliListPlayer;
 
   int _curIdx = 0;
   int _lastCurIndex = -1;
-
   bool _isPause = false;
-
   double _playerY = 0;
-
   bool _isFirstRenderShow = false;
-
   bool _isBackgroundMode;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    fAliListPlayer = FlutterAliPlayerFactory.createAliListPlayer(playerId: 'aliListPlayer');
+    fAliListPlayer =
+        FlutterAliPlayerFactory.createAliListPlayer(playerId: 'aliListPlayer');
     fAliListPlayer.setAutoPlay(true);
-      fAliListPlayer.setLoop(true);
-      var configMap = {
-        'mClearFrameWhenStop': true,
-      };
-      fAliListPlayer.setConfig(configMap);
+    fAliListPlayer.setLoop(true);
+    var configMap = {
+      'mClearFrameWhenStop': true,
+    };
+    fAliListPlayer.setConfig(configMap);
 
-      fAliListPlayer.setOnRenderingStart((playerId) {
-        print('_isFirstRenderShow==$_curIdx');
-        Future.delayed(Duration(milliseconds: 50), () {
-          setState(() {
-            _isFirstRenderShow = true;
-          });
+    fAliListPlayer.setOnRenderingStart((playerId) {
+      Future.delayed(Duration(milliseconds: 50), () {
+        setState(() {
+          _isFirstRenderShow = true;
         });
       });
+    });
 
-      fAliListPlayer.setOnStateChanged((newState, playerId) {
-        switch (newState) {
-          case FlutterAvpdef.AVPStatus_AVPStatusStarted:
-            setState(() {
-              _isBackgroundMode = false;
-              _isPause = false;
-            });
-            break;
-          case FlutterAvpdef.AVPStatus_AVPStatusPaused:
-            setState(() {
-              _isPause = true;
-            });
-            break;
-          default:
-        }
-      });
+    fAliListPlayer.setOnStateChanged((newState, playerId) {
+      switch (newState) {
+        case FlutterAvpdef.AVPStatus_AVPStatusStarted:
+          setState(() {
+            _isBackgroundMode = false;
+            _isPause = false;
+          });
+          break;
+        case FlutterAvpdef.AVPStatus_AVPStatusPaused:
+          setState(() {
+            _isPause = true;
+          });
+          break;
+        default:
+      }
+    });
 
-      fAliListPlayer.setOnError((errorCode, errorExtra, errorMsg, playerId) {
-        Fluttertoast.showToast(msg: errorMsg);
-      });
+    fAliListPlayer.setOnError((errorCode, errorExtra, errorMsg, playerId) {
+      Fluttertoast.showToast(msg: errorMsg);
+    });
 
-      _onRefresh();
+    _onRefresh();
   }
 
   @override
@@ -159,10 +158,13 @@ class _VideoGridPageState extends State<VideoGridPage>
       _dataList.addAll(videoListModel.videoList);
     }
     _refreshController.refreshCompleted();
+    _videoListRefreshController.refreshCompleted();
     if (videoListModel.videoList.length < 10) {
       _refreshController.loadNoData();
+      _videoListRefreshController.loadNoData();
     } else {
       _refreshController.loadComplete();
+      _videoListRefreshController.loadComplete();
     }
     setState(() {});
   }
@@ -276,7 +278,7 @@ class _VideoGridPageState extends State<VideoGridPage>
                 footer: ClassicFooter(
                   loadStyle: LoadStyle.ShowWhenLoading,
                 ),
-                controller: _refreshController,
+                controller: _videoListRefreshController,
                 onRefresh: _onRefresh,
                 onLoading: _onLoadMore,
                 child: CustomScrollView(

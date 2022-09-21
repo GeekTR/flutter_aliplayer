@@ -24,6 +24,9 @@ class _PlayConfigFragmentState extends State<PlayConfigFragment> {
   TextEditingController _mMaxProbeSizeController;
   TextEditingController _mReferrerController;
   TextEditingController _mHttpProxyController;
+  TextEditingController _mLiveStartIndex;
+  TextEditingController _mPositionTimerIntervalMs;
+  TextEditingController _mMaxBackwardBufferDurationMs;
 
   bool mDisableVideo = false;
   bool mDisableAudio = false;
@@ -70,6 +73,10 @@ class _PlayConfigFragmentState extends State<PlayConfigFragment> {
     ));
     _mHttpProxyController = TextEditingController.fromValue(TextEditingValue(
       text: _configMap['mHttpProxy'],
+    ));
+    //TODO
+    _mPositionTimerIntervalMs = TextEditingController.fromValue(TextEditingValue(
+      text: "111"
     ));
     mEnableSEI = _configMap['mEnableSEI'];
     mShowFrameWhenStop = !_configMap['mClearFrameWhenStop'];
@@ -155,6 +162,28 @@ class _PlayConfigFragmentState extends State<PlayConfigFragment> {
                   labelText: "httpProxy",
                 ),
               ),
+              TextField(
+                maxLines: 1,
+                controller: _mLiveStartIndex,
+                decoration: InputDecoration(
+                  labelText: "mLiveStartIndex",
+                ),
+              ),
+              TextField(
+                maxLines: 1,
+                controller: _mPositionTimerIntervalMs,
+                decoration: InputDecoration(
+                  labelText: "positionTimerInterval(ms)",
+                ),
+              ),
+              TextField(
+                maxLines: 1,
+                controller: _mMaxBackwardBufferDurationMs,
+                decoration: InputDecoration(
+                  labelText: "MaxBackwardBufferDuration(ms)",
+                ),
+              ),
+
               SizedBox(
                 height: 30.0,
               ),
@@ -241,7 +270,8 @@ class _PlayConfigFragmentState extends State<PlayConfigFragment> {
                         'mEnableSEI': mEnableSEI,
                         'mClearFrameWhenStop': !mShowFrameWhenStop,
                         'mDisableVideo': mDisableVideo,
-                        'mDisableAudio': mDisableAudio
+                        'mDisableAudio': mDisableAudio,
+                        "mPositionTimerIntervalMs":_mPositionTimerIntervalMs
                       };
                       widget.fAliplayer.setConfig(configMap);
                       Fluttertoast.showToast(msg: "应用配置成功");
