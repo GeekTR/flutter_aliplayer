@@ -296,14 +296,9 @@ class FlutterAliplayer {
         .invokeMethod('setAutoPlay', wrapWithPlayerId(arg: isAutoPlay));
   }
 
-  void setFastStart(bool fastStart) {
-    FlutterAliPlayerFactory.methodChannel
-        .invokeMethod("setFastStart", wrapWithPlayerId(arg: fastStart));
-  }
-
-  Future<void> setMaxAccurateSeekDelta(int time) {
+  Future<void> setFastStart(bool fastStart) {
     return FlutterAliPlayerFactory.methodChannel
-        .invokeMethod("setMaxAccurateSeekDelta", wrapWithPlayerId(arg: time));
+        .invokeMethod("setFastStart", wrapWithPlayerId(arg: fastStart));
   }
 
   Future<dynamic> isMuted() async {
@@ -456,6 +451,21 @@ class FlutterAliplayer {
         .invokeMethod('setVideoBackgroundColor', wrapWithPlayerId(arg: color));
   }
 
+  Future<dynamic> getVideoWidth() async {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod('getVideoWidth', wrapWithPlayerId());
+  }
+
+  Future<dynamic> getVideoHeight() async {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod('getVideoHeight', wrapWithPlayerId());
+  }
+
+  Future<dynamic> getVideoRotation() async {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod('getVideoRotation', wrapWithPlayerId());
+  }
+
   Future<void> setVolume(double volume) async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('setVolume', wrapWithPlayerId(arg: volume));
@@ -464,6 +474,36 @@ class FlutterAliplayer {
   Future<dynamic> getVolume() async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('getVolume', wrapWithPlayerId());
+  }
+
+  Future<dynamic> getDuration() async {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod('getDuration', wrapWithPlayerId());
+  }
+
+  Future<dynamic> getCurrentPosition() async {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod('getCurrentPosition', wrapWithPlayerId());
+  }
+
+  Future<dynamic> getCurrentUtcTime() async {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod('getCurrentUtcTime', wrapWithPlayerId());
+  }
+
+  Future<dynamic> getLocalCacheLoadedSize() async {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod('getLocalCacheLoadedSize', wrapWithPlayerId());
+  }
+
+  Future<dynamic> getCurrentDownloadSpeed() async {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod('getCurrentDownloadSpeed', wrapWithPlayerId());
+  }
+
+  Future<dynamic> getBufferedPosition() async {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod('getBufferedPosition', wrapWithPlayerId());
   }
 
   Future<dynamic> getConfig() async {
@@ -505,6 +545,30 @@ class FlutterAliplayer {
         .invokeMethod("updateFilterConfig", wrapWithPlayerId(arg: map));
   }
 
+  Future<dynamic> getCacheFilePath(String url) async {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("getCacheFilePath", wrapWithPlayerId(arg: url));
+  }
+
+  Future<dynamic> getCacheFilePathWithVid(
+      String vid, String format, String definition) async {
+    var map = {'vid': vid, 'format': format, 'definition': definition};
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("getCacheFilePathWithVid", wrapWithPlayerId(arg: map));
+  }
+
+  Future<dynamic> getCacheFilePathWithVidAtPreviewTime(
+      String vid, String format, String definition, int previewTime) async {
+    var map = {
+      'vid': vid,
+      'format': format,
+      'definition': definition,
+      'previewTime': previewTime
+    };
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod(
+        "getCacheFilePathWithVidAtPreviewTime", wrapWithPlayerId(arg: map));
+  }
+
   Future<dynamic> getMediaInfo() {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("getMediaInfo", wrapWithPlayerId());
@@ -541,8 +605,8 @@ class FlutterAliplayer {
         .invokeMethod("selectExtSubtitle", wrapWithPlayerId(arg: map));
   }
 
-  void setDefaultBandWidth(int parse) {
-    FlutterAliPlayerFactory.methodChannel
+  Future<void> setDefaultBandWidth(int parse) {
+    return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("setDefaultBandWidth", wrapWithPlayerId(arg: parse));
   }
 
@@ -574,15 +638,44 @@ class FlutterAliplayer {
         .invokeMethod("getPlayerName", wrapWithPlayerId());
   }
 
+  Future<void> sendCustomEvent(String args) {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("sendCustomEvent", wrapWithPlayerId(arg: args));
+  }
+
   Future<void> setStreamDelayTime(int trackIdx, int time) {
     var map = {'index': trackIdx, 'time': time};
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("setStreamDelayTime", map);
   }
 
+  Future<void> reload() async {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod('reload', wrapWithPlayerId());
+  }
+
+  Future<dynamic> getOption(UnsignedInt key) {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("getOption", wrapWithPlayerId(arg: key));
+  }
+
+  Future<dynamic> invokeComponent(String content) {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("invokeComponent", wrapWithPlayerId(arg: content));
+  }
+
+  Future<dynamic> getPropertyString(UnsignedInt key) {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("getPropertyString", wrapWithPlayerId(arg: key));
+  }
+
   ///静态方法
   static Future<dynamic> getSDKVersion() async {
     return FlutterAliPlayerFactory.methodChannel.invokeMethod("getSDKVersion");
+  }
+
+  static Future<dynamic> getDeviceUUID() async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod("getDeviceUUID");
   }
 
   static Future<void> enableMix(bool enable) {
@@ -606,32 +699,32 @@ class FlutterAliplayer {
     );
   }
 
-  static Future<dynamic> setUseHttp2(bool use) {
+  static Future<void> setUseHttp2(bool use) {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("setUseHttp2", use);
   }
 
-  static Future<dynamic> enableHttpDns(bool enable) {
+  static Future<void> enableHttpDns(bool enable) {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("enableHttpDns", enable);
   }
 
-  static Future<dynamic> setIpResolveType(UnsignedInt type) {
+  static Future<void> setIpResolveType(UnsignedInt type) {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("setIpResolveType", type);
   }
 
-  static Future<dynamic> setFairPlayCertIDAtIOS(String certID) {
+  static Future<void> setFairPlayCertIDAtIOS(String certID) {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("setFairPlayCertIDAtIOS", certID);
   }
 
-  static Future<dynamic> enableHWAduioTempo(bool enable) {
+  static Future<void> enableHWAduioTempo(bool enable) {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("enableHWAduioTempo", enable);
   }
 
-  static Future<dynamic> forceAudioRendingFormat(
+  static Future<void> forceAudioRendingFormat(
       bool force, String fmt, int channels, int sample_rate) {
     var map = {
       'force': force,
@@ -643,7 +736,13 @@ class FlutterAliplayer {
         .invokeMethod("enableHWAduioTempo", map);
   }
 
-  static Future<dynamic> enableLocalCache(
+  static Future<void> netWorkReConnect() {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("netWorkReConnect");
+  }
+
+  ///本地缓存
+  static Future<void> enableLocalCache(
       bool enable, int maxBufferMemoryKB, String localCacheDir) {
     var map = {
       'enable': enable,
@@ -654,7 +753,8 @@ class FlutterAliplayer {
         .invokeMethod("enableLocalCache", map);
   }
 
-  static Future<dynamic> setCacheFileClearConfig(
+  ///本地缓存文件自动清理相关的设置
+  static Future<void> setCacheFileClearConfig(
       LongLong expireMin, LongLong maxCapacityMB, LongLong freeStorageMB) {
     var map = {
       'expireMin': expireMin,
@@ -665,12 +765,13 @@ class FlutterAliplayer {
         .invokeMethod("enableLocalCache", map);
   }
 
-  static Future<dynamic> setCacheUrlHashCallback() async {
+  static Future<void> setCacheUrlHashCallback() async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("setCacheUrlHashCallback");
   }
 
-  static Future<dynamic> clearCaches() {
+  ///清理本地缓存，需要先应用配置缓存，才能清理本地缓存
+  static Future<void> clearCaches() {
     return FlutterAliPlayerFactory.methodChannel.invokeMethod("clearCaches");
   }
 
@@ -688,35 +789,6 @@ class FlutterAliplayer {
     };
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("addBlackDevice", map);
-  }
-
-  ///本地缓存
-  static Future<void> enableLocalCache(
-      bool enable, String maxBufferMemoryKB, String localCacheDir) {
-    var map = {
-      "enable": enable,
-      "maxBufferMemoryKB": maxBufferMemoryKB,
-      "localCacheDir": localCacheDir
-    };
-    return FlutterAliPlayerFactory.methodChannel
-        .invokeMethod("enableLocalCache", map);
-  }
-
-  ///本地缓存文件自动清理相关的设置
-  static Future<void> setCacheFileClearConfig(
-      String expireMin, String maxCapacityMB, String freeStorageMB) {
-    var map = {
-      "expireMin": expireMin,
-      "maxCapacityMB": maxCapacityMB,
-      "freeStorageMB": freeStorageMB
-    };
-    return FlutterAliPlayerFactory.methodChannel
-        .invokeMethod("setCacheFileClearConfig", map);
-  }
-
-  ///清理本地缓存，需要先应用配置缓存，才能清理本地缓存
-  static Future<void> clearCaches() {
-    return FlutterAliPlayerFactory.methodChannel.invokeMethod("clearCaches");
   }
 
   ///回调分发
