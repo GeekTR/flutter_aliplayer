@@ -9,6 +9,7 @@
 #import "NSDictionary+ext.h"
 #import "MJExtension.h"
 #import "AliPlayerProxy.h"
+#import<CommonCrypto/CommonDigest.h>
 
 @interface AliPlayerFactory () {
     NSObject<FlutterBinaryMessenger>* _messenger;
@@ -109,6 +110,12 @@
     }
 }
 
+- (void)initLicenseService:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    
+    [AliPrivateService initLicenseService];
+    result(nil);
+}
 
 - (void)initService:(NSArray*)arr {
     FlutterMethodCall* call = arr.firstObject;
@@ -174,6 +181,13 @@
     result(nil);
 }
 
+- (void)clearScreen:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    [proxy.player clearScreen];
+    result(nil);
+}
+
 - (void)stop:(NSArray*)arr {
     FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
@@ -205,7 +219,7 @@
     result(nil);
 }
 
--(void)enableMix:(NSArray*)arr {
+- (void)enableMix:(NSArray*)arr {
     FlutterMethodCall* call = arr.firstObject;
     FlutterResult result = arr[1];
     NSNumber* val = [call arguments];
@@ -390,6 +404,14 @@
     result(nil);
 }
 
+- (void)setTraceID:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSString* val = arr[3];
+    [proxy.player setTraceID:val];
+    result(nil);
+}
+
 - (void)getVolume:(NSArray*)arr {
     FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
@@ -448,6 +470,112 @@
     NSNumber *position = dic[@"position"];
     NSNumber *seekMode = dic[@"seekMode"];
     [proxy.player seekToTime:position.integerValue seekMode:seekMode.intValue];
+    result(nil);
+}
+
+- (void)setMaxAccurateSeekDelta:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSNumber* val = arr[3];
+    [proxy.player setMaxAccurateSeekDelta:val.intValue];
+    result(nil);
+}
+
+- (void)setUseHttp2:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    FlutterMethodCall* call = arr.firstObject;
+    NSNumber* val = [call arguments];
+    [AliPlayerGlobalSettings setUseHttp2:val.boolValue];
+    result(nil);
+}
+
+- (void)enableHttpDns:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    FlutterMethodCall* call = arr.firstObject;
+    NSNumber* val = [call arguments];
+    [AliPlayerGlobalSettings enableHttpDns:val.boolValue];
+    result(nil);
+}
+
+- (void)setIpResolveType:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    FlutterMethodCall* call = arr.firstObject;
+    NSNumber* val = [call arguments];
+    [AliPlayerGlobalSettings setIpResolveType:(AVPIpResolveType)val.unsignedIntegerValue];
+    result(nil);
+}
+
+- (void)setFairPlayCertIDAtIOS:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    FlutterMethodCall* call = arr.firstObject;
+    NSString* val = [call arguments];
+    [AliPlayerGlobalSettings setFairPlayCertID:val];
+    result(nil);
+}
+
+- (void)enableHWAduioTempo:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    FlutterMethodCall* call = arr.firstObject;
+    NSNumber* val = [call arguments];
+    [AliPlayerGlobalSettings enableHWAduioTempo:val.boolValue];
+    result(nil);
+}
+
+- (void)forceAudioRendingFormat:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    FlutterMethodCall* call = arr.firstObject;
+    NSDictionary* val = [call arguments];
+    
+    [AliPlayerGlobalSettings forceAudioRendingFormat:[val[@"force"] boolValue] fmt:val[@"fmt"] channels:[val[@"channels"] intValue] sample_rate:[val[@"sample_rate"] intValue]];
+    result(nil);
+}
+
+- (void)enableLocalCache:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    FlutterMethodCall* call = arr.firstObject;
+    NSDictionary* val = [call arguments];
+    
+    [AliPlayerGlobalSettings enableLocalCache:[val[@"enable"] boolValue] maxBufferMemoryKB:[val[@"maxBufferMemoryKB"] intValue] localCacheDir:val[@"localCacheDir"]];
+    result(nil);
+}
+
+- (void)setCacheFileClearConfig:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    FlutterMethodCall* call = arr.firstObject;
+    NSDictionary* val = [call arguments];
+    
+    [AliPlayerGlobalSettings setCacheFileClearConfig:[val[@"expireMin"] longLongValue] maxCapacityMB:[val[@"maxCapacityMB"] longLongValue] freeStorageMB:[val[@"freeStorageMB"] longLongValue]];
+    result(nil);
+}
+
+- (void)setCacheUrlHashCallback:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    
+    [AliPlayerGlobalSettings setCacheUrlHashCallback:hashCallback];
+    result(nil);
+}
+
+NSString *hashCallback(NSString* url) {
+    NSArray *array = [[url stringByReplacingOccurrencesOfString:@"https" withString:@"http"] componentsSeparatedByString:@"?"];
+    NSString *md5Str = array.firstObject;
+    return [AliPlayerFactory md5:md5Str];
+}
+
++ (NSString *) md5:(NSString *) input {
+    const char *cStr = [input UTF8String];
+    unsigned char digest[CC_MD5_DIGEST_LENGTH];
+    CC_MD5( cStr, strlen(cStr), digest );
+    NSMutableString *output = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH * 2];
+    for(int i = 0; i < CC_MD5_DIGEST_LENGTH; i++){
+        [output appendFormat:@"%02x", digest[i]];
+    }
+    return  output;
+}
+
+- (void)clearCaches:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    
+    [AliPlayerGlobalSettings clearCaches];
     result(nil);
 }
 
@@ -520,6 +648,61 @@
 
     [proxy.player setCacheConfig:config];
     result(nil);
+}
+
+- (void)setFilterConfig:(NSArray *)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSArray<NSDictionary *>* val = arr[3];
+    
+    AVPFilterConfig *filterConfig = [[AVPFilterConfig alloc] init];
+    
+    for (int i = 0; i < val.count; i++) {
+        NSDictionary *filterDic = val[i];
+        NSDictionary *filterOptionsDic = filterDic[@"options"];
+        
+        AVPFilter *filter = [[AVPFilter alloc] initWithTarget:filterDic[@"target"]];
+        
+        AVPFilterOptions *options = [[AVPFilterOptions alloc] init];
+        [options setOptions:filterOptionsDic[@"key"] value:filterOptionsDic[@"value"]];
+        
+        [filter setOptions:options];
+        [filterConfig addFilter:filter];
+    }
+    
+    [proxy.player setFilterConfig:filterConfig];
+    result(nil);
+}
+
+- (void)updateFilterConfig:(NSArray *)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSDictionary *configDic = arr[3];
+    NSDictionary *filterOptionsDic = configDic[@"options"];
+    
+    AVPFilterOptions *options = [[AVPFilterOptions alloc] init];
+    [options setOptions:filterOptionsDic[@"key"] value:filterOptionsDic[@"value"]];
+    
+    [proxy.player updateFilterConfig:configDic[@"target"] options:options];
+    result(nil);
+}
+
+- (void)setFilterInvalid:(NSArray *)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSDictionary *dic = arr[3];
+    
+    [proxy.player setFilterInvalid:dic[@"target"] invalid:[dic[@"invalid"] boolValue]];
+    result(nil);
+}
+
+- (void)getCacheFilePath:(NSArray *)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSString *val = arr[3];
+    
+    NSString *filePath = [proxy.player getCacheFilePath:val];
+    result(filePath);
 }
 
 - (void)getConfig:(NSArray*)arr {
@@ -614,6 +797,26 @@
     [source setMtsHlsUriToken:dic[@"hlsUriToken"]];
     [self setSource:source withDefinitions:dic];
     [proxy.player setMpsSource:source];
+    result(nil);
+}
+
+- (void)setLiveSts:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSDictionary *dic = arr[3];
+    AVPLiveStsSource *source = [AVPLiveStsSource mj_objectWithKeyValues:dic];
+    [self setSource:source withDefinitions:dic];
+    
+    [proxy.player setLiveStsSource:source];
+    result(nil);
+}
+
+- (void)updateLiveStsInfo:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSDictionary *dic = arr[3];
+    
+    [proxy.player updateLiveStsInfo:dic[@"accId"] accKey:dic[@"accKey"] token:dic[@"token"] region:dic[@"region"]];
     result(nil);
 }
 

@@ -8,8 +8,8 @@ import 'package:flutter_aliplayer/flutter_aliliveshiftplayer.dart';
 class FlutterAliPlayerFactory {
   static MethodChannel methodChannel =
       MethodChannel("plugins.flutter_aliplayer_factory");
-  
-  static Map<String,FlutterAliplayer> instanceMap = {};
+
+  static Map<String, FlutterAliplayer> instanceMap = {};
 
   static FlutterAliListPlayer createAliListPlayer({playerId}) {
     FlutterAliListPlayer flutterAliListPlayer =
@@ -24,8 +24,9 @@ class FlutterAliPlayerFactory {
     return flutterAliplayer;
   }
 
-  static FlutterAliLiveShiftPlayer createAliLiveShiftPlayer({playerId}){
-    FlutterAliLiveShiftPlayer flutterAliLiveShiftPlayer = FlutterAliLiveShiftPlayer.init(playerId);
+  static FlutterAliLiveShiftPlayer createAliLiveShiftPlayer({playerId}) {
+    FlutterAliLiveShiftPlayer flutterAliLiveShiftPlayer =
+        FlutterAliLiveShiftPlayer.init(playerId);
     flutterAliLiveShiftPlayer.create();
     return flutterAliLiveShiftPlayer;
   }
@@ -34,8 +35,12 @@ class FlutterAliPlayerFactory {
     return methodChannel.invokeMethod("initService", byteData);
   }
 
-  static void loadRtsLibrary(){
-    if(Platform.isAndroid){
+  static Future<void> initLicenseService() {
+    return methodChannel.invokeMethod("initLicenseService");
+  }
+
+  static void loadRtsLibrary() {
+    if (Platform.isAndroid) {
       methodChannel.invokeMethod("loadRtsLibrary");
     }
   }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ffi';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -14,8 +15,10 @@ export 'flutter_avpdef.dart';
 typedef OnPrepared = void Function(String playerId);
 typedef OnRenderingStart = void Function(String playerId);
 typedef OnVideoSizeChanged = void Function(
-    int width, int height, String playerId);
+    int width, int height, int rotation, String playerId);
 typedef OnSnapShot = void Function(String path, String playerId);
+typedef OnChooseTrackIndex = void Function(
+    Array chooseTrackInfo, String playerId);
 
 typedef OnSeekComplete = void Function(String playerId);
 typedef OnSeiData = void Function(int type, String data, String playerId);
@@ -71,7 +74,7 @@ class FlutterAliplayer {
   OnError? onError;
   OnSeiData? onSeiData;
   OnSnapShot? onSnapShot;
-
+  OnChooseTrackIndex? onChooseTrackIndex;
   OnTrackChanged? onTrackChanged;
   OnThumbnailPreparedSuccess? onThumbnailPreparedSuccess;
   OnThumbnailPreparedFail? onThumbnailPreparedFail;
@@ -120,6 +123,10 @@ class FlutterAliplayer {
 
   void setOnSnapShot(OnSnapShot snapShot) {
     this.onSnapShot = snapShot;
+  }
+
+  void setOnChooseTrackIndex(OnChooseTrackIndex chooseTrackIndex) {
+    this.onChooseTrackIndex = chooseTrackIndex;
   }
 
   void setOnSeekComplete(OnSeekComplete seekComplete) {
@@ -237,6 +244,11 @@ class FlutterAliplayer {
         .invokeMethod('pause', wrapWithPlayerId());
   }
 
+  Future<void> clearScreen() async {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod('clearScreen', wrapWithPlayerId());
+  }
+
   Future<dynamic> snapshot(String path) async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('snapshot', wrapWithPlayerId(arg: path));
@@ -257,6 +269,11 @@ class FlutterAliplayer {
     var map = {"position": position, "seekMode": seekMode};
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("seekTo", wrapWithPlayerId(arg: map));
+  }
+
+  Future<void> setMaxAccurateSeekDelta(int delta) async {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("setMaxAccurateSeekDelta", wrapWithPlayerId(arg: delta));
   }
 
   Future<dynamic> isLoop() async {
@@ -354,6 +371,46 @@ class FlutterAliplayer {
         .invokeMethod("setVidMps", wrapWithPlayerId(arg: mpsInfo));
   }
 
+  Future<void> setLiveSts(
+      {String? url,
+      String? accessKeyId,
+      String? accessKeySecret,
+      String? securityToken,
+      String? region,
+      String? domain,
+      String? app,
+      String? stream,
+      UnsignedInt? encryptionType,
+      List<String>? definitionList,
+      playerId}) async {
+    Map<String, dynamic> liveStsInfo = {
+      "url": url,
+      "accessKeyId": accessKeyId,
+      "accessKeySecret": accessKeySecret,
+      "securityToken": securityToken,
+      "region": region,
+      "domain": domain,
+      "app": app,
+      "stream": stream,
+      "encryptionType": encryptionType,
+      "definitionList": definitionList,
+    };
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("setLiveSts", wrapWithPlayerId(arg: liveStsInfo));
+  }
+
+  Future<dynamic> updateLiveStsInfo(
+      String accId, String accKey, String token, String region) async {
+    Map<String, String> liveStsInfo = {
+      "accId": accId,
+      "accKey": accKey,
+      "token": token,
+      "region": region,
+    };
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod('updateLiveStsInfo', wrapWithPlayerId(arg: liveStsInfo));
+  }
+
   Future<dynamic> getRotateMode() async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('getRotateMode', wrapWithPlayerId());
@@ -429,6 +486,25 @@ class FlutterAliplayer {
         .invokeMethod("setCacheConfig", wrapWithPlayerId(arg: map));
   }
 
+  Future<void> setFilterConfig(Array config) async {
+    // config格式: [{"target":"<target>", "options":{"key":"<options_key>", "value": "<options_value>"}}, ...]
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("setFilterConfig", wrapWithPlayerId(arg: config));
+  }
+
+  Future<void> updateFilterConfig(String target, Map options) async {
+    var map = {'target': target, 'options': options};
+    // options格式: {"key":"<options_key>", "value": "<options_value>"}
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("updateFilterConfig", wrapWithPlayerId(arg: map));
+  }
+
+  Future<void> setFilterInvalid(String target, bool invalid) async {
+    var map = {'target': target, 'invalid': invalid};
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("updateFilterConfig", wrapWithPlayerId(arg: map));
+  }
+
   Future<dynamic> getMediaInfo() {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("getMediaInfo", wrapWithPlayerId());
@@ -447,6 +523,11 @@ class FlutterAliplayer {
   Future<dynamic> requestBitmapAtPosition(int position) {
     return FlutterAliPlayerFactory.methodChannel.invokeMethod(
         "requestBitmapAtPosition", wrapWithPlayerId(arg: position));
+  }
+
+  Future<dynamic> setTraceID(String traceID) {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("setTraceID", wrapWithPlayerId(arg: traceID));
   }
 
   Future<void> addExtSubtitle(String url) {
@@ -525,6 +606,74 @@ class FlutterAliplayer {
     );
   }
 
+  static Future<dynamic> setUseHttp2(bool use) {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("setUseHttp2", use);
+  }
+
+  static Future<dynamic> enableHttpDns(bool enable) {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("enableHttpDns", enable);
+  }
+
+  static Future<dynamic> setIpResolveType(UnsignedInt type) {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("setIpResolveType", type);
+  }
+
+  static Future<dynamic> setFairPlayCertIDAtIOS(String certID) {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("setFairPlayCertIDAtIOS", certID);
+  }
+
+  static Future<dynamic> enableHWAduioTempo(bool enable) {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("enableHWAduioTempo", enable);
+  }
+
+  static Future<dynamic> forceAudioRendingFormat(
+      bool force, String fmt, int channels, int sample_rate) {
+    var map = {
+      'force': force,
+      'fmt': fmt,
+      'channels': channels,
+      'sample_rate': sample_rate
+    };
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("enableHWAduioTempo", map);
+  }
+
+  static Future<dynamic> enableLocalCache(
+      bool enable, int maxBufferMemoryKB, String localCacheDir) {
+    var map = {
+      'enable': enable,
+      'maxBufferMemoryKB': maxBufferMemoryKB,
+      'localCacheDir': localCacheDir,
+    };
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("enableLocalCache", map);
+  }
+
+  static Future<dynamic> setCacheFileClearConfig(
+      LongLong expireMin, LongLong maxCapacityMB, LongLong freeStorageMB) {
+    var map = {
+      'expireMin': expireMin,
+      'maxCapacityMB': maxCapacityMB,
+      'freeStorageMB': freeStorageMB,
+    };
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("enableLocalCache", map);
+  }
+
+  static Future<dynamic> setCacheUrlHashCallback() async {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("setCacheUrlHashCallback");
+  }
+
+  static Future<dynamic> clearCaches() {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod("clearCaches");
+  }
+
   ///return deviceInfo
   static Future<dynamic> createDeviceInfo() async {
     return FlutterAliPlayerFactory.methodChannel
@@ -591,13 +740,20 @@ class FlutterAliplayer {
         if (player.onVideoSizeChanged != null) {
           int width = event['width'];
           int height = event['height'];
-          player.onVideoSizeChanged!(width, height, playerId);
+          int rotation = event['rotation'];
+          player.onVideoSizeChanged!(width, height, rotation, playerId);
         }
         break;
       case "onSnapShot":
         if (player.onSnapShot != null) {
           String snapShotPath = event['snapShotPath'];
           player.onSnapShot!(snapShotPath, playerId);
+        }
+        break;
+      case "onChooseTrackIndex":
+        if (player.onChooseTrackIndex != null) {
+          Array info = event['info'];
+          player.onChooseTrackIndex!(info, playerId);
         }
         break;
       case "onChangedSuccess":
