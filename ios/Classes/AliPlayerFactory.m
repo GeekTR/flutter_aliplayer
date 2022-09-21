@@ -969,6 +969,37 @@ NSString *hashCallback(NSString* url) {
     result(nil);
 }
 
+- (void)removeSource:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSString *uid = arr[3];
+    
+    [(AliListPlayer*)proxy.player removeSource:uid];
+    result(nil);
+}
+
+- (void)getCurrentUid:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSString *currentUid = [(AliListPlayer*)proxy.player currentUid];
+    result(currentUid);
+}
+
+- (void)clear:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    [(AliListPlayer*)proxy.player clear];
+    result(nil);
+}
+
+- (void)setMaxPreloadMemorySizeMB:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSNumber* val = arr[3];
+    [(AliListPlayer*)proxy.player setMaxPreloadMemorySizeMB:val.intValue];
+    result(nil);
+}
+
 - (void)setPreloadCount:(NSArray*)arr {
     FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];

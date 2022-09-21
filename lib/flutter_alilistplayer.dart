@@ -15,6 +15,12 @@ class FlutterAliListPlayer extends FlutterAliplayer {
         'createAliPlayer', wrapWithPlayerId(arg: PlayerType.PlayerType_List));
   }
 
+  Future<void> setMaxPreloadMemorySizeMB(int maxPreloadMemorySizeMB) async {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod(
+        "setMaxPreloadMemorySizeMB",
+        wrapWithPlayerId(arg: maxPreloadMemorySizeMB));
+  }
+
   Future<void> setPreloadCount(int count) async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("setPreloadCount", wrapWithPlayerId(arg: count));

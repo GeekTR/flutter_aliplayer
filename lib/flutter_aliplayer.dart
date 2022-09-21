@@ -743,7 +743,7 @@ class FlutterAliplayer {
 
   ///本地缓存
   static Future<void> enableLocalCache(
-      bool enable, int maxBufferMemoryKB, String localCacheDir) {
+      bool enable, String maxBufferMemoryKB, String localCacheDir) {
     var map = {
       'enable': enable,
       'maxBufferMemoryKB': maxBufferMemoryKB,
@@ -755,7 +755,7 @@ class FlutterAliplayer {
 
   ///本地缓存文件自动清理相关的设置
   static Future<void> setCacheFileClearConfig(
-      LongLong expireMin, LongLong maxCapacityMB, LongLong freeStorageMB) {
+      String expireMin, String maxCapacityMB, String freeStorageMB) {
     var map = {
       'expireMin': expireMin,
       'maxCapacityMB': maxCapacityMB,
