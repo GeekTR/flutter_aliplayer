@@ -412,6 +412,24 @@
     result(nil);
 }
 
+- (void)getVideoWidth:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    result(@(proxy.player.width));
+}
+
+- (void)getVideoHeight:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    result(@(proxy.player.height));
+}
+
+- (void)getVideoRotation:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    result(@(proxy.player.rotation));
+}
+
 - (void)getVolume:(NSArray*)arr {
     FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
@@ -426,6 +444,42 @@
     result(nil);
 }
 
+- (void)getDuration:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    result(@(proxy.player.duration));
+}
+
+- (void)getCurrentPosition:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    result(@(proxy.player.currentPosition));
+}
+
+- (void)getCurrentUtcTime:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    result(@(proxy.player.currentUtcTime));
+}
+
+- (void)getLocalCacheLoadedSize:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    result(@(proxy.player.localCacheLoadedSize));
+}
+
+- (void)getCurrentDownloadSpeed:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    result(@(proxy.player.currentDownloadSpeed));
+}
+
+- (void)getBufferedPosition:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    result(@(proxy.player.bufferedPosition));
+}
+
 - (void)setVideoBackgroundColor:(NSArray*)arr {
     FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
@@ -436,9 +490,23 @@
     result(nil);
 }
 
+- (void)setFastStart:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSNumber* val = arr[3];
+    
+    [proxy.player setFastStart:[val boolValue]];
+    result(nil);
+}
+
 -(void)getSDKVersion:(NSArray*)arr{
     FlutterResult result = arr[1];
     result([AliPlayer getSDKVersion]);
+}
+
+- (void)getDeviceUUID:(NSArray*)arr{
+    FlutterResult result = arr[1];
+    result([AliPlayer getDeviceUUID]);
 }
 
 - (void)enableConsoleLog:(NSArray*)arr {
@@ -460,6 +528,15 @@
     FlutterMethodCall* call = arr.firstObject;
     NSNumber* val = [call arguments];
     [AliPlayer setLogCallbackInfo:val.intValue callbackBlock:nil];
+    result(nil);
+}
+
+- (void)setPreferPlayerName:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSString* val = arr[3];
+    
+    [proxy.player setPreferPlayerName:val];
     result(nil);
 }
 
@@ -503,6 +580,22 @@
     NSNumber* val = [call arguments];
     [AliPlayerGlobalSettings setIpResolveType:(AVPIpResolveType)val.unsignedIntegerValue];
     result(nil);
+}
+
+- (void)getOption:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSNumber* val = arr[3];
+    [proxy.player getOption:(AVPOption)[val unsignedIntValue]];
+    result(nil);
+}
+
+- (void)invokeComponent:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSString* val = arr[3];
+    int invoke = [proxy.player invokeComponent:val];
+    result(@(invoke));
 }
 
 - (void)setFairPlayCertIDAtIOS:(NSArray*)arr {
@@ -705,6 +798,24 @@ NSString *hashCallback(NSString* url) {
     result(filePath);
 }
 
+- (void)getCacheFilePathWithVid:(NSArray *)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSDictionary *dic = arr[3];
+    
+    NSString *filePath = [proxy.player getCacheFilePath:dic[@"vid"] format:dic[@"format"] definition:dic[@"definition"]];
+    result(filePath);
+}
+
+- (void)getCacheFilePathWithVidAtPreviewTime:(NSArray *)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSDictionary *dic = arr[3];
+    
+    NSString *filePath = [proxy.player getCacheFilePath:dic[@"vid"] format:dic[@"format"] definition:dic[@"definition"] previewTime:[dic[@"previewTime"] intValue]];
+    result(filePath);
+}
+
 - (void)getConfig:(NSArray*)arr {
     FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
@@ -858,6 +969,37 @@ NSString *hashCallback(NSString* url) {
     result(nil);
 }
 
+- (void)removeSource:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSString *uid = arr[3];
+    
+    [(AliListPlayer*)proxy.player removeSource:uid];
+    result(nil);
+}
+
+- (void)getCurrentUid:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSString *currentUid = [(AliListPlayer*)proxy.player currentUid];
+    result(currentUid);
+}
+
+- (void)clear:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    [(AliListPlayer*)proxy.player clear];
+    result(nil);
+}
+
+- (void)setMaxPreloadMemorySizeMB:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSNumber* val = arr[3];
+    [(AliListPlayer*)proxy.player setMaxPreloadMemorySizeMB:val.intValue];
+    result(nil);
+}
+
 - (void)setPreloadCount:(NSArray*)arr {
     FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
@@ -947,11 +1089,28 @@ NSString *hashCallback(NSString* url) {
     result(nil);
 }
 
-- (void)setPreferPlayerName:(NSArray*)arr {
+- (void)reload:(NSArray *)arr {
     FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
-    NSString *playerName = arr[3];
-    [proxy.player setPreferPlayerName:playerName];
+    [proxy.player reload];
+    result(nil);
+}
+
+- (void)getPropertyString:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSNumber *val = arr[3];
+    
+    NSString *propertyString = [proxy.player getPropertyString:(AVPPropertyKey)[val unsignedIntValue]];
+    result(propertyString);
+}
+
+- (void)setDefaultBandWidth:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSNumber *val = arr[3];
+    
+    [proxy.player setDefaultBandWidth:[val intValue]];
     result(nil);
 }
 
@@ -959,6 +1118,21 @@ NSString *hashCallback(NSString* url) {
     FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
     result([proxy.player getPlayerName]);
+}
+
+- (void)sendCustomEvent:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSString *val = arr[3];
+    
+    [proxy.player sendCustomEvent:val];
+    result(nil);
+}
+
+- (void)netWorkReConnect:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    
+    [AliPlayer netWorkReConnect];
     result(nil);
 }
 
