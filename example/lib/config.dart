@@ -40,14 +40,16 @@ class GlobalSettings {
   static bool mEnableLocalCache = false;
 
   static String mCacheDir = "";
+  static int mDocTypeForIOS = 0;
   static String mMaxCacheSize = LocalCacheDefaultValue.mDefaultMaxCacheSize;
   static String mExpiration = LocalCacheDefaultValue.mDefaultExpiration;
   static String mMaxCapacity = LocalCacheDefaultValue.mDefaultMaxCapacity;
-  static String mMinDiskCapacity = LocalCacheDefaultValue.mDefaultMinDiskCapacity;
+  static String mMinDiskCapacity =
+      LocalCacheDefaultValue.mDefaultMinDiskCapacity;
 }
 
 ///本地缓存默认设置
-class LocalCacheDefaultValue{
+class LocalCacheDefaultValue {
   ///最大缓存大小(M)
   static String mDefaultMaxCacheSize = "10";
 

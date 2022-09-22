@@ -778,7 +778,7 @@ class FlutterAliplayer {
       'freeStorageMB': freeStorageMB,
     };
     return FlutterAliPlayerFactory.methodChannel
-        .invokeMethod("enableLocalCache", map);
+        .invokeMethod("setCacheFileClearConfig", map);
   }
 
   static Future<void> setCacheUrlHashCallback() async {
