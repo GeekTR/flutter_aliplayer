@@ -1,6 +1,7 @@
 #import "FlutterAliplayerPlugin.h"
 #import "AliPlayerFactory.h"
 #import "FlutterAliDownloaderPlugin.h"
+#import "FlutterAliMediaLoader.h"
 
 @implementation FlutterAliplayerPlugin
 
@@ -10,6 +11,8 @@
     [registrar registerViewFactory:factory withId:@"plugins.flutter_aliplayer"];
    
     [FlutterAliDownloaderPlugin registerWithRegistrar:registrar];
+    
+    [FlutterAliMediaLoader registerWithRegistrar:registrar];
 }
 
 

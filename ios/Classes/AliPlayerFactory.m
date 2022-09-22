@@ -628,7 +628,37 @@
     FlutterMethodCall* call = arr.firstObject;
     NSDictionary* val = [call arguments];
     
-    [AliPlayerGlobalSettings enableLocalCache:[val[@"enable"] boolValue] maxBufferMemoryKB:[val[@"maxBufferMemoryKB"] intValue] localCacheDir:val[@"localCacheDir"]];
+    BOOL enableLocalCache = [val[@"enable"] boolValue];
+    NSString *localCacheDir = val[@"localCacheDir"];
+    NSInteger docType = [val[@"docTypeForIOS"] integerValue];
+    
+    NSString *docDir = nil;
+    switch (docType) {
+        case 0:
+            docDir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+            break;
+        case 1:
+            docDir = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject];
+            break;
+        case 2:
+            docDir = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
+            break;
+        default:
+            docDir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+            break;
+    }
+    if (localCacheDir.length > 0) {
+        docDir = [docDir stringByAppendingPathComponent:localCacheDir];
+    } else {
+        docDir = [docDir stringByAppendingPathComponent:@"localCache"];
+    }
+    
+    [AliPlayerGlobalSettings enableLocalCache:enableLocalCache maxBufferMemoryKB:[val[@"maxBufferMemoryKB"] intValue] localCacheDir:docDir];
+    
+    if (enableLocalCache) {
+        [AliPlayerGlobalSettings setCacheUrlHashCallback:hashCallback];
+    }
+    
     result(nil);
 }
 

@@ -750,13 +750,21 @@ class FlutterAliplayer {
   }
 
   ///本地缓存
-  static Future<void> enableLocalCache(
-      bool enable, String maxBufferMemoryKB, String localCacheDir) {
+  static Future<void> enableLocalCache(bool enable, String maxBufferMemoryKB,
+      String localCacheDir, int docTypeForIOS) {
     var map = {
       'enable': enable,
       'maxBufferMemoryKB': maxBufferMemoryKB,
       'localCacheDir': localCacheDir,
     };
+
+    if (Platform.isIOS) {
+      // docTypeForIOS的取值代表沙盒目录路径类型 "0":Documents, "1":Library, "2":Caches, 其他:Documents
+      map['docTypeForIOS'] = docTypeForIOS;
+    } else {
+      // 安卓不需设置docType，直接传递localCacheDir
+    }
+
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("enableLocalCache", map);
   }
