@@ -334,6 +334,8 @@ class FlutterAliplayer {
       String? securityToken,
       String? previewTime,
       List<String>? definitionList,
+      String quality = "",
+      bool forceQuality = false,
       playerId}) async {
     Map<String, dynamic> stsInfo = {
       "vid": vid,
@@ -342,7 +344,9 @@ class FlutterAliplayer {
       "accessKeySecret": accessKeySecret,
       "securityToken": securityToken,
       "definitionList": definitionList,
-      "previewTime": previewTime
+      "previewTime": previewTime,
+      "quality": quality,
+      "forceQuality": forceQuality
     };
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("setVidSts", wrapWithPlayerId(arg: stsInfo));
@@ -354,13 +358,17 @@ class FlutterAliplayer {
       String? playAuth,
       String? previewTime,
       List<String>? definitionList,
+      String quality = "",
+      bool forceQuality = false,
       playerId}) async {
     Map<String, dynamic> authInfo = {
       "vid": vid,
       "region": region,
       "playAuth": playAuth,
       "definitionList": definitionList,
-      "previewTime": previewTime
+      "previewTime": previewTime,
+      "quality": quality,
+      "forceQuality": forceQuality
     };
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("setVidAuth", wrapWithPlayerId(arg: authInfo));

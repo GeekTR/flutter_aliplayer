@@ -62,6 +62,7 @@ public class FlutterAliPlayer extends FlutterPlayerBase {
                 vidSts.setAccessKeyId((String) stsMap.get("accessKeyId"));
                 vidSts.setAccessKeySecret((String) stsMap.get("accessKeySecret"));
                 vidSts.setSecurityToken((String) stsMap.get("securityToken"));
+                vidSts.setQuality((String) stsMap.get("quality"),(Boolean) stsMap.get("forceQuality"));
 
                 List<String> stsMaplist = (List<String>) stsMap.get("definitionList");
                 if (stsMaplist != null) {
@@ -109,6 +110,7 @@ public class FlutterAliPlayer extends FlutterPlayerBase {
                 vidAuth.setVid((String) authMap.get("vid"));
                 vidAuth.setRegion((String) authMap.get("region"));
                 vidAuth.setPlayAuth((String) authMap.get("playAuth"));
+                vidAuth.setQuality((String) authMap.get("quality"),(Boolean) authMap.get("forceQuality"));
 
                 List<String> authMaplist = (List<String>) authMap.get("definitionList");
                 if (authMaplist != null) {
@@ -449,6 +451,17 @@ public class FlutterAliPlayer extends FlutterPlayerBase {
                 Boolean fastStart = methodCall.argument("arg");
                 setFastStart(mAliPlayer, fastStart);
                 result.success(null);
+                break;
+            case "setFilterConfig":
+                //TODO
+                break;
+            case "updateFilterConfig":
+                //TODO
+                break;
+            case "setFilterInvalid":
+                //TODO
+                break;
+            case "":
                 break;
             default:
                 result.notImplemented();
