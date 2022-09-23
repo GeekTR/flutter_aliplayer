@@ -8,6 +8,7 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 
+import com.aliyun.player.AliListPlayer;
 import com.aliyun.player.IPlayer;
 
 import java.lang.ref.WeakReference;
@@ -49,6 +50,8 @@ public class FlutterAliPlayerView implements PlatformView {
         if(mFlutterAliPlayerViewListener != null){
             mFlutterAliPlayerViewListener.onDispose(mViewId);
         }
+        mHandler.removeCallbacksAndMessages(null);
+        mSurface = null;
     }
 
     private void initRenderView(TextureView mTextureView) {
@@ -58,10 +61,6 @@ public class FlutterAliPlayerView implements PlatformView {
                 public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
                     mSurface = new Surface(surface);
                     mHandler.sendEmptyMessage(ALIYUNN_PLAYER_SETSURFACE);
-//                    if (mPlayer != null) {
-//                        mPlayer.setSurface(mSurface);
-//                    }
-
                 }
 
                 @Override
@@ -73,7 +72,15 @@ public class FlutterAliPlayerView implements PlatformView {
 
                 @Override
                 public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-                    if (mPlayer != null) {
+                    if(mPlayer instanceof AliListPlayer){
+                        /*
+                            当使用 pageView 实现列表播放时，会出现画面卡主，声音正常的问题。
+                            原因：滑动到下一个界面后，先设置 Surface 给 ListPlayer，然后上一个
+                                Surface 销毁，setSurface(null);
+                            部分手机如果不设置为 null，多次调用 setSurface 会导致崩溃。因此在 handler
+                            的事件里，先设置为 null，再设置 Surface.
+                         */
+                    }else{
                         mPlayer.setSurface(null);
                     }
                     return false;
