@@ -138,6 +138,10 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   }
 
   _initListener() {
+    fAliplayer.setTraceID("qhsefhsehfhwehfhwefs");
+    fAliplayer.setOnEventReportParams((params, playerId) {
+      print(params);
+    });
     fAliplayer.setOnPrepared((playerId) {
       Fluttertoast.showToast(msg: "OnPrepared ");
       fAliplayer

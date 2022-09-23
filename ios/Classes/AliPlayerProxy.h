@@ -15,7 +15,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface AliPlayerProxy : NSObject<AVPDelegate>
+@interface AliPlayerProxy : NSObject<AVPDelegate, AVPEventReportParamsDelegate>
 
 //@property(nonatomic,strong) FlutterResult result;
 @property (nonatomic, copy) FlutterEventSink eventSink;

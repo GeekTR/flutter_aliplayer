@@ -241,6 +241,15 @@
     self.eventSink(@{kAliPlayerMethod:@"onCurrentDownloadSpeed",@"speed":@(speed),kAliPlayerId:_playerId});
 }
 
+#pragma mark -- AVPEventReportParamsDelegate
+/**
+ @brief 回调
+ @param params  埋点事件参数
+ */
+- (void)onEventReportParams:(NSDictionary<NSString *, NSString *>*)params {
+    self.eventSink(@{kAliPlayerMethod:@"onEventReportParams",@"params":params,kAliPlayerId:_playerId});
+}
+
 -(void)bindPlayerView:(FlutterAliPlayerView*)fapv{
     _fapv = fapv;
     self.player.playerView = fapv.view;

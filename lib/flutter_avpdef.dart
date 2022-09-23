@@ -271,40 +271,51 @@ class AVPThumbnailInfo {
   }
 }
 
-class AVPOption {
+enum AVPOption {
   // /** @brief 渲染的fps*/
-  static const String AVP_OPTION_RENDER_FPS = "0";
+  render_fps,
   // /** @brief 当前的网络下行码率*/
-  static const String AVP_OPTION_DOWNLOAD_BITRATE = "1";
+  download_bitrate,
   // /** @brief 当前播放的视频码率*/
-  static const String AVP_OPTION_VIDEO_BITRATE = "2";
+  video_bitrate,
   // /** @brief 当前播放的音频码率*/
-  static const String AVP_OPTION_AUDIO_BITRATE = "3";
+  audio_bitrate,
 }
 
 // 获取信息播放器的key
-class AVPPropertyKey {
+enum AVPPropertyKey {
   // /** @brief Http的response信息*/
   // 返回的字符串是JSON数组，每个对象带response和type字段。type字段可以是url/video/audio/subtitle，根据流是否有相应Track返回。
   // 例如：[{"response":"response string","type":"url"},{"response":"","type":"video"}]
-  static const String AVP_KEY_RESPONSE_INFO = "0";
+
+  response_info,
 
   // /** @brief 主URL的连接信息*/
   // 返回的字符串是JSON对象，带url/ip/eagleID/cdnVia/cdncip/cdnsip等字段（如果解析不到则不添加）
   // 例如：{"url":"http://xxx","openCost":23,"ip":"11.111.111.11","cdnVia":"xxx","cdncip":"22.222.222.22","cdnsip":"xxx"}
-  static const String AVP_KEY_CONNECT_INFO = "1";
+  connect_info,
 }
 
 // encryptionType
-class EncryptionType {
-  static const String ENCRYPTION_TYPE_NONE = "0";
-  static const String ENCRYPTION_TYPE_ALIVODENCRYPTION = "1";
-  static const String ENCRYPTION_TYPE_FAIRPLAY = "2";
+enum EncryptionType {
+  none,
+  alivodEncryption,
+  fairPlay,
 }
 
 // IP 解析类型
-class AVPIpResolveType {
-  static const String AVPIpResolveWhatEver = "0";
-  static const String AVPIpResolveV4 = "1";
-  static const String AVPIpResolveV6 = "2";
+enum AVPIpResolveType {
+  whatEver,
+  v4,
+  v6,
+}
+
+// iOS 沙盒目录类型
+enum DocTypeForIOS {
+  // Documents
+  documents,
+  // Llibrary
+  library,
+  // Caches
+  caches,
 }

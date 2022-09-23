@@ -110,7 +110,7 @@
     }
 }
 
-- (void)initLicenseService:(NSArray*)arr {
+- (void)initLicenseServiceForIOS:(NSArray*)arr {
     FlutterResult result = arr[1];
     
     [AliPrivateService initLicenseService];
@@ -719,7 +719,6 @@ NSString *hashCallback(NSString* url) {
             @"maxBufferDuration" :@"mMaxBufferDuration",
             @"startBufferDuration" :@"mStartBufferDuration",
             @"maxProbeSize" :@"mMaxProbeSize",
-            @"maxProbeSize" :@"mMaxProbeSize",
             @"clearShowWhenStop" :@"mClearFrameWhenStop",
             @"enableVideoTunnelRender" :@"mEnableVideoTunnelRender",
             @"enableSEI" :@"mEnableSEI",
@@ -860,7 +859,6 @@ NSString *hashCallback(NSString* url) {
             @"maxDelayTime" :@"mMaxDelayTime",
             @"maxBufferDuration" :@"mMaxBufferDuration",
             @"startBufferDuration" :@"mStartBufferDuration",
-            @"maxProbeSize" :@"mMaxProbeSize",
             @"maxProbeSize" :@"mMaxProbeSize",
             @"clearShowWhenStop" :@"mClearFrameWhenStop",
             @"enableVideoTunnelRender" :@"mEnableVideoTunnelRender",
@@ -1202,6 +1200,14 @@ NSString *hashCallback(NSString* url) {
     [player setLiveTimeShiftUrl:timeLineUrl];
     result(nil);
 }
+
+- (void)setEventReportParamsDelegate:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    [proxy.player setEventReportParamsDelegate:proxy];
+    result(nil);
+}
+
 #pragma --mark CicadaAudioSessionDelegate
 - (BOOL)setActive:(BOOL)active error:(NSError **)outError
 {

@@ -29,8 +29,8 @@ class _SettingHomePageState extends State<SettingPage> {
 
   //保存地址
   String _savePath;
-  //iOS保存沙盒目录类型，安卓默认设置0供参数传递
-  int _saveDocTypeForIOS = 0;
+  //iOS保存沙盒目录类型。安卓默认设置DocTypeForIOS.documents供参数传递
+  DocTypeForIOS _saveDocTypeForIOS = DocTypeForIOS.documents;
 
   @override
   void initState() {
@@ -70,7 +70,7 @@ class _SettingHomePageState extends State<SettingPage> {
       });
     } else if (Platform.isIOS) {
       _savePath = "localCache";
-      _saveDocTypeForIOS = 0;
+      _saveDocTypeForIOS = DocTypeForIOS.documents;
       _mLocalCacheDirController.text = _savePath;
       GlobalSettings.mCacheDir = _savePath;
       GlobalSettings.mDocTypeForIOS = _saveDocTypeForIOS;

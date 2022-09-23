@@ -40,7 +40,7 @@ class GlobalSettings {
   static bool mEnableLocalCache = false;
 
   static String mCacheDir = "";
-  static int mDocTypeForIOS = 0;
+  static DocTypeForIOS mDocTypeForIOS = DocTypeForIOS.documents;
   static String mMaxCacheSize = LocalCacheDefaultValue.mDefaultMaxCacheSize;
   static String mExpiration = LocalCacheDefaultValue.mDefaultExpiration;
   static String mMaxCapacity = LocalCacheDefaultValue.mDefaultMaxCapacity;

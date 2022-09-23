@@ -40,11 +40,20 @@ class _MyAppState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    _initLicense();
     FlutterAliPlayerFactory.loadRtsLibrary();
     _loadEncrypted();
     _downloadPage = DownloadPage();
     SystemChrome.setPreferredOrientations(
         [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  }
+
+  _initLicense() {
+    if (Platform.isIOS) {
+      FlutterAliPlayerFactory.initLicenseServiceForIOS();
+    } else {
+      // 不需要
+    }
   }
 
   _loadEncrypted() async {
@@ -127,7 +136,7 @@ class _MyAppState extends State<HomePage> {
                       CommomUtils.pushPage(context, MultiplePlayerTest());
                       break;
                     case 7:
-                        CommomUtils.pushPage(context, LocalPage());
+                      CommomUtils.pushPage(context, LocalPage());
                       break;
                     case 8:
                       CommomUtils.pushPage(context, LiveShiftPage());
