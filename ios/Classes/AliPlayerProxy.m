@@ -193,18 +193,6 @@
 }
 
 /**
- @brief 选择希望播放的流
- @param player 播放器player指针
- @param info track流信息数组
- @see AVPTrackInfo
- */
-- (int)onChooseTrackIndex:(AliPlayer *)player info:(NSArray<AVPTrackInfo *> *)info {
-    NSArray *chooseTrackInfo = [AVPTrackInfo mj_keyValuesArrayWithObjectArray:info].mutableCopy;
-    self.eventSink(@{kAliPlayerMethod:@"onChooseTrackIndex",@"info":chooseTrackInfo,kAliPlayerId:_playerId});
-    return 0;
-}
-
-/**
  @brief track切换完成回调
  @param player 播放器player指针
  @param info 切换后的信息 参考AVPTrackInfo

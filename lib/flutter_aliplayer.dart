@@ -17,9 +17,6 @@ typedef OnRenderingStart = void Function(String playerId);
 typedef OnVideoSizeChanged = void Function(
     int width, int height, int rotation, String playerId);
 typedef OnSnapShot = void Function(String path, String playerId);
-typedef OnChooseTrackIndex = void Function(
-    Array chooseTrackInfo, String playerId);
-
 typedef OnSeekComplete = void Function(String playerId);
 typedef OnSeiData = void Function(int type, String data, String playerId);
 
@@ -74,7 +71,6 @@ class FlutterAliplayer {
   OnError? onError;
   OnSeiData? onSeiData;
   OnSnapShot? onSnapShot;
-  OnChooseTrackIndex? onChooseTrackIndex;
   OnTrackChanged? onTrackChanged;
   OnThumbnailPreparedSuccess? onThumbnailPreparedSuccess;
   OnThumbnailPreparedFail? onThumbnailPreparedFail;
@@ -123,10 +119,6 @@ class FlutterAliplayer {
 
   void setOnSnapShot(OnSnapShot snapShot) {
     this.onSnapShot = snapShot;
-  }
-
-  void setOnChooseTrackIndex(OnChooseTrackIndex chooseTrackIndex) {
-    this.onChooseTrackIndex = chooseTrackIndex;
   }
 
   void setOnSeekComplete(OnSeekComplete seekComplete) {
@@ -836,12 +828,6 @@ class FlutterAliplayer {
         if (player.onSnapShot != null) {
           String snapShotPath = event['snapShotPath'];
           player.onSnapShot!(snapShotPath, playerId);
-        }
-        break;
-      case "onChooseTrackIndex":
-        if (player.onChooseTrackIndex != null) {
-          Array info = event['info'];
-          player.onChooseTrackIndex!(info, playerId);
         }
         break;
       case "onChangedSuccess":
