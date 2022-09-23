@@ -16,19 +16,21 @@ class _SettingHomePageState extends State<SettingPage> {
   TextEditingController _dnsTextEditingController = TextEditingController();
   TextEditingController _mLocalCacheDirController = TextEditingController();
   TextEditingController _mLocalCacheMaxLocalSizeController =
-  TextEditingController();
+      TextEditingController();
   TextEditingController _mLocalCacheExpirationController =
-  TextEditingController();
+      TextEditingController();
   TextEditingController _mLocalCacheMaxCacheCapacityController =
-  TextEditingController();
+      TextEditingController();
   TextEditingController _mLocalCacheMinDiskCapacityController =
-  TextEditingController();
+      TextEditingController();
   String _sdkVersion;
   List<String> _playerName = List();
   String _currentPlayerName = "Default";
 
   //保存地址
   String _savePath;
+  //iOS保存沙盒目录类型。安卓默认设置DocTypeForIOS.documents供参数传递
+  DocTypeForIOS _saveDocTypeForIOS = DocTypeForIOS.documents;
 
   @override
   void initState() {
@@ -44,7 +46,9 @@ class _SettingHomePageState extends State<SettingPage> {
       _playerName.add("MediaPlayer");
     }
     if (Platform.isIOS) {
-      _playerName..add("SuperMediaPlayer")..add("AppleAVPlayer");
+      _playerName
+        ..add("SuperMediaPlayer")
+        ..add("AppleAVPlayer");
     }
 
     if (Platform.isAndroid) {
@@ -65,8 +69,11 @@ class _SettingHomePageState extends State<SettingPage> {
         _mLocalCacheDirController.text = _savePath;
       });
     } else if (Platform.isIOS) {
-      //TODO  IOS
-      _mLocalCacheDirController.text = "localCache";
+      _savePath = "localCache";
+      _saveDocTypeForIOS = DocTypeForIOS.documents;
+      _mLocalCacheDirController.text = _savePath;
+      GlobalSettings.mCacheDir = _savePath;
+      GlobalSettings.mDocTypeForIOS = _saveDocTypeForIOS;
     }
 
     _mLocalCacheDirController.text = GlobalSettings.mCacheDir;
@@ -393,6 +400,7 @@ class _SettingHomePageState extends State<SettingPage> {
               child: Text("应用配置"),
               onPressed: () {
                 GlobalSettings.mCacheDir = _mLocalCacheDirController.text;
+                GlobalSettings.mDocTypeForIOS = _saveDocTypeForIOS;
                 GlobalSettings.mMaxCacheSize =
                     _mLocalCacheMaxLocalSizeController.text;
                 GlobalSettings.mExpiration =
@@ -405,7 +413,8 @@ class _SettingHomePageState extends State<SettingPage> {
                 FlutterAliplayer.enableLocalCache(
                     GlobalSettings.mEnableLocalCache,
                     GlobalSettings.mMaxCacheSize,
-                    GlobalSettings.mCacheDir);
+                    GlobalSettings.mCacheDir,
+                    GlobalSettings.mDocTypeForIOS);
 
                 FlutterAliplayer.setCacheFileClearConfig(
                     GlobalSettings.mExpiration,

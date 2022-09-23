@@ -193,18 +193,6 @@
 }
 
 /**
- @brief 选择希望播放的流
- @param player 播放器player指针
- @param info track流信息数组
- @see AVPTrackInfo
- */
-- (int)onChooseTrackIndex:(AliPlayer *)player info:(NSArray<AVPTrackInfo *> *)info {
-    NSArray *chooseTrackInfo = [AVPTrackInfo mj_keyValuesArrayWithObjectArray:info].mutableCopy;
-    self.eventSink(@{kAliPlayerMethod:@"onChooseTrackIndex",@"info":chooseTrackInfo,kAliPlayerId:_playerId});
-    return 0;
-}
-
-/**
  @brief track切换完成回调
  @param player 播放器player指针
  @param info 切换后的信息 参考AVPTrackInfo
@@ -251,6 +239,15 @@
  */
 - (void)onCurrentDownloadSpeed:(AliPlayer *)player speed:(int64_t)speed {
     self.eventSink(@{kAliPlayerMethod:@"onCurrentDownloadSpeed",@"speed":@(speed),kAliPlayerId:_playerId});
+}
+
+#pragma mark -- AVPEventReportParamsDelegate
+/**
+ @brief 回调
+ @param params  埋点事件参数
+ */
+- (void)onEventReportParams:(NSDictionary<NSString *, NSString *>*)params {
+    self.eventSink(@{kAliPlayerMethod:@"onEventReportParams",@"params":params,kAliPlayerId:_playerId});
 }
 
 -(void)bindPlayerView:(FlutterAliPlayerView*)fapv{

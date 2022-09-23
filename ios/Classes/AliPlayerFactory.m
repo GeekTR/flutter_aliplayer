@@ -110,7 +110,7 @@
     }
 }
 
-- (void)initLicenseService:(NSArray*)arr {
+- (void)initLicenseServiceForIOS:(NSArray*)arr {
     FlutterResult result = arr[1];
     
     [AliPrivateService initLicenseService];
@@ -598,7 +598,7 @@
     result(@(invoke));
 }
 
-- (void)setFairPlayCertIDAtIOS:(NSArray*)arr {
+- (void)setFairPlayCertIDForIOS:(NSArray*)arr {
     FlutterResult result = arr[1];
     FlutterMethodCall* call = arr.firstObject;
     NSString* val = [call arguments];
@@ -628,7 +628,37 @@
     FlutterMethodCall* call = arr.firstObject;
     NSDictionary* val = [call arguments];
     
-    [AliPlayerGlobalSettings enableLocalCache:[val[@"enable"] boolValue] maxBufferMemoryKB:[val[@"maxBufferMemoryKB"] intValue] localCacheDir:val[@"localCacheDir"]];
+    BOOL enableLocalCache = [val[@"enable"] boolValue];
+    NSString *localCacheDir = val[@"localCacheDir"];
+    NSInteger docType = [val[@"docTypeForIOS"] integerValue];
+    
+    NSString *docDir = nil;
+    switch (docType) {
+        case 0:
+            docDir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+            break;
+        case 1:
+            docDir = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES) firstObject];
+            break;
+        case 2:
+            docDir = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject];
+            break;
+        default:
+            docDir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+            break;
+    }
+    if (localCacheDir.length > 0) {
+        docDir = [docDir stringByAppendingPathComponent:localCacheDir];
+    } else {
+        docDir = [docDir stringByAppendingPathComponent:@"localCache"];
+    }
+    
+    [AliPlayerGlobalSettings enableLocalCache:enableLocalCache maxBufferMemoryKB:[val[@"maxBufferMemoryKB"] intValue] localCacheDir:docDir];
+    
+    if (enableLocalCache) {
+        [AliPlayerGlobalSettings setCacheUrlHashCallback:hashCallback];
+    }
+    
     result(nil);
 }
 
@@ -688,7 +718,6 @@ NSString *hashCallback(NSString* url) {
             @"maxDelayTime" :@"mMaxDelayTime",
             @"maxBufferDuration" :@"mMaxBufferDuration",
             @"startBufferDuration" :@"mStartBufferDuration",
-            @"maxProbeSize" :@"mMaxProbeSize",
             @"maxProbeSize" :@"mMaxProbeSize",
             @"clearShowWhenStop" :@"mClearFrameWhenStop",
             @"enableVideoTunnelRender" :@"mEnableVideoTunnelRender",
@@ -830,7 +859,6 @@ NSString *hashCallback(NSString* url) {
             @"maxDelayTime" :@"mMaxDelayTime",
             @"maxBufferDuration" :@"mMaxBufferDuration",
             @"startBufferDuration" :@"mStartBufferDuration",
-            @"maxProbeSize" :@"mMaxProbeSize",
             @"maxProbeSize" :@"mMaxProbeSize",
             @"clearShowWhenStop" :@"mClearFrameWhenStop",
             @"enableVideoTunnelRender" :@"mEnableVideoTunnelRender",
@@ -1172,6 +1200,14 @@ NSString *hashCallback(NSString* url) {
     [player setLiveTimeShiftUrl:timeLineUrl];
     result(nil);
 }
+
+- (void)setEventReportParamsDelegate:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    [proxy.player setEventReportParamsDelegate:proxy];
+    result(nil);
+}
+
 #pragma --mark CicadaAudioSessionDelegate
 - (BOOL)setActive:(BOOL)active error:(NSError **)outError
 {

@@ -17,9 +17,6 @@ typedef OnRenderingStart = void Function(String playerId);
 typedef OnVideoSizeChanged = void Function(
     int width, int height, int rotation, String playerId);
 typedef OnSnapShot = void Function(String path, String playerId);
-typedef OnChooseTrackIndex = void Function(
-    Array chooseTrackInfo, String playerId);
-
 typedef OnSeekComplete = void Function(String playerId);
 typedef OnSeiData = void Function(int type, String data, String playerId);
 
@@ -59,6 +56,8 @@ typedef OnSeekLiveCompletion = void Function(int playTime, String playerId);
 typedef OnTimeShiftUpdater = void Function(
     int currentTime, int shiftStartTime, int shiftEndTime, String playerId);
 
+typedef OnEventReportParams = void Function(Map params, String playerId);
+
 class FlutterAliplayer {
   OnLoadingBegin? onLoadingBegin;
   OnLoadingProgress? onLoadingProgress;
@@ -74,7 +73,6 @@ class FlutterAliplayer {
   OnError? onError;
   OnSeiData? onSeiData;
   OnSnapShot? onSnapShot;
-  OnChooseTrackIndex? onChooseTrackIndex;
   OnTrackChanged? onTrackChanged;
   OnThumbnailPreparedSuccess? onThumbnailPreparedSuccess;
   OnThumbnailPreparedFail? onThumbnailPreparedFail;
@@ -91,6 +89,9 @@ class FlutterAliplayer {
   //直播时移
   OnSeekLiveCompletion? onSeekLiveCompletion;
   OnTimeShiftUpdater? onTimeShiftUpdater;
+
+  //埋点
+  OnEventReportParams? onEventReportParams;
 
   // static MethodChannel channel = new MethodChannel('flutter_aliplayer');
   EventChannel eventChannel = EventChannel("flutter_aliplayer_event");
@@ -123,10 +124,6 @@ class FlutterAliplayer {
 
   void setOnSnapShot(OnSnapShot snapShot) {
     this.onSnapShot = snapShot;
-  }
-
-  void setOnChooseTrackIndex(OnChooseTrackIndex chooseTrackIndex) {
-    this.onChooseTrackIndex = chooseTrackIndex;
   }
 
   void setOnSeekComplete(OnSeekComplete seekComplete) {
@@ -206,6 +203,10 @@ class FlutterAliplayer {
 
   void setOnTimeShiftUpdater(OnTimeShiftUpdater timeShiftUpdater) {
     this.onTimeShiftUpdater = timeShiftUpdater;
+  }
+
+  void setOnEventReportParams(OnEventReportParams eventReportParams) {
+    this.onEventReportParams = eventReportParams;
   }
 
   ///接口部分
@@ -383,7 +384,7 @@ class FlutterAliplayer {
       String? domain,
       String? app,
       String? stream,
-      UnsignedInt? encryptionType,
+      EncryptionType? encryptionType,
       List<String>? definitionList,
       playerId}) async {
     Map<String, dynamic> liveStsInfo = {
@@ -395,7 +396,7 @@ class FlutterAliplayer {
       "domain": domain,
       "app": app,
       "stream": stream,
-      "encryptionType": encryptionType,
+      "encryptionType": encryptionType.toString(),
       "definitionList": definitionList,
     };
     return FlutterAliPlayerFactory.methodChannel
@@ -547,10 +548,10 @@ class FlutterAliplayer {
         .invokeMethod("updateFilterConfig", wrapWithPlayerId(arg: map));
   }
 
-  Future<void> setFilterInvalid(String target, bool invalid) async {
+  Future<void> setFilterInvalid(String target, String invalid) async {
     var map = {'target': target, 'invalid': invalid};
     return FlutterAliPlayerFactory.methodChannel
-        .invokeMethod("updateFilterConfig", wrapWithPlayerId(arg: map));
+        .invokeMethod("setFilterInvalid", wrapWithPlayerId(arg: map));
   }
 
   Future<dynamic> getCacheFilePath(String url) async {
@@ -566,7 +567,7 @@ class FlutterAliplayer {
   }
 
   Future<dynamic> getCacheFilePathWithVidAtPreviewTime(
-      String vid, String format, String definition, int previewTime) async {
+      String vid, String format, String definition, String previewTime) async {
     var map = {
       'vid': vid,
       'format': format,
@@ -597,6 +598,7 @@ class FlutterAliplayer {
         "requestBitmapAtPosition", wrapWithPlayerId(arg: position));
   }
 
+  // 设置traceID会监听埋点事件回调onEventReportParams
   Future<dynamic> setTraceID(String traceID) {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("setTraceID", wrapWithPlayerId(arg: traceID));
@@ -662,19 +664,19 @@ class FlutterAliplayer {
         .invokeMethod('reload', wrapWithPlayerId());
   }
 
-  Future<dynamic> getOption(UnsignedInt key) {
+  Future<dynamic> getOption(AVPOption key) {
     return FlutterAliPlayerFactory.methodChannel
-        .invokeMethod("getOption", wrapWithPlayerId(arg: key));
+        .invokeMethod("getOption", wrapWithPlayerId(arg: key.toString()));
   }
 
-  Future<dynamic> invokeComponent(String content) {
-    return FlutterAliPlayerFactory.methodChannel
-        .invokeMethod("invokeComponent", wrapWithPlayerId(arg: content));
+  Future<dynamic> getPropertyString(AVPPropertyKey key) {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod(
+        "getPropertyString", wrapWithPlayerId(arg: key.toString()));
   }
 
-  Future<dynamic> getPropertyString(UnsignedInt key) {
-    return FlutterAliPlayerFactory.methodChannel
-        .invokeMethod("getPropertyString", wrapWithPlayerId(arg: key));
+  Future<dynamic> setEventReportParamsDelegate(int argt) {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod(
+        "setEventReportParamsDelegate", wrapWithPlayerId(arg: argt.toString()));
   }
 
   ///静态方法
@@ -717,14 +719,14 @@ class FlutterAliplayer {
         .invokeMethod("enableHttpDns", enable);
   }
 
-  static Future<void> setIpResolveType(UnsignedInt type) {
+  static Future<void> setIpResolveType(AVPIpResolveType type) {
     return FlutterAliPlayerFactory.methodChannel
-        .invokeMethod("setIpResolveType", type);
+        .invokeMethod("setIpResolveType", type.toString());
   }
 
-  static Future<void> setFairPlayCertIDAtIOS(String certID) {
+  static Future<void> setFairPlayCertIDForIOS(String certID) {
     return FlutterAliPlayerFactory.methodChannel
-        .invokeMethod("setFairPlayCertIDAtIOS", certID);
+        .invokeMethod("setFairPlayCertIDForIOS", certID);
   }
 
   static Future<void> enableHWAduioTempo(bool enable) {
@@ -733,7 +735,7 @@ class FlutterAliplayer {
   }
 
   static Future<void> forceAudioRendingFormat(
-      bool force, String fmt, int channels, int sample_rate) {
+      String force, String fmt, String channels, String sample_rate) {
     var map = {
       'force': force,
       'fmt': fmt,
@@ -741,7 +743,7 @@ class FlutterAliplayer {
       'sample_rate': sample_rate
     };
     return FlutterAliPlayerFactory.methodChannel
-        .invokeMethod("enableHWAduioTempo", map);
+        .invokeMethod("forceAudioRendingFormat", map);
   }
 
   static Future<void> netWorkReConnect() {
@@ -750,13 +752,21 @@ class FlutterAliplayer {
   }
 
   ///本地缓存
-  static Future<void> enableLocalCache(
-      bool enable, String maxBufferMemoryKB, String localCacheDir) {
+  static Future<void> enableLocalCache(bool enable, String maxBufferMemoryKB,
+      String localCacheDir, DocTypeForIOS docTypeForIOS) {
     var map = {
       'enable': enable,
       'maxBufferMemoryKB': maxBufferMemoryKB,
       'localCacheDir': localCacheDir,
     };
+
+    if (Platform.isIOS) {
+      // docTypeForIOS的取值代表沙盒目录路径类型 "0":Documents, "1":Library, "2":Caches, 其他:Documents
+      map['docTypeForIOS'] = docTypeForIOS;
+    } else {
+      // 安卓不需设置docType，直接传递localCacheDir
+    }
+
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("enableLocalCache", map);
   }
@@ -770,12 +780,7 @@ class FlutterAliplayer {
       'freeStorageMB': freeStorageMB,
     };
     return FlutterAliPlayerFactory.methodChannel
-        .invokeMethod("enableLocalCache", map);
-  }
-
-  static Future<void> setCacheUrlHashCallback() async {
-    return FlutterAliPlayerFactory.methodChannel
-        .invokeMethod("setCacheUrlHashCallback");
+        .invokeMethod("setCacheFileClearConfig", map);
   }
 
   ///清理本地缓存，需要先应用配置缓存，才能清理本地缓存
@@ -828,12 +833,6 @@ class FlutterAliplayer {
         if (player.onSnapShot != null) {
           String snapShotPath = event['snapShotPath'];
           player.onSnapShot!(snapShotPath, playerId);
-        }
-        break;
-      case "onChooseTrackIndex":
-        if (player.onChooseTrackIndex != null) {
-          Array info = event['info'];
-          player.onChooseTrackIndex!(info, playerId);
         }
         break;
       case "onChangedSuccess":
@@ -975,6 +974,12 @@ class FlutterAliplayer {
         if (player.onSeekLiveCompletion != null) {
           var playTime = event['playTime'];
           player.onSeekLiveCompletion!(playTime, playerId);
+        }
+        break;
+      case "onEventReportParams":
+        if (player.onEventReportParams != null) {
+          var params = event['params'];
+          player.onEventReportParams!(params, playerId);
         }
     }
   }

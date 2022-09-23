@@ -35,8 +35,8 @@ class FlutterAliPlayerFactory {
     return methodChannel.invokeMethod("initService", byteData);
   }
 
-  static Future<void> initLicenseService() {
-    return methodChannel.invokeMethod("initLicenseService");
+  static Future<void> initLicenseServiceForIOS() {
+    return methodChannel.invokeMethod("initLicenseServiceForIOS");
   }
 
   static void loadRtsLibrary() {
