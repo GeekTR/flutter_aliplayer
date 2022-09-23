@@ -112,6 +112,11 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     //设置播放器
     fAliplayer.setPreferPlayerName(GlobalSettings.mPlayerName);
 
+    // 设置traceId
+    fAliplayer.setTraceID("aliplayer");
+    // 添加监听埋点参数
+    fAliplayer.setEventReportParamsDelegate();
+
     if (Platform.isAndroid) {
       getExternalStorageDirectories().then((value) {
         if (value.length > 0) {
@@ -138,9 +143,8 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   }
 
   _initListener() {
-    fAliplayer.setTraceID("qhsefhsehfhwehfhwefs");
     fAliplayer.setOnEventReportParams((params, playerId) {
-      print(params);
+      print("EventReportParams=${params}");
     });
     fAliplayer.setOnPrepared((playerId) {
       Fluttertoast.showToast(msg: "OnPrepared ");

@@ -674,6 +674,11 @@ class FlutterAliplayer {
         "getPropertyString", wrapWithPlayerId(arg: key.toString()));
   }
 
+  Future<dynamic> setEventReportParamsDelegate(int argt) {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod(
+        "setEventReportParamsDelegate", wrapWithPlayerId(arg: argt.toString()));
+  }
+
   ///静态方法
   static Future<dynamic> getSDKVersion() async {
     return FlutterAliPlayerFactory.methodChannel.invokeMethod("getSDKVersion");
