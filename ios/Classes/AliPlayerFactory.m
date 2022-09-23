@@ -598,7 +598,7 @@
     result(@(invoke));
 }
 
-- (void)setFairPlayCertIDAtIOS:(NSArray*)arr {
+- (void)setFairPlayCertIDForIOS:(NSArray*)arr {
     FlutterResult result = arr[1];
     FlutterMethodCall* call = arr.firstObject;
     NSString* val = [call arguments];

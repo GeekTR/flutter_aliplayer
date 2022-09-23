@@ -375,7 +375,7 @@ class FlutterAliplayer {
       String? domain,
       String? app,
       String? stream,
-      UnsignedInt? encryptionType,
+      EncryptionType? encryptionType,
       List<String>? definitionList,
       playerId}) async {
     Map<String, dynamic> liveStsInfo = {
@@ -539,10 +539,10 @@ class FlutterAliplayer {
         .invokeMethod("updateFilterConfig", wrapWithPlayerId(arg: map));
   }
 
-  Future<void> setFilterInvalid(String target, bool invalid) async {
+  Future<void> setFilterInvalid(String target, String invalid) async {
     var map = {'target': target, 'invalid': invalid};
     return FlutterAliPlayerFactory.methodChannel
-        .invokeMethod("updateFilterConfig", wrapWithPlayerId(arg: map));
+        .invokeMethod("setFilterInvalid", wrapWithPlayerId(arg: map));
   }
 
   Future<dynamic> getCacheFilePath(String url) async {
@@ -558,7 +558,7 @@ class FlutterAliplayer {
   }
 
   Future<dynamic> getCacheFilePathWithVidAtPreviewTime(
-      String vid, String format, String definition, int previewTime) async {
+      String vid, String format, String definition, String previewTime) async {
     var map = {
       'vid': vid,
       'format': format,
@@ -654,17 +654,12 @@ class FlutterAliplayer {
         .invokeMethod('reload', wrapWithPlayerId());
   }
 
-  Future<dynamic> getOption(UnsignedInt key) {
+  Future<dynamic> getOption(AVPOption key) {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("getOption", wrapWithPlayerId(arg: key));
   }
 
-  Future<dynamic> invokeComponent(String content) {
-    return FlutterAliPlayerFactory.methodChannel
-        .invokeMethod("invokeComponent", wrapWithPlayerId(arg: content));
-  }
-
-  Future<dynamic> getPropertyString(UnsignedInt key) {
+  Future<dynamic> getPropertyString(AVPPropertyKey key) {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("getPropertyString", wrapWithPlayerId(arg: key));
   }
@@ -709,14 +704,14 @@ class FlutterAliplayer {
         .invokeMethod("enableHttpDns", enable);
   }
 
-  static Future<void> setIpResolveType(UnsignedInt type) {
+  static Future<void> setIpResolveType(AVPIpResolveType type) {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("setIpResolveType", type);
   }
 
-  static Future<void> setFairPlayCertIDAtIOS(String certID) {
+  static Future<void> setFairPlayCertIDForIOS(String certID) {
     return FlutterAliPlayerFactory.methodChannel
-        .invokeMethod("setFairPlayCertIDAtIOS", certID);
+        .invokeMethod("setFairPlayCertIDForIOS", certID);
   }
 
   static Future<void> enableHWAduioTempo(bool enable) {
@@ -725,7 +720,7 @@ class FlutterAliplayer {
   }
 
   static Future<void> forceAudioRendingFormat(
-      bool force, String fmt, int channels, int sample_rate) {
+      String force, String fmt, String channels, String sample_rate) {
     var map = {
       'force': force,
       'fmt': fmt,
@@ -733,7 +728,7 @@ class FlutterAliplayer {
       'sample_rate': sample_rate
     };
     return FlutterAliPlayerFactory.methodChannel
-        .invokeMethod("enableHWAduioTempo", map);
+        .invokeMethod("forceAudioRendingFormat", map);
   }
 
   static Future<void> netWorkReConnect() {
@@ -771,11 +766,6 @@ class FlutterAliplayer {
     };
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("setCacheFileClearConfig", map);
-  }
-
-  static Future<void> setCacheUrlHashCallback() async {
-    return FlutterAliPlayerFactory.methodChannel
-        .invokeMethod("setCacheUrlHashCallback");
   }
 
   ///清理本地缓存，需要先应用配置缓存，才能清理本地缓存
