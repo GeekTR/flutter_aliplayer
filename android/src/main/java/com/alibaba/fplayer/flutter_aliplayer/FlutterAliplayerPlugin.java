@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 
 import com.aliyun.player.AliPlayerFactory;
 import com.aliyun.player.AliPlayerGlobalSettings;
+import com.aliyun.player.IPlayer;
 import com.aliyun.private_service.PrivateService;
 import com.cicada.player.utils.Logger;
 
@@ -124,6 +125,9 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
             case "getSDKVersion":
                 result.success(AliPlayerFactory.getSdkVersion());
                 break;
+            case "getDeviceUUID":
+                result.success(AliPlayerFactory.getDeviceUUID());
+                break;
             case "getLogLevel":
                 result.success(getLogLevel());
                 break;
@@ -171,6 +175,14 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
                         flutterAliPlayerView.setPlayer(mSetPlayerViewCurrentFlutterAliLiveShiftPlayer.getAliPlayer());
                     }
                 }
+            case "setUseHttp2":
+                Boolean enableUseHttp2 = call.arguments();
+                AliPlayerGlobalSettings.setUseHttp2(enableUseHttp2);
+                break;
+            case "enableHttpDns":
+                Boolean enableHttpDns = call.arguments();
+                AliPlayerGlobalSettings.enableHttpDns(enableHttpDns);
+                break;
             case "enableLocalCache":
                 Map<String, Object> localCacheMap = call.arguments();
                 if (localCacheMap != null) {
@@ -191,6 +203,28 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
                 break;
             case "clearCaches":
                 AliPlayerGlobalSettings.clearCaches();
+                break;
+            case "setIPResolveType":
+                String setIPResolveTypeStr = call.arguments() == null ? "" : (String) call.arguments();
+                switch (setIPResolveTypeStr) {
+                    case "v4":
+                        AliPlayerGlobalSettings.setIPResolveType(IPlayer.IPResolveType.IpResolveV4);
+                        break;
+                    case "v6":
+                        AliPlayerGlobalSettings.setIPResolveType(IPlayer.IPResolveType.IpResolveV6);
+                        break;
+                    default:
+                        AliPlayerGlobalSettings.setIPResolveType(IPlayer.IPResolveType.IpResolveWhatEver);
+                        break;
+                }
+                break;
+            case "forceAudioRendingFormat":
+                Map<String, Object> forceAudioRendingFormat = call.arguments();
+                Boolean force = Boolean.getBoolean((String) forceAudioRendingFormat.get("force"));
+                String fmt = (String) forceAudioRendingFormat.get("fmt");
+                Integer channels = Integer.valueOf((String) forceAudioRendingFormat.get("channels"));
+                Integer sample_rate = Integer.valueOf((String) forceAudioRendingFormat.get("sample_rate"));
+                AliPlayerGlobalSettings.forceAudioRendingFormat(force, fmt, channels, sample_rate);
                 break;
             default:
                 String otherPlayerId = call.argument("playerId");

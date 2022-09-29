@@ -59,4 +59,8 @@ public interface FlutterAliPlayerListener {
 
     void onSeekLiveCompletion(Map<String,Object> map);
 
+    void onReportEventListener(Map<String,Object> map);
+
+    int onChooseTrackIndex(Map<String,Object> map);
+
 }

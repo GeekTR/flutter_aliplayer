@@ -74,9 +74,14 @@ class _PlayConfigFragmentState extends State<PlayConfigFragment> {
     _mHttpProxyController = TextEditingController.fromValue(TextEditingValue(
       text: _configMap['mHttpProxy'],
     ));
-    //TODO
+    _mLiveStartIndex = TextEditingController.fromValue(TextEditingValue(
+      text: _configMap['mLiveStartIndex'].toString()
+    ));
     _mPositionTimerIntervalMs = TextEditingController.fromValue(TextEditingValue(
-      text: "111"
+      text: _configMap['mPositionTimerIntervalMs'].toString()
+    ));
+    _mMaxBackwardBufferDurationMs = TextEditingController.fromValue(TextEditingValue(
+      text: _configMap['mMaxBackwardBufferDurationMs'].toString()
     ));
     mEnableSEI = _configMap['mEnableSEI'];
     mShowFrameWhenStop = !_configMap['mClearFrameWhenStop'];
@@ -271,7 +276,8 @@ class _PlayConfigFragmentState extends State<PlayConfigFragment> {
                         'mClearFrameWhenStop': !mShowFrameWhenStop,
                         'mDisableVideo': mDisableVideo,
                         'mDisableAudio': mDisableAudio,
-                        "mPositionTimerIntervalMs":_mPositionTimerIntervalMs
+                        "mPositionTimerIntervalMs":_mPositionTimerIntervalMs.text,
+                        "mMaxBackwardBufferDurationMs":_mMaxBackwardBufferDurationMs.text
                       };
                       widget.fAliplayer.setConfig(configMap);
                       Fluttertoast.showToast(msg: "应用配置成功");

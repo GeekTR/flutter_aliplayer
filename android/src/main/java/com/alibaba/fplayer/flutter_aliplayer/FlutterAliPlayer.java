@@ -5,6 +5,7 @@ import android.text.TextUtils;
 
 import com.aliyun.player.AliPlayer;
 import com.aliyun.player.AliPlayerFactory;
+import com.aliyun.player.FilterConfig;
 import com.aliyun.player.IPlayer;
 import com.aliyun.player.VidPlayerConfigGen;
 import com.aliyun.player.nativeclass.CacheConfig;
@@ -13,6 +14,8 @@ import com.aliyun.player.nativeclass.PlayerConfig;
 import com.aliyun.player.nativeclass.Thumbnail;
 import com.aliyun.player.nativeclass.TrackInfo;
 import com.aliyun.player.source.Definition;
+import com.aliyun.player.source.LiveSts;
+import com.aliyun.player.source.StsInfo;
 import com.aliyun.player.source.UrlSource;
 import com.aliyun.player.source.VidAuth;
 import com.aliyun.player.source.VidMps;
@@ -62,7 +65,7 @@ public class FlutterAliPlayer extends FlutterPlayerBase {
                 vidSts.setAccessKeyId((String) stsMap.get("accessKeyId"));
                 vidSts.setAccessKeySecret((String) stsMap.get("accessKeySecret"));
                 vidSts.setSecurityToken((String) stsMap.get("securityToken"));
-                vidSts.setQuality((String) stsMap.get("quality"),(Boolean) stsMap.get("forceQuality"));
+                vidSts.setQuality((String) stsMap.get("quality"), (Boolean) stsMap.get("forceQuality"));
 
                 List<String> stsMaplist = (List<String>) stsMap.get("definitionList");
                 if (stsMaplist != null) {
@@ -110,7 +113,7 @@ public class FlutterAliPlayer extends FlutterPlayerBase {
                 vidAuth.setVid((String) authMap.get("vid"));
                 vidAuth.setRegion((String) authMap.get("region"));
                 vidAuth.setPlayAuth((String) authMap.get("playAuth"));
-                vidAuth.setQuality((String) authMap.get("quality"),(Boolean) authMap.get("forceQuality"));
+                vidAuth.setQuality((String) authMap.get("quality"), (Boolean) authMap.get("forceQuality"));
 
                 List<String> authMaplist = (List<String>) authMap.get("definitionList");
                 if (authMaplist != null) {
@@ -200,6 +203,43 @@ public class FlutterAliPlayer extends FlutterPlayerBase {
                 setDataSource(mAliPlayer, vidMps);
                 result.success(null);
                 break;
+            case "setLiveSts":
+                Map<String, Object> liveStsMap = methodCall.argument("arg");
+                String liveStsUrl = (String) liveStsMap.get("url");
+                String liveStsAccessKeyId = (String) liveStsMap.get("accessKeyId");
+                String liveStsAccessKeySecret = (String) liveStsMap.get("accessKeySecret");
+                String liveStsSecurityToken = (String) liveStsMap.get("securityToken");
+                String liveStsRegion = (String) liveStsMap.get("region");
+                String liveStsDomain = (String) liveStsMap.get("domain");
+                String liveStsApp = (String) liveStsMap.get("app");
+                String liveStsStream = (String) liveStsMap.get("stream");
+                List<String> liveStsDefinitionList = (List<String>) liveStsMap.get("definitionList");
+                LiveSts liveSts = new LiveSts();
+                liveSts.setUrl(liveStsUrl);
+                liveSts.setAccessKeyId(liveStsAccessKeyId);
+                liveSts.setAccessKeySecret(liveStsAccessKeySecret);
+                liveSts.setSecurityToken(liveStsSecurityToken);
+                liveSts.setRegion(liveStsRegion);
+                liveSts.setDomain(liveStsDomain);
+                liveSts.setApp(liveStsApp);
+                liveSts.setStream(liveStsStream);
+                setDataSource(mAliPlayer, liveSts);
+                result.success(null);
+                break;
+            case "updateLiveStsInfo":
+                Map<String, Object> updateLiveStsInfoMap = methodCall.argument("arg");
+                String updateLiveStsInfoAccessKeyId = (String) updateLiveStsInfoMap.get("accId");
+                String updateLiveStsInfoAccessKeySecret = (String) updateLiveStsInfoMap.get("accKey");
+                String updateLiveStsSecurityToken = (String) updateLiveStsInfoMap.get("token");
+                String updateLiveStsRegion = (String) updateLiveStsInfoMap.get("region");
+                StsInfo stsInfo = new StsInfo();
+                stsInfo.setAccessKeyId(updateLiveStsInfoAccessKeyId);
+                stsInfo.setAccessKeySecret(updateLiveStsInfoAccessKeySecret);
+                stsInfo.setSecurityToken(updateLiveStsSecurityToken);
+                stsInfo.setRegion(updateLiveStsRegion);
+                updateLiveStsInfo(mAliPlayer, stsInfo);
+                result.success(null);
+                break;
             case "prepare":
                 prepare(mAliPlayer);
                 result.success(null);
@@ -219,6 +259,9 @@ public class FlutterAliPlayer extends FlutterPlayerBase {
             case "destroy":
                 release(mAliPlayer);
                 result.success(null);
+                break;
+            case "reload":
+                reload(mAliPlayer);
                 break;
             case "seekTo": {
                 Map<String, Object> seekToMap = (Map<String, Object>) methodCall.argument("arg");
@@ -453,6 +496,13 @@ public class FlutterAliPlayer extends FlutterPlayerBase {
                 result.success(null);
                 break;
             case "setFilterConfig":
+//                FilterConfig filterConfig = new FilterConfig();
+//                FilterConfig.Filter filter = new FilterConfig.Filter("");
+//                FilterConfig.FilterOptions filterOptions = new FilterConfig.FilterOptions();
+//                filterOptions.setOption();
+//                filter.setOptions();
+//                filterConfig.addFilter();
+//                mAliPlayer.setFilterConfig();
                 //TODO
                 break;
             case "updateFilterConfig":
@@ -461,11 +511,104 @@ public class FlutterAliPlayer extends FlutterPlayerBase {
             case "setFilterInvalid":
                 //TODO
                 break;
-            case "":
+            case "clearScreen":
+                mAliPlayer.clearScreen();
+                result.success(null);
+                break;
+            case "setTraceID":
+                String traceId = methodCall.argument("arg");
+                mAliPlayer.setTraceId(traceId);
+                result.success(null);
+                break;
+            case "getCacheFilePath":
+                String getCacheFilePathUrl = (String) methodCall.arguments;
+                result.success(getCacheFilePath(mAliPlayer, getCacheFilePathUrl));
+                break;
+            case "getCacheFilePathWithVid":
+                Map<String, Object> getCacheFilePathWithVidMap = (Map<String, Object>) methodCall.arguments;
+                String vid = (String) getCacheFilePathWithVidMap.get("vid");
+                String format = (String) getCacheFilePathWithVidMap.get("format");
+                String definition = (String) getCacheFilePathWithVidMap.get("definition");
+                result.success(getCacheFilePathWithVid(mAliPlayer, vid, format, definition));
+                break;
+            case "getPropertyString":
+                String getPropertyString = methodCall.arguments();
+                result.success(getPropertyString(mAliPlayer, getPropertyString));
+                break;
+            case "getOption":
+                String getOptionType = (String) methodCall.arguments;
+                IPlayer.Option option;
+                switch (getOptionType) {
+                    case "download_bitrate":
+                        option = IPlayer.Option.DownloadBitrate;
+                        break;
+                    case "video_bitrate":
+                        option = IPlayer.Option.VideoBitrate;
+                        break;
+                    case "audio_bitrate":
+                        option = IPlayer.Option.AudioBitrate;
+                        break;
+                    default:
+                        option = IPlayer.Option.RenderFPS;
+                        break;
+                }
+                result.success(getOption(mAliPlayer, option));
+                break;
+            case "sendCustomEvent":
+                String sendCustomEvent = (String) methodCall.arguments;
+                sendCustomEvent(mAliPlayer, sendCustomEvent);
+                result.success(null);
                 break;
             default:
                 result.notImplemented();
         }
+    }
+
+    private void sendCustomEvent(AliPlayer mAliPlayer, String sendCustomEvent) {
+        if (mAliPlayer != null) {
+            mAliPlayer.sendCustomEvent(sendCustomEvent);
+        }
+    }
+
+    private Object getOption(AliPlayer mAliPlayer, IPlayer.Option option) {
+        if (mAliPlayer != null) {
+            return mAliPlayer.getOption(option);
+        }
+        return null;
+    }
+
+    private void setIPResolveType(AliPlayer mAliPlayer, IPlayer.IPResolveType type) {
+        if (mAliPlayer != null) {
+            mAliPlayer.setIPResolveType(type);
+        }
+    }
+
+    private String getPropertyString(AliPlayer mAliPlayer, String getPropertyString) {
+        if (mAliPlayer != null) {
+            IPlayer.PropertyKey propertyKey = IPlayer.PropertyKey.valueOf(getPropertyString);
+            return mAliPlayer.getPropertyString(propertyKey);
+        }
+        return null;
+    }
+
+    private void updateLiveStsInfo(AliPlayer mAliPlayer, StsInfo stsInfo) {
+        if (mAliPlayer != null) {
+            mAliPlayer.updateStsInfo(stsInfo);
+        }
+    }
+
+    private String getCacheFilePathWithVid(AliPlayer mAliPlayer, String vid, String format, String definition) {
+        if (mAliPlayer != null) {
+            return mAliPlayer.getCacheFilePath(vid, format, definition, 0);
+        }
+        return null;
+    }
+
+    private String getCacheFilePath(AliPlayer mAliPlayer, String url) {
+        if (mAliPlayer != null) {
+            return mAliPlayer.getCacheFilePath(url);
+        }
+        return null;
     }
 
     @Override
@@ -499,6 +642,12 @@ public class FlutterAliPlayer extends FlutterPlayerBase {
         }
     }
 
+    private void setDataSource(AliPlayer mAliPlayer, LiveSts liveSts) {
+        if (mAliPlayer != null) {
+            ((AliPlayer) mAliPlayer).setDataSource(liveSts);
+        }
+    }
+
     private void prepare(AliPlayer mAliPlayer) {
         if (mAliPlayer != null) {
             mAliPlayer.prepare();
@@ -520,6 +669,12 @@ public class FlutterAliPlayer extends FlutterPlayerBase {
     private void stop(AliPlayer mAliPlayer) {
         if (mAliPlayer != null) {
             mAliPlayer.stop();
+        }
+    }
+
+    private void reload(AliPlayer mAliPlayer) {
+        if (mAliPlayer != null) {
+            mAliPlayer.reload();
         }
     }
 

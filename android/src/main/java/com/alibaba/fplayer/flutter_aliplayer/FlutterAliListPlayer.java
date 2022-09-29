@@ -355,12 +355,17 @@ public class FlutterAliListPlayer extends FlutterPlayerBase implements EventChan
                 String moveToPreAccessKeySecret = (String) moveToPreMap.get("accKey");
                 String moveToPreSecurityToken = (String) moveToPreMap.get("token");
                 String moveToPreRegion = (String) moveToPreMap.get("region");
-                StsInfo moveToPreStsInfo = new StsInfo();
-                moveToPreStsInfo.setAccessKeyId(moveToPreAccessKeyId);
-                moveToPreStsInfo.setAccessKeySecret(moveToPreAccessKeySecret);
-                moveToPreStsInfo.setSecurityToken(moveToPreSecurityToken);
-                moveToPreStsInfo.setRegion(moveToPreRegion);
-                moveToPre(moveToPreStsInfo);
+                if (TextUtils.isEmpty(moveToPreAccessKeyId) || TextUtils.isEmpty(moveToPreAccessKeySecret)
+                        || TextUtils.isEmpty(moveToPreSecurityToken) || TextUtils.isEmpty(moveToPreRegion)) {
+                    moveToPre(null);
+                } else {
+                    StsInfo moveToPreStsInfo = new StsInfo();
+                    moveToPreStsInfo.setAccessKeyId(moveToPreAccessKeyId);
+                    moveToPreStsInfo.setAccessKeySecret(moveToPreAccessKeySecret);
+                    moveToPreStsInfo.setSecurityToken(moveToPreSecurityToken);
+                    moveToPreStsInfo.setRegion(moveToPreRegion);
+                    moveToPre(moveToPreStsInfo);
+                }
                 result.success(null);
                 break;
             case "moveTo":

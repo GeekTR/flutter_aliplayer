@@ -111,6 +111,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
 
     //设置播放器
     fAliplayer.setPreferPlayerName(GlobalSettings.mPlayerName);
+    fAliplayer.setEnableHardwareDecoder(GlobalSettings.mEnableHardwareDecoder);
 
     // 设置traceId
     fAliplayer.setTraceID("aliplayer");

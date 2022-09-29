@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_aliplayer/flutter_aliplayer.dart';
+import 'package:flutter_aliplayer/flutter_aliplayer_factory.dart';
 import 'package:flutter_aliplayer_example/config.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path_provider/path_provider.dart';
@@ -139,6 +140,7 @@ class _SettingHomePageState extends State<SettingPage> {
                       setState(() {
                         GlobalSettings.mEnableHTTP2 = value;
                       });
+                      FlutterAliplayer.setUseHttp2(value);
                     }),
               ],
             ),
@@ -154,6 +156,7 @@ class _SettingHomePageState extends State<SettingPage> {
                       setState(() {
                         GlobalSettings.mEnableHTTPDNS = value;
                       });
+                      FlutterAliplayer.enableHttpDns(value);
                     }),
               ],
             ),

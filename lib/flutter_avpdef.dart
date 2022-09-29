@@ -271,6 +271,11 @@ class AVPThumbnailInfo {
   }
 }
 
+class AVPFilterInfo{
+  String? target;
+  List<String>? options;
+}
+
 enum AVPOption {
   // /** @brief 渲染的fps*/
   render_fps,
