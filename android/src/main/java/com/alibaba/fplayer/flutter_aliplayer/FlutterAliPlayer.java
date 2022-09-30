@@ -23,12 +23,14 @@ import com.aliyun.player.source.VidSts;
 import com.aliyun.thumbnail.ThumbnailBitmapInfo;
 import com.aliyun.thumbnail.ThumbnailHelper;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.MethodCall;
@@ -496,20 +498,42 @@ public class FlutterAliPlayer extends FlutterPlayerBase {
                 result.success(null);
                 break;
             case "setFilterConfig":
-//                FilterConfig filterConfig = new FilterConfig();
-//                FilterConfig.Filter filter = new FilterConfig.Filter("");
-//                FilterConfig.FilterOptions filterOptions = new FilterConfig.FilterOptions();
-//                filterOptions.setOption();
-//                filter.setOptions();
-//                filterConfig.addFilter();
-//                mAliPlayer.setFilterConfig();
-                //TODO
+                String setFilterConfigJson = methodCall.argument("arg");
+                FilterConfig filterConfig = new FilterConfig();
+                List<FlutterAliPlayerFilterConfigBean> flutterAliPlayerFilterConfigBeanList = mGson.fromJson(setFilterConfigJson, new TypeToken<List<FlutterAliPlayerFilterConfigBean>>() {
+                }.getType());
+                for (FlutterAliPlayerFilterConfigBean flutterAliPlayerFilterConfigBean : flutterAliPlayerFilterConfigBeanList) {
+                    String target = flutterAliPlayerFilterConfigBean.getTarget();
+                    FilterConfig.Filter filter = new FilterConfig.Filter(target);
+                    List<String> options = flutterAliPlayerFilterConfigBean.getOptions();
+                    if (options != null && options.size() > 0) {
+                        for (String option : options) {
+                            FilterConfig.FilterOptions filterOptions = new FilterConfig.FilterOptions();
+                            filterOptions.setOption(option, 0);
+                            filter.setOptions(filterOptions);
+                        }
+                    }
+                    filterConfig.addFilter(filter);
+                }
+                setFilterConfig(mAliPlayer, filterConfig);
                 break;
             case "updateFilterConfig":
-                //TODO
+                Map<String, Object> updateFilterConfig = methodCall.argument("arg");
+                String updateFilterConfigTarget = (String) updateFilterConfig.get("target");
+                Map<String, Object> updateFilterConfigOptionsMap = (Map<String, Object>) updateFilterConfig.get("options");
+                Set<String> updateFilterConfigOptionsMapKey = updateFilterConfigOptionsMap.keySet();
+                FilterConfig.FilterOptions updateFilterConfigFilterOptions = new FilterConfig.FilterOptions();
+                for (String key : updateFilterConfigOptionsMapKey) {
+                    updateFilterConfigFilterOptions.setOption(key, updateFilterConfigOptionsMap.get(key));
+                }
+                updateFilterConfig(mAliPlayer, updateFilterConfigTarget, updateFilterConfigFilterOptions);
+
                 break;
             case "setFilterInvalid":
-                //TODO
+                Map<String, Object> setFilterInvalidMap = methodCall.argument("arg");
+                String setFilterInvalidTarget = (String) setFilterInvalidMap.get("target");
+                boolean setFilterInvalidBoolean = Boolean.parseBoolean((String) setFilterInvalidMap.get("invalid"));
+                setFilterInvalid(mAliPlayer, setFilterInvalidTarget, setFilterInvalidBoolean);
                 break;
             case "clearScreen":
                 mAliPlayer.clearScreen();
@@ -562,53 +586,6 @@ public class FlutterAliPlayer extends FlutterPlayerBase {
             default:
                 result.notImplemented();
         }
-    }
-
-    private void sendCustomEvent(AliPlayer mAliPlayer, String sendCustomEvent) {
-        if (mAliPlayer != null) {
-            mAliPlayer.sendCustomEvent(sendCustomEvent);
-        }
-    }
-
-    private Object getOption(AliPlayer mAliPlayer, IPlayer.Option option) {
-        if (mAliPlayer != null) {
-            return mAliPlayer.getOption(option);
-        }
-        return null;
-    }
-
-    private void setIPResolveType(AliPlayer mAliPlayer, IPlayer.IPResolveType type) {
-        if (mAliPlayer != null) {
-            mAliPlayer.setIPResolveType(type);
-        }
-    }
-
-    private String getPropertyString(AliPlayer mAliPlayer, String getPropertyString) {
-        if (mAliPlayer != null) {
-            IPlayer.PropertyKey propertyKey = IPlayer.PropertyKey.valueOf(getPropertyString);
-            return mAliPlayer.getPropertyString(propertyKey);
-        }
-        return null;
-    }
-
-    private void updateLiveStsInfo(AliPlayer mAliPlayer, StsInfo stsInfo) {
-        if (mAliPlayer != null) {
-            mAliPlayer.updateStsInfo(stsInfo);
-        }
-    }
-
-    private String getCacheFilePathWithVid(AliPlayer mAliPlayer, String vid, String format, String definition) {
-        if (mAliPlayer != null) {
-            return mAliPlayer.getCacheFilePath(vid, format, definition, 0);
-        }
-        return null;
-    }
-
-    private String getCacheFilePath(AliPlayer mAliPlayer, String url) {
-        if (mAliPlayer != null) {
-            return mAliPlayer.getCacheFilePath(url);
-        }
-        return null;
     }
 
     @Override
@@ -1001,5 +978,70 @@ public class FlutterAliPlayer extends FlutterPlayerBase {
         if (mAliPlayer != null) {
             mAliPlayer.setFastStart(fastStart);
         }
+    }
+
+    private void updateFilterConfig(AliPlayer mAliPlayer, String updateFilterConfigTarget, FilterConfig.FilterOptions updateFilterConfigFilterOptions) {
+        if (mAliPlayer != null) {
+            mAliPlayer.updateFilterConfig(updateFilterConfigTarget, updateFilterConfigFilterOptions);
+        }
+    }
+
+    private void setFilterInvalid(AliPlayer mAliPlayer, String setFilterInvalidTarget, boolean setFilterInvalidBoolean) {
+        if (mAliPlayer != null) {
+            mAliPlayer.setFilterInvalid(setFilterInvalidTarget, setFilterInvalidBoolean);
+        }
+    }
+
+    private void setFilterConfig(AliPlayer mAliPlayer, FilterConfig filterConfig) {
+        if (mAliPlayer != null) {
+            mAliPlayer.setFilterConfig(filterConfig);
+        }
+    }
+
+    private void sendCustomEvent(AliPlayer mAliPlayer, String sendCustomEvent) {
+        if (mAliPlayer != null) {
+            mAliPlayer.sendCustomEvent(sendCustomEvent);
+        }
+    }
+
+    private Object getOption(AliPlayer mAliPlayer, IPlayer.Option option) {
+        if (mAliPlayer != null) {
+            return mAliPlayer.getOption(option);
+        }
+        return null;
+    }
+
+    private void setIPResolveType(AliPlayer mAliPlayer, IPlayer.IPResolveType type) {
+        if (mAliPlayer != null) {
+            mAliPlayer.setIPResolveType(type);
+        }
+    }
+
+    private String getPropertyString(AliPlayer mAliPlayer, String getPropertyString) {
+        if (mAliPlayer != null) {
+            IPlayer.PropertyKey propertyKey = IPlayer.PropertyKey.valueOf(getPropertyString);
+            return mAliPlayer.getPropertyString(propertyKey);
+        }
+        return null;
+    }
+
+    private void updateLiveStsInfo(AliPlayer mAliPlayer, StsInfo stsInfo) {
+        if (mAliPlayer != null) {
+            mAliPlayer.updateStsInfo(stsInfo);
+        }
+    }
+
+    private String getCacheFilePathWithVid(AliPlayer mAliPlayer, String vid, String format, String definition) {
+        if (mAliPlayer != null) {
+            return mAliPlayer.getCacheFilePath(vid, format, definition, 0);
+        }
+        return null;
+    }
+
+    private String getCacheFilePath(AliPlayer mAliPlayer, String url) {
+        if (mAliPlayer != null) {
+            return mAliPlayer.getCacheFilePath(url);
+        }
+        return null;
     }
 }

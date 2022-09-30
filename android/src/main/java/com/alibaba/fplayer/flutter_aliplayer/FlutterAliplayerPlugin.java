@@ -439,6 +439,17 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
                 mEventSink.success(map);
             }
 
+            @Override
+            public void onReportEventListener(Map<String, Object> map) {
+                mEventSink.success(map);
+            }
+
+            @Override
+            public int onChooseTrackIndex(Map<String, Object> map) {
+                mEventSink.success(map);
+                return 0;
+            }
+
         });
     }
 
