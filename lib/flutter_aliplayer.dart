@@ -396,7 +396,7 @@ class FlutterAliplayer {
       "domain": domain,
       "app": app,
       "stream": stream,
-      "encryptionType": encryptionType.toString(),
+      "encryptionType": encryptionType?.index.toString(),
       "definitionList": definitionList,
     };
     return FlutterAliPlayerFactory.methodChannel
@@ -537,7 +537,8 @@ class FlutterAliplayer {
 
   Future<void> setFilterConfig(String configJson) async {
     print("abc : setFilterConfig flutter");
-    // config格式: [{"target":"<target>", "options":{"key":"<options_key>", "value": "<options_value>"}}, ...]
+    // configJson格式: "[{"target":"<target1>", "options":["<options_key>"]}, {"target":"<target2>", "options":<null>},...]"
+    // options_key 目前有两种"sharp"、"sr"
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("setFilterConfig", wrapWithPlayerId(arg: configJson));
   }
@@ -667,12 +668,12 @@ class FlutterAliplayer {
 
   Future<dynamic> getOption(AVPOption key) {
     return FlutterAliPlayerFactory.methodChannel
-        .invokeMethod("getOption", wrapWithPlayerId(arg: key.toString()));
+        .invokeMethod("getOption", wrapWithPlayerId(arg: key.index.toString()));
   }
 
   Future<dynamic> getPropertyString(AVPPropertyKey key) {
     return FlutterAliPlayerFactory.methodChannel.invokeMethod(
-        "getPropertyString", wrapWithPlayerId(arg: key.toString()));
+        "getPropertyString", wrapWithPlayerId(arg: key.index.toString()));
   }
 
   Future<dynamic> setEventReportParamsDelegate(int argt) {
@@ -722,7 +723,7 @@ class FlutterAliplayer {
 
   static Future<void> setIpResolveType(AVPIpResolveType type) {
     return FlutterAliPlayerFactory.methodChannel
-        .invokeMethod("setIpResolveType", type.toString());
+        .invokeMethod("setIpResolveType", type.index.toString());
   }
 
   static Future<void> setFairPlayCertIDForIOS(String certID) {
@@ -763,7 +764,7 @@ class FlutterAliplayer {
 
     if (Platform.isIOS) {
       // docTypeForIOS的取值代表沙盒目录路径类型 "0":Documents, "1":Library, "2":Caches, 其他:Documents
-      map['docTypeForIOS'] = docTypeForIOS;
+      map['docTypeForIOS'] = docTypeForIOS.index.toString();
     } else {
       // 安卓不需设置docType，直接传递localCacheDir
     }

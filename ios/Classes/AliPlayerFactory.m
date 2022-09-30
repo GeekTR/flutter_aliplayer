@@ -775,20 +775,29 @@ NSString *hashCallback(NSString* url) {
 - (void)setFilterConfig:(NSArray *)arr {
     FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
-    NSArray<NSDictionary *>* val = arr[3];
+    NSArray<NSDictionary *>* val = [arr[3] mj_JSONObject];
     
     AVPFilterConfig *filterConfig = [[AVPFilterConfig alloc] init];
     
     for (int i = 0; i < val.count; i++) {
         NSDictionary *filterDic = val[i];
-        NSDictionary *filterOptionsDic = filterDic[@"options"];
+        NSString *target = filterDic[@"target"];
+        NSArray *filterOptions = filterDic[@"options"];
+        if ([filterOptions isKindOfClass:[NSNull class]]) {
+            filterOptions = @[];
+        }
         
-        AVPFilter *filter = [[AVPFilter alloc] initWithTarget:filterDic[@"target"]];
+        AVPFilter *filter = [[AVPFilter alloc] initWithTarget:target];
         
-        AVPFilterOptions *options = [[AVPFilterOptions alloc] init];
-        [options setOptions:filterOptionsDic[@"key"] value:filterOptionsDic[@"value"]];
+        if (filterOptions && filterOptions.count > 0) {
+            AVPFilterOptions *options = [[AVPFilterOptions alloc] init];
+            NSString *options_key = filterOptions.firstObject;
+            if ([target isEqualToString:@"sharp"]) {
+                [options setOptions:options_key value:@0.0];
+            }
+            [filter setOptions:options];
+        }
         
-        [filter setOptions:options];
         [filterConfig addFilter:filter];
     }
     
