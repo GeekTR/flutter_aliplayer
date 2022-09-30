@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -23,6 +25,23 @@ class _FilterFragmentState extends State<FilterFragment> {
   @override
   void initState() {
     super.initState();
+    List<AVPFilterInfo> avpFilterList = new List();
+    //add sharp
+    AVPFilterInfo shapeFilterInfo = new AVPFilterInfo();
+    List<String> shapeListOptions = List();
+    shapeListOptions.add("strength");
+    shapeFilterInfo.target = "sharp";
+    shapeFilterInfo.options = shapeListOptions;
+
+    //add sr
+    AVPFilterInfo srFilterInfo = new AVPFilterInfo();
+    srFilterInfo.target = "sr";
+
+    avpFilterList.add(shapeFilterInfo);
+    avpFilterList.add(srFilterInfo);
+
+    var avpFilterJson = jsonEncode(avpFilterList);
+    widget.fAliplayer.setFilterConfig(avpFilterJson);
   }
 
   @override
@@ -57,6 +76,7 @@ class _FilterFragmentState extends State<FilterFragment> {
                 setState(() {
                   _mEnableSharp = value;
                 });
+                widget.fAliplayer.setFilterInvalid("sharp", (!_mEnableSharp).toString());
               },
             )
           ],
@@ -81,6 +101,8 @@ class _FilterFragmentState extends State<FilterFragment> {
                 setState(() {
                   _mStrengthValue = value;
                 });
+                var map = {"strength":_mStrengthValue};
+                widget.fAliplayer.updateFilterConfig("sharp", map);
               }),
           SizedBox(width: 30, height: 20, child: Text("$_mStrengthValue"))
         ],
@@ -101,6 +123,7 @@ class _FilterFragmentState extends State<FilterFragment> {
             setState(() {
               _mEnableSR = value;
             });
+            widget.fAliplayer.setFilterInvalid("sr", (!_mEnableSR).toString());
           },
         )
       ],

@@ -535,10 +535,11 @@ class FlutterAliplayer {
         .invokeMethod("setCacheConfig", wrapWithPlayerId(arg: map));
   }
 
-  Future<void> setFilterConfig(Array config) async {
+  Future<void> setFilterConfig(String configJson) async {
+    print("abc : setFilterConfig flutter");
     // config格式: [{"target":"<target>", "options":{"key":"<options_key>", "value": "<options_value>"}}, ...]
     return FlutterAliPlayerFactory.methodChannel
-        .invokeMethod("setFilterConfig", wrapWithPlayerId(arg: config));
+        .invokeMethod("setFilterConfig", wrapWithPlayerId(arg: configJson));
   }
 
   Future<void> updateFilterConfig(String target, Map options) async {

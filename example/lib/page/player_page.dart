@@ -116,7 +116,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     // 设置traceId
     fAliplayer.setTraceID("aliplayer");
     // 添加监听埋点参数
-    fAliplayer.setEventReportParamsDelegate();
+    // fAliplayer.setEventReportParamsDelegate();
 
     if (Platform.isAndroid) {
       getExternalStorageDirectories().then((value) {

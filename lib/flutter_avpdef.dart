@@ -1,15 +1,21 @@
 class FlutterAvpdef {
   /**@brief 不保持比例平铺*/
+
   /// **@brief Auto stretch to fit.*/
   static const int AVP_SCALINGMODE_SCALETOFILL = 0;
+
   /**@brief 保持比例，黑边*/
+
   /// **@brief Keep aspect ratio and add black borders.*/
   static const int AVP_SCALINGMODE_SCALEASPECTFIT = 1;
+
   /**@brief 保持比例填充，需裁剪*/
+
   /// **@brief Keep aspect ratio and crop.*/
   static const int AVP_SCALINGMODE_SCALEASPECTFILL = 2;
 
   /**@brief 旋转模式*/
+
   /// **@brief Rotate mode*/
   static const int AVP_ROTATE_0 = 0;
   static const int AVP_ROTATE_90 = 90;
@@ -17,6 +23,7 @@ class FlutterAvpdef {
   static const int AVP_ROTATE_270 = 270;
 
   /**@brief 镜像模式*/
+
   /// **@brief Mirroring mode*/
   static const int AVP_MIRRORMODE_NONE = 0;
   static const int AVP_MIRRORMODE_HORIZONTAL = 1;
@@ -96,18 +103,25 @@ class FlutterAvpdef {
 
   //  空转，闲时，静态
   static const int AVPStatus_AVPStatusIdle = 0;
+
   // /** @brief 初始化完成 */
   static const int AVPStatus_AVPStatusInitialzed = 1;
+
   // /** @brief 准备完成 */
   static const int AVPStatus_AVPStatusPrepared = 2;
+
   // /** @brief 正在播放 */
   static const int AVPStatus_AVPStatusStarted = 3;
+
   // /** @brief 播放暂停 */
   static const int AVPStatus_AVPStatusPaused = 4;
+
   // /** @brief 播放停止 */
   static const int AVPStatus_AVPStatusStopped = 5;
+
   // /** @brief 播放完成 */
   static const int AVPStatus_AVPStatusCompletion = 6;
+
   // /** @brief 播放错误
   static const int AVPStatus_AVPStatusError = 7;
 }
@@ -271,9 +285,16 @@ class AVPThumbnailInfo {
   }
 }
 
-class AVPFilterInfo{
+class AVPFilterInfo {
   String? target;
   List<String>? options;
+
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> data = new Map<String, dynamic>();
+    data['target'] = target;
+    data['options'] = options;
+    return data;
+  }
 }
 
 enum AVPOption {
