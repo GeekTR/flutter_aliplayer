@@ -113,11 +113,6 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     fAliplayer.setPreferPlayerName(GlobalSettings.mPlayerName);
     fAliplayer.setEnableHardwareDecoder(GlobalSettings.mEnableHardwareDecoder);
 
-    // 设置traceId
-    fAliplayer.setTraceID("aliplayer");
-    // 添加监听埋点参数
-    // fAliplayer.setEventReportParamsDelegate();
-
     if (Platform.isAndroid) {
       getExternalStorageDirectories().then((value) {
         if (value.length > 0) {
