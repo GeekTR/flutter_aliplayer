@@ -38,7 +38,7 @@ typedef OnSubtitleHeader = void Function(
 typedef OnTrackReady = void Function(String playerId);
 
 typedef OnInfo = void Function(
-    int infoCode, int extraValue, String extraMsg, String playerId);
+    int? infoCode, int? extraValue, String? extraMsg, String playerId);
 typedef OnError = void Function(
     int errorCode, String? errorExtra, String? errorMsg, String playerId);
 typedef OnCompletion = void Function(String playerId);
@@ -879,9 +879,9 @@ class FlutterAliplayer {
         break;
       case "onInfo":
         if (player.onInfo != null) {
-          int infoCode = event['infoCode'];
-          int extraValue = event['extraValue'];
-          String extraMsg = event['extraMsg'];
+          int? infoCode = event['infoCode'];
+          int? extraValue = event['extraValue'];
+          String? extraMsg = event['extraMsg'];
           player.onInfo!(infoCode, extraValue, extraMsg, playerId);
         }
         break;

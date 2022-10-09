@@ -2,6 +2,8 @@ package com.alibaba.fplayer.flutter_aliplayer;
 
 import android.content.Context;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
@@ -44,6 +46,8 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
     private EventChannel.EventSink mEventSink;
     private EventChannel mEventChannel;
     private Integer playerType = -1;
+
+    private Handler mMainHandler = new Handler(Looper.getMainLooper());
 
     public FlutterAliplayerPlugin() {
         super(StandardMessageCodec.INSTANCE);
@@ -440,8 +444,13 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
             }
 
             @Override
-            public void onReportEventListener(Map<String, Object> map) {
-                mEventSink.success(map);
+            public void onReportEventListener(final Map<String, Object> map) {
+                mMainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mEventSink.success(map);
+                    }
+                });
             }
 
             @Override

@@ -78,7 +78,7 @@ public abstract class FlutterPlayerBase {
             @Override
             public void onEventParam(Map<String, String> param) {
                 Map<String, Object> map = new HashMap<>();
-                map.put("method", "onChooseTrackIndex");
+                map.put("method", "onEventReportParams");
                 map.put("params", param);
                 map.put("playerId", mPlayerId);
                 if (mFlutterAliPlayerListener != null) {
