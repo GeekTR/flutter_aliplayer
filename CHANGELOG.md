@@ -1,6 +1,16 @@
+## 5.4.8-dev.1.1
+----------------------------------
+1. 修复 Android 播放报错问题
+2. 修复 iOS 播放时，偶现 onInfo 没有回调的问题
+
+## 5.4.8-dev.1.0
+----------------------------------
+1. 更新 Anddroid、iOS播放器SDK为 5.4.8.0
+2. 移除 flutter_aliplayer_artc 和 flutter_rts，需要使用 Rts SDK，请自行在 Android、iOS 项目里添加依赖
+3. 新增接口
 ## 5.4.3-dev.5
 ----------------------------------
-1. 增加 Sei 、SubtitleHeader 接口调用 
+1. 增加 Sei 、SubtitleHeader 接口调用
 2. 增加 FlutterAliPlayerFactory.loadRtsLibrary() 接口，(Android)
 3. 修复 5.4.2 编译报错问题
 4. 修复集成 Rts 低延时直播无法播放问题
