@@ -11,8 +11,10 @@ class FlutterAliListPlayer extends FlutterAliplayer {
 
   @override
   Future<void> create() async {
-    return FlutterAliPlayerFactory.methodChannel.invokeMethod(
+    var  invokeMethod = FlutterAliPlayerFactory.methodChannel.invokeMethod(
         'createAliPlayer', wrapWithPlayerId(arg: PlayerType.PlayerType_List));
+    sendCustomEvent("source=flutter");
+    return invokeMethod;
   }
 
   Future<void> setPreloadCount(int count) async {

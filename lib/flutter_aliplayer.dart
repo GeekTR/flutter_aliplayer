@@ -216,8 +216,10 @@ class FlutterAliplayer {
   }
 
   Future<void> create() async {
-    return FlutterAliPlayerFactory.methodChannel.invokeMethod(
+    var invokeMethod = FlutterAliPlayerFactory.methodChannel.invokeMethod(
         'createAliPlayer', wrapWithPlayerId(arg: PlayerType.PlayerType_Single));
+    sendCustomEvent("source=flutter");
+    return invokeMethod;
   }
 
   Future<void> setPlayerView(int viewId) async {
@@ -536,7 +538,6 @@ class FlutterAliplayer {
   }
 
   Future<void> setFilterConfig(String configJson) async {
-    print("abc : setFilterConfig flutter");
     // configJson格式: "[{"target":"<target1>", "options":["<options_key>"]}, {"target":"<target2>", "options":<null>},...]"
     // options_key 目前有两种"sharp"、"sr"
     return FlutterAliPlayerFactory.methodChannel
@@ -867,7 +868,6 @@ class FlutterAliplayer {
         break;
       case "onLoadingEnd":
         if (player.onLoadingEnd != null) {
-          print("onLoadingEnd");
           player.onLoadingEnd!(playerId);
         }
         break;
@@ -1015,12 +1015,10 @@ class _VideoPlayerState extends State<AliPlayerView> {
   @override
   void initState() {
     super.initState();
-    // print("abc : create PlatFormView initState");
   }
 
   @override
   Widget build(BuildContext context) {
-    // print("abc : create PlatFormView build");
     return nativeView();
   }
 
