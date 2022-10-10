@@ -579,8 +579,9 @@ public class FlutterAliPlayer extends FlutterPlayerBase {
                 result.success(getOption(mAliPlayer, option));
                 break;
             case "sendCustomEvent":
-                String sendCustomEvent = (String) methodCall.arguments;
-                sendCustomEvent(mAliPlayer, sendCustomEvent);
+                Map<String,Object> sendCustomEventMap = methodCall.arguments();
+                String sendCustomArgs = (String) sendCustomEventMap.get("arg");
+                sendCustomEvent(mAliPlayer, sendCustomArgs);
                 result.success(null);
                 break;
             default:
