@@ -308,7 +308,7 @@ enum AVPOption {
   audio_bitrate,
 }
 
-// 获取信息播放器的key
+/// 获取信息播放器的key
 enum AVPPropertyKey {
   // /** @brief Http的response信息*/
   // 返回的字符串是JSON数组，每个对象带response和type字段。type字段可以是url/video/audio/subtitle，根据流是否有相应Track返回。
@@ -322,21 +322,21 @@ enum AVPPropertyKey {
   connect_info,
 }
 
-// encryptionType
+/// encryptionType
 enum EncryptionType {
   none,
   alivodEncryption,
   fairPlay,
 }
 
-// IP 解析类型
+/// IP 解析类型
 enum AVPIpResolveType {
   whatEver,
   v4,
   v6,
 }
 
-// iOS 沙盒目录类型
+/// iOS 沙盒目录类型
 enum DocTypeForIOS {
   // Documents
   documents,

@@ -13,6 +13,7 @@ class FlutterAliDownloader {
     _eventChannel.receiveBroadcastStream().listen(_onEvent, onError: _onError);
   }
 
+  /// 准备下载
   ///type {FlutterAvpdef.DOWNLOADTYPE_STS / FlutterAvpdef.DOWNLOADTYPE_AUTH}
   ///STS {vid,accessKeyId,accessKeySecret,securityToken}
   ///AUTH {vid,playAuth}
@@ -27,7 +28,7 @@ class FlutterAliDownloader {
       'type': type,
       'vid': vid,
       'index': index,
-      'region':region,
+      'region': region,
       'accessKeyId': accessKeyId,
       'accessKeySecret': accessKeySecret,
       'securityToken': securityToken,
@@ -36,41 +37,49 @@ class FlutterAliDownloader {
     return _methodChannel.invokeMethod("prepare", map);
   }
 
+  /// 开始下载
   Stream<dynamic>? start(String vid, int index) {
     var map = {'vid': vid, 'index': index};
     _methodChannel.invokeMethod("start", map);
     return _receiveStream;
   }
 
+  /// 设置下载的trackIndex
   Future<dynamic> selectItem(String vid, int index) {
     var map = {'vid': vid, 'index': index};
     return _methodChannel.invokeMethod("selectItem", map);
   }
 
+  /// 设置下载的保存路径
   void setSaveDir(String path) {
     _methodChannel.invokeMethod("setSaveDir", path);
   }
 
+  /// 停止下载
   Future<dynamic> stop(String vid, int index) {
     var map = {'vid': vid, 'index': index};
     return _methodChannel.invokeMethod("stop", map);
   }
 
+  /// 删除下载文件
   Future<dynamic> delete(String vid, int index) {
     var map = {'vid': vid, 'index': index};
     return _methodChannel.invokeMethod("delete", map);
   }
 
+  /// 获取下载文件路径
   Future<dynamic> getFilePath(String vid, int index) {
     var map = {'vid': vid, 'index': index};
     return _methodChannel.invokeMethod("getFilePath", map);
   }
 
+  /// 销毁下载对象
   Future<dynamic> release(String vid, int index) {
     var map = {'vid': vid, 'index': index};
     return _methodChannel.invokeMethod("release", map);
   }
 
+  /// 鉴权过期，更新下载源信息
   Future<dynamic> updateSource(String type, String vid, String index,
       {String? region,
       String? accessKeyId,
@@ -81,7 +90,7 @@ class FlutterAliDownloader {
       'type': type,
       'vid': vid,
       'index': index,
-      'region':region,
+      'region': region,
       'accessKeyId': accessKeyId,
       'accessKeySecret': accessKeySecret,
       'securityToken': securityToken,
@@ -90,6 +99,7 @@ class FlutterAliDownloader {
     return _methodChannel.invokeMethod("updateSource", map);
   }
 
+  /// 设置下载config
   Future<dynamic> setDownloaderConfig(String vid, String index,
       {String? userAgent,
       String? referrer,

@@ -102,7 +102,7 @@
             }
         }
     }
-    result(nil);
+    // result(nil);
 }
 
 - (void)updateSource:(NSArray*)arr {

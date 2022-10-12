@@ -998,11 +998,29 @@ NSString *hashCallback(NSString* url) {
     result(nil);
 }
 
+- (void)moveToPre:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSDictionary *dic = arr[3];
+    if (dic && dic.count > 0) {
+        dic = [arr[3] removeNull];
+        [(AliListPlayer*)proxy.player moveToPre:dic[@"accId"] accKey:dic[@"accKey"] token:dic[@"token"] region:dic[@"region"]];
+    } else {
+        [(AliListPlayer*)proxy.player moveToPre];
+    }
+    result(nil);
+}
+
 - (void)moveToNext:(NSArray*)arr {
     FlutterResult result = arr[1];
     AliPlayerProxy *proxy = arr[2];
-    NSDictionary *dic = [arr[3] removeNull];
-    [(AliListPlayer*)proxy.player moveToNext:dic[@"accId"] accKey:dic[@"accKey"] token:dic[@"token"] region:dic[@"region"]];
+    NSDictionary *dic = arr[3];
+    if (dic && dic.count > 0) {
+        dic = [arr[3] removeNull];
+        [(AliListPlayer*)proxy.player moveToNext:dic[@"accId"] accKey:dic[@"accKey"] token:dic[@"token"] region:dic[@"region"]];
+    } else {
+        [(AliListPlayer*)proxy.player moveToNext];
+    }
     result(nil);
 }
 

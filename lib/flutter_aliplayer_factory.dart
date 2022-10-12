@@ -11,6 +11,7 @@ class FlutterAliPlayerFactory {
 
   static Map<String, FlutterAliplayer> instanceMap = {};
 
+  /// 创建短视频列表播放
   static FlutterAliListPlayer createAliListPlayer({playerId}) {
     FlutterAliListPlayer flutterAliListPlayer =
         FlutterAliListPlayer.init(playerId);
@@ -18,6 +19,7 @@ class FlutterAliPlayerFactory {
     return flutterAliListPlayer;
   }
 
+  /// 创建普通播放器
   static FlutterAliplayer createAliPlayer({playerId}) {
     FlutterAliplayer flutterAliplayer = FlutterAliplayer.init(playerId);
     flutterAliplayer.create();
@@ -31,10 +33,13 @@ class FlutterAliPlayerFactory {
     return flutterAliLiveShiftPlayer;
   }
 
+  /// 初始化下载秘钥信息
   static Future<void> initService(Uint8List byteData) {
     return methodChannel.invokeMethod("initService", byteData);
   }
 
+  /// 初始化license证书服务
+  /// 仅对iOS系统有效
   static Future<void> initLicenseServiceForIOS() {
     return methodChannel.invokeMethod("initLicenseServiceForIOS");
   }

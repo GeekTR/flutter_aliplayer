@@ -15,14 +15,14 @@ export 'flutter_avpdef.dart';
 typedef OnPrepared = void Function(String playerId);
 typedef OnRenderingStart = void Function(String playerId);
 typedef OnVideoSizeChanged = void Function(
-    int width, int height, int rotation, String playerId);
+    int width, int height, int? rotation, String playerId);
 typedef OnSnapShot = void Function(String path, String playerId);
 typedef OnSeekComplete = void Function(String playerId);
 typedef OnSeiData = void Function(int type, String data, String playerId);
 
 typedef OnLoadingBegin = void Function(String playerId);
 typedef OnLoadingProgress = void Function(
-    int percent, double netSpeed, String playerId);
+    int percent, double? netSpeed, String playerId);
 typedef OnLoadingEnd = void Function(String playerId);
 
 typedef OnStateChanged = void Function(int newState, String playerId);
@@ -110,34 +110,45 @@ class FlutterAliplayer {
     eventChannel.receiveBroadcastStream().listen(_onEvent, onError: _onError);
   }
 
+  /// 播放器事件回调，准备完成事件
   void setOnPrepared(OnPrepared prepared) {
     this.onPrepared = prepared;
   }
 
+  /// 播放器事件回调，首帧显示事件
   void setOnRenderingStart(OnRenderingStart renderingStart) {
     this.onRenderingStart = renderingStart;
   }
 
+  /// 视频大小变化回调
   void setOnVideoSizeChanged(OnVideoSizeChanged videoSizeChanged) {
     this.onVideoSizeChanged = videoSizeChanged;
   }
 
+  /// 获取截图回调
   void setOnSnapShot(OnSnapShot snapShot) {
     this.onSnapShot = snapShot;
   }
 
+  // 播放器事件回调，跳转完成事件
   void setOnSeekComplete(OnSeekComplete seekComplete) {
     this.onSeekComplete = seekComplete;
   }
 
+  /// 错误代理回调
   void setOnError(OnError onError) {
     this.onError = onError;
   }
 
+  /// SEI回调
   void setOnSeiData(OnSeiData seiData) {
     this.onSeiData = seiData;
   }
 
+  /// 视频缓冲相关回调
+  /// loadingBegin: 播放器事件回调，缓冲开始事件
+  /// loadingProgress: 视频缓冲进度回调
+  /// loadingEnd: 播放器事件回调，缓冲完成事件
   void setOnLoadingStatusListener(
       {required OnLoadingBegin loadingBegin,
       required OnLoadingProgress loadingProgress,
@@ -147,22 +158,27 @@ class FlutterAliplayer {
     this.onLoadingEnd = loadingEnd;
   }
 
+  /// 播放器状态改变回调
   void setOnStateChanged(OnStateChanged stateChanged) {
     this.onStateChanged = stateChanged;
   }
 
+  /// 视频当前播放位置回调
   void setOnInfo(OnInfo info) {
     this.onInfo = info;
   }
 
+  /// 播放器事件回调，播放完成事件
   void setOnCompletion(OnCompletion completion) {
     this.onCompletion = completion;
   }
 
+  /// 获取track信息回调
   void setOnTrackReady(OnTrackReady onTrackReady) {
     this.onTrackReady = onTrackReady;
   }
 
+  /// track切换完成回调
   void setOnTrackChanged(OnTrackChanged onTrackChanged) {
     this.onTrackChanged = onTrackChanged;
   }
@@ -174,6 +190,9 @@ class FlutterAliplayer {
     this.onThumbnailPreparedFail = preparedFail;
   }
 
+  /// 获取缩略图相关回调
+  /// onThumbnailGetSuccess: 获取缩略图成功回调
+  /// onThumbnailGetFail: 获取缩略图失败回调
   void setOnThumbnailGetListener(
       {required OnThumbnailGetSuccess onThumbnailGetSuccess,
       required OnThumbnailGetFail onThumbnailGetFail}) {
@@ -181,18 +200,23 @@ class FlutterAliplayer {
     this.onThumbnailGetSuccess = onThumbnailGetSuccess;
   }
 
+  /// 字幕显示回调
   void setOnSubtitleShow(OnSubtitleShow onSubtitleShow) {
     this.onSubtitleShow = onSubtitleShow;
   }
 
+  /// 字幕隐藏回调
   void setOnSubtitleHide(OnSubtitleHide onSubtitleHide) {
     this.onSubtitleHide = onSubtitleHide;
   }
 
+  /// 字幕头信息回调
+  /// ass字幕，如果实现了此回调，则播放器不会渲染字幕，由调用者完成渲染，否则播放器自动完成字幕的渲染
   void setOnSubtitleHeader(OnSubtitleHeader onSubtitleHeader) {
     this.onSubtitleHeader = onSubtitleHeader;
   }
 
+  /// 外挂字幕被添加
   void setOnSubtitleExtAdded(OnSubtitleExtAdded onSubtitleExtAdded) {
     this.onSubtitleExtAdded = onSubtitleExtAdded;
   }
@@ -205,6 +229,7 @@ class FlutterAliplayer {
     this.onTimeShiftUpdater = timeShiftUpdater;
   }
 
+  /// 埋点事件参数回调
   void setOnEventReportParams(OnEventReportParams eventReportParams) {
     this.onEventReportParams = eventReportParams;
   }
@@ -215,6 +240,7 @@ class FlutterAliplayer {
     return map;
   }
 
+  /// 创建播放器
   Future<void> create() async {
     var invokeMethod = FlutterAliPlayerFactory.methodChannel.invokeMethod(
         'createAliPlayer', wrapWithPlayerId(arg: PlayerType.PlayerType_Single));
@@ -222,108 +248,131 @@ class FlutterAliplayer {
     return invokeMethod;
   }
 
+  /// 设置播放器的视图playerView
   Future<void> setPlayerView(int viewId) async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('setPlayerView', wrapWithPlayerId(arg: viewId));
   }
 
+  /// 使用url方式来播放视频
   Future<void> setUrl(String url) async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('setUrl', wrapWithPlayerId(arg: url));
   }
 
+  /// 播放准备
   Future<void> prepare() async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('prepare', wrapWithPlayerId());
   }
 
+  /// 开始播放
   Future<void> play() async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('play', wrapWithPlayerId());
   }
 
+  /// 暂停播放
   Future<void> pause() async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('pause', wrapWithPlayerId());
   }
 
+  /// 清空画面
   Future<void> clearScreen() async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('clearScreen', wrapWithPlayerId());
   }
 
+  /// 截图
+  /// 信息可在获取截图回调中取得
   Future<dynamic> snapshot(String path) async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('snapshot', wrapWithPlayerId(arg: path));
   }
 
+  /// 停止播放
   Future<void> stop() async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('stop', wrapWithPlayerId());
   }
 
+  /// 销毁播放器
   Future<void> destroy() async {
     FlutterAliPlayerFactory.instanceMap.remove(playerId);
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('destroy', wrapWithPlayerId());
   }
 
+  /// 跳转到指定的播放位置
   Future<void> seekTo(int position, int seekMode) async {
     var map = {"position": position, "seekMode": seekMode};
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("seekTo", wrapWithPlayerId(arg: map));
   }
 
+  /// 设置精准seek的最大间隔
   Future<void> setMaxAccurateSeekDelta(int delta) async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("setMaxAccurateSeekDelta", wrapWithPlayerId(arg: delta));
   }
 
+  /// 当前是否循环播放
   Future<dynamic> isLoop() async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('isLoop', wrapWithPlayerId());
   }
 
+  /// 设置是否循环播放
   Future<void> setLoop(bool isloop) async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('setLoop', wrapWithPlayerId(arg: isloop));
   }
 
+  /// 当前是否自动播放
   Future<dynamic> isAutoPlay() async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('isAutoPlay', wrapWithPlayerId());
   }
 
+  /// 设置是否自动播放
   Future<void> setAutoPlay(bool isAutoPlay) async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('setAutoPlay', wrapWithPlayerId(arg: isAutoPlay));
   }
 
+  /// 设置视频快速启动
   Future<void> setFastStart(bool fastStart) {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("setFastStart", wrapWithPlayerId(arg: fastStart));
   }
 
+  /// 当前是否静音
   Future<dynamic> isMuted() async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('isMuted', wrapWithPlayerId());
   }
 
+  /// 设置是否静音
   Future<void> setMuted(bool isMuted) async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('setMuted', wrapWithPlayerId(arg: isMuted));
   }
 
+  /// 当前是否开启硬件解码
   Future<dynamic> enableHardwareDecoder() async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('enableHardwareDecoder', wrapWithPlayerId());
   }
 
+  /// 设置是否开启硬件解码
   Future<void> setEnableHardwareDecoder(bool isHardWare) async {
     return FlutterAliPlayerFactory.methodChannel.invokeMethod(
         'setEnableHardwareDecoder', wrapWithPlayerId(arg: isHardWare));
   }
 
+  /// 用vid和sts来播放视频
+  /// sts可参考：https://help.aliyun.com/document_detail/28756.html?spm=a2c4g.11186623.4.4.6f554c07q7B7aS
   Future<void> setVidSts(
       {String? vid,
       String? region,
@@ -350,6 +399,8 @@ class FlutterAliplayer {
         .invokeMethod("setVidSts", wrapWithPlayerId(arg: stsInfo));
   }
 
+  /// 使用vid+playauth方式播放
+  /// 可参考：https://help.aliyun.com/document_detail/57294.html
   Future<void> setVidAuth(
       {String? vid,
       String? region,
@@ -372,11 +423,14 @@ class FlutterAliplayer {
         .invokeMethod("setVidAuth", wrapWithPlayerId(arg: authInfo));
   }
 
+  /// 用vid和MPS信息来播放视频
+  /// 可参考：https://help.aliyun.com/document_detail/53522.html?spm=5176.doc53534.2.5.mhSfOh
   Future<void> setVidMps(Map<String, dynamic> mpsInfo) async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("setVidMps", wrapWithPlayerId(arg: mpsInfo));
   }
 
+  /// 使用LiveSts 方式播放直播流
   Future<void> setLiveSts(
       {String? url,
       String? accessKeyId,
@@ -405,6 +459,7 @@ class FlutterAliplayer {
         .invokeMethod("setLiveSts", wrapWithPlayerId(arg: liveStsInfo));
   }
 
+  /// 更新LiveSts信息
   Future<dynamic> updateLiveStsInfo(
       String accId, String accKey, String token, String region) async {
     Map<String, String> liveStsInfo = {
@@ -417,111 +472,135 @@ class FlutterAliplayer {
         .invokeMethod('updateLiveStsInfo', wrapWithPlayerId(arg: liveStsInfo));
   }
 
+  /// 获取渲染旋转模式
   Future<dynamic> getRotateMode() async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('getRotateMode', wrapWithPlayerId());
   }
 
+  /// 设置渲染旋转模式
   Future<void> setRotateMode(int mode) async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('setRotateMode', wrapWithPlayerId(arg: mode));
   }
 
+  /// 获取渲染填充模式
   Future<dynamic> getScalingMode() async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('getScalingMode', wrapWithPlayerId());
   }
 
+  /// 设置渲染填充模式
   Future<void> setScalingMode(int mode) async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('setScalingMode', wrapWithPlayerId(arg: mode));
   }
 
+  /// 获取渲染镜像模式
   Future<dynamic> getMirrorMode() async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('getMirrorMode', wrapWithPlayerId());
   }
 
+  /// 设置渲染镜像模式
   Future<void> setMirrorMode(int mode) async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('setMirrorMode', wrapWithPlayerId(arg: mode));
   }
 
+  /// 获取播放速率
   Future<dynamic> getRate() async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('getRate', wrapWithPlayerId());
   }
 
+  /// 设置播放速率
+  /// 0.5-2.0之间，1为正常播放
   Future<void> setRate(double mode) async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('setRate', wrapWithPlayerId(arg: mode));
   }
 
+  /// 设置视频的背景色
   Future<void> setVideoBackgroundColor(var color) async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('setVideoBackgroundColor', wrapWithPlayerId(arg: color));
   }
 
+  /// 获取视频的宽度
   Future<dynamic> getVideoWidth() async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('getVideoWidth', wrapWithPlayerId());
   }
 
+  /// 获取视频的高度
   Future<dynamic> getVideoHeight() async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('getVideoHeight', wrapWithPlayerId());
   }
 
+  /// 获取视频的旋转角度
   Future<dynamic> getVideoRotation() async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('getVideoRotation', wrapWithPlayerId());
   }
 
+  /// 设置播放器的音量（非系统音量）
+  /// 范围0.0~2.0，当音量大于1.0时，可能出现噪音，不推荐使用
   Future<void> setVolume(double volume) async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('setVolume', wrapWithPlayerId(arg: volume));
   }
 
+  /// 获取播放器的音量（非系统音量）
   Future<dynamic> getVolume() async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('getVolume', wrapWithPlayerId());
   }
 
+  /// 获取视频的长度
   Future<dynamic> getDuration() async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('getDuration', wrapWithPlayerId());
   }
 
+  /// 获取当前播放位置
   Future<dynamic> getCurrentPosition() async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('getCurrentPosition', wrapWithPlayerId());
   }
 
+  /// 获取当前播放位置的utc时间
   Future<dynamic> getCurrentUtcTime() async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('getCurrentUtcTime', wrapWithPlayerId());
   }
 
+  /// 获取当前播放命中的缓存文件大小
   Future<dynamic> getLocalCacheLoadedSize() async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('getLocalCacheLoadedSize', wrapWithPlayerId());
   }
 
+  /// 获取当前下载速度
   Future<dynamic> getCurrentDownloadSpeed() async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('getCurrentDownloadSpeed', wrapWithPlayerId());
   }
 
+  /// 获取已经缓存的位置
   Future<dynamic> getBufferedPosition() async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('getBufferedPosition', wrapWithPlayerId());
   }
 
+  /// 获取播放器设置
   Future<dynamic> getConfig() async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("getConfig", wrapWithPlayerId());
   }
 
+  /// 播放器设置
   Future<void> setConfig(Map map) async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("setConfig", wrapWithPlayerId(arg: map));
@@ -532,11 +611,14 @@ class FlutterAliplayer {
         .invokeMethod("getCacheConfig", wrapWithPlayerId());
   }
 
+  /// 设置缓存配置
   Future<void> setCacheConfig(Map map) async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("setCacheConfig", wrapWithPlayerId(arg: map));
   }
 
+  /// 设置滤镜配置
+  /// 在prepare之前调用此方法。如果想更新，调用updateFilterConfig
   Future<void> setFilterConfig(String configJson) async {
     // configJson格式: "[{"target":"<target1>", "options":["<options_key>"]}, {"target":"<target2>", "options":<null>},...]"
     // options_key 目前有两种"sharp"、"sr"
@@ -544,6 +626,7 @@ class FlutterAliplayer {
         .invokeMethod("setFilterConfig", wrapWithPlayerId(arg: configJson));
   }
 
+  /// 更新滤镜配置
   Future<void> updateFilterConfig(String target, Map options) async {
     var map = {'target': target, 'options': options};
     // options格式: {"key":"<options_key>", "value": "<options_value>"}
@@ -551,17 +634,20 @@ class FlutterAliplayer {
         .invokeMethod("updateFilterConfig", wrapWithPlayerId(arg: map));
   }
 
+  /// 开启关闭滤镜
   Future<void> setFilterInvalid(String target, String invalid) async {
     var map = {'target': target, 'invalid': invalid};
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("setFilterInvalid", wrapWithPlayerId(arg: map));
   }
 
+  /// 根据url获取缓存的文件名
   Future<dynamic> getCacheFilePath(String url) async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("getCacheFilePath", wrapWithPlayerId(arg: url));
   }
 
+  /// 根据vid获取缓存的文件名
   Future<dynamic> getCacheFilePathWithVid(
       String vid, String format, String definition) async {
     var map = {'vid': vid, 'format': format, 'definition': definition};
@@ -569,6 +655,7 @@ class FlutterAliplayer {
         .invokeMethod("getCacheFilePathWithVid", wrapWithPlayerId(arg: map));
   }
 
+  /// 根据vid+试看时长获取缓存的文件名
   Future<dynamic> getCacheFilePathWithVidAtPreviewTime(
       String vid, String format, String definition, String previewTime) async {
     var map = {
@@ -581,49 +668,60 @@ class FlutterAliplayer {
         "getCacheFilePathWithVidAtPreviewTime", wrapWithPlayerId(arg: map));
   }
 
+  /// 获取媒体信息，包括track信息
   Future<dynamic> getMediaInfo() {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("getMediaInfo", wrapWithPlayerId());
   }
 
+  /// 获取当前播放track
   Future<dynamic> getCurrentTrack(int trackIdx) {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("getCurrentTrack", wrapWithPlayerId(arg: trackIdx));
   }
 
+  /// 设置缩略图URL
   Future<dynamic> createThumbnailHelper(String thumbnail) {
     return FlutterAliPlayerFactory.methodChannel.invokeMethod(
         "createThumbnailHelper", wrapWithPlayerId(arg: thumbnail));
   }
 
+  /// 获取指定位置的缩略图
   Future<dynamic> requestBitmapAtPosition(int position) {
     return FlutterAliPlayerFactory.methodChannel.invokeMethod(
         "requestBitmapAtPosition", wrapWithPlayerId(arg: position));
   }
 
-  // 设置traceID会监听埋点事件回调onEventReportParams
+  /// 设置traceID，用于跟踪debug信息
+  /// 通过埋点事件回调onEventReportParams
   Future<dynamic> setTraceID(String traceID) {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("setTraceID", wrapWithPlayerId(arg: traceID));
   }
 
+  /// 添加外挂字幕
   Future<void> addExtSubtitle(String url) {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("addExtSubtitle", wrapWithPlayerId(arg: url));
   }
 
+  /// 选择外挂字幕
   Future<void> selectExtSubtitle(int trackIndex, bool enable) {
     var map = {'trackIndex': trackIndex, 'enable': enable};
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("selectExtSubtitle", wrapWithPlayerId(arg: map));
   }
 
+  /// 设置多码率时默认播放的码率
+  /// 将会选择与之最接近的一路流播放
   Future<void> setDefaultBandWidth(int parse) {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("setDefaultBandWidth", wrapWithPlayerId(arg: parse));
   }
 
-  // accurate 0 为不精确  1 为精确  不填为忽略
+  /// 根据trackIndex，切换清晰度
+  /// trackIdx 选择清晰度的index，-1代表自适应码率
+  ///  accurate 0 为不精确  1 为精确  不填为忽略
   Future<void> selectTrack(
     int trackIdx, {
     int accurate = -1,
@@ -641,52 +739,65 @@ class FlutterAliplayer {
         .invokeMethod("setPrivateService", data);
   }
 
+  /// 设置期望使用的播放器名字
   Future<void> setPreferPlayerName(String playerName) {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("setPreferPlayerName", wrapWithPlayerId(arg: playerName));
   }
 
+  /// 获取播放时使用的播放器名字
   Future<dynamic> getPlayerName() {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("getPlayerName", wrapWithPlayerId());
   }
 
+  /// 发送用户自定义事件
+  /// 通过埋点事件回调onEventReportParams
   Future<void> sendCustomEvent(String args) {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("sendCustomEvent", wrapWithPlayerId(arg: args));
   }
 
+  /// 设置某路流相对于主时钟的延时时间
+  /// 默认是0, 目前只支持外挂字幕
   Future<void> setStreamDelayTime(int trackIdx, int time) {
     var map = {'index': trackIdx, 'time': time};
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("setStreamDelayTime", map);
   }
 
+  /// 重新加载
+  /// 比如网络超时时，可以重新加载。
   Future<void> reload() async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod('reload', wrapWithPlayerId());
   }
 
+  /// 获取播放器的参数
   Future<dynamic> getOption(AVPOption key) {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("getOption", wrapWithPlayerId(arg: key.index.toString()));
   }
 
+  /// 根据key获取相应的信息
   Future<dynamic> getPropertyString(AVPPropertyKey key) {
     return FlutterAliPlayerFactory.methodChannel.invokeMethod(
         "getPropertyString", wrapWithPlayerId(arg: key.index.toString()));
   }
 
+  /// 设置埋点事件回调onEventReportParams代理
   Future<dynamic> setEventReportParamsDelegate(int argt) {
     return FlutterAliPlayerFactory.methodChannel.invokeMethod(
         "setEventReportParamsDelegate", wrapWithPlayerId(arg: argt.toString()));
   }
 
   ///静态方法
+  /// 获取SDK版本号信息
   static Future<dynamic> getSDKVersion() async {
     return FlutterAliPlayerFactory.methodChannel.invokeMethod("getSDKVersion");
   }
 
+  /// 获取设备UUID
   static Future<dynamic> getDeviceUUID() async {
     return FlutterAliPlayerFactory.methodChannel.invokeMethod("getDeviceUUID");
   }
@@ -696,11 +807,14 @@ class FlutterAliplayer {
         .invokeMethod("enableMix", enable);
   }
 
+  /// 是否打开log输出
   static Future<void> enableConsoleLog(bool enable) {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("enableConsoleLog", enable);
   }
 
+  /// 设置日志打印回调block
+  /// logLevel log输出级别
   static Future<void> setLogLevel(int level) async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("setLogLevel", level);
@@ -712,31 +826,41 @@ class FlutterAliplayer {
     );
   }
 
+  /// 设置是否使用http2
   static Future<void> setUseHttp2(bool use) {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("setUseHttp2", use);
   }
 
+  /// 是否开启httpDNS
+  /// 默认不开启
   static Future<void> enableHttpDns(bool enable) {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("enableHttpDns", enable);
   }
 
+  /// 设置解析ip类型
   static Future<void> setIpResolveType(AVPIpResolveType type) {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("setIpResolveType", type.index.toString());
   }
 
+  /// 设置fairPlay的用户证书id
+  /// 仅对iOS系统有效
   static Future<void> setFairPlayCertIDForIOS(String certID) {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("setFairPlayCertIDForIOS", certID);
   }
 
+  /// 设置是否使能硬件提供的音频变速播放能力
+  /// 关闭后则使用软件实现音频的倍速播放，pcm回调数据的格式和此设置关联；默认打开
   static Future<void> enableHWAduioTempo(bool enable) {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("enableHWAduioTempo", enable);
   }
 
+  /// 强制音频渲染器采用指定的格式进行渲染
+  /// 如果设定的格式设备不支持，则无效，无效值将被忽略，使用默认值；pcm回调数据的格式和此设置关联；默认关闭
   static Future<void> forceAudioRendingFormat(
       String force, String fmt, String channels, String sample_rate) {
     var map = {
@@ -749,12 +873,15 @@ class FlutterAliplayer {
         .invokeMethod("forceAudioRendingFormat", map);
   }
 
+  /// 重连所有网络连接
+  /// 网络路由发生变化后，调用此接口，可以让播放器所有的连接切换到新的路由上去。
   static Future<void> netWorkReConnect() {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("netWorkReConnect");
   }
 
-  ///本地缓存
+  /// 开启本地缓存
+  /// 开启之后，就会缓存到本地文件中。
   static Future<void> enableLocalCache(bool enable, String maxBufferMemoryKB,
       String localCacheDir, DocTypeForIOS docTypeForIOS) {
     var map = {
@@ -774,7 +901,7 @@ class FlutterAliplayer {
         .invokeMethod("enableLocalCache", map);
   }
 
-  ///本地缓存文件自动清理相关的设置
+  /// 本地缓存文件自动清理相关的设置
   static Future<void> setCacheFileClearConfig(
       String expireMin, String maxCapacityMB, String freeStorageMB) {
     var map = {
@@ -786,7 +913,7 @@ class FlutterAliplayer {
         .invokeMethod("setCacheFileClearConfig", map);
   }
 
-  ///清理本地缓存，需要先应用配置缓存，才能清理本地缓存
+  /// 清理本地缓存，需要先应用配置缓存，才能清理本地缓存
   static Future<void> clearCaches() {
     return FlutterAliPlayerFactory.methodChannel.invokeMethod("clearCaches");
   }
@@ -828,7 +955,7 @@ class FlutterAliplayer {
         if (player.onVideoSizeChanged != null) {
           int width = event['width'];
           int height = event['height'];
-          int rotation = event['rotation'];
+          int? rotation = event['rotation'];
           player.onVideoSizeChanged!(width, height, rotation, playerId);
         }
         break;
@@ -861,7 +988,7 @@ class FlutterAliplayer {
         break;
       case "onLoadingProgress":
         int percent = event['percent'];
-        double netSpeed = event['netSpeed'];
+        double? netSpeed = event['netSpeed'];
         if (player.onLoadingProgress != null) {
           player.onLoadingProgress!(percent, netSpeed, playerId);
         }

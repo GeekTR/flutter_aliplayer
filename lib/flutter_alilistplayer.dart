@@ -10,50 +10,62 @@ class FlutterAliListPlayer extends FlutterAliplayer {
   FlutterAliListPlayer.init(String id) : super.init(id);
 
   @override
+
+  /// 创建短视频列表播放
   Future<void> create() async {
-    var  invokeMethod = FlutterAliPlayerFactory.methodChannel.invokeMethod(
+    var invokeMethod = FlutterAliPlayerFactory.methodChannel.invokeMethod(
         'createAliPlayer', wrapWithPlayerId(arg: PlayerType.PlayerType_List));
     sendCustomEvent("source=flutter");
     return invokeMethod;
   }
 
+  /// 设置预加载的个数
+  /// 当前位置的前preloadCount和后preloadCount，默认preloadCount = 2
   Future<void> setPreloadCount(int count) async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("setPreloadCount", wrapWithPlayerId(arg: count));
   }
 
+  /// 添加vid资源到播放列表中
   Future<void> addVidSource({@required vid, @required uid}) async {
     Map<String, dynamic> info = {'vid': vid, 'uid': uid};
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("addVidSource", wrapWithPlayerId(arg: info));
   }
 
+  /// 添加url资源到播放列表中
   Future<void> addUrlSource({@required url, @required uid}) async {
     Map<String, dynamic> info = {'url': url, 'uid': uid};
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("addUrlSource", wrapWithPlayerId(arg: info));
   }
 
+  /// 从播放列表中删除指定资源
   Future<void> removeSource(String uid) async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("removeSource", wrapWithPlayerId(arg: uid));
   }
 
+  /// 获取当前播放资源的uid
   Future<dynamic> getCurrentUid() {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("getCurrentUid", wrapWithPlayerId());
   }
 
+  /// 清除播放列表
   Future<void> clear() async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("clear", wrapWithPlayerId());
   }
 
+  /// 设置最大的预缓存的内存大小，默认100M，最小20M
   Future<void> setMaxPreloadMemorySizeMB(int size) {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("setMaxPreloadMemorySizeMB", wrapWithPlayerId(arg: size));
   }
 
+  /// 当前位置移动到下一个进行准备播放
+  /// 没有入参是url播放方式；有入参是sts播放方式，需要更新sts信息
   Future<void> moveToNext(
       {String? accId, String? accKey, String? token, String? region}) async {
     Map<String, dynamic> info = {
@@ -66,6 +78,8 @@ class FlutterAliListPlayer extends FlutterAliplayer {
         .invokeMethod("moveToNext", wrapWithPlayerId(arg: info));
   }
 
+  /// 当前位置移动到上一个进行准备播放
+  /// 没有入参是url播放方式；有入参是sts播放方式，需要更新sts信息
   Future<void> moveToPre({
     String? accId,
     String? accKey,
