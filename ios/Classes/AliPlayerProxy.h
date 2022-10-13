@@ -7,6 +7,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AliyunPlayer/AliyunPlayer.h>
+#import <AliyunPlayer/AliPlayerPictureInPictureDelegate.h>
 #import <Flutter/Flutter.h>
 #import "FlutterAliPlayerView.h"
 
@@ -15,7 +16,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface AliPlayerProxy : NSObject<AVPDelegate, AVPEventReportParamsDelegate>
+@interface AliPlayerProxy : NSObject<AVPDelegate, AVPEventReportParamsDelegate, AliPlayerPictureInPictureDelegate>
 
 //@property(nonatomic,strong) FlutterResult result;
 @property (nonatomic, copy) FlutterEventSink eventSink;

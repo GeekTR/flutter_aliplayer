@@ -791,6 +791,15 @@ class FlutterAliplayer {
         "setEventReportParamsDelegate", wrapWithPlayerId(arg: argt.toString()));
   }
 
+  /// 设置画中画功能开启/关闭
+  /// 仅对iOS系统有效，在iOS 15以上系统应用
+  /// 需要在onPrepared回调方法中调用
+  Future<dynamic> setPictureInPictureEnableForIOS(bool enable) {
+    return FlutterAliPlayerFactory.methodChannel.invokeMethod(
+        "setPictureInPictureEnableForIOS",
+        wrapWithPlayerId(arg: enable.toString()));
+  }
+
   ///静态方法
   /// 获取SDK版本号信息
   static Future<dynamic> getSDKVersion() async {

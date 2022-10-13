@@ -250,6 +250,35 @@
     self.eventSink(@{kAliPlayerMethod:@"onEventReportParams",@"params":params,kAliPlayerId:_playerId});
 }
 
+#pragma mark -- AliPlayerPictureInPictureDelegate
+/**
+ * 画中画准备启动
+ */
+- (void)pictureInPictureControllerWillStartPictureInPicture {
+    self.eventSink(@{kAliPlayerMethod:@"pipWillStart",kAliPlayerId:_playerId});
+}
+
+/**
+ * 画中画已经启动
+ */
+- (void)pictureInPictureControllerDidStartPictureInPicture {
+    self.eventSink(@{kAliPlayerMethod:@"pipDidStart",kAliPlayerId:_playerId});
+}
+
+/**
+ * 画中画准备停止
+ */
+- (void)pictureInPictureControllerWillStopPictureInPicture {
+    self.eventSink(@{kAliPlayerMethod:@"pipWillStop",kAliPlayerId:_playerId});
+}
+
+/**
+ * 画中画已经停止
+ */
+- (void)pictureInPictureControllerDidStopPictureInPicture {
+    self.eventSink(@{kAliPlayerMethod:@"pipDidStop",kAliPlayerId:_playerId});
+}
+
 -(void)bindPlayerView:(FlutterAliPlayerView*)fapv{
     _fapv = fapv;
     self.player.playerView = fapv.view;

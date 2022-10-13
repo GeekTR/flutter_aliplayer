@@ -151,6 +151,11 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
         _videoDuration = value['duration'];
         setState(() {});
       });
+
+      // iOS开启画中画功能
+      if (Platform.isIOS) {
+        fAliplayer.setPictureInPictureEnableForIOS(true);
+      }
     });
     fAliplayer.setOnRenderingStart((playerId) {
       Fluttertoast.showToast(msg: " OnFirstFrameShow ");

@@ -1235,6 +1235,19 @@ NSString *hashCallback(NSString* url) {
     result(nil);
 }
 
+- (void)setPictureInPictureEnableForIOS:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    BOOL enable = [arr[3] boolValue];
+    [proxy.player setPictureInPictureEnable:enable];
+    if (enable) {
+        proxy.player.pictureInPictureDelegate = proxy;
+    } else {
+        proxy.player.pictureInPictureDelegate = nil;
+    }
+    result(nil);
+}
+
 #pragma --mark CicadaAudioSessionDelegate
 - (BOOL)setActive:(BOOL)active error:(NSError **)outError
 {
