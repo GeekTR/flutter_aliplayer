@@ -288,11 +288,6 @@ class _SettingHomePageState extends State<SettingPage> {
                     GlobalSettings.mEnableLocalCache = value;
                   });
                 }),
-            SizedBox(
-              width: 5.0,
-            ),
-            Text("缓存大小："),
-            Text("125M")
           ],
         ),
 
