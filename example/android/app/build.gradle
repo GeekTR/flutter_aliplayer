@@ -72,8 +72,8 @@ android {
 }
 
 dependencies{
-    implementation 'com.aliyun.sdk.android:AlivcArtc:5.4.8.0'
-    implementation 'com.aliyun.rts.android:RtsSDK:2.4.0'
+    implementation 'com.aliyun.sdk.android:AlivcArtc:5.4.9.1'
+    implementation 'com.aliyun.rts.android:RtsSDK:2.5.0'
 }
 
 flutter {
