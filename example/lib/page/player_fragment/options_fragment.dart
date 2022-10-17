@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -47,7 +48,8 @@ class _OptionsFragmentState extends State<OptionsFragment> {
   double _volume = 100;
   TextEditingController _bgColorController = TextEditingController();
   TextEditingController _setMaxAccurateSeekController = TextEditingController();
-  TextEditingController _setDefaultBandWidthController = TextEditingController();
+  TextEditingController _setDefaultBandWidthController =
+      TextEditingController();
 
   _loadInitData() async {
     mLoop = await widget.fAliplayer.isLoop();
@@ -203,9 +205,30 @@ class _OptionsFragmentState extends State<OptionsFragment> {
             Text("精准seek"),
           ],
         ),
-        SizedBox(width: 10.0),
+        _buildPipSwitch(),
       ],
     );
+  }
+
+  Column _buildPipSwitch() {
+    if (Platform.isIOS) {
+      return Column(
+        children: [
+          CupertinoSwitch(
+            value: GlobalSettings.mEnabletPictureInPicture,
+            onChanged: (value) {
+              setState(() {
+                GlobalSettings.mEnabletPictureInPicture = value;
+              });
+              widget.fAliplayer.setPictureInPictureEnableForIOS(value);
+            },
+          ),
+          Text("画中画"),
+        ],
+      );
+    } else {
+      return Column();
+    }
   }
 
   /// 音量

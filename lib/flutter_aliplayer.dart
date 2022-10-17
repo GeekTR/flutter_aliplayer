@@ -763,7 +763,7 @@ class FlutterAliplayer {
   Future<void> setStreamDelayTime(int trackIdx, int time) {
     var map = {'index': trackIdx, 'time': time};
     return FlutterAliPlayerFactory.methodChannel
-        .invokeMethod("setStreamDelayTime", map);
+        .invokeMethod("setStreamDelayTime", wrapWithPlayerId(arg: map));
   }
 
   /// 重新加载
