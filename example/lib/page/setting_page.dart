@@ -91,12 +91,6 @@ class _SettingHomePageState extends State<SettingPage> {
         _sdkVersion = value;
       });
     });
-
-    FlutterAliplayer.getLogLevel().then((value) {
-      setState(() {
-        GlobalSettings.mLogLevel = value;
-      });
-    });
   }
 
   @override

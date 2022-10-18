@@ -829,6 +829,8 @@ class FlutterAliplayer {
         .invokeMethod("setLogLevel", level);
   }
 
+  /// 获取日志级别
+  /// 仅对Android系统有效
   static Future<dynamic> getLogLevel() {
     return FlutterAliPlayerFactory.methodChannel.invokeMethod(
       "getLogLevel",
