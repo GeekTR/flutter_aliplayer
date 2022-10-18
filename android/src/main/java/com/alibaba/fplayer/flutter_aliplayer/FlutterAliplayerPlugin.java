@@ -136,12 +136,12 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
                 result.success(getLogLevel());
                 break;
             case "enableConsoleLog":
-                Boolean enableLog = (Boolean) call.argument("arg");
+                Boolean enableLog = (Boolean) call.arguments;
                 enableConsoleLog(enableLog);
                 result.success(null);
                 break;
             case "setLogLevel":
-                Integer level = (Integer) call.argument("arg");
+                Integer level = (Integer) call.arguments;
                 setLogLevel(level);
                 result.success(null);
                 break;
@@ -179,6 +179,7 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
                         flutterAliPlayerView.setPlayer(mSetPlayerViewCurrentFlutterAliLiveShiftPlayer.getAliPlayer());
                     }
                 }
+                break;
             case "setUseHttp2":
                 Boolean enableUseHttp2 = call.arguments();
                 AliPlayerGlobalSettings.setUseHttp2(enableUseHttp2);
