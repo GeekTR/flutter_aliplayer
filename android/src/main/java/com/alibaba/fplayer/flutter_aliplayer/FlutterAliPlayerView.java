@@ -1,12 +1,13 @@
 package com.alibaba.fplayer.flutter_aliplayer;
 
 import android.content.Context;
-import android.graphics.SurfaceTexture;
 import android.os.Handler;
 import android.os.Message;
-import android.view.Surface;
-import android.view.TextureView;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
+
+import androidx.annotation.NonNull;
 
 import com.aliyun.player.AliListPlayer;
 import com.aliyun.player.IPlayer;
@@ -24,14 +25,15 @@ public class FlutterAliPlayerView implements PlatformView {
     private int mViewId;
     private MyHandler mHandler = new MyHandler(this);
 
-    private final TextureView mTextureView;
-    private Surface mSurface;
+    private final SurfaceView mSurfaceView;
+    private SurfaceHolder mSurfaceHolder;
 
     public FlutterAliPlayerView(Context context, int viewId) {
         this.mViewId = viewId;
         this.mContext = context;
-        mTextureView = new TextureView(mContext);
-        initRenderView(mTextureView);
+        mSurfaceView = new SurfaceView(mContext);
+
+        initRenderView(mSurfaceView);
     }
 
     public void setPlayer(IPlayer player) {
@@ -42,7 +44,7 @@ public class FlutterAliPlayerView implements PlatformView {
 
     @Override
     public View getView() {
-        return mTextureView;
+        return mSurfaceView;
     }
 
     @Override
@@ -51,27 +53,28 @@ public class FlutterAliPlayerView implements PlatformView {
             mFlutterAliPlayerViewListener.onDispose(mViewId);
         }
         mHandler.removeCallbacksAndMessages(null);
-        mSurface = null;
+        mSurfaceHolder = null;
     }
 
-    private void initRenderView(TextureView mTextureView) {
-        if (mTextureView != null) {
-            mTextureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
+    private void initRenderView(SurfaceView surfaceView) {
+
+        if (surfaceView != null) {
+            surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
                 @Override
-                public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-                    mSurface = new Surface(surface);
+                public void surfaceCreated(@NonNull SurfaceHolder surfaceHolder) {
+                    mSurfaceHolder = surfaceHolder;
                     mHandler.sendEmptyMessage(ALIYUNN_PLAYER_SETSURFACE);
                 }
 
                 @Override
-                public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+                public void surfaceChanged(@NonNull SurfaceHolder surfaceHolder, int i, int i1, int i2) {
                     if (mPlayer != null) {
                         mPlayer.surfaceChanged();
                     }
                 }
 
                 @Override
-                public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+                public void surfaceDestroyed(@NonNull SurfaceHolder surfaceHolder) {
                     if(mPlayer instanceof AliListPlayer){
                         /*
                             当使用 pageView 实现列表播放时，会出现画面卡主，声音正常的问题。
@@ -83,12 +86,6 @@ public class FlutterAliPlayerView implements PlatformView {
                     }else{
                         mPlayer.setSurface(null);
                     }
-                    return false;
-                }
-
-                @Override
-                public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-
                 }
             });
         }
@@ -121,9 +118,9 @@ public class FlutterAliPlayerView implements PlatformView {
             }
             switch (msg.what){
                 case ALIYUNN_PLAYER_SETSURFACE:
-                    if(flutterAliPlayerView.mPlayer != null && flutterAliPlayerView.mSurface != null){
-                        flutterAliPlayerView.mPlayer.setSurface(null);
-                        flutterAliPlayerView.mPlayer.setSurface(flutterAliPlayerView.mSurface);
+                    if(flutterAliPlayerView.mPlayer != null && flutterAliPlayerView.mSurfaceHolder != null){
+                        flutterAliPlayerView.mPlayer.setDisplay(null);
+                        flutterAliPlayerView.mPlayer.setDisplay(flutterAliPlayerView.mSurfaceHolder);
                     }
                     break;
             }
