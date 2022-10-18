@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_aliplayer/flutter_aliplayer.dart';
-import 'package:flutter_aliplayer/flutter_aliplayer_factory.dart';
 import 'package:flutter_aliplayer_example/config.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path_provider/path_provider.dart';
@@ -32,10 +31,13 @@ class _SettingHomePageState extends State<SettingPage> {
   String _savePath;
   //iOS保存沙盒目录类型。安卓默认设置DocTypeForIOS.documents供参数传递
   DocTypeForIOS _saveDocTypeForIOS = DocTypeForIOS.documents;
+  int _mLogLevel;
 
   @override
   void initState() {
     super.initState();
+
+    _mLogLevel = GlobalSettings.mLogLevel;
 
     if (GlobalSettings.mPlayerName.isNotEmpty) {
       _currentPlayerName = GlobalSettings.mPlayerName;
@@ -476,11 +478,12 @@ class _SettingHomePageState extends State<SettingPage> {
                 dense: true,
                 title: Text("AF_LOG_LEVEL_NONE"),
                 value: FlutterAvpdef.AF_LOG_LEVEL_NONE,
-                groupValue: GlobalSettings.mLogLevel,
+                groupValue: _mLogLevel,
                 onChanged: (value) {
                   FlutterAliplayer.setLogLevel(value);
 
                   setState(() {
+                    _mLogLevel = value;
                     GlobalSettings.mLogLevel = value;
                   });
                 }),
@@ -491,10 +494,11 @@ class _SettingHomePageState extends State<SettingPage> {
                 dense: true,
                 title: Text("AF_LOG_LEVEL_FATAL"),
                 value: FlutterAvpdef.AF_LOG_LEVEL_FATAL,
-                groupValue: GlobalSettings.mLogLevel,
+                groupValue: _mLogLevel,
                 onChanged: (value) {
                   FlutterAliplayer.setLogLevel(value);
                   setState(() {
+                    _mLogLevel = value;
                     GlobalSettings.mLogLevel = value;
                   });
                 }),
@@ -505,10 +509,11 @@ class _SettingHomePageState extends State<SettingPage> {
                 dense: true,
                 title: Text("AF_LOG_LEVEL_ERROR"),
                 value: FlutterAvpdef.AF_LOG_LEVEL_ERROR,
-                groupValue: GlobalSettings.mLogLevel,
+                groupValue: _mLogLevel,
                 onChanged: (value) {
                   FlutterAliplayer.setLogLevel(value);
                   setState(() {
+                    _mLogLevel = value;
                     GlobalSettings.mLogLevel = value;
                   });
                 }),
@@ -519,10 +524,11 @@ class _SettingHomePageState extends State<SettingPage> {
                 dense: true,
                 title: Text("AF_LOG_LEVEL_WARNING"),
                 value: FlutterAvpdef.AF_LOG_LEVEL_WARNING,
-                groupValue: GlobalSettings.mLogLevel,
+                groupValue: _mLogLevel,
                 onChanged: (value) {
                   FlutterAliplayer.setLogLevel(value);
                   setState(() {
+                    _mLogLevel = value;
                     GlobalSettings.mLogLevel = value;
                   });
                 }),
@@ -533,10 +539,11 @@ class _SettingHomePageState extends State<SettingPage> {
                 dense: true,
                 title: Text("AF_LOG_LEVEL_INFO"),
                 value: FlutterAvpdef.AF_LOG_LEVEL_INFO,
-                groupValue: GlobalSettings.mLogLevel,
+                groupValue: _mLogLevel,
                 onChanged: (value) {
                   FlutterAliplayer.setLogLevel(value);
                   setState(() {
+                    _mLogLevel = value;
                     GlobalSettings.mLogLevel = value;
                   });
                 }),
@@ -547,10 +554,11 @@ class _SettingHomePageState extends State<SettingPage> {
                 dense: true,
                 title: Text("AF_LOG_LEVEL_DEBUG"),
                 value: FlutterAvpdef.AF_LOG_LEVEL_DEBUG,
-                groupValue: GlobalSettings.mLogLevel,
+                groupValue: _mLogLevel,
                 onChanged: (value) {
                   FlutterAliplayer.setLogLevel(value);
                   setState(() {
+                    _mLogLevel = value;
                     GlobalSettings.mLogLevel = value;
                   });
                 }),
@@ -561,10 +569,11 @@ class _SettingHomePageState extends State<SettingPage> {
                 dense: true,
                 title: Text("AF_LOG_LEVEL_TRACE"),
                 value: FlutterAvpdef.AF_LOG_LEVEL_TRACE,
-                groupValue: GlobalSettings.mLogLevel,
+                groupValue: _mLogLevel,
                 onChanged: (value) {
                   FlutterAliplayer.setLogLevel(value);
                   setState(() {
+                    _mLogLevel = value;
                     GlobalSettings.mLogLevel = value;
                   });
                 }),
