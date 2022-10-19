@@ -366,8 +366,9 @@ downloader.release(vid, index)
 ## 加载 RtsSDK
 如果需要支持 artc 协议，首先需要引入如下两个插件：
 ```yaml
-flutter_aliplayer_artc: 对应版本号
-flutter_aliplayer_rts: 对应版本号
+//flutter_aliplayer_artc: 对应版本号
+//flutter_aliplayer_rts: 对应版本号
+
 ```
 
 Android 需要额外调用如下代码(尽可能提前)：
