@@ -113,26 +113,28 @@ public abstract class FlutterPlayerBase {
                 ThreadManager.threadPool.execute(new Runnable() {
                     @Override
                     public void run() {
-                        File f = new File(mSnapShotPath);
-                        FileOutputStream out = null;
-                        if (f.exists()) {
-                            f.delete();
-                        }
-                        try {
-                            out = new FileOutputStream(f);
-                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-                            out.flush();
-                            out.close();
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } finally {
-                            if (out != null) {
-                                try {
-                                    out.close();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
+                        if(bitmap != null){
+                            File f = new File(mSnapShotPath);
+                            FileOutputStream out = null;
+                            if (f.exists()) {
+                                f.delete();
+                            }
+                            try {
+                                out = new FileOutputStream(f);
+                                bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+                                out.flush();
+                                out.close();
+                            } catch (FileNotFoundException e) {
+                                e.printStackTrace();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            } finally {
+                                if (out != null) {
+                                    try {
+                                        out.close();
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                             }
                         }

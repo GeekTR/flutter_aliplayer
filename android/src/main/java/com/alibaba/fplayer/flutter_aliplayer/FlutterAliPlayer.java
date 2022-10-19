@@ -913,17 +913,19 @@ public class FlutterAliPlayer extends FlutterPlayerBase {
                     Map<String, Object> map = new HashMap<>();
 
                     Bitmap thumbnailBitmap = thumbnailBitmapInfo.getThumbnailBitmap();
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    thumbnailBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                    thumbnailBitmap.recycle();
-                    long[] positionRange = thumbnailBitmapInfo.getPositionRange();
+                    if(thumbnailBitmap != null){
+                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        thumbnailBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                        thumbnailBitmap.recycle();
+                        long[] positionRange = thumbnailBitmapInfo.getPositionRange();
 
-                    map.put("method", "onThumbnailGetSuccess");
-                    map.put("thumbnailbitmap", stream.toByteArray());
-                    map.put("thumbnailRange", positionRange);
-//                    mEventSink.success(map);
-                    if (mFlutterAliPlayerListener != null) {
-                        mFlutterAliPlayerListener.onThumbnailGetSuccess(map);
+                        map.put("method", "onThumbnailGetSuccess");
+                        map.put("thumbnailbitmap", stream.toByteArray());
+                        map.put("thumbnailRange", positionRange);
+//                      mEventSink.success(map);
+                        if (mFlutterAliPlayerListener != null) {
+                            mFlutterAliPlayerListener.onThumbnailGetSuccess(map);
+                        }
                     }
                 }
             }
