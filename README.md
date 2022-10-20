@@ -371,7 +371,15 @@ downloader.release(vid, index)
 
 ```
 
-//iOS在Podfile文件中添加依赖即可
+Android 在build.gradle中添加依赖即可
+```
+dependencies{
+    implementation 'com.aliyun.sdk.android:AlivcArtc:$version'
+    implementation 'com.aliyun.rts.android:RtsSDK:$version'
+}
+```
+
+iOS在Podfile文件中添加依赖即可
 ```
 target 'Runner' do
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
