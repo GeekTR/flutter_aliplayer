@@ -371,6 +371,18 @@ downloader.release(vid, index)
 
 ```
 
+//iOS在Podfile文件中添加依赖即可
+```
+target 'Runner' do
+  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+
+  pod 'AliPlayerSDK_iOS_ARTC', '$version'  #$version比如5.4.9.1
+  pod 'RtsSDK', '$version'  #$version比如2.5.0
+
+end
+```
+
+
 Android 需要额外调用如下代码(尽可能提前)：
 ```dart
 FlutterAliPlayerFactory.loadRtsLibrary();

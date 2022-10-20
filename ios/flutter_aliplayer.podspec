@@ -17,8 +17,8 @@ A new flutter plugin project.
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
   s.dependency 'AliPlayerSDK_iOS', '5.4.9.1-26507944'
-  s.dependency 'AliPlayerSDK_iOS_ARTC', '5.4.9.1'
-  s.dependency 'RtsSDK', '2.5.0'
+  #s.dependency 'AliPlayerSDK_iOS_ARTC', '5.4.9.1'
+  #s.dependency 'RtsSDK', '2.5.0'
   s.dependency 'MJExtension'
   s.platform = :ios, '11.0'
 

@@ -29,6 +29,10 @@ flutter_ios_podfile_setup
 
 target 'Runner' do
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+  
+  pod 'AliPlayerSDK_iOS_ARTC', '5.4.9.1'
+  pod 'RtsSDK', '2.5.0'
+  
 end
 
 # post_install do |installer|
