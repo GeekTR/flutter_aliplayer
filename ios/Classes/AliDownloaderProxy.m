@@ -64,7 +64,13 @@
 - (void)onCompletion:(AliMediaDownloader*)downloader{
     if(self.eventSink){
         [self.argMap setObject:@"download_completion" forKey:@"method"];
-        [self.argMap setObject:[NSString stringWithFormat:@"%@",downloader.downloadedFilePath] forKey:@"savePath"];
+        BOOL haveSaveKeyPath = [downloader.downloadedFilePath containsString:self.saveKeyPath];
+        NSString *savePath = @"";
+        if (haveSaveKeyPath) {
+            NSRange range = [downloader.downloadedFilePath rangeOfString:self.saveKeyPath];
+            savePath = [downloader.downloadedFilePath substringFromIndex:range.location];
+        }
+        [self.argMap setObject:savePath forKey:@"savePath"];
         self.eventSink(self.argMap);
     }
 }

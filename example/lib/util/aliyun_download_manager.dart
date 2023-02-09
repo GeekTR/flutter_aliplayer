@@ -200,4 +200,8 @@ class AliyunDownloadManager {
     _controllerMap.remove(key);
     return Future.value(customDownloaderModel);
   }
+
+  Future<dynamic> getFullSavePathForIOS(String savePath) {
+    return _flutterAliDownloader.getFullSaveForIOS(savePath);
+  }
 }
