@@ -350,6 +350,13 @@ donwloader.setSaveDir(path)
             //处理进度百分比信息，获取处理进度百分比：event[EventChanneldef.DOWNLOAD_PROCESS]
         }else if(event[EventChanneldef.TYPE_KEY] == EventChanneldef.DOWNLOAD_COMPLETION){
             //下载完成，可以通过 event['vid']、event['index'] 获取对应的 vid 和 index 用于判断是哪个视频下载完成，event['savePath'] 用于获取下载完成视频的本地路径
+
+            // 'savePath'在iOS中是相对路径，每次进行播放时可以通过调用getFullSaveForIOS('savePath')进行获取全路径，保证路径获取的正确性，安卓直接使用就可以
+            if (Platform.isIOS) {
+              donwloader.getFullSavePathForIOS(event['savePath']).then((value) {
+                // value是最新的全路径，可以拿这个路径去播放
+              });
+            }
         }else if(event[EventChanneldef.TYPE_KEY] == EventChanneldef.DOWNLOAD_ERROR){
             //下载失败，可以通过 event['vid']、event['index'] 获取对应的 vid 和 index 用于判断是哪个视频下载失败，event['errorCode']、event['errorMsg'] 可以获取对应的错误码，和错误信息
         }
