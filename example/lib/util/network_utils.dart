@@ -1,3 +1,4 @@
+import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_aliplayer_example/config.dart';
 
@@ -16,6 +17,12 @@ class NetWorkUtils {
       _dio.options.connectTimeout = 5000;
       _dio.options.receiveTimeout = 5000;
       _dio.options.baseUrl = HttpConstant.HTTP_HOST;
+      (_dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+          (client) {
+        client.badCertificateCallback = (cert, host, port) {
+          return true;
+        };
+      };
     }
   }
 
