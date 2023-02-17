@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter_aliplayer/flutter_aliplayer.dart';
 import 'package:flutter_aliplayer_example/config.dart';
 import 'package:flutter_aliplayer_example/model/custom_downloader_model.dart';
@@ -203,15 +204,31 @@ class _DownloadPageState extends State<DownloadPage> {
                               _dataList[index];
                           if (customDownloaderModel.downloadState ==
                               DownloadState.COMPLETE) {
-                            Map<String, String> dataSourcecMap = {
-                              DataSourceRelated.URL_KEY:
-                                  customDownloaderModel.savePath
-                            };
-                            CommomUtils.pushPage(
-                                context,
-                                PlayerPage(
-                                    playMode: ModeType.URL,
-                                    dataSourceMap: dataSourcecMap));
+                            if (Platform.isIOS) {
+                              _aliyunDownloadManager
+                                  .getFullSavePathForIOS(
+                                      customDownloaderModel.savePath)
+                                  .then((value) {
+                                Map<String, String> dataSourcecMap = {
+                                  DataSourceRelated.URL_KEY: value
+                                };
+                                CommomUtils.pushPage(
+                                    context,
+                                    PlayerPage(
+                                        playMode: ModeType.URL,
+                                        dataSourceMap: dataSourcecMap));
+                              });
+                            } else if (Platform.isAndroid) {
+                              Map<String, String> dataSourcecMap = {
+                                DataSourceRelated.URL_KEY:
+                                    customDownloaderModel.savePath
+                              };
+                              CommomUtils.pushPage(
+                                  context,
+                                  PlayerPage(
+                                      playMode: ModeType.URL,
+                                      dataSourceMap: dataSourcecMap));
+                            }
                           }
                         },
                       ),

@@ -18,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic,strong) NSMutableDictionary *argMap;
 
 @property(nonatomic,strong) NSString *mVideoId;
+@property(nonatomic,copy) NSString *saveKeyPath;
 
 @end
 

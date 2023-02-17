@@ -55,6 +55,12 @@ class FlutterAliDownloader {
     _methodChannel.invokeMethod("setSaveDir", path);
   }
 
+  // iOS获取下载完成后保存的文件全路径
+  // savePath：监听下载完成方法中EventChanneldef.DOWNLOAD_COMPLETION获取的'savePath'值
+  Future<dynamic> getFullSaveForIOS(String savePath) {
+    return _methodChannel.invokeMethod("getFullSaveDir", savePath);
+  }
+
   /// 停止下载
   Future<dynamic> stop(String vid, int index) {
     var map = {'vid': vid, 'index': index};

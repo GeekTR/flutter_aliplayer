@@ -12,6 +12,7 @@
 
 @interface FlutterAliDownloaderPlugin ()<FlutterStreamHandler>{
     NSString *mSavePath;
+    NSString *mSaveKeyPath;
 }
 
 @property(strong,nonatomic) NSMutableDictionary * mAliMediaDownloadMap;
@@ -65,9 +66,18 @@
 //    NSLog(@"savePath==%@",call.arguments);
     mSavePath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
     if (mSavePath) {
+        mSaveKeyPath = call.arguments;
         mSavePath = [mSavePath stringByAppendingPathComponent:call.arguments];
     }
     result(nil);
+}
+
+- (void)getFullSaveDir:(NSArray*)arr {
+    FlutterMethodCall* call = arr.firstObject;
+    FlutterResult result = arr[1];
+    NSString *fullSaveDir = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
+    fullSaveDir = [fullSaveDir stringByAppendingPathComponent:call.arguments];
+    result(fullSaveDir);
 }
 
 - (void)prepare:(NSArray*)arr {
@@ -238,6 +248,7 @@
         if (proxy) {
             proxy.eventSink = self.eventSink;
             proxy.argMap = dic.mutableCopy;
+            proxy.saveKeyPath = mSaveKeyPath;
             [downloader setDelegate:proxy];
         }
         [downloader start];
