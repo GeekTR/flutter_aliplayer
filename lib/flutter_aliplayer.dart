@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ffi';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -7,8 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_aliplayer/flutter_aliplayer_factory.dart';
 import 'package:flutter_aliplayer/flutter_avpdef.dart';
-
-import 'flutter_avpdef.dart';
 
 export 'flutter_avpdef.dart';
 
@@ -244,7 +241,7 @@ class FlutterAliplayer {
   Future<void> create() async {
     var invokeMethod = FlutterAliPlayerFactory.methodChannel.invokeMethod(
         'createAliPlayer', wrapWithPlayerId(arg: PlayerType.PlayerType_Single));
-    sendCustomEvent("source=flutter");
+    // sendCustomEvent("source=flutter");
     return invokeMethod;
   }
 
