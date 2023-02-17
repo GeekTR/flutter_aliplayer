@@ -2,6 +2,8 @@ package com.alibaba.fplayer.flutter_aliplayer;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Handler;
+import android.os.Looper;
 
 import com.aliyun.player.AliLiveShiftPlayer;
 import com.aliyun.player.IPlayer;
@@ -24,6 +26,8 @@ public abstract class FlutterPlayerBase {
     protected String mSnapShotPath;
     protected String mPlayerId;
     protected FlutterAliPlayerListener mFlutterAliPlayerListener;
+
+    private Handler mHandler = new Handler(Looper.getMainLooper());
 
     public void setOnFlutterListener(FlutterAliPlayerListener listener) {
         this.mFlutterAliPlayerListener = listener;
@@ -138,12 +142,19 @@ public abstract class FlutterPlayerBase {
                                 }
                             }
                         }
+
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (mFlutterAliPlayerListener != null) {
+                                    mFlutterAliPlayerListener.onSnapShot(map);
+                                }
+                            }
+                        });
                     }
                 });
 
-                if (mFlutterAliPlayerListener != null) {
-                    mFlutterAliPlayerListener.onSnapShot(map);
-                }
+
 
 //                mEventSink.success(map);
 
