@@ -373,12 +373,16 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     } else {
       height = MediaQuery.of(context).size.height;
     }
+
     AliPlayerView aliPlayerView = AliPlayerView(
-        onCreated: onViewPlayerCreated,
-        x: x,
-        y: y,
-        width: width,
-        height: height);
+      onCreated: onViewPlayerCreated,
+      x: x,
+      y: y,
+      width: width,
+      height: height,
+      aliPlayerViewType: AliPlayerViewTypeForAndroid.surfaceview,
+    );
+
     return OrientationBuilder(
       builder: (BuildContext context, Orientation orientation) {
         return Scaffold(

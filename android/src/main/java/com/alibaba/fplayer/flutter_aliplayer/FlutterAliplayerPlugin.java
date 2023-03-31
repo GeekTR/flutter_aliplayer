@@ -469,7 +469,7 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
 
     @Override
     public PlatformView create(Context context, int viewId, Object args) {
-        FlutterAliPlayerView flutterAliPlayerView = new FlutterAliPlayerView(context, viewId);
+        FlutterAliPlayerView flutterAliPlayerView = new FlutterAliPlayerView(context, viewId,args);
         flutterAliPlayerView.setFlutterAliPlayerViewListener(this);
         mFlutterAliPlayerViewMap.put(viewId, flutterAliPlayerView);
         return flutterAliPlayerView;

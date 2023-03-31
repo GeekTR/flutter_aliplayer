@@ -1132,6 +1132,7 @@ class AliPlayerView extends StatefulWidget {
   final y;
   final width;
   final height;
+  AliPlayerViewTypeForAndroid aliPlayerViewType;
 
   AliPlayerView({
     Key? key,
@@ -1140,6 +1141,7 @@ class AliPlayerView extends StatefulWidget {
     @required this.y,
     @required this.width,
     @required this.height,
+    this.aliPlayerViewType = AliPlayerViewTypeForAndroid.surfaceview,
   });
 
   @override
@@ -1167,6 +1169,7 @@ class _VideoPlayerState extends State<AliPlayerView> {
           "y": widget.y,
           "width": widget.width,
           "height": widget.height,
+          "viewType":widget.aliPlayerViewType.name,
         },
         creationParamsCodec: const StandardMessageCodec(),
       );

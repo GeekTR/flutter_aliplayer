@@ -345,3 +345,9 @@ enum DocTypeForIOS {
   // Caches
   caches,
 }
+
+///Android 渲染 View 类型
+enum AliPlayerViewTypeForAndroid {
+  surfaceview,
+  textureview,
+}
