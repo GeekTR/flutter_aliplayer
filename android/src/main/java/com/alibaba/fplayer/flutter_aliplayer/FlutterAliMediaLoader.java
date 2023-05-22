@@ -6,8 +6,6 @@ import androidx.annotation.NonNull;
 
 import com.aliyun.loader.MediaLoader;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,7 +61,7 @@ public class FlutterAliMediaLoader implements FlutterPlugin, MethodChannel.Metho
     }
 
     @Override
-    public void onMethodCall(@NonNull @NotNull MethodCall call, @NonNull @NotNull MethodChannel.Result result) {
+    public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
         switch (call.method) {
             case "load":
                 Map<String, String> loadMap = call.arguments();
@@ -87,12 +85,12 @@ public class FlutterAliMediaLoader implements FlutterPlugin, MethodChannel.Metho
     }
 
     @Override
-    public void onAttachedToEngine(@NonNull @NotNull FlutterPluginBinding binding) {
+    public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
 
     }
 
     @Override
-    public void onDetachedFromEngine(@NonNull @NotNull FlutterPluginBinding binding) {
+    public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
 
     }
 
