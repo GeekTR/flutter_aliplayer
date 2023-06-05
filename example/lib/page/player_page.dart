@@ -90,8 +90,11 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
 
   String extSubTitleText = '';
 
+  ///封面图
+  bool _showCoverImg = true;
+
   //网络状态监听
-  StreamSubscription _networkSubscriptiion;
+  StreamSubscription _networkSubscription;
 
   GlobalKey<TrackFragmentState> trackFragmentKey = GlobalKey();
 
@@ -154,6 +157,11 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     });
     fAliplayer.setOnRenderingStart((playerId) {
       Fluttertoast.showToast(msg: " OnFirstFrameShow ");
+      setState(() {
+        if (mounted) {
+          _showCoverImg = false;
+        }
+      });
     });
     fAliplayer.setOnVideoSizeChanged((width, height, rotation, playerId) {});
     fAliplayer.setOnStateChanged((newState, playerId) {
@@ -241,7 +249,6 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     });
 
     fAliplayer.setOnSnapShot((path, playerId) {
-      print("aliyun : snapShotPath = $path");
       Fluttertoast.showToast(msg: "SnapShot Save : $path");
     });
     fAliplayer.setOnError((errorCode, errorExtra, errorMsg, playerId) {
@@ -299,7 +306,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   }
 
   _setNetworkChangedListener() {
-    _networkSubscriptiion = Connectivity()
+    _networkSubscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
       if (result == ConnectivityResult.mobile) {
@@ -334,8 +341,8 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
         if (!_mEnablePlayBack) {
           fAliplayer.pause();
         }
-        if (_networkSubscriptiion != null) {
-          _networkSubscriptiion.cancel();
+        if (_networkSubscription != null) {
+          _networkSubscription.cancel();
         }
         break;
       case AppLifecycleState.detached:
@@ -355,8 +362,8 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     fAliplayer.destroy();
     super.dispose();
     WidgetsBinding.instance.removeObserver(this);
-    if (_networkSubscriptiion != null) {
-      _networkSubscriptiion.cancel();
+    if (_networkSubscription != null) {
+      _networkSubscription.cancel();
     }
   }
 
@@ -401,8 +408,9 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                     height: height,
                     // padding: EdgeInsets.only(bottom: 25.0),
                     child: Offstage(
-                        offstage: _isLock,
-                        child: _buildContentWidget(orientation)),
+                      offstage: _isLock,
+                      child: _buildContentWidget(orientation),
+                    ),
                   ),
                   _buildProgressBar(width, height),
                   _buildTipsWidget(width, height),
@@ -419,26 +427,31 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                     left: 30,
                     top: height / 2,
                     child: Offstage(
-                        offstage: orientation == Orientation.portrait,
-                        child: InkWell(
-                          onTap: () {
-                            setState(() {
+                      offstage: orientation == Orientation.portrait,
+                      child: InkWell(
+                        onTap: () {
+                          setState(
+                            () {
                               _isLock = !_isLock;
-                            });
-                          },
-                          child: Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                                color: Colors.black.withAlpha(150),
-                                borderRadius: BorderRadius.circular(20)),
-                            child: Icon(
-                              _isLock ? Icons.lock : Icons.lock_open,
-                              color: Colors.white,
-                            ),
+                            },
+                          );
+                        },
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Colors.black.withAlpha(150),
+                            borderRadius: BorderRadius.circular(20),
                           ),
-                        )),
-                  )
+                          child: Icon(
+                            _isLock ? Icons.lock : Icons.lock_open,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  _buildCoverImg(),
                 ],
               ),
               _buildControlBtns(orientation),
@@ -502,19 +515,21 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             InkWell(
-                child: Text('准备'),
-                onTap: () {
-                  _showTipsWidget = false;
-                  _showLoading = false;
-                  trackFragmentKey.currentState.prepared();
-                  setState(() {});
-                  fAliplayer.prepare();
-                }),
+              child: Text('准备'),
+              onTap: () {
+                _showTipsWidget = false;
+                _showLoading = false;
+                trackFragmentKey.currentState.prepared();
+                setState(() {});
+                fAliplayer.prepare();
+              },
+            ),
             InkWell(
-                child: Text('播放'),
-                onTap: () {
-                  fAliplayer.play();
-                }),
+              child: Text('播放'),
+              onTap: () {
+                fAliplayer.play();
+              },
+            ),
             InkWell(
               child: Text('停止'),
               onTap: () {
@@ -522,24 +537,26 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
               },
             ),
             InkWell(
-                child: Text('暂停'),
-                onTap: () {
-                  fAliplayer.pause();
-                }),
+              child: Text('暂停'),
+              onTap: () {
+                fAliplayer.pause();
+              },
+            ),
             InkWell(
-                child: Text('截图'),
-                onTap: () {
-                  if (Platform.isIOS) {
-                    fAliplayer.snapshot(
-                        DateTime.now().millisecondsSinceEpoch.toString() +
-                            ".png");
-                  } else {
-                    fAliplayer.snapshot(_snapShotPath +
-                        "/snapshot_" +
-                        new DateTime.now().millisecondsSinceEpoch.toString() +
-                        ".png");
-                  }
-                }),
+              child: Text('截图'),
+              onTap: () {
+                if (Platform.isIOS) {
+                  fAliplayer.snapshot(
+                      DateTime.now().millisecondsSinceEpoch.toString() +
+                          ".png");
+                } else {
+                  fAliplayer.snapshot(_snapShotPath +
+                      "/snapshot_" +
+                      new DateTime.now().millisecondsSinceEpoch.toString() +
+                      ".png");
+                }
+              },
+            ),
           ],
         ),
       ),
@@ -611,11 +628,16 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                   borderRadius: BorderRadius.circular(5),
                 ),
               ),
-              child: Text("Replay", style: TextStyle(color: Colors.white)),
+              child: Text(
+                "Replay",
+                style: TextStyle(color: Colors.white),
+              ),
               onPressed: () {
-                setState(() {
-                  _showTipsWidget = false;
-                });
+                setState(
+                  () {
+                    _showTipsWidget = false;
+                  },
+                );
                 fAliplayer.prepare();
                 fAliplayer.play();
               },
@@ -685,10 +707,12 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                   ),
                   child: Text("退出播放", style: TextStyle(color: Colors.white)),
                   onPressed: () {
-                    setState(() {
-                      _isShowMobileNetWork = false;
-                      Navigator.pop(context);
-                    });
+                    setState(
+                      () {
+                        _isShowMobileNetWork = false;
+                        Navigator.pop(context);
+                      },
+                    );
                   },
                 ),
               ],
@@ -763,14 +787,18 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                   },
                   onChangeEnd: (value) {
                     _inSeek = false;
-                    setState(() {
-                      if (_currentPlayerState == FlutterAvpdef.completion &&
-                          _showTipsWidget) {
-                        setState(() {
-                          _showTipsWidget = false;
-                        });
-                      }
-                    });
+                    setState(
+                      () {
+                        if (_currentPlayerState == FlutterAvpdef.completion &&
+                            _showTipsWidget) {
+                          setState(
+                            () {
+                              _showTipsWidget = false;
+                            },
+                          );
+                        }
+                      },
+                    );
                     fAliplayer.seekTo(
                         value.ceil(),
                         GlobalSettings.mEnableAccurateSeek
@@ -781,9 +809,11 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                     if (_thumbnailSuccess) {
                       fAliplayer.requestBitmapAtPosition(value.ceil());
                     }
-                    setState(() {
-                      _currentPosition = value.ceil();
-                    });
+                    setState(
+                      () {
+                        _currentPosition = value.ceil();
+                      },
+                    );
                   },
                 ),
               ),
@@ -796,15 +826,19 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                 ),
                 onPressed: () {
                   if (orientation == Orientation.portrait) {
-                    SystemChrome.setPreferredOrientations([
-                      DeviceOrientation.landscapeLeft,
-                      DeviceOrientation.landscapeRight
-                    ]);
+                    SystemChrome.setPreferredOrientations(
+                      [
+                        DeviceOrientation.landscapeLeft,
+                        DeviceOrientation.landscapeRight
+                      ],
+                    );
                   } else {
-                    SystemChrome.setPreferredOrientations([
-                      DeviceOrientation.portraitUp,
-                      DeviceOrientation.portraitDown
-                    ]);
+                    SystemChrome.setPreferredOrientations(
+                      [
+                        DeviceOrientation.portraitUp,
+                        DeviceOrientation.portraitDown
+                      ],
+                    );
                   }
                 },
               ),
@@ -835,12 +869,22 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
         currentIndex: bottomIndex,
         onTap: (index) {
           if (index != bottomIndex) {
-            setState(() {
-              bottomIndex = index;
-            });
+            setState(
+              () {
+                bottomIndex = index;
+              },
+            );
           }
         },
       );
+    }
+  }
+
+  _buildCoverImg() {
+    if (_showCoverImg) {
+      return Image.asset("images/background_push.png");
+    } else {
+      return SizedBox();
     }
   }
 }
