@@ -12,6 +12,7 @@ import 'package:flutter_aliplayer_example/page/player_fragment/options_fragment.
 import 'package:flutter_aliplayer_example/page/player_fragment/play_config_fragment.dart';
 import 'package:flutter_aliplayer_example/page/player_fragment/track_fragment.dart';
 import 'package:flutter_aliplayer_example/util/formatter_utils.dart';
+import 'package:flutter_aliplayer_example/widget/aliyun_marqueeview.dart';
 import 'package:flutter_aliplayer_example/widget/aliyun_slider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path_provider/path_provider.dart';
@@ -117,12 +118,14 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     fAliplayer.setEnableHardwareDecoder(GlobalSettings.mEnableHardwareDecoder);
 
     if (Platform.isAndroid) {
-      getExternalStorageDirectories().then((value) {
-        if (value.length > 0) {
-          _snapShotPath = value[0].path;
-          return _snapShotPath;
-        }
-      });
+      getExternalStorageDirectories().then(
+        (value) {
+          if (value.length > 0) {
+            _snapShotPath = value[0].path;
+            return _snapShotPath;
+          }
+        },
+      );
     }
 
     mOptionsFragment = OptionsFragment(fAliplayer);
@@ -134,198 +137,256 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
       TrackFragment(trackFragmentKey, fAliplayer),
     ];
 
-    mOptionsFragment.setOnEnablePlayBackChanged((mEnablePlayBack) {
-      this._mEnablePlayBack = mEnablePlayBack;
-    });
+    mOptionsFragment.setOnEnablePlayBackChanged(
+      (mEnablePlayBack) {
+        this._mEnablePlayBack = mEnablePlayBack;
+      },
+    );
 
     _initListener();
   }
 
   _initListener() {
-    fAliplayer.setOnEventReportParams((params, playerId) {
-      print("EventReportParams=${params}");
-    });
-    fAliplayer.setOnPrepared((playerId) {
-      Fluttertoast.showToast(msg: "OnPrepared ");
-      fAliplayer
-          .getPlayerName()
-          .then((value) => print("getPlayerName==${value}"));
-      fAliplayer.getMediaInfo().then((value) {
-        _videoDuration = value['duration'];
-        setState(() {});
-      });
-    });
-    fAliplayer.setOnRenderingStart((playerId) {
-      Fluttertoast.showToast(msg: " OnFirstFrameShow ");
-      setState(() {
-        if (mounted) {
-          _showCoverImg = false;
-        }
-      });
-    });
+    fAliplayer.setOnEventReportParams(
+      (params, playerId) {
+        print("EventReportParams=${params}");
+      },
+    );
+    fAliplayer.setOnPrepared(
+      (playerId) {
+        Fluttertoast.showToast(msg: "OnPrepared ");
+        fAliplayer.getPlayerName().then(
+              (value) => print("getPlayerName==${value}"),
+            );
+        fAliplayer.getMediaInfo().then(
+          (value) {
+            _videoDuration = value['duration'];
+            setState(() {});
+          },
+        );
+      },
+    );
+    fAliplayer.setOnRenderingStart(
+      (playerId) {
+        Fluttertoast.showToast(msg: " OnFirstFrameShow ");
+        setState(
+          () {
+            if (mounted) {
+              _showCoverImg = false;
+            }
+          },
+        );
+      },
+    );
     fAliplayer.setOnVideoSizeChanged((width, height, rotation, playerId) {});
-    fAliplayer.setOnStateChanged((newState, playerId) {
-      _currentPlayerState = newState;
-      print("aliyun : onStateChanged $newState");
-      switch (newState) {
-        case FlutterAvpdef.AVPStatus_AVPStatusStarted:
-          setState(() {
-            _showTipsWidget = false;
-            _showLoading = false;
-          });
-          break;
-        case FlutterAvpdef.AVPStatus_AVPStatusPaused:
-          break;
-        default:
-      }
-    });
-    fAliplayer.setOnLoadingStatusListener(loadingBegin: (playerId) {
-      setState(() {
-        _loadingPercent = 0;
-        _showLoading = true;
-      });
-    }, loadingProgress: (percent, netSpeed, playerId) {
-      _loadingPercent = percent;
-      if (percent == 100) {
-        _showLoading = false;
-      }
-      setState(() {});
-    }, loadingEnd: (playerId) {
-      setState(() {
-        _showLoading = false;
-      });
-    });
-    fAliplayer.setOnSeekComplete((playerId) {
-      _inSeek = false;
-    });
-    fAliplayer.setOnInfo((infoCode, extraValue, extraMsg, playerId) {
-      if (infoCode == FlutterAvpdef.CURRENTPOSITION) {
-        if (_videoDuration != 0 && extraValue <= _videoDuration) {
-          _currentPosition = extraValue;
+    fAliplayer.setOnStateChanged(
+      (newState, playerId) {
+        _currentPlayerState = newState;
+        print("aliyun : onStateChanged $newState");
+        switch (newState) {
+          case FlutterAvpdef.AVPStatus_AVPStatusStarted:
+            setState(
+              () {
+                _showTipsWidget = false;
+                _showLoading = false;
+              },
+            );
+            break;
+          case FlutterAvpdef.AVPStatus_AVPStatusPaused:
+            break;
+          default:
         }
-        if (!_inSeek) {
-          setState(() {
-            _currentPositionText = extraValue;
-          });
+      },
+    );
+    fAliplayer.setOnLoadingStatusListener(
+      loadingBegin: (playerId) {
+        setState(
+          () {
+            _loadingPercent = 0;
+            _showLoading = true;
+          },
+        );
+      },
+      loadingProgress: (percent, netSpeed, playerId) {
+        _loadingPercent = percent;
+        if (percent == 100) {
+          _showLoading = false;
         }
-      } else if (infoCode == FlutterAvpdef.BUFFEREDPOSITION) {
-        _bufferPosition = extraValue;
-        if (mounted) {
-          setState(() {});
-        }
-      } else if (infoCode == FlutterAvpdef.AUTOPLAYSTART) {
-        Fluttertoast.showToast(msg: "AutoPlay");
-      } else if (infoCode == FlutterAvpdef.CACHESUCCESS) {
-        Fluttertoast.showToast(msg: "Cache Success");
-      } else if (infoCode == FlutterAvpdef.CACHEERROR) {
-        Fluttertoast.showToast(msg: "Cache Error $extraMsg");
-      } else if (infoCode == FlutterAvpdef.LOOPINGSTART) {
-        Fluttertoast.showToast(msg: "Looping Start");
-      } else if (infoCode == FlutterAvpdef.SWITCHTOSOFTWAREVIDEODECODER) {
-        Fluttertoast.showToast(msg: "change to soft ware decoder");
-        mOptionsFragment.switchHardwareDecoder();
-      }
-    });
-    fAliplayer.setOnCompletion((playerId) {
-      _showTipsWidget = true;
-      _showLoading = false;
-      _tipsContent = "播放完成";
-      setState(() {
-        _currentPosition = _videoDuration;
-      });
-    });
-    fAliplayer.setOnTrackReady((playerId) {
-      fAliplayer.getMediaInfo().then((value) {
         setState(() {});
-        List thumbnails = value['thumbnails'];
-        if (thumbnails != null && thumbnails.isNotEmpty) {
-          fAliplayer.createThumbnailHelper(thumbnails[0]['url']);
-        } else {
-          _thumbnailSuccess = false;
+      },
+      loadingEnd: (playerId) {
+        setState(
+          () {
+            _showLoading = false;
+          },
+        );
+      },
+    );
+    fAliplayer.setOnSeekComplete(
+      (playerId) {
+        _inSeek = false;
+      },
+    );
+    fAliplayer.setOnInfo(
+      (infoCode, extraValue, extraMsg, playerId) {
+        if (infoCode == FlutterAvpdef.CURRENTPOSITION) {
+          if (_videoDuration != 0 && extraValue <= _videoDuration) {
+            _currentPosition = extraValue;
+          }
+          if (!_inSeek) {
+            setState(
+              () {
+                _currentPositionText = extraValue;
+              },
+            );
+          }
+        } else if (infoCode == FlutterAvpdef.BUFFEREDPOSITION) {
+          _bufferPosition = extraValue;
+          if (mounted) {
+            setState(() {});
+          }
+        } else if (infoCode == FlutterAvpdef.AUTOPLAYSTART) {
+          Fluttertoast.showToast(msg: "AutoPlay");
+        } else if (infoCode == FlutterAvpdef.CACHESUCCESS) {
+          Fluttertoast.showToast(msg: "Cache Success");
+        } else if (infoCode == FlutterAvpdef.CACHEERROR) {
+          Fluttertoast.showToast(msg: "Cache Error $extraMsg");
+        } else if (infoCode == FlutterAvpdef.LOOPINGSTART) {
+          Fluttertoast.showToast(msg: "Looping Start");
+        } else if (infoCode == FlutterAvpdef.SWITCHTOSOFTWAREVIDEODECODER) {
+          Fluttertoast.showToast(msg: "change to soft ware decoder");
+          mOptionsFragment.switchHardwareDecoder();
         }
-      });
-      trackFragmentKey.currentState.loadData();
-      setState(() {});
-    });
+      },
+    );
+    fAliplayer.setOnCompletion(
+      (playerId) {
+        _showTipsWidget = true;
+        _showLoading = false;
+        _tipsContent = "播放完成";
+        setState(
+          () {
+            _currentPosition = _videoDuration;
+          },
+        );
+      },
+    );
+    fAliplayer.setOnTrackReady(
+      (playerId) {
+        fAliplayer.getMediaInfo().then(
+          (value) {
+            setState(() {});
+            List thumbnails = value['thumbnails'];
+            if (thumbnails != null && thumbnails.isNotEmpty) {
+              fAliplayer.createThumbnailHelper(thumbnails[0]['url']);
+            } else {
+              _thumbnailSuccess = false;
+            }
+          },
+        );
+        trackFragmentKey.currentState.loadData();
+        setState(() {});
+      },
+    );
 
     fAliplayer.setOnSnapShot((path, playerId) {
       Fluttertoast.showToast(msg: "SnapShot Save : $path");
     });
-    fAliplayer.setOnError((errorCode, errorExtra, errorMsg, playerId) {
-      _showTipsWidget = true;
-      _showLoading = false;
-      _tipsContent = "$errorCode \n $errorMsg";
-      setState(() {});
-    });
+    fAliplayer.setOnError(
+      (errorCode, errorExtra, errorMsg, playerId) {
+        _showTipsWidget = true;
+        _showLoading = false;
+        _tipsContent = "$errorCode \n $errorMsg";
+        setState(() {});
+      },
+    );
 
-    fAliplayer.setOnTrackChanged((value, playerId) {
-      AVPTrackInfo info = AVPTrackInfo.fromJson(value);
-      if (info != null && info.trackDefinition.length > 0) {
-        trackFragmentKey.currentState.onTrackChanged(info);
-        Fluttertoast.showToast(msg: "${info.trackDefinition}切换成功");
-      }
-    });
+    fAliplayer.setOnTrackChanged(
+      (value, playerId) {
+        AVPTrackInfo info = AVPTrackInfo.fromJson(value);
+        if (info != null && info.trackDefinition.length > 0) {
+          trackFragmentKey.currentState.onTrackChanged(info);
+          Fluttertoast.showToast(msg: "${info.trackDefinition}切换成功");
+        }
+      },
+    );
 
-    fAliplayer.setOnThumbnailPreparedListener(preparedSuccess: (playerId) {
-      _thumbnailSuccess = true;
-    }, preparedFail: (playerId) {
-      _thumbnailSuccess = false;
-    });
+    fAliplayer.setOnThumbnailPreparedListener(
+      preparedSuccess: (playerId) {
+        _thumbnailSuccess = true;
+      },
+      preparedFail: (playerId) {
+        _thumbnailSuccess = false;
+      },
+    );
 
     fAliplayer.setOnThumbnailGetListener(
         onThumbnailGetSuccess: (bitmap, range, playerId) {
           // _thumbnailBitmap = bitmap;
           var provider = MemoryImage(bitmap);
-          precacheImage(provider, context).then((_) {
-            setState(() {
-              _imageProvider = provider;
-            });
-          });
+          precacheImage(provider, context).then(
+            (_) {
+              setState(
+                () {
+                  _imageProvider = provider;
+                },
+              );
+            },
+          );
         },
         onThumbnailGetFail: (playerId) {});
 
-    this.fAliplayer.setOnSubtitleHide((trackIndex, subtitleID, playerId) {
-      if (mounted) {
-        setState(() {
-          extSubTitleText = '';
-        });
-      }
-    });
+    this.fAliplayer.setOnSubtitleHide(
+      (trackIndex, subtitleID, playerId) {
+        if (mounted) {
+          setState(
+            () {
+              extSubTitleText = '';
+            },
+          );
+        }
+      },
+    );
 
-    this
-        .fAliplayer
-        .setOnSubtitleShow((trackIndex, subtitleID, subtitle, playerId) {
-      if (mounted) {
-        setState(() {
-          extSubTitleText = subtitle;
-        });
-      }
-    });
-
+    this.fAliplayer.setOnSubtitleShow(
+      (trackIndex, subtitleID, subtitle, playerId) {
+        if (mounted) {
+          setState(
+            () {
+              extSubTitleText = subtitle;
+            },
+          );
+        }
+      },
+    );
     _setNetworkChangedListener();
   }
 
   _setNetworkChangedListener() {
-    _networkSubscription = Connectivity()
-        .onConnectivityChanged
-        .listen((ConnectivityResult result) {
-      if (result == ConnectivityResult.mobile) {
-        fAliplayer.pause();
-        setState(() {
-          _isShowMobileNetWork = true;
-        });
-      } else if (result == ConnectivityResult.wifi) {
-        //从4G网络或者无网络切换到wifi
-        if (_currentConnectivityResult == ConnectivityResult.mobile ||
-            _currentConnectivityResult == ConnectivityResult.none) {
-          fAliplayer.play();
+    _networkSubscription = Connectivity().onConnectivityChanged.listen(
+      (ConnectivityResult result) {
+        if (result == ConnectivityResult.mobile) {
+          fAliplayer.pause();
+          setState(
+            () {
+              _isShowMobileNetWork = true;
+            },
+          );
+        } else if (result == ConnectivityResult.wifi) {
+          //从4G网络或者无网络切换到wifi
+          if (_currentConnectivityResult == ConnectivityResult.mobile ||
+              _currentConnectivityResult == ConnectivityResult.none) {
+            fAliplayer.play();
+          }
+          setState(
+            () {
+              _isShowMobileNetWork = false;
+            },
+          );
         }
-        setState(() {
-          _isShowMobileNetWork = false;
-        });
-      }
-      _currentConnectivityResult = result;
-    });
+        _currentConnectivityResult = result;
+      },
+    );
   }
 
   @override
@@ -452,6 +513,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                     ),
                   ),
                   _buildCoverImg(),
+                  _buildMarqueeView(),
                 ],
               ),
               _buildControlBtns(orientation),
@@ -886,5 +948,27 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     } else {
       return SizedBox();
     }
+  }
+
+  _buildMarqueeView() {
+    return Container(
+      height: 36,
+      decoration: BoxDecoration(),
+      child: Row(
+        children: <Widget>[
+          Container(
+            decoration: const BoxDecoration(),
+          ),
+          Expanded(
+            child: MarqueeView(
+              child: Text(
+                "阿里云播放器",
+                style: TextStyle(color: Colors.blue),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
