@@ -7,7 +7,7 @@
 #import "AliPlayerFactory.h"
 #import "FlutterAliPlayerView.h"
 #import "NSDictionary+ext.h"
-#import "MJExtension.h"
+#import <MJExtension/MJExtension.h>
 #import "AliPlayerProxy.h"
 #import<CommonCrypto/CommonDigest.h>
 
@@ -1241,9 +1241,9 @@ NSString *hashCallback(NSString* url) {
     BOOL enable = [arr[3] boolValue];
     [proxy.player setPictureInPictureEnable:enable];
     if (enable) {
-        proxy.player.pictureInPictureDelegate = proxy;
+        [proxy.player setPictureinPictureDelegate:proxy];
     } else {
-        proxy.player.pictureInPictureDelegate = nil;
+        [proxy.player setPictureinPictureDelegate:nil];
     }
     result(nil);
 }

@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'flutter_aliplayer'
-  s.version          = '0.0.1'
+  s.version          = '5.5.6'
   s.summary          = 'A new flutter plugin project.'
   s.description      = <<-DESC
 A new flutter plugin project.
@@ -16,12 +16,11 @@ A new flutter plugin project.
   s.source_files = 'Classes/**/*'
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
-  #s.dependency 'AliPlayerSDK_iOS', '5.4.9.1-26507944'
-  s.vendored_frameworks = 'SDK/alivcffmpeg.framework', 'SDK/AliyunMediaDownloader.framework', 'SDK/AliyunPlayer.framework'
+  s.dependency 'AliPlayerSDK_iOS', '5.5.6.0'
   
-  #s.dependency 'AliPlayerSDK_iOS_ARTC', '5.4.9.1'
+  #s.dependency 'AliPlayerSDK_iOS_ARTC', '5.5.6.0'
   #s.dependency 'RtsSDK', '2.5.0'
-  #s.dependency 'MJExtension'
+  s.dependency 'MJExtension'
   s.platform = :ios, '11.0'
 
   # Flutter.framework does not contain a i386 slice. Only x86_64 simulators are supported.
