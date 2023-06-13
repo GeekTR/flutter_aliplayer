@@ -702,6 +702,16 @@ NSString *hashCallback(NSString* url) {
     result(nil);
 }
 
+- (void)setOptionalConfig:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSDictionary* val = arr[3];
+    AVPConfig *config = [proxy.player getConfig];
+    config = [AVPConfig mj_objectWithKeyValues:val];
+    [proxy.player setConfig:config];
+    result(nil);
+}
+
 //TODO 应该是根据已经有的key 替换比较合理
 - (void)setConfig:(NSArray*)arr {
     FlutterResult result = arr[1];
