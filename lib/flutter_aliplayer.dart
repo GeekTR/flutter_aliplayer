@@ -597,171 +597,38 @@ class FlutterAliplayer {
         .invokeMethod("getConfig", wrapWithPlayerId());
   }
 
+  /// 获取播放器设置
+  /// 新版本增加，逐步替代[getConfig]
+  Future<AVPConfig> getPlayConfig() async {
+    Map map = await FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("getPlayConfig", wrapWithPlayerId());
+    return AVPConfig.convertAt(map);
+  }
+
   /// 播放器设置，传递map
   Future<void> setConfig(Map map) async {
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("setConfig", wrapWithPlayerId(arg: map));
   }
 
-  /// 播放器可选设置
-  Future<void> setOptionalConfig({
-    /// 直播最大延迟 默认5000毫秒，单位毫秒
-    int? maxDelayTime,
-
-    /// 卡顿后缓存数据的高水位，当播放器缓存数据大于此值时开始播放，单位毫秒
-    int? highBufferDuration,
-
-    /// 开始起播缓存区数据长度，默认500ms，单位毫秒
-    int? startBufferDuration,
-
-    /// 播放器最大的缓存数据长度，默认50秒，单位毫秒
-    int? maxBufferDuration,
-
-    /// 网络超时时间，默认15秒，单位毫秒
-    int? networkTimeout,
-
-    /// 网络重试次数，每次间隔networkTimeout，networkRetryCount=0则表示不重试，重试策略app决定，默认值为2
-    int? networkRetryCount,
-
-    /// probe数据大小，默认-1,表示不设置
-    int? maxProbeSize,
-
-    /// 请求referer
-    String? referer,
-
-    /// user Agent
-    String? userAgent,
-
-    /// httpProxy代理
-    String? httpProxy,
-
-    /// 调用stop停止后是否显示最后一帧图像，YES代表清除显示，黑屏，默认为NO
-    bool? clearShowWhenStop,
-
-    /// 添加自定义header
-    List? httpHeaders,
-
-    /// 是否启用SEI
-    bool? enableSEI,
-
-    /// 是否开启本地缓存
-    bool? enableLocalCache,
-
-    /// set the video format for renderFrame callback
-    int? pixelBufferOutputFormat,
-
-    /// HLS直播时，起播分片位置。
-    int? liveStartIndex,
-
-    /// 禁用Audio.
-    bool? disableAudio,
-
-    /// 禁用Video
-    bool? disableVideo,
-
-    /// 进度跟新的频率。包括当前位置和缓冲位置。
-    int? positionTimerIntervalMs,
-
-    /// 设置播放器后向buffer的最大值.
-    int? mMAXBackwardDuration,
-
-    /// 优先保证音频播放；在网络带宽不足的情况下，优先保障音频的播放，目前只在dash直播流中有效（视频已经切换到了最低码率）
-    bool? preferAudio,
-
-    /// 播放器实例是否可以使用http dns进行解析，-1 表示跟随全局设置，0 disable
-    int? enableHttpDns,
-
-    /// 使用http3进行请求，支持标准：RFC 9114（HTTP3）和RFC 9000（QUIC v1），默认值关。如果http3请求失败，自动降级至普通http，默认关闭
-    bool? enableHttp3,
-
-    /// 用于纯音频或纯视频的RTMP/FLV直播流起播优化策略，当流的header声明只有音频或只有视频时，且实际流的内容跟header声明一致时，此选项打开可以达到快速起播的效果。默认关闭
-    bool? enableStrictFlvHeader,
-
-    /// 针对打开了点播URL鉴权的媒体资源（HLS协议），开启本地缓存后，可选择不同的鉴权模式：非严格鉴权(false)：鉴权也缓存，若上一次只缓存了部分媒体，下次播放至非缓存部分时，播放器会用缓存的鉴权发起请求，如果URL鉴权设置的有效很短的话，会导致播放异常。严格鉴权(true)：鉴权不缓存，每次起播都进行鉴权，无网络下会导致起播失败。默认值：false。
-    bool? enableStrictAuthMode,
-
-    /// 允许当前播放器实例进行投屏,你需要集成投屏SDK来完成投屏功能,默认值关
-    bool? enableProjection,
-  }) async {
-    Map map = {};
-    if (maxDelayTime != null) {
-      map.addAll({"maxDelayTime": maxDelayTime});
-    }
-    if (highBufferDuration != null) {
-      map.addAll({"highBufferDuration": highBufferDuration});
-    }
-    if (startBufferDuration != null) {
-      map.addAll({"startBufferDuration": startBufferDuration});
-    }
-    if (maxBufferDuration != null) {
-      map.addAll({"maxBufferDuration": maxBufferDuration});
-    }
-    if (networkTimeout != null) {
-      map.addAll({"networkTimeout": networkTimeout});
-    }
-    if (networkRetryCount != null) {
-      map.addAll({"networkRetryCount": networkRetryCount});
-    }
-    if (referer != null) {
-      map.addAll({"referer": referer});
-    }
-    if (userAgent != null) {
-      map.addAll({"userAgent": userAgent});
-    }
-    if (httpProxy != null) {
-      map.addAll({"httpProxy": httpProxy});
-    }
-    if (clearShowWhenStop != null) {
-      map.addAll({"clearShowWhenStop": clearShowWhenStop});
-    }
-    if (httpHeaders != null) {
-      map.addAll({"httpHeaders": httpHeaders});
-    }
-    if (enableSEI != null) {
-      map.addAll({"enableSEI": enableSEI});
-    }
-    if (enableLocalCache != null) {
-      map.addAll({"enableLocalCache": enableLocalCache});
-    }
-    if (pixelBufferOutputFormat != null) {
-      map.addAll({"pixelBufferOutputFormat": pixelBufferOutputFormat});
-    }
-    if (liveStartIndex != null) {
-      map.addAll({"liveStartIndex": liveStartIndex});
-    }
-    if (disableAudio != null) {
-      map.addAll({"disableAudio": disableAudio});
-    }
-    if (disableVideo != null) {
-      map.addAll({"disableVideo": disableVideo});
-    }
-    if (positionTimerIntervalMs != null) {
-      map.addAll({"positionTimerIntervalMs": positionTimerIntervalMs});
-    }
-    if (mMAXBackwardDuration != null) {
-      map.addAll({"mMAXBackwardDuration": mMAXBackwardDuration});
-    }
-    if (preferAudio != null) {
-      map.addAll({"preferAudio": preferAudio});
-    }
-    if (enableHttpDns != null) {
-      map.addAll({"enableHttpDns": enableHttpDns});
-    }
-    if (enableHttp3 != null) {
-      map.addAll({"enableHttp3": enableHttp3});
-    }
-    if (enableStrictFlvHeader != null) {
-      map.addAll({"enableStrictFlvHeader": enableStrictFlvHeader});
-    }
-    if (enableStrictAuthMode != null) {
-      map.addAll({"enableStrictAuthMode": enableStrictAuthMode});
-    }
-    if (enableProjection != null) {
-      map.addAll({"enableProjection": enableProjection});
-    }
-
+  /// 播放器设置
+  /// 新版本增加，逐步替代[setConfig]
+  Future<void> setPlayConfig(AVPConfig config) async {
+    Map map = config.convertToMap();
     return FlutterAliPlayerFactory.methodChannel
-        .invokeMethod("setOptionalConfig", wrapWithPlayerId(arg: map));
+        .invokeMethod("setPlayConfig", wrapWithPlayerId(arg: map));
+  }
+
+  /// 播放器降级设置
+  /// source 降级url
+  /// config 降级配置
+  Future<void> enableDowngrade(String source, AVPConfig config) async {
+    Map map = {
+      "source": source,
+      "config": config.convertToMap(),
+    };
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("setConfig", wrapWithPlayerId(arg: map));
   }
 
   Future<dynamic> getCacheConfig() async {
@@ -916,6 +783,18 @@ class FlutterAliplayer {
         .invokeMethod("sendCustomEvent", wrapWithPlayerId(arg: args));
   }
 
+  /// 设置UserData，用于一些全局API的透传，以区分player实例。
+  Future<void> setUserData(String userData) {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("setUserData", wrapWithPlayerId(arg: userData));
+  }
+
+  /// 设置UserData，用于一些全局API的透传，以区分player实例。
+  Future<dynamic> getUserData() async {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("getUserData", wrapWithPlayerId());
+  }
+
   /// 设置某路流相对于主时钟的延时时间
   /// 默认是0, 目前只支持外挂字幕
   Future<void> setStreamDelayTime(int trackIdx, int time) {
@@ -969,9 +848,21 @@ class FlutterAliplayer {
     return FlutterAliPlayerFactory.methodChannel.invokeMethod("getDeviceUUID");
   }
 
-  static Future<void> enableMix(bool enable) {
+  /// 返回某项功能是否支持
+  /// type 是否支持的功能的类型。 参考SupportFeatureType。
+  static Future<bool> isFeatureSupport(SupportFeatureType type) async {
+    bool boolV = await FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("isFeatureSupport", type.index);
+    return boolV;
+  }
+
+  /// 控制音频设置
+  /// 默认按照播放器SDK自身设置，只对iOS平台有效
+  /// 替代旧版本的[enableMix]
+  static Future<void> setAudioSessionTypeForIOS(
+      AliPlayerAudioSesstionType type) {
     return FlutterAliPlayerFactory.methodChannel
-        .invokeMethod("enableMix", enable);
+        .invokeMethod("setAudioSessionTypeForIOS", type.index);
   }
 
   /// 是否打开log输出

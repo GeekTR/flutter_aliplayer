@@ -351,3 +351,214 @@ enum AliPlayerViewTypeForAndroid {
   surfaceview,
   textureview,
 }
+
+/// AVPConfig设置
+class AVPConfig {
+  /// 直播最大延迟 默认5000毫秒，单位毫秒
+  int? maxDelayTime;
+
+  /// 卡顿后缓存数据的高水位，当播放器缓存数据大于此值时开始播放，单位毫秒
+  int? highBufferDuration;
+
+  /// 开始起播缓存区数据长度，默认500ms，单位毫秒
+  int? startBufferDuration;
+
+  /// 播放器最大的缓存数据长度，默认50秒，单位毫秒
+  int? maxBufferDuration;
+
+  /// 网络超时时间，默认15秒，单位毫秒
+  int? networkTimeout;
+
+  /// 网络重试次数，每次间隔networkTimeout，networkRetryCount=0则表示不重试，重试策略app决定，默认值为2
+  int? networkRetryCount;
+
+  /// probe数据大小，默认-1,表示不设置
+  int? maxProbeSize;
+
+  /// 请求referer
+  String? referer;
+
+  /// user Agent
+  String? userAgent;
+
+  /// httpProxy代理
+  String? httpProxy;
+
+  /// 调用stop停止后是否显示最后一帧图像，YES代表清除显示，黑屏，默认为NO
+  bool? clearShowWhenStop;
+
+  /// 添加自定义header
+  List? httpHeaders;
+
+  /// 是否启用SEI
+  bool? enableSEI;
+
+  /// 是否开启本地缓存
+  bool? enableLocalCache;
+
+  /// set the video format for renderFrame callback
+  int? pixelBufferOutputFormat;
+
+  /// HLS直播时，起播分片位置。
+  int? liveStartIndex;
+
+  /// 禁用Audio.
+  bool? disableAudio;
+
+  /// 禁用Video
+  bool? disableVideo;
+
+  /// 进度跟新的频率。包括当前位置和缓冲位置。
+  int? positionTimerIntervalMs;
+
+  /// 设置播放器后向buffer的最大值.
+  int? mMAXBackwardDuration;
+
+  /// 优先保证音频播放；在网络带宽不足的情况下，优先保障音频的播放，目前只在dash直播流中有效（视频已经切换到了最低码率）
+  bool? preferAudio;
+
+  /// 播放器实例是否可以使用http dns进行解析，-1 表示跟随全局设置，0 disable
+  int? enableHttpDns;
+
+  /// 使用http3进行请求，支持标准：RFC 9114（HTTP3）和RFC 9000（QUIC v1），默认值关。如果http3请求失败，自动降级至普通http，默认关闭
+  bool? enableHttp3;
+
+  /// 用于纯音频或纯视频的RTMP/FLV直播流起播优化策略，当流的header声明只有音频或只有视频时，且实际流的内容跟header声明一致时，此选项打开可以达到快速起播的效果。默认关闭
+  bool? enableStrictFlvHeader;
+
+  /// 针对打开了点播URL鉴权的媒体资源（HLS协议），开启本地缓存后，可选择不同的鉴权模式：非严格鉴权(false)：鉴权也缓存，若上一次只缓存了部分媒体，下次播放至非缓存部分时，播放器会用缓存的鉴权发起请求，如果URL鉴权设置的有效很短的话，会导致播放异常。严格鉴权(true)：鉴权不缓存，每次起播都进行鉴权，无网络下会导致起播失败。默认值：false。
+  bool? enableStrictAuthMode;
+
+  /// 允许当前播放器实例进行投屏,你需要集成投屏SDK来完成投屏功能,默认值关
+  bool? enableProjection;
+
+  /// AVPConfig类型的playConfig转为Map类型
+  Map convertToMap() {
+    Map map = {};
+    if (this.maxDelayTime != null) {
+      map.addAll({"maxDelayTime": this.maxDelayTime});
+    }
+    if (this.highBufferDuration != null) {
+      map.addAll({"highBufferDuration": this.highBufferDuration});
+    }
+    if (this.startBufferDuration != null) {
+      map.addAll({"startBufferDuration": this.startBufferDuration});
+    }
+    if (this.maxBufferDuration != null) {
+      map.addAll({"maxBufferDuration": this.maxBufferDuration});
+    }
+    if (this.networkTimeout != null) {
+      map.addAll({"networkTimeout": this.networkTimeout});
+    }
+    if (this.networkRetryCount != null) {
+      map.addAll({"networkRetryCount": this.networkRetryCount});
+    }
+    if (this.referer != null) {
+      map.addAll({"referer": this.referer});
+    }
+    if (this.userAgent != null) {
+      map.addAll({"userAgent": this.userAgent});
+    }
+    if (this.httpProxy != null) {
+      map.addAll({"httpProxy": this.httpProxy});
+    }
+    if (this.clearShowWhenStop != null) {
+      map.addAll({"clearShowWhenStop": this.clearShowWhenStop});
+    }
+    if (this.httpHeaders != null) {
+      map.addAll({"httpHeaders": this.httpHeaders});
+    }
+    if (this.enableSEI != null) {
+      map.addAll({"enableSEI": this.enableSEI});
+    }
+    if (this.enableLocalCache != null) {
+      map.addAll({"enableLocalCache": this.enableLocalCache});
+    }
+    if (this.pixelBufferOutputFormat != null) {
+      map.addAll({"pixelBufferOutputFormat": this.pixelBufferOutputFormat});
+    }
+    if (this.liveStartIndex != null) {
+      map.addAll({"liveStartIndex": this.liveStartIndex});
+    }
+    if (this.disableAudio != null) {
+      map.addAll({"disableAudio": this.disableAudio});
+    }
+    if (this.disableVideo != null) {
+      map.addAll({"disableVideo": this.disableVideo});
+    }
+    if (this.positionTimerIntervalMs != null) {
+      map.addAll({"positionTimerIntervalMs": this.positionTimerIntervalMs});
+    }
+    if (this.mMAXBackwardDuration != null) {
+      map.addAll({"mMAXBackwardDuration": this.mMAXBackwardDuration});
+    }
+    if (this.preferAudio != null) {
+      map.addAll({"preferAudio": this.preferAudio});
+    }
+    if (this.enableHttpDns != null) {
+      map.addAll({"enableHttpDns": this.enableHttpDns});
+    }
+    if (this.enableHttp3 != null) {
+      map.addAll({"enableHttp3": this.enableHttp3});
+    }
+    if (this.enableStrictFlvHeader != null) {
+      map.addAll({"enableStrictFlvHeader": this.enableStrictFlvHeader});
+    }
+    if (this.enableStrictAuthMode != null) {
+      map.addAll({"enableStrictAuthMode": this.enableStrictAuthMode});
+    }
+    if (this.enableProjection != null) {
+      map.addAll({"enableProjection": this.enableProjection});
+    }
+    return map;
+  }
+
+  /// Map类型的playConfig转为AVPConfig类型
+  static AVPConfig convertAt(Map map) {
+    AVPConfig config = AVPConfig();
+    config.maxDelayTime = map["maxDelayTime"];
+    config.highBufferDuration = map["highBufferDuration"];
+    config.startBufferDuration = map["startBufferDuration"];
+    config.maxBufferDuration = map["maxBufferDuration"];
+    config.networkTimeout = map["networkTimeout"];
+    config.networkRetryCount = map["networkRetryCount"];
+    config.maxProbeSize = map["maxProbeSize"];
+    config.referer = map["referer"];
+    config.userAgent = map["userAgent"];
+    config.httpProxy = map["httpProxy"];
+    config.clearShowWhenStop = map["clearShowWhenStop"];
+    config.httpHeaders = map["httpHeaders"];
+    config.enableSEI = map["enableSEI"];
+    config.enableLocalCache = map["enableLocalCache"];
+    config.pixelBufferOutputFormat = map["pixelBufferOutputFormat"];
+    config.liveStartIndex = map["liveStartIndex"];
+    config.disableAudio = map["disableAudio"];
+    config.disableVideo = map["disableVideo"];
+    config.positionTimerIntervalMs = map["positionTimerIntervalMs"];
+    config.mMAXBackwardDuration = map["mMAXBackwardDuration"];
+    config.preferAudio = map["preferAudio"];
+    config.enableHttp3 = map["enableHttp3"];
+    config.enableStrictFlvHeader = map["enableStrictFlvHeader"];
+    config.enableStrictAuthMode = map["enableStrictAuthMode"];
+    config.enableProjection = map["enableProjection"];
+    return config;
+  }
+}
+
+/// 是否支持的功能的类型
+enum SupportFeatureType {
+  /// 硬件是否支持杜比音频
+  dolbyAudio,
+}
+
+/// 播放器音频设置选择
+enum AliPlayerAudioSesstionType {
+  /// 默认播放器SDK音频设置
+  sdkDefault,
+
+  /// 混音
+  mix,
+
+  /// 音频不设置，设置权交由客户自行选择，解决多个播放器可能产生的音频抢占问题
+  none,
+}
