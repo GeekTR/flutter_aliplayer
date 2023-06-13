@@ -97,6 +97,8 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   //网络状态监听
   StreamSubscription _networkSubscription;
 
+  List<int> dotPositionList = [];
+
   GlobalKey<TrackFragmentState> trackFragmentKey = GlobalKey();
 
   @override
@@ -182,7 +184,6 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     fAliplayer.setOnStateChanged(
       (newState, playerId) {
         _currentPlayerState = newState;
-        print("aliyun : onStateChanged $newState");
         switch (newState) {
           case FlutterAvpdef.AVPStatus_AVPStatusStarted:
             setState(
@@ -314,6 +315,12 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     fAliplayer.setOnThumbnailPreparedListener(
       preparedSuccess: (playerId) {
         _thumbnailSuccess = true;
+        setState(() {
+          /// 打点位置
+          dotPositionList.add(30000);
+          dotPositionList.add(65000);
+          dotPositionList.add(125000);
+        });
       },
       preparedFail: (playerId) {
         _thumbnailSuccess = false;
@@ -839,6 +846,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                 child: AliyunSlider(
                   max: _videoDuration == 0 ? 1 : _videoDuration.toDouble(),
                   min: 0,
+                  dotList: dotPositionList,
                   bufferColor: Colors.white,
                   bufferValue: _bufferPosition.toDouble(),
                   value: _currentPosition.toDouble(),
@@ -866,6 +874,18 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                         GlobalSettings.mEnableAccurateSeek
                             ? FlutterAvpdef.ACCURATE
                             : FlutterAvpdef.INACCURATE);
+                  },
+                  onTapDot: (value) {
+                    if (_thumbnailSuccess) {
+                      fAliplayer.requestBitmapAtPosition(value.ceil());
+                    }
+                    setState(
+                      () async {
+                        _inSeek = true;
+                        await Future.delayed(const Duration(milliseconds: 1500));
+                        _inSeek = false;
+                      },
+                    );
                   },
                   onChanged: (value) {
                     if (_thumbnailSuccess) {

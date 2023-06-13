@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 
 class AliyunSlider extends StatefulWidget {
   const AliyunSlider({
@@ -15,14 +14,17 @@ class AliyunSlider extends StatefulWidget {
     this.bufferValue,
     this.onChangeStart,
     this.onChangeEnd,
+    this.onTapDot,
     this.min = 0.0,
     this.max = 1.0,
     this.divisions,
     this.activeColor,
     this.trackColor,
     this.bufferColor,
+    this.dotList,
     this.thumbColor = CupertinoColors.white,
-  })  : assert(value != null),
+  })
+      : assert(value != null),
         assert(min != null),
         assert(max != null),
         assert(value >= min && value <= max),
@@ -35,6 +37,7 @@ class AliyunSlider extends StatefulWidget {
   final ValueChanged<double> onChanged;
   final ValueChanged<double> onChangeStart;
   final ValueChanged<double> onChangeEnd;
+  final ValueChanged<double> onTapDot;
   final double min;
   final double max;
   final int divisions;
@@ -42,6 +45,7 @@ class AliyunSlider extends StatefulWidget {
   final Color trackColor;
   final Color bufferColor;
   final Color thumbColor;
+  final List<int> dotList;
 
   @override
   _AliyunSliderState createState() => _AliyunSliderState();
@@ -79,11 +83,14 @@ class _AliyunSliderState extends State<AliyunSlider>
   Widget build(BuildContext context) {
     return _AliyunSliderRenderObjectWidget(
       value: (widget.value - widget.min) / (widget.max - widget.min),
+      max: widget.max - widget.min,
       bufferValue:
-          (widget.bufferValue - widget.min) / (widget.max - widget.min),
+      (widget.bufferValue - widget.min) / (widget.max - widget.min),
       divisions: widget.divisions,
       activeColor: CupertinoDynamicColor.resolve(
-        widget.activeColor ?? CupertinoTheme.of(context).primaryColor,
+        widget.activeColor ?? CupertinoTheme
+            .of(context)
+            .primaryColor,
         context,
       ),
       trackColor: CupertinoDynamicColor.resolve(
@@ -91,14 +98,18 @@ class _AliyunSliderState extends State<AliyunSlider>
         context,
       ),
       bufferColor: CupertinoDynamicColor.resolve(
-        widget.bufferColor ?? CupertinoTheme.of(context).primaryColor,
+        widget.bufferColor ?? CupertinoTheme
+            .of(context)
+            .primaryColor,
         context,
       ),
       thumbColor: widget.thumbColor,
       onChanged: widget.onChanged != null ? _handleChanged : null,
       onChangeStart: widget.onChangeStart != null ? _handleDragStart : null,
       onChangeEnd: widget.onChangeEnd != null ? _handleDragEnd : null,
+      onTapDot: widget.onTapDot,
       vsync: this,
+      dotList: widget.dotList,
     );
   }
 }
@@ -107,6 +118,7 @@ class _AliyunSliderRenderObjectWidget extends LeafRenderObjectWidget {
   const _AliyunSliderRenderObjectWidget({
     Key key,
     this.value,
+    this.max,
     this.bufferValue,
     this.divisions,
     this.activeColor,
@@ -116,10 +128,13 @@ class _AliyunSliderRenderObjectWidget extends LeafRenderObjectWidget {
     this.onChanged,
     this.onChangeStart,
     this.onChangeEnd,
+    this.onTapDot,
     this.vsync,
+    this.dotList,
   }) : super(key: key);
 
   final double value;
+  final double max;
   final double bufferValue;
   final int divisions;
   final Color activeColor;
@@ -129,12 +144,15 @@ class _AliyunSliderRenderObjectWidget extends LeafRenderObjectWidget {
   final ValueChanged<double> onChanged;
   final ValueChanged<double> onChangeStart;
   final ValueChanged<double> onChangeEnd;
+  final ValueChanged<double> onTapDot;
   final TickerProvider vsync;
+  final List<int> dotList;
 
   @override
   _RenderAliyunSlider createRenderObject(BuildContext context) {
     return _RenderAliyunSlider(
       value: value,
+      max: max,
       bufferValue: bufferValue,
       divisions: divisions,
       activeColor: activeColor,
@@ -146,26 +164,31 @@ class _AliyunSliderRenderObjectWidget extends LeafRenderObjectWidget {
       onChanged: onChanged,
       onChangeStart: onChangeStart,
       onChangeEnd: onChangeEnd,
+      onTapDot: onTapDot,
       vsync: vsync,
+      dotList: dotList,
       textDirection: Directionality.of(context),
     );
   }
 
   @override
-  void updateRenderObject(
-      BuildContext context, _RenderAliyunSlider renderObject) {
+  void updateRenderObject(BuildContext context,
+      _RenderAliyunSlider renderObject) {
     renderObject
       ..value = value
+      ..max = max
+      ..dotList = dotList
       ..bufferValue = bufferValue
       ..divisions = divisions
       ..activeColor = activeColor
       ..thumbColor = CupertinoDynamicColor.resolve(thumbColor, context)
       ..trackColor = trackColor
       ..bufferColor = bufferColor
-      // CupertinoDynamicColor.resolve(CupertinoColors.systemFill, context)
+    // CupertinoDynamicColor.resolve(CupertinoColors.systemFill, context)
       ..onChanged = onChanged
       ..onChangeStart = onChangeStart
       ..onChangeEnd = onChangeEnd
+      ..onTapDot = onTapDot
       ..textDirection = Directionality.of(context);
   }
 }
@@ -175,8 +198,8 @@ const double _kSliderHeight = 2.0 * (CupertinoThumbPainter.radius + _kPadding);
 const double _kSliderWidth = 176.0; // Matches Material Design slider.
 const Duration _kDiscreteTransitionDuration = Duration(milliseconds: 500);
 
-const double _kAdjustmentUnit =
-    0.1; // Matches iOS implementation of material slider.
+// Matches iOS implementation of material slider.
+const double _kAdjustmentUnit = 0.1;
 
 class _RenderAliyunSlider extends RenderConstrainedBox {
   _RenderAliyunSlider({
@@ -190,9 +213,13 @@ class _RenderAliyunSlider extends RenderConstrainedBox {
     ValueChanged<double> onChanged,
     this.onChangeStart,
     this.onChangeEnd,
+    this.dotList,
+    this.onTapDot,
+    this.max,
     TickerProvider vsync,
     @required TextDirection textDirection,
-  })  : assert(value != null && value >= 0.0 && value <= 1.0),
+  })
+      : assert(value != null && value >= 0.0 && value <= 1.0),
         assert(textDirection != null),
         _value = value,
         _bufferValue = bufferValue,
@@ -204,8 +231,10 @@ class _RenderAliyunSlider extends RenderConstrainedBox {
         _onChanged = onChanged,
         _textDirection = textDirection,
         super(
-            additionalConstraints: const BoxConstraints.tightFor(
-                width: _kSliderWidth, height: _kSliderHeight)) {
+          additionalConstraints: const BoxConstraints.tightFor(
+              width: _kSliderWidth, height: _kSliderHeight)) {
+    _tapGesture = TapGestureRecognizer()
+      ..onTap = _handleTap;
     _drag = HorizontalDragGestureRecognizer()
       ..onStart = _handleDragStart
       ..onUpdate = _handleDragUpdate
@@ -214,11 +243,17 @@ class _RenderAliyunSlider extends RenderConstrainedBox {
       value: value,
       duration: _kDiscreteTransitionDuration,
       vsync: vsync,
-    )..addListener(markNeedsPaint);
+    )
+      ..addListener(markNeedsPaint);
   }
 
   double get value => _value;
   double _value;
+  double max;
+  List<int> dotList;
+
+  double tapCurrentValue;
+
   set value(double newValue) {
     assert(newValue != null && newValue >= 0.0 && newValue <= 1.0);
     if (newValue == _value) return;
@@ -232,6 +267,7 @@ class _RenderAliyunSlider extends RenderConstrainedBox {
 
   double get bufferValue => _bufferValue;
   double _bufferValue;
+
   set bufferValue(double value) {
     if (value == _bufferValue) return;
     _bufferValue = value;
@@ -240,6 +276,7 @@ class _RenderAliyunSlider extends RenderConstrainedBox {
 
   int get divisions => _divisions;
   int _divisions;
+
   set divisions(int value) {
     if (value == _divisions) return;
     _divisions = value;
@@ -248,6 +285,7 @@ class _RenderAliyunSlider extends RenderConstrainedBox {
 
   Color get activeColor => _activeColor;
   Color _activeColor;
+
   set activeColor(Color value) {
     if (value == _activeColor) return;
     _activeColor = value;
@@ -256,6 +294,7 @@ class _RenderAliyunSlider extends RenderConstrainedBox {
 
   Color get thumbColor => _thumbColor;
   Color _thumbColor;
+
   set thumbColor(Color value) {
     if (value == _thumbColor) return;
     _thumbColor = value;
@@ -264,6 +303,7 @@ class _RenderAliyunSlider extends RenderConstrainedBox {
 
   Color get trackColor => _trackColor;
   Color _trackColor;
+
   set trackColor(Color value) {
     if (value == _trackColor) return;
     _trackColor = value;
@@ -272,6 +312,7 @@ class _RenderAliyunSlider extends RenderConstrainedBox {
 
   Color get bufferColor => _bufferColor;
   Color _bufferColor;
+
   set bufferColor(Color value) {
     if (value == _bufferColor) return;
     _bufferColor = value;
@@ -280,6 +321,7 @@ class _RenderAliyunSlider extends RenderConstrainedBox {
 
   ValueChanged<double> get onChanged => _onChanged;
   ValueChanged<double> _onChanged;
+
   set onChanged(ValueChanged<double> value) {
     if (value == _onChanged) return;
     final bool wasInteractive = isInteractive;
@@ -289,9 +331,11 @@ class _RenderAliyunSlider extends RenderConstrainedBox {
 
   ValueChanged<double> onChangeStart;
   ValueChanged<double> onChangeEnd;
+  ValueChanged<double> onTapDot;
 
   TextDirection get textDirection => _textDirection;
   TextDirection _textDirection;
+
   set textDirection(TextDirection value) {
     assert(value != null);
     if (_textDirection == value) return;
@@ -302,6 +346,7 @@ class _RenderAliyunSlider extends RenderConstrainedBox {
   AnimationController _position;
 
   HorizontalDragGestureRecognizer _drag;
+  TapGestureRecognizer _tapGesture;
   double _currentDragValue = 0.0;
 
   double get _discretizedCurrentDragValue {
@@ -312,7 +357,9 @@ class _RenderAliyunSlider extends RenderConstrainedBox {
   }
 
   double get _trackLeft => _kPadding;
+
   double get _trackRight => size.width - _kPadding;
+
   double get _thumbCenter {
     double visualPosition;
     switch (textDirection) {
@@ -325,6 +372,11 @@ class _RenderAliyunSlider extends RenderConstrainedBox {
     }
     return lerpDouble(_trackLeft + CupertinoThumbPainter.radius,
         _trackRight - CupertinoThumbPainter.radius, visualPosition);
+  }
+
+  double _dotCenter(double percent) {
+    return lerpDouble(_trackLeft + CupertinoThumbPainter.radius,
+        _trackRight - CupertinoThumbPainter.radius / 3, percent);
   }
 
   double get _bufferRight {
@@ -342,6 +394,12 @@ class _RenderAliyunSlider extends RenderConstrainedBox {
   }
 
   bool get isInteractive => onChanged != null;
+
+  void _handleTap() {
+    if (onTapDot != null) {
+      onTapDot.call(tapCurrentValue);
+    }
+  }
 
   void _handleDragStart(DragStartDetails details) =>
       _startInteraction(details.globalPosition);
@@ -384,14 +442,28 @@ class _RenderAliyunSlider extends RenderConstrainedBox {
 
   @override
   bool hitTestSelf(Offset position) {
-    return (position.dx - _thumbCenter).abs() <
-        CupertinoThumbPainter.radius + _kPadding;
+    if ((position.dx - _thumbCenter).abs() <
+        CupertinoThumbPainter.radius + _kPadding) {
+      return true;
+    } else {
+      for (var value in dotList) {
+        if (((position.dx - _dotCenter(value / max)).abs() <
+            CupertinoThumbPainter.radius / 3 + _kPadding)) {
+          tapCurrentValue = value.toDouble();
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   @override
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
     assert(debugHandleEvent(event, entry));
-    if (event is PointerDownEvent && isInteractive) _drag.addPointer(event);
+    if (event is PointerDownEvent && isInteractive) {
+      _tapGesture.addPointer(event);
+      _drag.addPointer(event);
+    }
   }
 
   @override
@@ -420,11 +492,13 @@ class _RenderAliyunSlider extends RenderConstrainedBox {
     final double trackActive = offset.dx + _thumbCenter;
     final double buffingRight = trackActive + _bufferRight;
 
+
     final Canvas canvas = context.canvas;
 
     ///未播放进度
     if (visualPosition < 1.0) {
-      final Paint paint = Paint()..color = leftColor;
+      final Paint paint = Paint()
+        ..color = leftColor;
       canvas.drawRRect(
           RRect.fromLTRBXY(
               trackActive, trackTop, trackRight, trackBottom, 1.0, 1.0),
@@ -433,7 +507,8 @@ class _RenderAliyunSlider extends RenderConstrainedBox {
 
     ///buffering进度
     if (visualPosition > 0.0 && bufferValue >= 0) {
-      final Paint paint = Paint()..color = _bufferColor;
+      final Paint paint = Paint()
+        ..color = _bufferColor;
       //buffre end draw
       if (bufferValue >= 1.0) {
         canvas.drawRRect(
@@ -449,7 +524,8 @@ class _RenderAliyunSlider extends RenderConstrainedBox {
 
       ///播放进度
       if (visualPosition > 0.0) {
-        final Paint paint = Paint()..color = rightColor;
+        final Paint paint = Paint()
+          ..color = rightColor;
         canvas.drawRRect(
             RRect.fromLTRBXY(
                 trackLeft, trackTop, trackActive, trackBottom, 1.0, 1.0),
@@ -457,6 +533,19 @@ class _RenderAliyunSlider extends RenderConstrainedBox {
       }
     }
 
+    ///打点
+    if (dotList != null) {
+      for (var value in dotList) {
+        var dotCenter = _dotCenter(value / max) + offset.dx;
+        final Offset thumbCenter = Offset(dotCenter, trackCenter);
+        CupertinoThumbPainter(color: Colors.red).paint(
+            canvas,
+            Rect.fromCircle(
+                center: thumbCenter, radius: CupertinoThumbPainter.radius / 3));
+      }
+    }
+
+    ///thumb
     if (visualPosition >= 1.0) {
       final Offset thumbCenter = Offset(trackRight, trackCenter);
       CupertinoThumbPainter(color: thumbColor).paint(
@@ -483,9 +572,9 @@ class _RenderAliyunSlider extends RenderConstrainedBox {
       config.onDecrease = _decreaseAction;
       config.value = '${(value * 100).round()}%';
       config.increasedValue =
-          '${((value + _semanticActionUnit).clamp(0.0, 1.0) * 100).round()}%';
+      '${((value + _semanticActionUnit).clamp(0.0, 1.0) * 100).round()}%';
       config.decreasedValue =
-          '${((value - _semanticActionUnit).clamp(0.0, 1.0) * 100).round()}%';
+      '${((value - _semanticActionUnit).clamp(0.0, 1.0) * 100).round()}%';
     }
   }
 
