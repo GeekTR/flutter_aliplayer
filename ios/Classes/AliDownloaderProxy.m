@@ -6,7 +6,7 @@
 //
 
 #import "AliDownloaderProxy.h"
-#import "MJExtension.h"
+#import <MJExtension/MJExtension.h>
 
 @implementation AliDownloaderProxy
 

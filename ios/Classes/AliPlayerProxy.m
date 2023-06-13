@@ -6,7 +6,7 @@
 //
 
 #import "AliPlayerProxy.h"
-#import "MJExtension.h"
+#import <MJExtension/MJExtension.h>
 
 @interface AliPlayerProxy ()
 @property(nonatomic,strong) NSTimer *timer;

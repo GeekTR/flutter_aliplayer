@@ -1,19 +1,25 @@
 PODS:
-  - AliPlayerSDK_iOS_ARTC (5.4.9.1):
-    - AliPlayerSDK_iOS_ARTC/AliPlayerSDK (= 5.4.9.1)
-  - AliPlayerSDK_iOS_ARTC/AliPlayerSDK (5.4.9.1)
+  - AliPlayerSDK_iOS (5.5.6.0):
+    - AliPlayerSDK_iOS/AliPlayerSDK (= 5.5.6.0)
+  - AliPlayerSDK_iOS/AliPlayerSDK (5.5.6.0)
+  - AliPlayerSDK_iOS_ARTC (5.5.6.0):
+    - AliPlayerSDK_iOS_ARTC/AliPlayerSDK (= 5.5.6.0)
+  - AliPlayerSDK_iOS_ARTC/AliPlayerSDK (5.5.6.0)
   - connectivity (0.0.1):
     - Flutter
     - Reachability
   - Flutter (1.0.0)
-  - flutter_aliplayer (0.0.1):
+  - flutter_aliplayer (5.5.6):
+    - AliPlayerSDK_iOS (= 5.5.6.0)
     - Flutter
+    - MJExtension
   - fluttertoast (0.0.2):
     - Flutter
     - Toast
   - FMDB (2.7.5):
     - FMDB/standard (= 2.7.5)
   - FMDB/standard (2.7.5)
+  - MJExtension (3.4.1)
   - path_provider (0.0.1):
     - Flutter
   - qrcode_reader (0.0.1):
@@ -26,7 +32,7 @@ PODS:
   - Toast (4.0.0)
 
 DEPENDENCIES:
-  - AliPlayerSDK_iOS_ARTC (= 5.4.9.1)
+  - AliPlayerSDK_iOS_ARTC (= 5.5.6.0)
   - connectivity (from `.symlinks/plugins/connectivity/ios`)
   - Flutter (from `Flutter`)
   - flutter_aliplayer (from `.symlinks/plugins/flutter_aliplayer/ios`)
@@ -38,8 +44,10 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - AliPlayerSDK_iOS
     - AliPlayerSDK_iOS_ARTC
     - FMDB
+    - MJExtension
     - Reachability
     - RtsSDK
     - Toast
@@ -61,12 +69,14 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/sqflite/ios"
 
 SPEC CHECKSUMS:
-  AliPlayerSDK_iOS_ARTC: ba767400e76e3a640396af445694450a393fd620
+  AliPlayerSDK_iOS: fa379587f1f6b9c7dc588f8328ad64f1f550b826
+  AliPlayerSDK_iOS_ARTC: a5a56b7ba715e686d7817b64551be50a956205a7
   connectivity: c4130b2985d4ef6fd26f9702e886bd5260681467
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
-  flutter_aliplayer: 8e16ca63a36208d76c3920498f81324fd2de19c9
+  flutter_aliplayer: cf3da3d18dffe2ac1b0cef462f9dfec027a0d53c
   fluttertoast: 6122fa75143e992b1d3470f61000f591a798cc58
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
+  MJExtension: 21c5f6f8c4d5d8844b7ae8fbae08fed0b501f961
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
   qrcode_reader: 09b34d43b4c08fe5b63a6e56c96789bcea7b9148
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
@@ -74,6 +84,6 @@ SPEC CHECKSUMS:
   sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
 
-PODFILE CHECKSUM: 76aebacac06166ee8c36cea934699ba6b4b6c684
+PODFILE CHECKSUM: 85a4650c8affccc8dad46acd9ce21e3296173297
 
 COCOAPODS: 1.11.3
