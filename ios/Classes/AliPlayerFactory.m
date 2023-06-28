@@ -11,12 +11,19 @@
 #import "AliPlayerProxy.h"
 #import<CommonCrypto/CommonDigest.h>
 
+typedef NS_ENUM(NSInteger, AliPlayerAudioSesstionType) {
+    AliPlayerAudioSesstionTypeSDKDefault,
+    AliPlayerAudioSesstionTypeMix,
+    AliPlayerAudioSesstionTypeNone,
+};
+
 @interface AliPlayerFactory () {
     NSObject<FlutterBinaryMessenger>* _messenger;
     FlutterMethodChannel* _commonChannel;
     UIView *playerView;
 }
-@property (nonatomic, assign) BOOL enableMix;
+
+@property (nonatomic, assign) AliPlayerAudioSesstionType audioSessionType;
 
 @property (nonatomic, strong) FlutterEventSink eventSink;
 @property(nonatomic,strong) NSMutableDictionary *viewDic;
@@ -219,11 +226,11 @@
     result(nil);
 }
 
-- (void)enableMix:(NSArray*)arr {
+- (void)setAudioSessionTypeForIOS:(NSArray*)arr {
     FlutterMethodCall* call = arr.firstObject;
     FlutterResult result = arr[1];
     NSNumber* val = [call arguments];
-    self.enableMix = val.boolValue;
+    self.audioSessionType = val.intValue;
     if (val.boolValue) {
         [AliPlayer setAudioSessionDelegate:self];
     }else{
@@ -509,6 +516,14 @@
     result([AliPlayer getDeviceUUID]);
 }
 
+- (void)isFeatureSupport:(NSArray*)arr{
+    FlutterResult result = arr[1];
+    FlutterMethodCall* call = arr.firstObject;
+    NSNumber* val = [call arguments];
+    BOOL callback = [AliPlayer isFeatureSupport:[val intValue]];
+    result(@(callback));
+}
+
 - (void)enableConsoleLog:(NSArray*)arr {
     FlutterResult result = arr[1];
     FlutterMethodCall* call = arr.firstObject;
@@ -702,6 +717,16 @@ NSString *hashCallback(NSString* url) {
     result(nil);
 }
 
+- (void)setPlayConfig:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSDictionary* val = arr[3];
+    AVPConfig *config = [proxy.player getConfig];
+    config = [AVPConfig mj_objectWithKeyValues:val];
+    [proxy.player setConfig:config];
+    result(nil);
+}
+
 //TODO 应该是根据已经有的key 替换比较合理
 - (void)setConfig:(NSArray*)arr {
     FlutterResult result = arr[1];
@@ -734,6 +759,22 @@ NSString *hashCallback(NSString* url) {
     config = [AVPConfig mj_objectWithKeyValues:val];
 
     [proxy.player setConfig:config];
+    result(nil);
+}
+
+- (void)enableDowngrade:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSDictionary* val = arr[3];
+    NSString *source = val[@"source"];
+    NSDictionary *config = val[@"config"];
+    
+    AVPUrlSource *urlSource = [[AVPUrlSource alloc] urlWithString:source];
+    
+    AVPConfig *playConfig = [proxy.player getConfig];
+    playConfig = [AVPConfig mj_objectWithKeyValues:config];
+    
+    [proxy.player enableDowngrade:urlSource config:playConfig];
     result(nil);
 }
 
@@ -878,6 +919,13 @@ NSString *hashCallback(NSString* url) {
             @"customHeaders" :@"mCustomHeaders",
         };
     }];
+    result(config.mj_keyValues);
+}
+
+- (void)getPlayConfig:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    AVPConfig *config = [proxy.player getConfig];
     result(config.mj_keyValues);
 }
 
@@ -1184,6 +1232,23 @@ NSString *hashCallback(NSString* url) {
     result(nil);
 }
 
+- (void)setUserData:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    NSString *val = arr[3];
+    
+    [proxy.player setUserData:val];
+    result(nil);
+}
+
+- (void)getUserData:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    AliPlayerProxy *proxy = arr[2];
+    
+    NSString *userData = [proxy.player getUserData];
+    result(userData);
+}
+
 - (void)netWorkReConnect:(NSArray*)arr {
     FlutterResult result = arr[1];
     
@@ -1251,27 +1316,35 @@ NSString *hashCallback(NSString* url) {
 #pragma --mark CicadaAudioSessionDelegate
 - (BOOL)setActive:(BOOL)active error:(NSError **)outError
 {
-    return [[AVAudioSession sharedInstance] setActive:active error:outError];
+    if (self.audioSessionType == AliPlayerAudioSesstionTypeNone) {
+        return YES;
+    } else {
+        return [[AVAudioSession sharedInstance] setActive:active error:outError];
+    }
 }
 
 - (BOOL)setCategory:(NSString *)category withOptions:(AVAudioSessionCategoryOptions)options error:(NSError **)outError
 {
-    if (self.enableMix) {
+    if (self.audioSessionType == AliPlayerAudioSesstionTypeSDKDefault) {
+        return [[AVAudioSession sharedInstance] setCategory:category withOptions:options error:outError];
+    } else if (self.audioSessionType == AliPlayerAudioSesstionTypeMix) {
         options = AVAudioSessionCategoryOptionMixWithOthers | AVAudioSessionCategoryOptionDuckOthers;
+        return [[AVAudioSession sharedInstance] setCategory:category withOptions:options error:outError];
+    } else {
+        return YES;
     }
-    return [[AVAudioSession sharedInstance] setCategory:category withOptions:options error:outError];
 }
 
 - (BOOL)setCategory:(AVAudioSessionCategory)category mode:(AVAudioSessionMode)mode routeSharingPolicy:(AVAudioSessionRouteSharingPolicy)policy options:(AVAudioSessionCategoryOptions)options error:(NSError **)outError
 {
-    if (self.enableMix) {
+    if (self.audioSessionType == AliPlayerAudioSesstionTypeSDKDefault) {
+        if (@available(iOS 11.0, tvOS 11.0, *)) {
+            return [[AVAudioSession sharedInstance] setCategory:category mode:mode routeSharingPolicy:policy options:options error:outError];
+        }
+        return NO;
+    } else {
         return YES;
     }
-
-    if (@available(iOS 11.0, tvOS 11.0, *)) {
-        return [[AVAudioSession sharedInstance] setCategory:category mode:mode routeSharingPolicy:policy options:options error:outError];
-    }
-    return NO;
 }
 
 @end

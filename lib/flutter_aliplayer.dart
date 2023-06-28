@@ -597,8 +597,36 @@ class FlutterAliplayer {
         .invokeMethod("getConfig", wrapWithPlayerId());
   }
 
-  /// 播放器设置
+  /// 获取播放器设置
+  /// 新版本增加，逐步替代[getConfig]
+  Future<AVPConfig> getPlayConfig() async {
+    Map map = await FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("getPlayConfig", wrapWithPlayerId());
+    return AVPConfig.convertAt(map);
+  }
+
+  /// 播放器设置，传递map
   Future<void> setConfig(Map map) async {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("setConfig", wrapWithPlayerId(arg: map));
+  }
+
+  /// 播放器设置
+  /// 新版本增加，逐步替代[setConfig]
+  Future<void> setPlayConfig(AVPConfig config) async {
+    Map map = config.convertToMap();
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("setPlayConfig", wrapWithPlayerId(arg: map));
+  }
+
+  /// 播放器降级设置
+  /// source 降级url
+  /// config 降级配置
+  Future<void> enableDowngrade(String source, AVPConfig config) async {
+    Map map = {
+      "source": source,
+      "config": config.convertToMap(),
+    };
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("setConfig", wrapWithPlayerId(arg: map));
   }
@@ -755,6 +783,18 @@ class FlutterAliplayer {
         .invokeMethod("sendCustomEvent", wrapWithPlayerId(arg: args));
   }
 
+  /// 设置UserData，用于一些全局API的透传，以区分player实例。
+  Future<void> setUserData(String userData) {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("setUserData", wrapWithPlayerId(arg: userData));
+  }
+
+  /// 设置UserData，用于一些全局API的透传，以区分player实例。
+  Future<dynamic> getUserData() async {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("getUserData", wrapWithPlayerId());
+  }
+
   /// 设置某路流相对于主时钟的延时时间
   /// 默认是0, 目前只支持外挂字幕
   Future<void> setStreamDelayTime(int trackIdx, int time) {
@@ -808,9 +848,21 @@ class FlutterAliplayer {
     return FlutterAliPlayerFactory.methodChannel.invokeMethod("getDeviceUUID");
   }
 
-  static Future<void> enableMix(bool enable) {
+  /// 返回某项功能是否支持
+  /// type 是否支持的功能的类型。 参考SupportFeatureType。
+  static Future<bool> isFeatureSupport(SupportFeatureType type) async {
+    bool boolV = await FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("isFeatureSupport", type.index);
+    return boolV;
+  }
+
+  /// 控制音频设置
+  /// 默认按照播放器SDK自身设置，只对iOS平台有效
+  /// 替代旧版本的[enableMix]
+  static Future<void> setAudioSessionTypeForIOS(
+      AliPlayerAudioSesstionType type) {
     return FlutterAliPlayerFactory.methodChannel
-        .invokeMethod("enableMix", enable);
+        .invokeMethod("setAudioSessionTypeForIOS", type.index);
   }
 
   /// 是否打开log输出
@@ -1166,7 +1218,7 @@ class _VideoPlayerState extends State<AliPlayerView> {
           "y": widget.y,
           "width": widget.width,
           "height": widget.height,
-          "viewType":widget.aliPlayerViewType.name,
+          "viewType": widget.aliPlayerViewType.name,
         },
         creationParamsCodec: const StandardMessageCodec(),
       );
