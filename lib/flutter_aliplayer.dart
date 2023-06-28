@@ -1146,13 +1146,10 @@ class AliPlayerView extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => _VideoPlayerState();
+
 }
 
 class _VideoPlayerState extends State<AliPlayerView> {
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {

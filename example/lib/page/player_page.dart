@@ -101,6 +101,8 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
 
   GlobalKey<TrackFragmentState> trackFragmentKey = GlobalKey();
 
+  int aliPlayerViewId;
+
   @override
   void initState() {
     super.initState();
@@ -403,11 +405,18 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
       case AppLifecycleState.inactive:
         break;
       case AppLifecycleState.resumed:
+        if (_mEnablePlayBack && GlobalSettings.mEnabletPictureInPicture) {
+          FlutterAliPlayerFactory.hideFloatViewForAndroid();
+        }
+        setState(() {});
         _setNetworkChangedListener();
         break;
       case AppLifecycleState.paused:
         if (!_mEnablePlayBack) {
           fAliplayer.pause();
+        }
+        if (_mEnablePlayBack && GlobalSettings.mEnabletPictureInPicture) {
+          FlutterAliPlayerFactory.showFloatViewForAndroid(aliPlayerViewId);
         }
         if (_networkSubscription != null) {
           _networkSubscription.cancel();
@@ -534,6 +543,7 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   }
 
   void onViewPlayerCreated(viewId) async {
+    this.aliPlayerViewId = viewId;
     this.fAliplayer.setPlayerView(viewId);
     switch (_playMode) {
       case ModeType.URL:

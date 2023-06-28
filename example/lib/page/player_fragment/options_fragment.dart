@@ -1,9 +1,7 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_aliplayer/flutter_aliplayer.dart';
-import 'package:flutter_aliplayer/flutter_aliplayer_medialoader.dart';
 import 'package:flutter_aliplayer_example/config.dart';
 import 'package:flutter_aliplayer_example/widget/aliyun_segment.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -49,7 +47,7 @@ class _OptionsFragmentState extends State<OptionsFragment> {
   TextEditingController _bgColorController = TextEditingController();
   TextEditingController _setMaxAccurateSeekController = TextEditingController();
   TextEditingController _setDefaultBandWidthController =
-      TextEditingController();
+  TextEditingController();
 
   _loadInitData() async {
     mLoop = await widget.fAliplayer.isLoop();
@@ -211,24 +209,22 @@ class _OptionsFragmentState extends State<OptionsFragment> {
   }
 
   Column _buildPipSwitch() {
-    if (Platform.isIOS) {
-      return Column(
-        children: [
-          CupertinoSwitch(
-            value: GlobalSettings.mEnabletPictureInPicture,
-            onChanged: (value) {
-              setState(() {
-                GlobalSettings.mEnabletPictureInPicture = value;
-              });
+    return Column(
+      children: [
+        CupertinoSwitch(
+          value: GlobalSettings.mEnabletPictureInPicture,
+          onChanged: (value) {
+            setState(() {
+              GlobalSettings.mEnabletPictureInPicture = value;
+            });
+            if (Platform.isIOS) {
               widget.fAliplayer.setPictureInPictureEnableForIOS(value);
-            },
-          ),
-          Text("画中画"),
-        ],
-      );
-    } else {
-      return Column();
-    }
+            }
+          },
+        ),
+        Text("画中画"),
+      ],
+    );
   }
 
   /// 音量
@@ -305,7 +301,10 @@ class _OptionsFragmentState extends State<OptionsFragment> {
 
   /// 旋转模式
   Container _buildRotate() {
-    double width = MediaQuery.of(context).size.width;
+    double width = MediaQuery
+        .of(context)
+        .size
+        .width;
     return Container(
       child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
         Text('旋转模式'),
@@ -329,38 +328,41 @@ class _OptionsFragmentState extends State<OptionsFragment> {
 
   /// 倍速播放
   Row _buildSpeed() {
-    return Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-      Text('倍速播放'),
-      Expanded(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8),
-          child: AliyunSegment(
-            titles: ['正常', '0.5倍速', '1.5倍速', "2.0倍速"],
-            selIdx: mSpeedGroupValueIndex,
-            onSelectAtIdx: (value) {
-              mSpeedGroupValueIndex = value;
-              switch (value) {
-                case 0:
-                  mSpeedGroupValue = 1.0;
-                  break;
-                case 1:
-                  mSpeedGroupValue = 0.5;
-                  break;
-                case 2:
-                  mSpeedGroupValue = 1.5;
-                  break;
-                case 3:
-                  mSpeedGroupValue = 2.0;
-                  break;
-                default:
-              }
-              widget.fAliplayer.setRate(mSpeedGroupValue);
-              setState(() {});
-            },
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        Text('倍速播放'),
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8),
+            child: AliyunSegment(
+              titles: ['正常', '0.5倍速', '1.5倍速', "2.0倍速"],
+              selIdx: mSpeedGroupValueIndex,
+              onSelectAtIdx: (value) {
+                mSpeedGroupValueIndex = value;
+                switch (value) {
+                  case 0:
+                    mSpeedGroupValue = 1.0;
+                    break;
+                  case 1:
+                    mSpeedGroupValue = 0.5;
+                    break;
+                  case 2:
+                    mSpeedGroupValue = 1.5;
+                    break;
+                  case 3:
+                    mSpeedGroupValue = 2.0;
+                    break;
+                  default:
+                }
+                widget.fAliplayer.setRate(mSpeedGroupValue);
+                setState(() {});
+              },
+            ),
           ),
         ),
-      ),
-    ]);
+      ],
+    );
   }
 
   /// 背景色
@@ -514,9 +516,11 @@ class _OptionsFragmentState extends State<OptionsFragment> {
                 if (widget.playBackChanged != null) {
                   widget.playBackChanged(value);
                 }
-                setState(() {
-                  mEnablePlayBack = value;
-                });
+                setState(
+                      () {
+                    mEnablePlayBack = value;
+                  },
+                );
               },
             ),
             Text("后台播放"),
@@ -529,9 +533,11 @@ class _OptionsFragmentState extends State<OptionsFragment> {
           ),
           onTap: () {
             if (widget.fAliplayer != null) {
-              widget.fAliplayer.getMediaInfo().then((value) {
-                Fluttertoast.showToast(msg: value.toString());
-              });
+              widget.fAliplayer.getMediaInfo().then(
+                    (value) {
+                  Fluttertoast.showToast(msg: value.toString());
+                },
+              );
             }
           },
         ),

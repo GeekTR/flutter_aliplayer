@@ -5,6 +5,8 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
@@ -48,6 +50,7 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
     private Integer playerType = -1;
 
     private Handler mMainHandler = new Handler(Looper.getMainLooper());
+    private FlutterAliFloatWindowManager flutterAliFloatWindowManager;
 
     public FlutterAliplayerPlugin() {
         super(StandardMessageCodec.INSTANCE);
@@ -64,6 +67,8 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
         mAliPlayerFactoryMethodChannel.setMethodCallHandler(this);
         mEventChannel = new EventChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "flutter_aliplayer_event");
         mEventChannel.setStreamHandler(this);
+
+        flutterAliFloatWindowManager = new FlutterAliFloatWindowManager(flutterPluginBinding.getApplicationContext());
 
         AliPlayerGlobalSettings.setCacheUrlHashCallback(new AliPlayerGlobalSettings.OnGetUrlHashCallback() {
             @Override
@@ -94,6 +99,16 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
         switch (call.method) {
+            case "showFloatViewForAndroid":
+                int showFloatViewId = (int) call.arguments;
+                FlutterAliPlayerView showFlutterAliPlayerView = mFlutterAliPlayerViewMap.get(showFloatViewId);
+                flutterAliFloatWindowManager.showFloatWindow(showFlutterAliPlayerView);
+                result.success(null);
+                break;
+            case "hideFloatViewForAndroid":
+                flutterAliFloatWindowManager.hideFloatWindow();
+                result.success(null);
+                break;
             case "createAliPlayer":
                 playerType = call.argument("arg");
                 if (0 == playerType) {
@@ -158,6 +173,7 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
             case "setPlayerView":
                 Integer viewId = (Integer) call.argument("arg");
                 FlutterAliPlayerView flutterAliPlayerView = mFlutterAliPlayerViewMap.get(viewId);
+
                 if (playerType == 0) {
                     String setPlayerViewPlayerId = call.argument("playerId");
                     FlutterAliPlayer mSetPlayerViewCurrentFlutterAliPlayer = mFlutterAliPlayerMap.get(setPlayerViewPlayerId);

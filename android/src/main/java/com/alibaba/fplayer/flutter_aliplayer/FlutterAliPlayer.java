@@ -579,7 +579,7 @@ public class FlutterAliPlayer extends FlutterPlayerBase {
                 result.success(getOption(mAliPlayer, option));
                 break;
             case "sendCustomEvent":
-                Map<String,Object> sendCustomEventMap = methodCall.arguments();
+                Map<String, Object> sendCustomEventMap = methodCall.arguments();
                 String sendCustomArgs = (String) sendCustomEventMap.get("arg");
                 sendCustomEvent(mAliPlayer, sendCustomArgs);
                 result.success(null);
@@ -913,7 +913,7 @@ public class FlutterAliPlayer extends FlutterPlayerBase {
                     Map<String, Object> map = new HashMap<>();
 
                     Bitmap thumbnailBitmap = thumbnailBitmapInfo.getThumbnailBitmap();
-                    if(thumbnailBitmap != null){
+                    if (thumbnailBitmap != null) {
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
                         thumbnailBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                         thumbnailBitmap.recycle();

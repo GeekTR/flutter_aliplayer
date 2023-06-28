@@ -39,6 +39,7 @@ public class FlutterAliPlayerView implements PlatformView {
     private Surface mSurface;
 
     private String viewType = SURFACE_VIEW_TYPE;
+    private View flutterAttachedView;
 
     public FlutterAliPlayerView(Context context, int viewId,Object args) {
         if (args != null) {
@@ -47,7 +48,7 @@ public class FlutterAliPlayerView implements PlatformView {
         }
         this.mViewId = viewId;
         this.mContext = context;
-        if (isTextureView(viewType)) {
+        if (isTextureView()) {
             mTextureView = new TextureView(mContext);
             initRenderView(mTextureView);
         } else {
@@ -56,23 +57,26 @@ public class FlutterAliPlayerView implements PlatformView {
         }
     }
 
-    private boolean isTextureView(String viewType){
-        return TEXTURE_VIEW_TYPE.equals(viewType);
+    public IPlayer getPlayer() {
+        return mPlayer;
     }
 
     public void setPlayer(IPlayer player) {
         this.mPlayer = player;
-        if (isTextureView(viewType)) {
+        if (isTextureView()) {
             mHandler.sendEmptyMessage(ALIYUNN_PLAYER_TEXTURE);
         } else {
             mHandler.sendEmptyMessage(ALIYUNN_PLAYER_SETSURFACE);
         }
     }
 
+    public boolean isTextureView() {
+        return TEXTURE_VIEW_TYPE.equals(viewType);
+    }
 
     @Override
     public View getView() {
-        if (isTextureView(viewType)) {
+        if (isTextureView()) {
             return mTextureView;
         } else {
             return mSurfaceView;
@@ -90,12 +94,12 @@ public class FlutterAliPlayerView implements PlatformView {
 
     private void initRenderView(SurfaceView surfaceView) {
 
-        if (!isTextureView(viewType) && surfaceView != null) {
+        if (!isTextureView() && surfaceView != null) {
             surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
                 @Override
                 public void surfaceCreated(@NonNull SurfaceHolder surfaceHolder) {
                     mSurfaceHolder = surfaceHolder;
-                    mHandler.sendEmptyMessage(ALIYUNN_PLAYER_SETSURFACE);
+                    sendSetRenderViewMessage();
                 }
 
                 @Override
@@ -131,7 +135,7 @@ public class FlutterAliPlayerView implements PlatformView {
                 @Override
                 public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surfaceTexture, int i, int i1) {
                     mSurface = new Surface(surfaceTexture);
-                    mHandler.sendEmptyMessage(ALIYUNN_PLAYER_TEXTURE);
+                    sendSetRenderViewMessage();
                 }
 
                 @Override
@@ -150,6 +154,14 @@ public class FlutterAliPlayerView implements PlatformView {
 
                 }
             });
+        }
+    }
+
+    public void sendSetRenderViewMessage() {
+        if (isTextureView()) {
+            mHandler.sendEmptyMessage(ALIYUNN_PLAYER_TEXTURE);
+        } else {
+            mHandler.sendEmptyMessage(ALIYUNN_PLAYER_SETSURFACE);
         }
     }
 

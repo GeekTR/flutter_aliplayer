@@ -44,6 +44,14 @@ class FlutterAliPlayerFactory {
     return methodChannel.invokeMethod("initLicenseServiceForIOS");
   }
 
+  static void showFloatViewForAndroid(int viewId) {
+    methodChannel.invokeMethod("showFloatViewForAndroid", viewId);
+  }
+
+  static void hideFloatViewForAndroid() {
+    methodChannel.invokeMethod("hideFloatViewForAndroid");
+  }
+
   static void loadRtsLibrary() {
     if (Platform.isAndroid) {
       methodChannel.invokeMethod("loadRtsLibrary");
