@@ -589,11 +589,29 @@ typedef NS_ENUM(NSInteger, AliPlayerAudioSesstionType) {
     result(nil);
 }
 
+- (void)setDNSResolve:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    FlutterMethodCall* call = arr.firstObject;
+    NSDictionary* val = [call arguments];
+    NSString *host = val[@"host"];
+    NSString *ip = val[@"ip"];
+    [AliPlayerGlobalSettings setDNSResolve:host ip:ip];
+    result(nil);
+}
+
 - (void)setIpResolveType:(NSArray*)arr {
     FlutterResult result = arr[1];
     FlutterMethodCall* call = arr.firstObject;
     NSNumber* val = [call arguments];
     [AliPlayerGlobalSettings setIpResolveType:(AVPIpResolveType)val.unsignedIntegerValue];
+    result(nil);
+}
+
+- (void)enableNetworkBalance:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    FlutterMethodCall* call = arr.firstObject;
+    NSNumber* val = [call arguments];
+    [AliPlayerGlobalSettings enableNetworkBalance:val.boolValue];
     result(nil);
 }
 

@@ -899,6 +899,18 @@ class FlutterAliplayer {
         .invokeMethod("enableHttpDns", enable);
   }
 
+  /// 设置域名对应的解析ip
+  /// host 域名，需指定端口（http默认端口80，https默认端口443）。例如player.alicdn.com:443
+  /// ip 相应的ip，设置为空字符串清空设定。
+  static Future<void> setDNSResolve(String host, String ip) {
+    Map map = {
+      "host": host,
+      "ip": ip,
+    };
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("setDNSResolve", map);
+  }
+
   /// 设置解析ip类型
   static Future<void> setIpResolveType(AVPIpResolveType type) {
     return FlutterAliPlayerFactory.methodChannel
@@ -971,6 +983,13 @@ class FlutterAliplayer {
     };
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("setCacheFileClearConfig", map);
+  }
+
+  /// 是否开启内建预加载网络平衡策略，播放过程中，自动控制预加载的运行时机。默认开启。
+  /// enable 是否开启
+  static Future<void> enableNetworkBalance(bool enable) {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("enableNetworkBalance", enable);
   }
 
   /// 清理本地缓存，需要先应用配置缓存，才能清理本地缓存
@@ -1198,11 +1217,9 @@ class AliPlayerView extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => _VideoPlayerState();
-
 }
 
 class _VideoPlayerState extends State<AliPlayerView> {
-
   @override
   Widget build(BuildContext context) {
     return nativeView();
