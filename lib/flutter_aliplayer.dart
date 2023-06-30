@@ -370,13 +370,14 @@ class FlutterAliplayer {
 
   /// 用vid和sts来播放视频
   /// sts可参考：https://help.aliyun.com/document_detail/28756.html?spm=a2c4g.11186623.4.4.6f554c07q7B7aS
+  /// playConfig 从[generatePlayerConfig]获取
   Future<void> setVidSts(
       {String? vid,
       String? region,
       String? accessKeyId,
       String? accessKeySecret,
       String? securityToken,
-      String? previewTime,
+      String? playConfig,
       List<String>? definitionList,
       String quality = "",
       bool forceQuality = false,
@@ -388,7 +389,7 @@ class FlutterAliplayer {
       "accessKeySecret": accessKeySecret,
       "securityToken": securityToken,
       "definitionList": definitionList,
-      "previewTime": previewTime,
+      "playConfig": playConfig,
       "quality": quality,
       "forceQuality": forceQuality
     };
@@ -398,11 +399,12 @@ class FlutterAliplayer {
 
   /// 使用vid+playauth方式播放
   /// 可参考：https://help.aliyun.com/document_detail/57294.html
+  /// playConfig 从[generatePlayerConfig]获取
   Future<void> setVidAuth(
       {String? vid,
       String? region,
       String? playAuth,
-      String? previewTime,
+      String? playConfig,
       List<String>? definitionList,
       String quality = "",
       bool forceQuality = false,
@@ -412,7 +414,7 @@ class FlutterAliplayer {
       "region": region,
       "playAuth": playAuth,
       "definitionList": definitionList,
-      "previewTime": previewTime,
+      "playConfig": playConfig,
       "quality": quality,
       "forceQuality": forceQuality
     };
@@ -1011,6 +1013,63 @@ class FlutterAliplayer {
     };
     return FlutterAliPlayerFactory.methodChannel
         .invokeMethod("addBlackDevice", map);
+  }
+
+  /// 创建媒体播放自定义设置对象
+  static Future<void> createVidPlayerConfigGenerator() async {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("createVidPlayerConfigGenerator");
+  }
+
+  /// 设置预览时间
+  /// previewTime 预览时间，单位为秒
+  /// 调用之前必须先执行[createVidPlayerConfigGenerator]
+  static Future<void> setPreviewTime(int previewTime) async {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("setPreviewTime", previewTime.toString());
+  }
+
+  /// HLS标准加密设置UriToken
+  /// mtsHlsUriToken 字符串
+  /// 调用之前必须先执行[createVidPlayerConfigGenerator]
+  static Future<void> setHlsUriToken(String mtsHlsUriToken) async {
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("setHlsUriToken", mtsHlsUriToken);
+  }
+
+  /// 添加vid的playerconfig参数
+  /// key: 对应playerConfig中的参数名字
+  /// value: 对应key参数的值
+  /// 调用之前必须先执行[createVidPlayerConfigGenerator]
+  static Future<void> addVidPlayerConfigByStringValue(
+      String key, String value) async {
+    Map param = {
+      "key": key,
+      "value": value,
+    };
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("addVidPlayerConfigByStringValue", param);
+  }
+
+  /// 添加vid的playerconfig参数
+  /// key: 对应playerConfig中的参数名字
+  /// value: 对应key参数的整形值
+  /// 调用之前必须先执行[createVidPlayerConfigGenerator]
+  static Future<void> addVidPlayerConfigByIntValue(
+      String key, int value) async {
+    Map param = {
+      "key": key,
+      "value": value.toString(),
+    };
+    return FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("addVidPlayerConfigByIntValue", param);
+  }
+
+  /// 生成playerConfig
+  /// 调用之前必须先执行[createVidPlayerConfigGenerator]
+  static Future<String> generatePlayerConfig() async {
+    return await FlutterAliPlayerFactory.methodChannel
+        .invokeMethod("generatePlayerConfig");
   }
 
   ///回调分发

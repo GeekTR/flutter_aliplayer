@@ -28,6 +28,7 @@ typedef NS_ENUM(NSInteger, AliPlayerAudioSesstionType) {
 @property (nonatomic, strong) FlutterEventSink eventSink;
 @property(nonatomic,strong) NSMutableDictionary *viewDic;
 @property(nonatomic,strong) NSMutableDictionary *playerProxyDic;
+@property (nonatomic, strong) VidPlayerConfigGenerator *vidPlayerConfigGenerator;
 
 @end
 
@@ -966,11 +967,9 @@ NSString *hashCallback(NSString* url) {
     NSDictionary *dic = arr[3];
     AVPVidStsSource *source = [AVPVidStsSource mj_objectWithKeyValues:dic];
 
-    NSString *previewTime = [dic getStrByKey:@"previewTime"];
-    if(previewTime && previewTime.length>0){
-        VidPlayerConfigGenerator* vp = [[VidPlayerConfigGenerator alloc] init];
-        [vp setPreviewTime:previewTime.intValue];
-        source.playConfig = [vp generatePlayerConfig];
+    NSString *playConfig = [dic getStrByKey:@"playConfig"];
+    if(playConfig && playConfig.length>0){
+        source.playConfig = playConfig;
     }
 
     [self setSource:source withDefinitions:dic];
@@ -984,11 +983,9 @@ NSString *hashCallback(NSString* url) {
     NSDictionary *dic = arr[3];
     AVPVidAuthSource *source = [AVPVidAuthSource mj_objectWithKeyValues:dic];
 
-    NSString *previewTime = [dic getStrByKey:@"previewTime"];
-    if(previewTime && previewTime.length>0){
-        VidPlayerConfigGenerator* vp = [[VidPlayerConfigGenerator alloc] init];
-        [vp setPreviewTime:previewTime.intValue];
-        source.playConfig = [vp generatePlayerConfig];
+    NSString *playConfig = [dic getStrByKey:@"playConfig"];
+    if(playConfig && playConfig.length>0){
+        source.playConfig = playConfig;
     }
 
     [self setSource:source withDefinitions:dic];
@@ -1309,6 +1306,66 @@ NSString *hashCallback(NSString* url) {
     [player prepareWithLiveTimeUrl:url];
     [player setLiveTimeShiftUrl:timeLineUrl];
     result(nil);
+}
+
+- (void)createVidPlayerConfigGenerator:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    self.vidPlayerConfigGenerator = [[VidPlayerConfigGenerator alloc] init];
+    result(nil);
+}
+
+- (void)setPreviewTime:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    FlutterMethodCall* call = arr.firstObject;
+    int val = [[call arguments] intValue];
+    if (self.vidPlayerConfigGenerator) {
+        [self.vidPlayerConfigGenerator setPreviewTime:val];
+    }
+    result(nil);
+}
+
+- (void)setHlsUriToken:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    FlutterMethodCall* call = arr.firstObject;
+    NSString* val = [call arguments];
+    if (self.vidPlayerConfigGenerator) {
+        [self.vidPlayerConfigGenerator setHlsUriToken:val];
+    }
+    result(nil);
+}
+
+- (void)addVidPlayerConfigByStringValue:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    FlutterMethodCall* call = arr.firstObject;
+    NSDictionary* val = [call arguments];
+    NSString *key = val[@"key"];
+    NSString *value = val[@"value"];
+    if (self.vidPlayerConfigGenerator) {
+        [self.vidPlayerConfigGenerator addVidPlayerConfigByStringValue:key value:value];
+    }
+    result(nil);
+}
+
+- (void)addVidPlayerConfigByIntValue:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    FlutterMethodCall* call = arr.firstObject;
+    NSDictionary* val = [call arguments];
+    NSString *key = val[@"key"];
+    int value = [val[@"value"] intValue];
+    if (self.vidPlayerConfigGenerator) {
+        [self.vidPlayerConfigGenerator addVidPlayerConfigByIntValue:key value:value];
+    }
+    result(nil);
+}
+
+- (void)generatePlayerConfig:(NSArray*)arr {
+    FlutterResult result = arr[1];
+    FlutterMethodCall* call = arr.firstObject;
+    NSString *callback = @"";
+    if (self.vidPlayerConfigGenerator) {
+        callback = [self.vidPlayerConfigGenerator generatePlayerConfig];
+    }
+    result(callback);
 }
 
 - (void)setEventReportParamsDelegate:(NSArray*)arr {
