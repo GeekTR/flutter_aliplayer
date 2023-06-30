@@ -171,8 +171,6 @@ public class FlutterAliPlayer extends FlutterPlayerBase {
                     for (String s : map.keySet()) {
                         vidPlayerConfigGen.addPlayerConfig(s, String.valueOf(map.get(s)));
                     }
-
-                    vidPlayerConfigGen.setEncryptType();
                     vidAuth.setPlayConfig(vidPlayerConfigGen);
                 }
                 setDataSource(mAliPlayer, vidAuth);
