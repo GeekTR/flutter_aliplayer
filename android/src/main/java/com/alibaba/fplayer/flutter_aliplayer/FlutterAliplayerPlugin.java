@@ -204,6 +204,20 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
                 Boolean enableHttpDns = call.arguments();
                 AliPlayerGlobalSettings.enableHttpDns(enableHttpDns);
                 break;
+            case "setDNSResolve":
+                Map<String, String> dnsResolveMap = call.arguments();
+                if (dnsResolveMap != null) {
+                    String dnsResolveHost = dnsResolveMap.get("host");
+                    String dnsResolveIP = dnsResolveMap.get("ip");
+                    AliPlayerGlobalSettings.setDNSResolve(dnsResolveHost, dnsResolveIP);
+                }
+
+                result.success(null);
+            case "enableNetworkBalance":
+                Boolean enableNetworkBalance = call.arguments();
+                AliPlayerGlobalSettings.enableNetworkBalance(enableNetworkBalance);
+                result.success(null);
+                break;
             case "enableLocalCache":
                 Map<String, Object> localCacheMap = call.arguments();
                 if (localCacheMap != null) {
@@ -224,6 +238,9 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
                 break;
             case "clearCaches":
                 AliPlayerGlobalSettings.clearCaches();
+                break;
+            case "isFeatureSupport":
+                result.success(AliPlayerFactory.isFeatureSupport(AliPlayerFactory.SupportFeatureType.FeatureDolbyAudio));
                 break;
             case "setIPResolveType":
                 String setIPResolveTypeStr = call.arguments() == null ? "" : (String) call.arguments();
@@ -485,7 +502,7 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
 
     @Override
     public PlatformView create(Context context, int viewId, Object args) {
-        FlutterAliPlayerView flutterAliPlayerView = new FlutterAliPlayerView(context, viewId,args);
+        FlutterAliPlayerView flutterAliPlayerView = new FlutterAliPlayerView(context, viewId, args);
         flutterAliPlayerView.setFlutterAliPlayerViewListener(this);
         mFlutterAliPlayerViewMap.put(viewId, flutterAliPlayerView);
         return flutterAliPlayerView;

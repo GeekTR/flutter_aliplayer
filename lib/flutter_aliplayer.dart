@@ -628,7 +628,7 @@ class FlutterAliplayer {
       "config": config.convertToMap(),
     };
     return FlutterAliPlayerFactory.methodChannel
-        .invokeMethod("setConfig", wrapWithPlayerId(arg: map));
+        .invokeMethod("enableDowngrade", wrapWithPlayerId(arg: map));
   }
 
   Future<dynamic> getCacheConfig() async {

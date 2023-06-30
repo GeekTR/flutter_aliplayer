@@ -5,6 +5,7 @@ import android.text.TextUtils;
 
 import com.aliyun.player.AliPlayer;
 import com.aliyun.player.AliPlayerFactory;
+import com.aliyun.player.AliPlayerGlobalSettings;
 import com.aliyun.player.FilterConfig;
 import com.aliyun.player.IPlayer;
 import com.aliyun.player.VidPlayerConfigGen;
@@ -397,6 +398,15 @@ public class FlutterAliPlayer extends FlutterPlayerBase {
                 result.success(null);
             }
             break;
+            case "setPlayConfig":
+                Map<String, Object> setPlayConfigMap = (Map<String, Object>) methodCall.argument("arg");
+                PlayerConfig setPlayConfig = getConfig(mAliPlayer);
+                if (setPlayConfig != null) {
+                    setPlayConfig = mapCovertToPlayerConfig(setPlayConfigMap, setPlayConfig);
+                    setConfig(mAliPlayer, setPlayConfig);
+                }
+                result.success(null);
+                break;
             case "getConfig":
                 PlayerConfig config = getConfig(mAliPlayer);
                 String json = mGson.toJson(config);
@@ -583,6 +593,31 @@ public class FlutterAliPlayer extends FlutterPlayerBase {
                 String sendCustomArgs = (String) sendCustomEventMap.get("arg");
                 sendCustomEvent(mAliPlayer, sendCustomArgs);
                 result.success(null);
+                break;
+            case "enableDowngrade":
+                Map<String, Object> enableDowngrade = methodCall.argument("arg");
+                if (enableDowngrade != null) {
+                    String enabledownGradeUrl = (String) enableDowngrade.get("source");
+                    UrlSource downgradeUrlSource = new UrlSource();
+                    downgradeUrlSource.setUri(enabledownGradeUrl);
+
+                    Map<String, Object> downgradConfigMap = (Map<String, Object>) enableDowngrade.get("config");
+                    PlayerConfig downgradConfig = getConfig(mAliPlayer);
+                    if (downgradConfig != null) {
+                        downgradConfig = mapCovertToPlayerConfig(downgradConfigMap,downgradConfig);
+                        setConfig(mAliPlayer, downgradConfig);
+                    }
+                    mAliPlayer.enableDowngrade(downgradeUrlSource, downgradConfig);
+                }
+                result.success(null);
+                break;
+            case "setUserData":
+                String setUserData = (String) methodCall.arguments;
+                mAliPlayer.setUserData(setUserData);
+                result.success(null);
+                break;
+            case "getUserData":
+                result.success(mAliPlayer.getUserData());
                 break;
             default:
                 result.notImplemented();
@@ -835,6 +870,7 @@ public class FlutterAliPlayer extends FlutterPlayerBase {
 
     private void setConfig(AliPlayer mAliPlayer, PlayerConfig playerConfig) {
         if (mAliPlayer != null) {
+            playerConfig.mEnableVideoTunnelRender = true;
             mAliPlayer.setConfig(playerConfig);
         }
     }
@@ -1046,5 +1082,83 @@ public class FlutterAliPlayer extends FlutterPlayerBase {
             return mAliPlayer.getCacheFilePath(url);
         }
         return null;
+    }
+
+    private PlayerConfig mapCovertToPlayerConfig(Map<String, Object> map, PlayerConfig config) {
+        if (map != null && config != null) {
+            if (map.containsKey("maxDelayTime") && map.get("maxDelayTime") != null) {
+                config.mMaxDelayTime = (Integer) map.get("maxDelayTime");
+            }
+            if (map.containsKey("highBufferDuration") && map.get("highBufferDuration") != null) {
+                config.mHighBufferDuration = (Integer) map.get("highBufferDuration");
+            }
+            if (map.containsKey("startBufferDuration") && map.get("startBufferDuration") != null) {
+                config.mStartBufferDuration = (Integer) map.get("startBufferDuration");
+            }
+            if (map.containsKey("maxBufferDuration") && map.get("maxBufferDuration") != null) {
+                config.mMaxBufferDuration = (Integer) map.get("maxBufferDuration");
+            }
+            if (map.containsKey("networkTimeout") && map.get("networkTimeout") != null) {
+                config.mNetworkTimeout = (Integer) map.get("networkTimeout");
+            }
+            if (map.containsKey("networkRetryCount") && map.get("networkRetryCount") != null) {
+                config.mNetworkTimeout = (Integer) map.get("networkRetryCount");
+            }
+            if (map.containsKey("maxProbeSize") && map.get("maxProbeSize") != null) {
+                config.mMaxProbeSize = (Integer) map.get("maxProbeSize");
+            }
+            if (map.containsKey("referer") && map.get("referer") != null) {
+                config.mReferrer = (String) map.get("referer");
+            }
+            if (map.containsKey("userAgent") && map.get("userAgent") != null) {
+                config.mUserAgent = (String) map.get("userAgent");
+            }
+            if (map.containsKey("httpProxy") && map.get("httpProxy") != null) {
+                config.mHttpProxy = (String) map.get("httpProxy");
+            }
+            if (map.containsKey("clearShowWhenStop") && map.get("clearShowWhenStop") != null) {
+                config.mClearFrameWhenStop = (Boolean) map.get("clearShowWhenStop");
+            }
+            if (map.containsKey("enableSEI") && map.get("enableSEI") != null) {
+                config.mEnableSEI = (Boolean) map.get("enableSEI");
+            }
+            if (map.containsKey("enableLocalCache") && map.get("enableLocalCache") != null) {
+                config.mEnableLocalCache = (Boolean) map.get("enableLocalCache");
+            }
+            if (map.containsKey("liveStartIndex") && map.get("liveStartIndex") != null) {
+                config.mLiveStartIndex = (Integer) map.get("liveStartIndex");
+            }
+            if (map.containsKey("disableAudio") && map.get("disableAudio") != null) {
+                config.mDisableAudio = (Boolean) map.get("disableAudio");
+            }
+            if (map.containsKey("disableVideo") && map.get("disableVideo") != null) {
+                config.mDisableVideo = (Boolean) map.get("disableVideo");
+            }
+            if (map.containsKey("positionTimerIntervalMs") && map.get("positionTimerIntervalMs") != null) {
+                config.mPositionTimerIntervalMs = (Integer) map.get("positionTimerIntervalMs");
+            }
+            if (map.containsKey("mMAXBackwardDuration") && map.get("mMAXBackwardDuration") != null) {
+                config.mMaxBackwardBufferDurationMs = (Integer) map.get("mMAXBackwardDuration");
+            }
+            if (map.containsKey("preferAudio") && map.get("preferAudio") != null) {
+                config.mPreferAudio = (Boolean) map.get("preferAudio");
+            }
+            if (map.containsKey("enableHttpDns") && map.get("enableHttpDns") != null) {
+                config.mEnableHttpDns = (Integer) map.get("enableHttpDns");
+            }
+            if (map.containsKey("enableHttp3") && map.get("enableHttp3") != null) {
+                config.mEnableHttp3 = (Boolean) map.get("enableHttp3");
+            }
+            if (map.containsKey("enableStrictFlvHeader") && map.get("enableStrictFlvHeader") != null) {
+                config.mEnableStrictFlvHeader = (Boolean) map.get("enableStrictFlvHeader");
+            }
+            if (map.containsKey("enableStrictAuthMode") && map.get("enableStrictAuthMode") != null) {
+                config.mEnableStrictAuthMode = (Boolean) map.get("enableStrictAuthMode");
+            }
+            if (map.containsKey("enableProjection") && map.get("enableProjection") != null) {
+                config.mEnableProjection = (Boolean) map.get("enableProjection");
+            }
+        }
+        return config;
     }
 }

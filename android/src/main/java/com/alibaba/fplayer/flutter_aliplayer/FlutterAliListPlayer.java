@@ -21,7 +21,6 @@ import com.aliyun.player.source.VidMps;
 import com.aliyun.player.source.VidSts;
 import com.aliyun.thumbnail.ThumbnailBitmapInfo;
 import com.aliyun.thumbnail.ThumbnailHelper;
-import com.aliyun.utils.ThreadManager;
 import com.google.gson.Gson;
 
 import java.io.ByteArrayOutputStream;

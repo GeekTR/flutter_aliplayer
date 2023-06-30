@@ -99,6 +99,7 @@ public class FlutterAliPlayerView implements PlatformView {
                 @Override
                 public void surfaceCreated(@NonNull SurfaceHolder surfaceHolder) {
                     mSurfaceHolder = surfaceHolder;
+                    System.out.println("abc : qqqqqqqq  " + mSurfaceHolder);
                     sendSetRenderViewMessage();
                 }
 

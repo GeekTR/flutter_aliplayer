@@ -11,7 +11,6 @@ import com.aliyun.player.bean.ErrorInfo;
 import com.aliyun.player.bean.InfoBean;
 import com.aliyun.player.nativeclass.MediaInfo;
 import com.aliyun.player.nativeclass.TrackInfo;
-import com.aliyun.utils.ThreadManager;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -19,6 +18,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 public abstract class FlutterPlayerBase {
 
@@ -26,6 +27,7 @@ public abstract class FlutterPlayerBase {
     protected String mSnapShotPath;
     protected String mPlayerId;
     protected FlutterAliPlayerListener mFlutterAliPlayerListener;
+    private ExecutorService executorService = new ScheduledThreadPoolExecutor(10);
 
     private Handler mHandler = new Handler(Looper.getMainLooper());
 
@@ -114,7 +116,8 @@ public abstract class FlutterPlayerBase {
                 map.put("snapShotPath", mSnapShotPath);
                 map.put("playerId", mPlayerId);
 
-                ThreadManager.threadPool.execute(new Runnable() {
+
+                executorService.execute(new Runnable() {
                     @Override
                     public void run() {
                         if(bitmap != null){
@@ -153,11 +156,7 @@ public abstract class FlutterPlayerBase {
                         });
                     }
                 });
-
-
-
 //                mEventSink.success(map);
-
             }
         });
 
