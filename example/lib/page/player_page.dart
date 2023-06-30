@@ -547,28 +547,35 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
   void onViewPlayerCreated(viewId) async {
     this.aliPlayerViewId = viewId;
     this.fAliplayer.setPlayerView(viewId);
+    _generatePlayConfigGen();
     switch (_playMode) {
       case ModeType.URL:
         this.fAliplayer.setUrl(_dataSourceMap[DataSourceRelated.URL_KEY]);
         break;
       case ModeType.STS:
-        this.fAliplayer.setVidSts(
-            vid: _dataSourceMap[DataSourceRelated.VID_KEY],
-            region: _dataSourceMap[DataSourceRelated.REGION_KEY],
-            accessKeyId: _dataSourceMap[DataSourceRelated.ACCESSKEYID_KEY],
-            accessKeySecret:
-                _dataSourceMap[DataSourceRelated.ACCESSKEYSECRET_KEY],
-            securityToken: _dataSourceMap[DataSourceRelated.SECURITYTOKEN_KEY],
-            definitionList: _dataSourceMap[DataSourceRelated.DEFINITION_LIST],
-            previewTime: _dataSourceMap[DataSourceRelated.PREVIEWTIME_KEY]);
+        FlutterAliplayer.generatePlayerConfig().then((value) {
+          this.fAliplayer.setVidSts(
+              vid: _dataSourceMap[DataSourceRelated.VID_KEY],
+              region: _dataSourceMap[DataSourceRelated.REGION_KEY],
+              accessKeyId: _dataSourceMap[DataSourceRelated.ACCESSKEYID_KEY],
+              accessKeySecret:
+                  _dataSourceMap[DataSourceRelated.ACCESSKEYSECRET_KEY],
+              securityToken:
+                  _dataSourceMap[DataSourceRelated.SECURITYTOKEN_KEY],
+              definitionList: _dataSourceMap[DataSourceRelated.DEFINITION_LIST],
+              playConfig: value);
+        });
+
         break;
       case ModeType.AUTH:
-        this.fAliplayer.setVidAuth(
-            vid: _dataSourceMap[DataSourceRelated.VID_KEY],
-            region: _dataSourceMap[DataSourceRelated.REGION_KEY],
-            playAuth: _dataSourceMap[DataSourceRelated.PLAYAUTH_KEY],
-            definitionList: _dataSourceMap[DataSourceRelated.DEFINITION_LIST],
-            previewTime: _dataSourceMap[DataSourceRelated.PREVIEWTIME_KEY]);
+        FlutterAliplayer.generatePlayerConfig().then((value) {
+          this.fAliplayer.setVidAuth(
+              vid: _dataSourceMap[DataSourceRelated.VID_KEY],
+              region: _dataSourceMap[DataSourceRelated.REGION_KEY],
+              playAuth: _dataSourceMap[DataSourceRelated.PLAYAUTH_KEY],
+              definitionList: _dataSourceMap[DataSourceRelated.DEFINITION_LIST],
+              playConfig: value);
+        });
         break;
       case ModeType.MPS:
         this.fAliplayer.setVidMps(_dataSourceMap);
@@ -1003,5 +1010,10 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
         ],
       ),
     );
+  }
+
+  _generatePlayConfigGen() {
+    FlutterAliplayer.createVidPlayerConfigGenerator();
+    FlutterAliplayer.setPreviewTime(0);
   }
 }

@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import com.aliyun.player.AliPlayerFactory;
 import com.aliyun.player.AliPlayerGlobalSettings;
 import com.aliyun.player.IPlayer;
+import com.aliyun.player.VidPlayerConfigGen;
 import com.aliyun.private_service.PrivateService;
 import com.cicada.player.utils.Logger;
 
@@ -51,6 +52,7 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
 
     private Handler mMainHandler = new Handler(Looper.getMainLooper());
     private FlutterAliFloatWindowManager flutterAliFloatWindowManager;
+    private VidPlayerConfigGen mVidPlayerConfigGen;
 
     public FlutterAliplayerPlugin() {
         super(StandardMessageCodec.INSTANCE);
@@ -263,6 +265,38 @@ public class FlutterAliplayerPlugin extends PlatformViewFactory implements Flutt
                 Integer channels = Integer.valueOf((String) forceAudioRendingFormat.get("channels"));
                 Integer sample_rate = Integer.valueOf((String) forceAudioRendingFormat.get("sample_rate"));
                 AliPlayerGlobalSettings.forceAudioRendingFormat(force, fmt, channels, sample_rate);
+                break;
+            case "createVidPlayerConfigGenerator":
+                mVidPlayerConfigGen = new VidPlayerConfigGen();
+                result.success(null);
+                break;
+            case "setPreviewTime":
+                String setPreviewTime = call.arguments();
+                if (mVidPlayerConfigGen != null && !TextUtils.isEmpty(setPreviewTime)) {
+                    mVidPlayerConfigGen.setPreviewTime(Integer.parseInt(setPreviewTime));
+                }
+                result.success(null);
+                break;
+            case "setHlsUriToken":
+                String setHlsUriToken = call.arguments();
+                if (mVidPlayerConfigGen != null) {
+                    mVidPlayerConfigGen.setMtsHlsUriToken(setHlsUriToken);
+                }
+                result.success(null);
+                break;
+            case "addVidPlayerConfigByStringValue":
+            case "addVidPlayerConfigByIntValue":
+                Map<String, String> addVidPlayerConfigByStringValue = (Map<String, String>) call.arguments;
+                if (mVidPlayerConfigGen != null) {
+                    for (String s : addVidPlayerConfigByStringValue.keySet()) {
+                        mVidPlayerConfigGen.addPlayerConfig(s, addVidPlayerConfigByStringValue.get(s));
+                    }
+                }
+                result.success(null);
+                break;
+            case "generatePlayerConfig":
+                String generatePlayerConfig = mVidPlayerConfigGen.genConfig();
+                result.success(generatePlayerConfig);
                 break;
             default:
                 String otherPlayerId = call.argument("playerId");

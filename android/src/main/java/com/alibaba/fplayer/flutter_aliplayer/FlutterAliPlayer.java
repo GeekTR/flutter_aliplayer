@@ -5,7 +5,6 @@ import android.text.TextUtils;
 
 import com.aliyun.player.AliPlayer;
 import com.aliyun.player.AliPlayerFactory;
-import com.aliyun.player.AliPlayerGlobalSettings;
 import com.aliyun.player.FilterConfig;
 import com.aliyun.player.IPlayer;
 import com.aliyun.player.VidPlayerConfigGen;
@@ -107,6 +106,16 @@ public class FlutterAliPlayer extends FlutterPlayerBase {
                     vidPlayerConfigGen.setPreviewTime(previewTime);
                     vidSts.setPlayConfig(vidPlayerConfigGen);
                 }
+                if (stsMap.containsKey("playConfig")) {
+                    String stsPlayConfig = (String) stsMap.get("playConfig");
+                    Map<String,Object> map = mGson.fromJson(stsPlayConfig, Map.class);
+                    VidPlayerConfigGen vidPlayerConfigGen = new VidPlayerConfigGen();
+                    for (String s : map.keySet()) {
+                        vidPlayerConfigGen.addPlayerConfig(s, String.valueOf(map.get(s)));
+                    }
+
+                    vidSts.setPlayConfig(vidPlayerConfigGen);
+                }
                 setDataSource(mAliPlayer, vidSts);
                 result.success(null);
                 break;
@@ -153,6 +162,17 @@ public class FlutterAliPlayer extends FlutterPlayerBase {
                     VidPlayerConfigGen vidPlayerConfigGen = new VidPlayerConfigGen();
                     int previewTime = Integer.valueOf((String) authMap.get("previewTime"));
                     vidPlayerConfigGen.setPreviewTime(previewTime);
+                    vidAuth.setPlayConfig(vidPlayerConfigGen);
+                }
+                if (authMap.containsKey("playConfig")) {
+                    String authPlayConfig = (String) authMap.get("playConfig");
+                    Map<String,Object> map = mGson.fromJson(authPlayConfig, Map.class);
+                    VidPlayerConfigGen vidPlayerConfigGen = new VidPlayerConfigGen();
+                    for (String s : map.keySet()) {
+                        vidPlayerConfigGen.addPlayerConfig(s, String.valueOf(map.get(s)));
+                    }
+
+                    vidPlayerConfigGen.setEncryptType();
                     vidAuth.setPlayConfig(vidPlayerConfigGen);
                 }
                 setDataSource(mAliPlayer, vidAuth);
