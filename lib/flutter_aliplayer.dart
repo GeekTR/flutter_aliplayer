@@ -1041,6 +1041,7 @@ class FlutterAliplayer {
   /// key: 对应playerConfig中的参数名字
   /// value: 对应key参数的值
   /// 调用之前必须先执行[createVidPlayerConfigGenerator]
+  /// Android 设置加密类型：key 为 EncryptType，value 可选：Unencrypted，AliyunVoDEncryption，HLSEncryption
   static Future<void> addVidPlayerConfigByStringValue(
       String key, String value) async {
     Map param = {
